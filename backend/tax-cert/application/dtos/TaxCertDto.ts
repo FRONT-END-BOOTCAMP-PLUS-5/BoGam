@@ -48,7 +48,11 @@ export interface TaxCertTwoWayRequest extends Omit<TaxCertRequest, 'signedData'>
   simpleKeyToken?: string; // 간편인증 토큰
   rValue?: string; // 검증 값 (Base64 url-safe 인코딩)
   certificate?: string; // 전자서명을 수행한 인증서
-  extraInfo?: any; // 추가 정보
+  extraInfo?: {
+    simpleKeyToken?: string; // 간편인증 토큰
+    rValue?: string; // 검증 값
+    certificate?: string; // 전자서명을 수행한 인증서
+  }; // 추가 정보
 }
 
 // 응답 데이터 상세 타입 정의

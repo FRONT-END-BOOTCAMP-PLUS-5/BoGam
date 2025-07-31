@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { getCodefAuth } from '../../../../utils/codefAuth';
+import { createCodefAuth } from '../../../../libs/codefAuth';
+import { loadCodefConfig, validateCodefConfig } from '../../../../libs/codefEnvironment';
 import {
   DetailInquiryRequest,
   GetRealEstateRequest,
@@ -13,12 +14,28 @@ import { GetRealEstateResponse } from '../../applications/dtos/GetRealEstateResp
  * 클린 아키텍처의 Infrastructure 레이어
  */
 export class GetRealEstateDataInfrastructure {
-  private readonly codefAuth = getCodefAuth();
+  private readonly codefAuth;
   private readonly baseUrl: string;
   private readonly timeout: number = 300000; // 5분 (등기부등본 API는 시간이 오래 걸림)
 
   constructor() {
-    this.baseUrl = process.env.CODEF_API_URL || 'https://api.codef.io';
+    // CODEF 설정 로드
+    const config = loadCodefConfig();
+    const validation = validateCodefConfig(config);
+    
+    if (!validation.isValid) {
+      console.warn('⚠️ CODEF 설정 검증 실패:', validation.errors);
+      console.warn('⚠️ 기본 설정으로 진행합니다.');
+    }
+    
+    // CODEF 인증 인스턴스 생성
+    this.codefAuth = createCodefAuth({
+      clientId: config.oauth.clientId,
+      clientSecret: config.oauth.clientSecret,
+      baseUrl: config.oauth.baseUrl,
+    });
+    
+    this.baseUrl = process.env.CODEF_API_URL || 'https://development.codef.io';
   }
 
   /**
@@ -68,7 +85,7 @@ export class GetRealEstateDataInfrastructure {
    * @param twoWayInfo 추가인증 정보
    * @returns 응답 데이터
    */
-  async processTwoWayAuth(
+  async handleTwoWayAuth(
     uniqueNo: string,
     twoWayInfo: {
       jobIndex: number;
@@ -78,9 +95,8 @@ export class GetRealEstateDataInfrastructure {
     }
   ): Promise<GetRealEstateResponse> {
     try {
-      console.log('🔐 2-way 인증 처리 시작:', { uniqueNo });
+      console.log('🔐 2-way 인증 처리 시작:', { uniqueNo, twoWayInfo });
 
-      // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
 
       const twoWayRequest = {
@@ -89,9 +105,8 @@ export class GetRealEstateDataInfrastructure {
         twoWayInfo,
       };
 
-      // API 요청 실행
       const response: AxiosResponse<GetRealEstateResponse> = await axios.post(
-        `https://development.codef.io/v1/kr/public/ck/real-estate-register/status`,
+        `${this.baseUrl}/v1/kr/public/ck/real-estate-register/status`,
         twoWayRequest,
         {
           headers: {
@@ -99,17 +114,15 @@ export class GetRealEstateDataInfrastructure {
             'Content-Type': 'application/json',
             'User-Agent': 'CodefSandbox/1.0',
           },
-          timeout: 120000, // 2-way 인증은 2분 타임아웃
+          timeout: 120000, // 2분 (2-way 인증은 시간이 짧음)
         }
       );
 
-      console.log('✅ 2-way 인증 처리 성공:', {
-        uniqueNo,
-        resultCode: response.data.result?.code,
-      });
+      const decodedData = this.decodeBase64Response(response.data);
+      console.log('✅ 2-way 인증 처리 완료');
 
-      return response.data;
-    } catch (error: unknown) {
+      return decodedData;
+    } catch (error) {
       console.error('❌ 2-way 인증 처리 실패:', error);
       this.handleError(error as AxiosError | Error);
       throw error;
@@ -117,7 +130,11 @@ export class GetRealEstateDataInfrastructure {
   }
 
   /**
-   * 고유번호로 부동산 조회
+   * 간단한 메소드들을 제공하는 편의 함수들
+   */
+
+  /**
+   * 고유번호로 부동산 정보 조회
    * @param uniqueNo 부동산 고유번호
    * @param password 비밀번호
    * @param options 추가 옵션
@@ -197,9 +214,10 @@ export class GetRealEstateDataInfrastructure {
     addrLotNumber: string,
     password: string,
     options: {
-      realtyType?: string;
       addrSido?: string;
+      addrSigungu?: string;
       addrDong?: string;
+      realtyType?: string;
       inputSelect?: string;
       buildingName?: string;
       dong?: string;
@@ -214,12 +232,15 @@ export class GetRealEstateDataInfrastructure {
       phoneNo: options.phoneNo || '01000000000',
       password,
       inquiryType: '2',
-      addr_lotNumber: addrLotNumber,
-      realtyType: options.realtyType,
       addr_sido: options.addrSido || '',
+      addr_sigungu: options.addrSigungu || '',
       addr_dong: options.addrDong || '',
-      inputSelect: options.inputSelect,
-      issueReason: '열람', // 필수 필드
+      addr_lotNumber: addrLotNumber,
+      realtyType: options.realtyType || '',
+      inputSelect: options.inputSelect || '0',
+      buildingName: options.buildingName || '',
+      dong: options.dong || '',
+      ho: options.ho || '',
       issueType: options.issueType || '1',
     };
 
@@ -228,20 +249,20 @@ export class GetRealEstateDataInfrastructure {
 
   /**
    * 도로명주소로 부동산 검색
-   * @param addrRoadName 도로명
-   * @param addrBuildingNumber 건물번호
+   * @param roadName 도로명
+   * @param buildingNumber 건물번호
    * @param password 비밀번호
    * @param options 추가 옵션
    * @returns 응답 데이터
    */
   async searchRealEstateByRoadAddress(
-    addrRoadName: string,
-    addrBuildingNumber: string,
+    roadName: string,
+    buildingNumber: string,
     password: string,
     options: {
-      realtyType?: string;
       addrSido?: string;
       addrSigungu?: string;
+      realtyType?: string;
       dong?: string;
       ho?: string;
       issueType?: string;
@@ -249,107 +270,108 @@ export class GetRealEstateDataInfrastructure {
       organization?: string;
     } = {}
   ): Promise<GetRealEstateResponse> {
-    const request: IssueResultRequest = {
+    const request: GetRealEstateRequest = {
       organization: options.organization || '0002',
       phoneNo: options.phoneNo || '01000000000',
       password,
       inquiryType: '3',
-      addr_roadName: addrRoadName,
-      addr_buildingNumber: addrBuildingNumber,
-      realtyType: options.realtyType,
       addr_sido: options.addrSido || '',
       addr_sigungu: options.addrSigungu || '',
-      originData: '', // 필수 필드
-      originDataYN: '0',
-      issueType: options.issueType || '1',
+      addr_roadName: roadName,
+      addr_buildingNumber: buildingNumber,
+      realtyType: options.realtyType || '',
       dong: options.dong || '',
       ho: options.ho || '',
+      issueType: options.issueType || '1',
     };
 
     return this.getRealEstateRegistry(request);
   }
 
-  /**
-   * 에러 처리
-   * @param error 에러 객체
-   */
-  private handleError(error: AxiosError | Error): void {
-    if ('response' in error && error.response) {
-      // 서버 응답이 있는 경우
-      const { status, data } = error.response;
-      console.error('API 응답 에러:', {
-        status,
-        code: (data as any)?.result?.code,
-        message: (data as any)?.result?.message,
-      });
-
-      // 특정 에러 코드에 대한 처리
-      switch ((data as any)?.result?.code) {
-        case 'CF-03002':
-          console.log('⚠️ 추가인증이 필요합니다.');
-          break;
-        case 'CF-13002':
-          console.log('⚠️ 전화번호 형식이 올바르지 않습니다.');
-          break;
-        case 'CF-13007':
-          console.log('⚠️ 조회건수가 100건을 초과했습니다.');
-          break;
-        default:
-          console.log('⚠️ 기타 API 에러가 발생했습니다.');
-      }
-    } else if ('request' in error && error.request) {
-      // 요청은 보냈지만 응답이 없는 경우
-      console.error('네트워크 에러:', error.message);
-    } else {
-      // 요청 설정 중 에러
-      console.error('요청 설정 에러:', error.message);
-    }
-  }
+  // ===== 유틸리티 메소드 =====
 
   /**
-   * 응답 데이터의 URL 디코딩 및 JSON 파싱 처리
-   * @param response 원본 응답 데이터
-   * @returns 디코딩된 응답 데이터
+   * 액세스 토큰 획득
    */
-  private decodeBase64Response(
-    data: GetRealEstateResponse
-  ): GetRealEstateResponse {
-    try {
-      // 깊은 복사로 원본 데이터 보존
-      let decodedData = JSON.parse(JSON.stringify(data));
-
-      // data 필드가 URL 인코딩된 문자열인 경우 디코딩
-      if (decodedData && typeof decodedData === 'string') {
-        try {
-          // URL 디코딩
-          const urlDecodedData = decodeURIComponent(decodedData);
-
-          // JSON 파싱
-          const jsonData = JSON.parse(urlDecodedData);
-
-          // 디코딩된 JSON 데이터로 교체
-          decodedData = jsonData.data;
-          decodedData.result = jsonData.result;
-          return decodedData;
-        } catch (decodeError) {
-          console.warn(
-            '⚠️ URL 디코딩 또는 JSON 파싱 실패, 원본 데이터 유지:',
-            decodeError
-          );
-        }
-      }
-
-      return decodedData;
-    } catch (error) {
-      console.error('❌ 응답 디코딩 처리 실패:', error);
-      return data; // 오류 시 원본 응답 반환
-    }
+  async getAccessToken(): Promise<string> {
+    return this.codefAuth.getAccessToken();
   }
 
   /**
    * 토큰 캐시 초기화
    */
   clearTokenCache(): void {
-    this.codefAuth.clearTokenCache();
+    // 현재 간단한 구현에서는 로그만 출력
+    console.log('🔄 토큰 캐시 초기화');
+  }
+
+  /**
+   * Base64 URL 디코딩 처리
+   * CODEF API 응답에 포함된 base64 인코딩된 URL을 디코딩
+   */
+  private decodeBase64Response(data: any): any {
+    if (!data) return data;
+
+    try {
+      // 재귀적으로 객체 내의 모든 base64 URL 디코딩
+      const decoded = this.recursiveBase64Decode(data);
+      return decoded;
+    } catch (error) {
+      console.warn('⚠️ Base64 디코딩 실패, 원본 데이터 반환:', error);
+      return data;
+    }
+  }
+
+  /**
+   * 재귀적으로 base64 디코딩
+   */
+  private recursiveBase64Decode(obj: any): any {
+    if (typeof obj === 'string') {
+      // base64로 인코딩된 URL 패턴 확인 및 디코딩
+      try {
+        if (obj.startsWith('data:') || obj.includes('base64,')) {
+          return obj; // data URL은 그대로 유지
+        }
+        // URL 디코딩 시도
+        const decoded = decodeURIComponent(obj);
+        return decoded !== obj ? decoded : obj;
+      } catch {
+        return obj;
+      }
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this.recursiveBase64Decode(item));
+    }
+
+    if (obj !== null && typeof obj === 'object') {
+      const result: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        result[key] = this.recursiveBase64Decode(value);
+      }
+      return result;
+    }
+
+    return obj;
+  }
+
+  /**
+   * 에러 처리
+   */
+  private handleError(error: AxiosError | Error): void {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      console.error('❌ Axios 에러:', {
+        status: axiosError.response?.status,
+        statusText: axiosError.response?.statusText,
+        message: axiosError.message,
+        data: axiosError.response?.data,
+      });
+    } else {
+      console.error('❌ 일반 에러:', {
+        message: error.message,
+        stack: error.stack,
+      });
+    }
   }
 }
