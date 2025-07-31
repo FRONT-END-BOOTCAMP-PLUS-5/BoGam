@@ -1,0 +1,186 @@
+/* 단계별 진행 상태 */
+.stepContainer {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+}
+
+.stepTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.75rem;
+}
+
+.stepGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.stepItem {
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid;
+}
+
+.stepItemCurrent {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.stepItemCompleted {
+  background-color: #dcfce7;
+  border-color: #86efac;
+}
+
+.stepItemWaiting {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.stepIcon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.stepIconCurrent {
+  color: #2563eb;
+}
+
+.stepIconCompleted {
+  color: #16a34a;
+}
+
+.stepIconWaiting {
+  color: #9ca3af;
+}
+
+.stepText {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.stepTextCurrent {
+  color: #1e40af;
+}
+
+.stepTextCompleted {
+  color: #15803d;
+}
+
+.stepTextWaiting {
+  color: #6b7280;
+}
+
+.guideContainer {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+}
+
+.guideTitle {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.guideTitleCurrent {
+  color: #1e40af;
+}
+
+.guideTitleCompleted {
+  color: #15803d;
+}
+
+.guideTitleLoading {
+  color: #a16207;
+}
+
+.guideTitleWaiting {
+  color: #6b7280;
+}
+
+.guideDescription {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.loadingContainer {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  color: #ca8a04;
+}
+
+.loadingSpinner {
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  border-bottom: 2px solid #ca8a04;
+  margin-right: 0.5rem;
+}
+
+.actionContainer {
+  margin-top: 0.75rem;
+}
+
+.actionButton {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  background-color: #1d4ed8;
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actionNote {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.completedContainer {
+  margin-top: 0.75rem;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+}
+
+.completedTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #15803d;
+  margin-bottom: 0.25rem;
+}
+
+.completedDescription {
+  font-size: 0.75rem;
+  color: #16a34a;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} 
