@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetRealEstateDataUseCase } from '../../../../../backend/realEstate/applications/usecases/GetRealEstateDataUseCase';
-import { encryptPassword } from '../../../../../backend/utils/rsaEncryption';
+import { encryptPassword } from '../../../../../libs/codefEncryption';
 import { IssueResultRequest } from '../../../../../backend/realEstate/applications/dtos/GetRealEstateRequest';
 
 const useCase = new GetRealEstateDataUseCase();
@@ -8,6 +8,8 @@ const useCase = new GetRealEstateDataUseCase();
 export async function POST(request: NextRequest) {
   try {
     const body: IssueResultRequest = await request.json();
+    console.log('Road-address request body:', body);
+    
     const {
       organization,
       phoneNo,
@@ -22,7 +24,7 @@ export async function POST(request: NextRequest) {
       originData,
       dong,
       ho,
-      joinMortgageJeonseYN,
+      jointMortgageJeonseYN,
       tradingYN,
       listNumber,
       ePrepayNo,
@@ -76,7 +78,7 @@ export async function POST(request: NextRequest) {
     const apiRequest: IssueResultRequest = {
       organization: organization || '0002',
       phoneNo: phoneNo || '01000000000',
-      password: encryptPassword(password), // RSA 암호화
+      password: await encryptPassword(password), // RSA 암호화
       inquiryType: '3' as const,
       issueType: issueType || '1',
       addr_sido: addr_sido || '',
@@ -87,15 +89,25 @@ export async function POST(request: NextRequest) {
       dong: dong || '',
       ho: ho || '',
       realtyType: realtyType || '',
-      ePrepayNo: ePrepayNo || '',
-      ePrepayPass: ePrepayPass || '',
+      
+      jointMortgageJeonseYN: jointMortgageJeonseYN || '0',
+      tradingYN: tradingYN || '0',
+      listNumber: listNumber || undefined,
+      electronicClosedYN: electronicClosedYN || '0',
+      ePrepayNo: ePrepayNo || undefined,
+      ePrepayPass: ePrepayPass || undefined,
       originDataYN: originDataYN || '0',
+      warningSkipYN: warningSkipYN || '0',
+      registerSummaryYN: registerSummaryYN || '0',
+      selectAddress: selectAddress || '0',
+      isIdentityViewYn: isIdentityViewYn || '0',
+      identityList: identityList || undefined,
     };
 
     // UseCase 호출
     const response = await useCase.getRealEstateRegistry(apiRequest);
 
-    // 응답 검증
+    // 응답 검증은 주석 처리 (개발 중)
     // const validationResult = useCase.validateResponse(response);
     // if (!validationResult.isValid) {
     //   if (validationResult.requiresTwoWayAuth) {
@@ -129,9 +141,13 @@ export async function POST(request: NextRequest) {
       data: response,
     });
   } catch (error) {
-    console.error('도로명주소 검색 에러:', error);
+    console.error('❌ 부동산등기부등본 조회 API 오류:', error);
     return NextResponse.json(
-      { success: false, message: '서버 내부 오류가 발생했습니다.' },
+      {
+        success: false,
+        message: '부동산등기부등본 조회 중 오류가 발생했습니다.',
+        error: error instanceof Error ? error.message : '알 수 없는 오류',
+      },
       { status: 500 }
     );
   }

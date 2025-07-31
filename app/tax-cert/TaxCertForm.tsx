@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
 import ApiResultDisplay from '@/components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
-import { API_ENDPOINTS } from '@/lib/api-endpoints';
-import { createCodefEncryption } from '@/lib/encryption';
+import { API_ENDPOINTS } from '@/libs/api-endpoints';
+import { createCodefEncryption } from '@/libs/codefEncryption';
 import styles from './TaxCertForm.module.css';
 import commonStyles from './components/Common.module.css';
 

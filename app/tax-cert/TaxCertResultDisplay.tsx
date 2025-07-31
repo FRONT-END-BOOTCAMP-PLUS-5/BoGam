@@ -1,7 +1,7 @@
 'use client';
 
 import { CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
-import { decodeTaxCertResponse, urlDecode } from '@/lib/codef-decoder';
+import { decodeTaxCertResponse, urlDecode } from '@/libs/codef-decoder';
 import styles from './TaxCertResultDisplay.module.css';
 
 interface TaxCertResultDisplayProps {

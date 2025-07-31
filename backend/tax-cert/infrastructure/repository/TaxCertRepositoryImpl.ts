@@ -1,8 +1,8 @@
 import { TaxCertRepository } from '../../domain/repository/TaxCertRepository';
 import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../application/dtos/TaxCertDto';
-import { CODEF_API_CONFIG } from '@/lib/api-endpoints';
-import { createCodefAuth, getCodefAuth, CodefAuth } from '@/lib/auth';
-import { loadCodefConfig, validateCodefConfig } from '@/lib/config';
+import { CODEF_API_CONFIG } from '@/libs/api-endpoints';
+import { createCodefAuth, getCodefAuth, CodefAuth } from '@/libs/codefAuth';
+import { loadCodefConfig, validateCodefConfig } from '@/libs/codefEnvironment';
 
 export class TaxCertRepositoryImpl implements TaxCertRepository {
   private readonly baseUrl = CODEF_API_CONFIG.BASE_URL;
@@ -38,7 +38,12 @@ export class TaxCertRepositoryImpl implements TaxCertRepository {
     });
 
     // OAuth 인증 헤더 가져오기
-    const headers = await this.codefAuth.getRequestHeaders();
+    const authorization = await this.codefAuth.getAuthorizationHeader();
+    
+    const headers = {
+      'Authorization': authorization,
+      'Content-Type': 'application/json',
+    };
     
     console.log('🔐 인증 헤더 준비 완료:', {
       hasAuthorization: !!headers.Authorization,

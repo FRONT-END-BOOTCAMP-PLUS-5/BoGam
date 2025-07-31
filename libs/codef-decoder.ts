@@ -182,4 +182,4 @@ export function decodeTaxCertResponse(response: CodefResponse): CodefResponse {
   }
 
   return decodedResponse;
-} 
+}
