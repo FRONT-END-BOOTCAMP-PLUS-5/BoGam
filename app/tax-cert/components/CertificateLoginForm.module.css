@@ -1,0 +1,19 @@
+/* 인증서 로그인 폼 스타일 */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.formGridTwo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* 반응형 디자인 */
+@media (min-width: 768px) {
+  .formGridTwo {
+    grid-template-columns: 1fr 1fr;
+  }
+} 
