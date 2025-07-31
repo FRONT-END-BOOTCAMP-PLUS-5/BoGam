@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
       originData,
       dong,
       ho,
-      jointMortgageJeonseYN,
       tradingYN,
       listNumber,
       ePrepayNo,
@@ -90,7 +89,6 @@ export async function POST(request: NextRequest) {
       ho: ho || '',
       realtyType: realtyType || '',
       
-      jointMortgageJeonseYN: jointMortgageJeonseYN || '0',
       tradingYN: tradingYN || '0',
       listNumber: listNumber || undefined,
       electronicClosedYN: electronicClosedYN || '0',
