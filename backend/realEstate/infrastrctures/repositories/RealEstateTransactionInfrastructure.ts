@@ -6,7 +6,7 @@ import { GetRealEstateTransactionResponse } from '../../applications/dtos/GetRea
  * 실거래가 조회 API 인프라스트럭처
  * 클린 아키텍처의 Infrastructure 레이어
  */
-export class GetRealEstateTransactionInfrastructure {
+export class RealEstateTransactionInfrastructure {
   private readonly baseUrl: string;
   private readonly timeout: number = 30000; // 30초
   private readonly axiosInstance: ReturnType<typeof axios.create>;
@@ -34,21 +34,11 @@ export class GetRealEstateTransactionInfrastructure {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async getApartmentRentTransaction(
-    request: GetRealEstateTransactionRequest
-  ): Promise<GetRealEstateTransactionResponse> {
-         try {
-       // 서비스키 디코딩 (URL 인코딩된 경우)
-       const decodedServiceKey = decodeURIComponent(request.serviceKey);
-       
-       const params = {
-         LAWD_CD: request.LAWD_CD,
-         DEAL_YMD: request.DEAL_YMD,
-         serviceKey: decodedServiceKey,
-         numOfRows: request.numOfRows || '10',
-         pageNo: request.pageNo || '1',
-       };
-
+  async findAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      // 서비스키 디코딩 (URL 인코딩된 경우)
+      const decodedServiceKey = decodeURIComponent(request.serviceKey);
+      
       // API 요청 실행
       const response: AxiosResponse<string> = await this.axiosInstance.get(
         `${this.baseUrl}/getRTMSDataSvcAptRent`,
@@ -63,15 +53,13 @@ export class GetRealEstateTransactionInfrastructure {
           responseType: 'text', // XML 응답을 텍스트로 받기
         }
       );
-
-             // 성공 로그 제거
       
       // XML을 JSON으로 파싱
       return this.parseXmlResponse(response.data);
-         } catch (error) {
-       this.handleError(error as AxiosError | Error);
-       throw error;
-     }
+    } catch (error) {
+      this.handleError(error as AxiosError | Error);
+      throw error;
+    }
   }
 
   /**
@@ -79,11 +67,8 @@ export class GetRealEstateTransactionInfrastructure {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async getDetachedHouseRentTransaction(
-    request: GetRealEstateTransactionRequest
-  ): Promise<GetRealEstateTransactionResponse> {
-         try {
-
+  async findDetachedHouseAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
       // API 요청 실행
       const response: AxiosResponse<GetRealEstateTransactionResponse> = await this.axiosInstance.get(
         `${this.baseUrl}/getRTMSDataSvcSHRent`,
@@ -98,11 +83,11 @@ export class GetRealEstateTransactionInfrastructure {
         }
       );
 
-             return response.data;
-     } catch (error) {
-       this.handleError(error as AxiosError | Error);
-       throw error;
-     }
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError | Error);
+      throw error;
+    }
   }
 
   /**
@@ -110,11 +95,8 @@ export class GetRealEstateTransactionInfrastructure {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async getOfficetelRentTransaction(
-    request: GetRealEstateTransactionRequest
-  ): Promise<GetRealEstateTransactionResponse> {
-         try {
-
+  async findOfficetelAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
       // API 요청 실행
       const response: AxiosResponse<GetRealEstateTransactionResponse> = await this.axiosInstance.get(
         `${this.baseUrl}/getRTMSDataSvcORTRent`,
@@ -129,11 +111,11 @@ export class GetRealEstateTransactionInfrastructure {
         }
       );
 
-             return response.data;
-     } catch (error) {
-       this.handleError(error as AxiosError | Error);
-       throw error;
-     }
+      return response.data;
+    } catch (error) {
+      this.handleError(error as AxiosError | Error);
+      throw error;
+    }
   }
 
   /**
@@ -143,7 +125,7 @@ export class GetRealEstateTransactionInfrastructure {
    * @param options 추가 옵션
    * @returns 응답 데이터
    */
-  async getTransactionByLocationAndDate(
+  async findByLocationAndDate(
     lawdCd: string,
     dealYmd: string,
     options: {
@@ -153,8 +135,6 @@ export class GetRealEstateTransactionInfrastructure {
     } = {}
   ): Promise<GetRealEstateTransactionResponse> {
     const serviceKey = options.serviceKey || process.env.RTMSDATA_TRANSACTION_PRICE_KEY;
-    
-         // 환경변수 확인 (필요시만 주석 해제)
     
     if (!serviceKey) {
       throw new Error('공공데이터포털 서비스키가 설정되지 않았습니다.');
@@ -168,7 +148,7 @@ export class GetRealEstateTransactionInfrastructure {
       pageNo: options.pageNo || '1',
     };
 
-    return this.getApartmentRentTransaction(request);
+    return this.findAll(request);
   }
 
   /**
@@ -258,16 +238,16 @@ export class GetRealEstateTransactionInfrastructure {
           totalCount,
         },
       };
-         } catch (error) {
-       throw new Error(`XML 파싱 실패: ${error instanceof Error ? error.message : 'Unknown error'}`);
-     }
+    } catch (error) {
+      throw new Error(`XML 파싱 실패: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   /**
    * 에러 처리
    * @param error 에러 객체
    */
-       private handleError(error: AxiosError | Error): void {
+  private handleError(error: AxiosError | Error): void {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       if (axiosError.response) {
