@@ -1,16 +1,16 @@
 import { GetRealEstateTransactionRequest } from '../dtos/GetRealEstateTransactionRequest';
 import { GetRealEstateTransactionResponse } from '../dtos/GetRealEstateTransactionResponse';
-import { RealEstateTransactionInfrastructure } from '../../infrastrctures/repositories/RealEstateTransactionInfrastructure';
+import { RealEstateTransactionRepository } from '../../infrastrctures/repositories/RealEstateTransactionRepository';
 
 /**
  * 실거래가 조회 유스케이스
  * 클린 아키텍처의 Application 레이어
  */
-export class RealEstateTransactionUseCase {
-  private readonly infrastructure: RealEstateTransactionInfrastructure;
+export class GetRealEstateTransactionUseCase {
+  private readonly repository: RealEstateTransactionRepository;
 
   constructor() {
-    this.infrastructure = new RealEstateTransactionInfrastructure();
+    this.repository = new RealEstateTransactionRepository();
   }
 
   /**
@@ -18,9 +18,9 @@ export class RealEstateTransactionUseCase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async execute(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      const response = await this.infrastructure.findAll(request);
+      const response = await this.repository.findAll(request);
       
       // 계약일 포맷팅 (YYYY-MM-DD 형식)
       if (response.body.items.item) {
@@ -42,9 +42,9 @@ export class RealEstateTransactionUseCase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findDetachedHouseAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async executeDetachedHouse(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      const response = await this.infrastructure.findDetachedHouseAll(request);
+      const response = await this.repository.findDetachedHouseAll(request);
       
       // 계약일 포맷팅 (YYYY-MM-DD 형식)
       if (response.body.items.item) {
@@ -66,9 +66,9 @@ export class RealEstateTransactionUseCase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findOfficetelAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async executeOfficetel(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      const response = await this.infrastructure.findOfficetelAll(request);
+      const response = await this.repository.findOfficetelAll(request);
       
       // 계약일 포맷팅 (YYYY-MM-DD 형식)
       if (response.body.items.item) {
@@ -92,7 +92,7 @@ export class RealEstateTransactionUseCase {
    * @param options 추가 옵션
    * @returns 응답 데이터
    */
-  async findByLocationAndDate(
+  async executeByLocationAndDate(
     lawdCd: string,
     dealYmd: string,
     options: {
@@ -102,7 +102,7 @@ export class RealEstateTransactionUseCase {
     } = {}
   ): Promise<GetRealEstateTransactionResponse> {
     try {
-      const response = await this.infrastructure.findByLocationAndDate(lawdCd, dealYmd, options);
+      const response = await this.repository.findByLocationAndDate(lawdCd, dealYmd, options);
       
       // 계약일 포맷팅 (YYYY-MM-DD 형식)
       if (response.body.items.item) {
