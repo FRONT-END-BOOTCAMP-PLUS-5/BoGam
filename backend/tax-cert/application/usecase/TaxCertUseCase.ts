@@ -67,12 +67,6 @@ export class TaxCertUseCase {
     const startTime = Date.now();
     
     try {
-      console.log('🚀 납세증명서 요청 시작:', {
-        is2Way: request.is2Way,
-        loginType: request.loginType,
-        requestDataKeys: Object.keys(request),
-      });
-
       // 요청 데이터 검증
       const validation = this.validateRequest(request);
       if (!validation.isValid) {
@@ -97,15 +91,6 @@ export class TaxCertUseCase {
       }
 
       const duration = Date.now() - startTime;
-
-      console.log('✅ 납세증명서 요청 성공:', {
-        duration: `${duration}ms`,
-        resultCode: response?.result?.code,
-        resultMessage: response?.result?.message,
-        continue2Way: response?.data?.continue2Way,
-        hasResIssueNo: !!response?.data?.resIssueNo,
-        transactionId: response?.result?.transactionId,
-      });
 
       return {
         success: true,

@@ -5,7 +5,7 @@ import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@/backend/t
 import ApiResultDisplay from '@/components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
 import { API_ENDPOINTS } from '@/libs/api-endpoints';
-import { createCodefEncryption } from '@/libs/codefEncryption';
+import axios from 'axios';
 import styles from './TaxCertForm.module.css';
 import commonStyles from './components/Common.module.css';
 
@@ -15,16 +15,6 @@ import SimpleAuthModal from './components/SimpleAuthModal';
 import CertificateLoginForm from './components/CertificateLoginForm';
 import IdLoginForm from './components/IdLoginForm';
 import SimpleAuthForm from './components/SimpleAuthForm';
-
-interface KakaoCertificateData {
-  accessToken: string;
-  userId: string;
-  nickname: string;
-  email: string;
-  certificate: string;
-  simpleKeyToken: string;
-  rValue: string;
-}
 
 export default function TaxCertForm() {
   const [formData, setFormData] = useState<TaxCertRequest>({
@@ -163,20 +153,18 @@ export default function TaxCertForm() {
 
       console.log('📋 폼 데이터:', formData);
 
-      // 비밀번호 필드 암호화
-      const encryptedFormData = await encryptPasswordFields(formData);
+      // 폼 데이터 준비 (암호화는 서버에서 처리)
+      const preparedFormData = prepareFormData(formData);
       
-      console.log('🔐 암호화된 폼 데이터:', encryptedFormData);
+      console.log('📋 전송할 폼 데이터:', preparedFormData);
 
-      const apiResponse = await fetch(API_ENDPOINTS.TAX_CERT, {
-        method: 'POST',
+      const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, preparedFormData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(encryptedFormData),
       });
 
-      const data = await apiResponse.json();
+      const data = apiResponse.data;
       
       if (data.error) {
         throw new Error(data.error);
@@ -197,22 +185,9 @@ export default function TaxCertForm() {
     }
   };
 
-  const encryptPasswordFields = async (formData: TaxCertRequest): Promise<TaxCertRequest> => {
-    const encryption = await createCodefEncryption();
-    const encryptedData = { ...formData };
-
-    // 비밀번호 필드들 암호화
-    if (formData.certPassword) {
-      encryptedData.certPassword = await encryption.encryptCertPassword(formData.certPassword);
-    }
-    if (formData.userPassword) {
-      encryptedData.userPassword = await encryption.encryptUserPassword(formData.userPassword);
-    }
-    if (formData.managePassword) {
-      encryptedData.managePassword = await encryption.encryptManagePassword(formData.managePassword);
-    }
-
-    return encryptedData;
+  // 암호화는 서버에서 처리하므로 클라이언트에서는 평문 그대로 전송
+  const prepareFormData = (formData: TaxCertRequest): TaxCertRequest => {
+    return { ...formData };
   };
 
   // 추가인증 제출 시 단계 업데이트
@@ -280,15 +255,13 @@ export default function TaxCertForm() {
 
       console.log('🔐 2차 요청 데이터:', JSON.stringify(twoWayRequest, null, 2));
 
-      const apiResponse = await fetch(API_ENDPOINTS.TAX_CERT, {
-        method: 'POST',
+      const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, twoWayRequest, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(twoWayRequest),
       });
 
-      const data = await apiResponse.json();
+      const data = apiResponse.data;
       
       if (data.error) {
         throw new Error(data.error);

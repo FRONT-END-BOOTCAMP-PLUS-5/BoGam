@@ -1,9 +1,7 @@
-// CODEF API RSA 암호화 라이브러리 (Node.js + Browser 호환)
+import { loadCodefConfig, validateCodefConfig } from './codefEnvironment';
 
-// Node.js용 RSA 암호화 (서버 사이드)
-async function encryptInNode(text: string, publicKey: string): Promise<string> {
+export async function encryptWithRSA(text: string, publicKey: string): Promise<string> {
   try {
-    // dynamic import로 NodeRSA 로드 (서버 사이드에서만)
     const NodeRSA = (await import('node-rsa')).default;
     
     const key = new NodeRSA();
@@ -11,115 +9,38 @@ async function encryptInNode(text: string, publicKey: string): Promise<string> {
     key.setOptions({ encryptionScheme: 'pkcs1' });
     
     const encrypted = key.encrypt(text, 'base64');
-    console.log('✅ NodeRSA 암호화 성공');
+    console.log('✅ RSA 암호화 성공');
     return encrypted;
   } catch (error) {
-    console.error('❌ NodeRSA 암호화 실패:', error);
-    throw error;
+    console.error('❌ RSA 암호화 실패:', error);
+    throw new Error(`RSA 암호화 실패: ${error}`);
   }
 }
 
-// 브라우저용 RSA 암호화 (클라이언트 사이드)
-async function encryptInBrowser(text: string, publicKey: string): Promise<string> {
-  try {
-    const key = await importPublicKey(publicKey);
-    const encodedText = new TextEncoder().encode(text);
-    
-    const encrypted = await crypto.subtle.encrypt(
-      {
-        name: 'RSA-OAEP',
-        hash: 'SHA-256',
-      },
-      key,
-      encodedText
-    );
-    
-    const base64Encrypted = btoa(String.fromCharCode(...new Uint8Array(encrypted)));
-    console.log('✅ Web Crypto API 암호화 성공');
-    return base64Encrypted;
-  } catch (error) {
-    console.error('❌ Web Crypto API 암호화 실패:', error);
-    throw error;
-  }
-}
-
-// 공개키 import (브라우저용)
-async function importPublicKey(publicKeyString: string): Promise<CryptoKey> {
-  // PEM 헤더/푸터 제거 및 개행 문자 제거
-  const pemContents = publicKeyString
-    .replace(/-----BEGIN PUBLIC KEY-----/, '')
-    .replace(/-----END PUBLIC KEY-----/, '')
-    .replace(/\s/g, '');
-  
-  // Base64 디코딩
-  const binaryString = atob(pemContents);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  
-  // 공개키 import
-  return await crypto.subtle.importKey(
-    'spki',
-    bytes.buffer,
-    {
-      name: 'RSA-OAEP',
-      hash: 'SHA-256',
-    },
-    false,
-    ['encrypt']
-  );
-}
-
-// 환경별 RSA 암호화
-export async function encryptWithRSA(text: string, publicKey: string): Promise<string> {
-  // Node.js 환경 감지
-  if (typeof window === 'undefined' && typeof process !== 'undefined') {
-    return await encryptInNode(text, publicKey);
-  } 
-  // 브라우저 환경
-  else if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
-    return await encryptInBrowser(text, publicKey);
-  } 
-  else {
-    throw new Error('지원되지 않는 환경입니다.');
-  }
-}
-
-// CODEF 암호화 클래스
+/**
+ * CODEF 암호화 서비스 클래스
+ */
 export class CodefEncryption {
   private publicKey: string;
 
   constructor(publicKey: string) {
-    this.publicKey = publicKey;
+    this.publicKey = publicKey || process.env.CODEF_PUBLIC_KEY_JO || '';
   }
 
   /**
-   * 비밀번호 RSA 암호화
+   * 비밀번호 암호화
+   * RSA 암호화를 시도하고, 실패 시 Base64 인코딩으로 fallback
    */
   async encryptPassword(password: string): Promise<string> {
-    try {
-      console.log('🔐 비밀번호 RSA 암호화 시작');
-      
-      if (!this.publicKey) {
-        throw new Error('공개키가 설정되지 않았습니다.');
-      }
+    if (!this.publicKey) {
+      throw new Error('공개키가 설정되지 않았습니다.');
+    }
 
-      // RSA 암호화 시도
-      try {
-        const encrypted = await encryptWithRSA(password, this.publicKey);
-        console.log('✅ RSA 암호화 성공');
-        return encrypted;
-      } catch (rsaError) {
-        console.warn('⚠️ RSA 암호화 실패, Base64 fallback 사용:', rsaError);
-        // RSA 암호화 실패 시 Base64 인코딩으로 fallback
-        const base64Encoded = Buffer.from(password).toString('base64');
-        console.log('✅ Base64 인코딩 완료 (fallback)');
-        return base64Encoded;
-      }
+    try {
+      return await encryptWithRSA(password, this.publicKey);
     } catch (error) {
-      console.error('❌ 비밀번호 암호화 실패:', error);
-      throw error;
+      console.warn('⚠️ RSA 암호화 실패, Base64 fallback 사용');
+      return Buffer.from(password).toString('base64');
     }
   }
 }
@@ -128,12 +49,27 @@ export class CodefEncryption {
 let codefEncryptionInstance: CodefEncryption | null = null;
 
 /**
- * CODEF 암호화 인스턴스 생성
+ * codefEnvironment에서 CODEF 공개키를 로드
  */
-export function createCodefEncryption(publicKey: string): CodefEncryption {
+function loadCodefPublicKey(): string {
+  const config = loadCodefConfig();
+  const validation = validateCodefConfig(config);
+  
+  if (!validation.isValid) {
+    throw new Error(`CODEF 설정 검증 실패: ${validation.errors.join(', ')}`);
+  }
+  
+  return config.encryption.publicKey;
+}
+
+/**
+ * CODEF 암호화 인스턴스 생성 또는 반환 (환경변수 자동 로드)
+ */
+export function createCodefEncryption(): CodefEncryption {
   if (!codefEncryptionInstance) {
+    const publicKey = loadCodefPublicKey();
     codefEncryptionInstance = new CodefEncryption(publicKey);
-    console.log('🔐 CODEF 암호화 인스턴스 생성됨');
+    console.log('🔐 CODEF 암호화 싱글톤 인스턴스 생성됨');
   }
   return codefEncryptionInstance;
 }
@@ -150,21 +86,15 @@ export function getCodefEncryption(): CodefEncryption | null {
  */
 export function resetCodefEncryption(): void {
   codefEncryptionInstance = null;
-  console.log('🔄 CODEF 암호화 인스턴스 초기화됨');
+  console.log('🔄 CODEF 암호화 싱글톤 인스턴스 초기화됨');
 }
 
 /**
- * 호환성을 위한 헬퍼 함수
+ * 환경 변수에서 공개키를 로드하여 비밀번호 암호화
+ * @param password 암호화할 비밀번호
+ * @returns 암호화된 비밀번호
  */
 export async function encryptPassword(password: string): Promise<string> {
-  // 환경 변수에서 공개키 로드
-  const publicKey = process.env.CODEF_PUBLIC_KEY_JO;
-  
-  if (!publicKey) {
-    console.warn('⚠️ 공개키가 없어 Base64 인코딩 사용');
-    return Buffer.from(password).toString('base64');
-  }
-
-  const encryption = createCodefEncryption(publicKey);
+  const encryption = createCodefEncryption();
   return await encryption.encryptPassword(password);
 }

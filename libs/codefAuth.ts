@@ -1,4 +1,7 @@
 // CODEF API OAuth 2.0 인증 라이브러리
+import axios from 'axios';
+import { loadCodefConfig, validateCodefConfig } from './codefEnvironment';
+
 export interface CodefAuthConfig {
   clientId: string;
   clientSecret: string;
@@ -35,31 +38,32 @@ export class CodefAuth {
       const credentials = Buffer.from(`${this.config.clientId}:${this.config.clientSecret}`).toString('base64');
       const authorizationHeader = `Basic ${credentials}`;
 
-      const response = await fetch(this.tokenEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': authorizationHeader,
-        },
-        body: new URLSearchParams({
+      const response = await axios.post(this.tokenEndpoint, 
+        new URLSearchParams({
           grant_type: 'client_credentials',
-        }),
-      });
+        }), 
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': authorizationHeader,
+          },
+        }
+      );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ OAuth 토큰 발급 실패:', errorText);
-        throw new Error(`토큰 발급 실패: ${response.status} ${response.statusText}`);
-      }
-
-      const tokenData: CodefTokenResponse = await response.json();
+      const tokenData: CodefTokenResponse = response.data;
       
       console.log('✅ CODEF OAuth 토큰 발급 성공');
       return tokenData.access_token;
 
     } catch (error) {
-      console.error('❌ CODEF OAuth 토큰 발급 실패:', error);
-      throw error;
+      if (axios.isAxiosError(error)) {
+        const errorText = error.response?.data || error.message;
+        console.error('❌ OAuth 토큰 발급 실패:', errorText);
+        throw new Error(`토큰 발급 실패: ${error.response?.status} ${error.response?.statusText}`);
+      } else {
+        console.error('❌ CODEF OAuth 토큰 발급 실패:', error);
+        throw error;
+      }
     }
   }
 
@@ -72,16 +76,35 @@ export class CodefAuth {
   }
 }
 
-// 싱글톤 인스턴스 생성
+// 싱글톤 인스턴스
 let codefAuthInstance: CodefAuth | null = null;
 
 /**
- * CODEF 인증 인스턴스 생성 또는 반환
+ * codefEnvironment에서 CODEF 인증 설정을 로드
  */
-export function createCodefAuth(config: CodefAuthConfig): CodefAuth {
+function loadCodefAuthConfig(): CodefAuthConfig {
+  const config = loadCodefConfig();
+  const validation = validateCodefConfig(config);
+  
+  if (!validation.isValid) {
+    throw new Error(`CODEF 설정 검증 실패: ${validation.errors.join(', ')}`);
+  }
+
+  return {
+    clientId: config.oauth.clientId,
+    clientSecret: config.oauth.clientSecret,
+    baseUrl: config.oauth.baseUrl,
+  };
+}
+
+/**
+ * CODEF 인증 인스턴스 생성 또는 반환 (환경변수 자동 로드)
+ */
+export function createCodefAuth(): CodefAuth {
   if (!codefAuthInstance) {
+    const config = loadCodefAuthConfig();
     codefAuthInstance = new CodefAuth(config);
-    console.log('🔐 CODEF 인증 인스턴스 생성됨');
+    console.log('🔐 CODEF 인증 싱글톤 인스턴스 생성됨');
   }
   return codefAuthInstance;
 }
@@ -98,5 +121,5 @@ export function getCodefAuth(): CodefAuth | null {
  */
 export function resetCodefAuth(): void {
   codefAuthInstance = null;
-  console.log('🔄 CODEF 인증 인스턴스 초기화됨');
+  console.log('🔄 CODEF 인증 싱글톤 인스턴스 초기화됨');
 }
