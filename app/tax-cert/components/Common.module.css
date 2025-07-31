@@ -1,0 +1,173 @@
+/* 공통 폼 스타일 */
+.formField {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.labelRequired {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: 0.25rem;
+}
+
+.labelRequired::after {
+  content: ' *';
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.inputRequired {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #fca5a5;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background-color: #fef2f2;
+  transition: all 0.2s;
+}
+
+.inputRequired:focus {
+  outline: none;
+  border-color: #dc2626;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.inputRequired::placeholder {
+  color: #f87171;
+  font-style: italic;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 6rem;
+  transition: all 0.2s;
+}
+
+.textarea:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background-color: #ffffff;
+  transition: all 0.2s;
+}
+
+.select:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.selectRequired {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #fca5a5;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  background-color: #fef2f2;
+  transition: all 0.2s;
+}
+
+.selectRequired:focus {
+  outline: none;
+  border-color: #dc2626;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.submitButton {
+  background-color: #2563eb;
+  color: #ffffff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background-color: #1d4ed8;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorContainer {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.375rem;
+}
+
+.errorText {
+  color: #dc2626;
+}
+
+.noSelectionText {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+}
+
+/* 반응형 디자인 */
+@media (min-width: 768px) {
+  .formGridTwo {
+    grid-template-columns: 1fr 1fr;
+  }
+} 
