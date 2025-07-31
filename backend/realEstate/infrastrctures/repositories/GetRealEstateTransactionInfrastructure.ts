@@ -9,9 +9,24 @@ import { GetRealEstateTransactionResponse } from '../../applications/dtos/GetRea
 export class GetRealEstateTransactionInfrastructure {
   private readonly baseUrl: string;
   private readonly timeout: number = 30000; // 30초
+  private readonly axiosInstance: ReturnType<typeof axios.create>;
 
   constructor() {
     this.baseUrl = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptRent';
+    
+    // axios 인스턴스 생성
+    this.axiosInstance = axios.create({
+      timeout: this.timeout,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Referer': 'https://www.data.go.kr/',
+        'Origin': 'https://www.data.go.kr',
+      },
+    });
   }
 
   /**
@@ -35,7 +50,7 @@ export class GetRealEstateTransactionInfrastructure {
        };
 
       // API 요청 실행
-      const response: AxiosResponse<string> = await axios.get(
+      const response: AxiosResponse<string> = await this.axiosInstance.get(
         `${this.baseUrl}/getRTMSDataSvcAptRent`,
         {
           params: {
@@ -45,17 +60,7 @@ export class GetRealEstateTransactionInfrastructure {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          timeout: this.timeout,
           responseType: 'text', // XML 응답을 텍스트로 받기
-                     headers: {
-             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-             'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
-             'Accept-Encoding': 'gzip, deflate, br',
-             'Connection': 'keep-alive',
-             'Referer': 'https://www.data.go.kr/',
-             'Origin': 'https://www.data.go.kr',
-           },
         }
       );
 
@@ -80,7 +85,7 @@ export class GetRealEstateTransactionInfrastructure {
          try {
 
       // API 요청 실행
-      const response: AxiosResponse<GetRealEstateTransactionResponse> = await axios.get(
+      const response: AxiosResponse<GetRealEstateTransactionResponse> = await this.axiosInstance.get(
         `${this.baseUrl}/getRTMSDataSvcSHRent`,
         {
           params: {
@@ -90,7 +95,6 @@ export class GetRealEstateTransactionInfrastructure {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          timeout: this.timeout,
         }
       );
 
@@ -112,7 +116,7 @@ export class GetRealEstateTransactionInfrastructure {
          try {
 
       // API 요청 실행
-      const response: AxiosResponse<GetRealEstateTransactionResponse> = await axios.get(
+      const response: AxiosResponse<GetRealEstateTransactionResponse> = await this.axiosInstance.get(
         `${this.baseUrl}/getRTMSDataSvcORTRent`,
         {
           params: {
@@ -122,7 +126,6 @@ export class GetRealEstateTransactionInfrastructure {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          timeout: this.timeout,
         }
       );
 
@@ -264,7 +267,22 @@ export class GetRealEstateTransactionInfrastructure {
    * 에러 처리
    * @param error 에러 객체
    */
-     private handleError(error: AxiosError | Error): void {
-     // 에러 처리 (필요시 로그 추가)
-   }
+       private handleError(error: AxiosError | Error): void {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        console.error('API 응답 에러:', {
+          status: axiosError.response.status,
+          statusText: axiosError.response.statusText,
+          data: axiosError.response.data,
+        });
+      } else if (axiosError.request) {
+        console.error('API 요청 타임아웃 또는 네트워크 에러:', axiosError.message);
+      } else {
+        console.error('API 요청 설정 에러:', axiosError.message);
+      }
+    } else {
+      console.error('일반 에러:', error.message);
+    }
+  }
 } 
