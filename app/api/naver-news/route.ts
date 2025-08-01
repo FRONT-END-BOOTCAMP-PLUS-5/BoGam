@@ -6,7 +6,7 @@ export async function GET() {
   const useCase = new GetNaverNewsUseCase(new NaverNewsRepository());
 
   try {
-    const result = await useCase.execute();
+    const result = await useCase.fetchNaverNews();
     return NextResponse.json(result);
   } catch (error) {
     console.error("뉴스 요청 실패:", error);
