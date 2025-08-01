@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../backend/applications/taxCert/dtos/TaxCertDto';
-import { extractActualData } from '../../libs/responseUtils';
-import ApiResultDisplay from '../../components/common/ApiResultDisplay';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../../backend/applications/taxCert/dtos/TaxCertDto';
+import { extractActualData } from '../../../libs/responseUtils';
+import ApiResultDisplay from '../_components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
-import { API_ENDPOINTS } from '../../libs/api-endpoints';
+import { API_ENDPOINTS } from '../../../libs/api-endpoints';
 import axios from 'axios';
 import styles from './TaxCertForm.module.css';
 import commonStyles from './components/Common.module.css';

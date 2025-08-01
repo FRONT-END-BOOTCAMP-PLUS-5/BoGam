@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { TaxCertRequest } from '../../../backend/applications/taxCert/dtos/TaxCertDto';
+import { TaxCertRequest } from '../../../../backend/applications/taxCert/dtos/TaxCertDto';
 import commonStyles from './Common.module.css';
 
 interface CertificateLoginFormProps {

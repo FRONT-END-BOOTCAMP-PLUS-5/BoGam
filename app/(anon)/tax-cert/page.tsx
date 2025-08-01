@@ -1,4 +1,4 @@
-import Navigation from "../../components/common/Navigation";
+import Navigation from "../_components/common/Navigation";
 import TaxCertForm from "./TaxCertForm";
 import styles from "./page.module.css";
 
