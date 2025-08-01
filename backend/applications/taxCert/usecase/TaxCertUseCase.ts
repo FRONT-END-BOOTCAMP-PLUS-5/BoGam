@@ -1,4 +1,4 @@
-import { TaxCertRepository } from '../../../domain/tax-cert/repository/TaxCertRepository';
+import { TaxCertRepository } from '../../../domain/taxCert/repository/TaxCertRepository';
 import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, TaxCertRequestDto, TaxCertResponseDto, TaxCertValidationDto } from '../dtos/TaxCertDto';
 
 export class TaxCertUseCase {

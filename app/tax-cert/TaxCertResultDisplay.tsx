@@ -1,6 +1,6 @@
 'use client';
 
-import { CodefResponse, TaxCertRespiteItem, TaxCertArrearsItem } from '../../backend/applications/tax-cert/dtos/TaxCertDto';
+import { CodefResponse, TaxCertRespiteItem, TaxCertArrearsItem } from '../../backend/applications/taxCert/dtos/TaxCertDto';
 import { extractActualData } from '../../libs/responseUtils';
 import styles from './TaxCertResultDisplay.module.css';
 

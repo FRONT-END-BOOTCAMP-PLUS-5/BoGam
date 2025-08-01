@@ -9,8 +9,8 @@ export async function GET() {
 }
 
 /*
-import { NaverNewsRepository } from "@/backend/naver-news/infrastructure/repository/NaverNewsRepository";
-import { GetNaverNewsUseCase } from "@/backend/naver-news/applications/usecases/GetNaverNewsUseCase";
+import { NaverNewsRepository } from "../../../backend/infrastructure/naverNews/repository/NaverNewsRepository";
+import { GetNaverNewsUseCase } from "../../../backend/applications/naverNews/usecases/GetNaverNewsUseCase";
 
 export async function GET() {
   const useCase = new GetNaverNewsUseCase(new NaverNewsRepository());

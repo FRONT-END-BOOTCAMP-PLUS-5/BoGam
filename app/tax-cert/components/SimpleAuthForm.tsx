@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { TaxCertRequest } from '../../../backend/applications/tax-cert/dtos/TaxCertDto';
+import { TaxCertRequest } from '../../../backend/applications/taxCert/dtos/TaxCertDto';
 import styles from './SimpleAuthForm.module.css';
 import commonStyles from './Common.module.css';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../backend/applications/tax-cert/dtos/TaxCertDto';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../backend/applications/taxCert/dtos/TaxCertDto';
 import { extractActualData } from '../../libs/responseUtils';
 import ApiResultDisplay from '../../components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';

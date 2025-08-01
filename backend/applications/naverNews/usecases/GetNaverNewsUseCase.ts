@@ -1,4 +1,4 @@
-import { NewsRepository } from "../../../domain/naver-news/repository/NewsRepository";
+import { NewsRepository } from "../../../domain/naverNews/repository/NewsRepository";
 import { NaverNewsResponseDto } from "../dtos/NaverNewsDto";
 
 export class GetNaverNewsUseCase {
