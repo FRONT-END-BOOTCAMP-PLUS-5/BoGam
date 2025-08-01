@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     
     // 3. 쿼리를 위해 전달할 DTO를 Usecase에게 전달해서 실행한다.
     const useCase = new GetRealEstateTransactionUseCase();
-    const response: GetRealEstateTransactionResponse = await useCase.execute(requestData);
+    const response: GetRealEstateTransactionResponse = await useCase.getApartmentTransactions(requestData);
     
     // 응답 데이터를 JSON 형식으로 반환 (DTO 타입 명시)
     return NextResponse.json({
