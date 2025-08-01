@@ -31,4 +31,4 @@ export const API_ENVIRONMENTS = {
     BASE_URL: 'https://api.codef.io',
     TAX_CERT_ENDPOINT: '/v1/kr/public/nt/proof-issue/tax-cert-all',
   },
-} as const; 
+} as const;

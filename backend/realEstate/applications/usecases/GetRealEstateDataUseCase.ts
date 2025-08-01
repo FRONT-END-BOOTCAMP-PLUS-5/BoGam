@@ -2,6 +2,8 @@ import { GetRealEstateDataInfrastructure } from '../../infrastrctures/repositori
 import {
   GetRealEstateRequest,
   IssueResultRequest,
+  SummaryInquiryRequest,
+  DetailInquiryRequest,
 } from '../dtos/GetRealEstateRequest';
 import { GetRealEstateResponse } from '../dtos/GetRealEstateResponse';
 
@@ -23,7 +25,7 @@ export class GetRealEstateDataUseCase {
    * 액세스 토큰 획득
    */
   async getAccessToken(): Promise<string> {
-    return this.infrastructure['codefAuth'].getAccessToken();
+    return this.infrastructure.getAccessToken();
   }
 
   /**
@@ -41,7 +43,7 @@ export class GetRealEstateDataUseCase {
    * @returns 응답 데이터
    */
   async getRealEstateRegistry(
-    request: IssueResultRequest
+    request: IssueResultRequest | SummaryInquiryRequest | DetailInquiryRequest | GetRealEstateRequest
   ): Promise<GetRealEstateResponse> {
     return this.infrastructure.getRealEstateRegistry(request);
   }
@@ -52,7 +54,7 @@ export class GetRealEstateDataUseCase {
    * @param twoWayInfo 추가인증 정보
    * @returns 응답 데이터
    */
-  async processTwoWayAuth(
+  async handleTwoWayAuth(
     uniqueNo: string,
     twoWayInfo: {
       jobIndex: number;
@@ -61,243 +63,135 @@ export class GetRealEstateDataUseCase {
       twoWayTimestamp: number;
     }
   ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.processTwoWayAuth(uniqueNo, twoWayInfo);
+    return this.infrastructure.handleTwoWayAuth(uniqueNo, twoWayInfo);
   }
 
-  /**
-   * 고유번호로 부동산 조회
-   * @param uniqueNo 부동산 고유번호
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async getRealEstateByUniqueNo(
-    uniqueNo: string,
-    password: string,
-    options: {
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.getRealEstateByUniqueNo(
-      uniqueNo,
-      password,
-      options
-    );
-  }
+  // ===== 응답 검증 및 처리 =====
 
   /**
-   * 간편검색으로 부동산 검색
-   * @param address 검색 주소
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async searchRealEstateByAddress(
-    address: string,
-    password: string,
-    options: {
-      realtyType?: string;
-      addrSido?: string;
-      recordStatus?: string;
-      startPageNo?: string;
-      pageCount?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-      dong?: string;
-      ho?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.searchRealEstateByAddress(
-      address,
-      password,
-      options
-    );
-  }
-
-  /**
-   * 소재지번으로 부동산 검색
-   * @param addrLotNumber 지번
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async searchRealEstateByLotNumber(
-    addrLotNumber: string,
-    password: string,
-    options: {
-      realtyType?: string;
-      addrSido?: string;
-      addrDong?: string;
-      inputSelect?: string;
-      buildingName?: string;
-      dong?: string;
-      ho?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.searchRealEstateByLotNumber(
-      addrLotNumber,
-      password,
-      options
-    );
-  }
-
-  /**
-   * 도로명주소로 부동산 검색
-   * @param addrRoadName 도로명
-   * @param addrBuildingNumber 건물번호
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async searchRealEstateByRoadAddress(
-    addrRoadName: string,
-    addrBuildingNumber: string,
-    password: string,
-    options: {
-      realtyType?: string;
-      addrSido?: string;
-      addrSigungu?: string;
-      dong?: string;
-      ho?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.searchRealEstateByRoadAddress(
-      addrRoadName,
-      addrBuildingNumber,
-      password,
-      options
-    );
-  }
-
-  // ===== 비즈니스 로직 메서드들 =====
-
-  /**
-   * 부동산등기부등본 조회 결과 검증
+   * API 응답 검증
    * @param response API 응답
    * @returns 검증 결과
    */
   validateResponse(response: GetRealEstateResponse): {
     isValid: boolean;
-    message: string;
-    requiresTwoWayAuth: boolean;
+    message?: string;
+    requiresTwoWayAuth?: boolean;
   } {
-    if (!response.data) {
+    // 응답 코드 확인
+    if (!response.result) {
+      return { isValid: false, message: '응답 형식이 올바르지 않습니다.' };
+    }
+
+    const { code, message } = response.result;
+
+    // 성공 코드 확인
+    if (code === 'CF-00000') {
+      return { isValid: true };
+    }
+
+    // 추가인증 필요 (CF-03002)
+    if (code === 'CF-03002') {
       return {
         isValid: false,
-        message: '응답 데이터가 올바르지 않습니다.',
-        requiresTwoWayAuth: false,
+        requiresTwoWayAuth: true,
+        message: message || '추가인증이 필요합니다.',
       };
     }
 
-    if (response.result.code !== 'CF-00000') {
-      return {
-        isValid: false,
-        message: response.result.message || 'API 호출에 실패했습니다.',
-        requiresTwoWayAuth: response.result.code === 'CF-03002',
-      };
-    }
-
+    // 기타 오류
     return {
-      isValid: true,
-      message: '조회가 성공적으로 완료되었습니다.',
-      requiresTwoWayAuth: false,
+      isValid: false,
+      message: message || `API 오류: ${code}`,
     };
   }
 
   /**
-   * 추가인증 필요 여부 확인
+   * 2-way 인증 필요 여부 확인
    * @param response API 응답
-   * @returns 추가인증 필요 여부
+   * @returns 2-way 인증 필요 여부
    */
   requiresTwoWayAuth(response: GetRealEstateResponse): boolean {
-    if ('continue2Way' in response.data) {
-      return response.data.continue2Way === true;
-    }
-    return false;
+    return (
+      response.result?.code === 'CF-03002' ||
+      (response.data && 'continue2Way' in response.data && response.data.continue2Way === true)
+    );
   }
 
   /**
-   * 등기부등본 발급 상태 확인
+   * 2-way 인증 정보 추출
    * @param response API 응답
-   * @returns 발급 상태 정보
+   * @returns 2-way 인증 정보
    */
-  getIssueStatus(response: GetRealEstateResponse): {
-    isSuccess: boolean;
-    status: string;
-    message: string;
-  } {
+  extractTwoWayInfo(response: GetRealEstateResponse): {
+    jobIndex: number;
+    threadIndex: number;
+    jti: string;
+    twoWayTimestamp: number;
+    method?: string;
+    extraInfo?: any;
+  } | null {
+    const data = response.data;
+    if (!data) return null;
+
+    if (
+      typeof data.jobIndex === 'number' &&
+      typeof data.threadIndex === 'number' &&
+      typeof data.jti === 'string' &&
+      typeof data.twoWayTimestamp === 'number'
+    ) {
+      return {
+        jobIndex: data.jobIndex,
+        threadIndex: data.threadIndex,
+        jti: data.jti,
+        twoWayTimestamp: data.twoWayTimestamp,
+        method: data.method,
+        extraInfo: data.extraInfo,
+      };
+    }
+
+    return null;
+  }
+
+  // ===== 응답 데이터 추출 =====
+
+  /**
+   * 등기부등본 문서 정보 추출
+   * @param response API 응답
+   * @returns 등기부등본 문서 정보
+   */
+  getDocuments(response: GetRealEstateResponse): Array<{
+    title: string;
+    realtyName: string;
+    uniqueNo: string;
+    publishDate: string;
+    registryOffice: string;
+    publishNo?: string;
+  }> {
     const data = response.data;
     if (!data) {
-      return {
-        isSuccess: false,
-        status: 'UNKNOWN',
-        message: '응답 데이터가 없습니다.',
-      };
+      return [];
     }
 
     // RealEstateRegisterResponse 타입인지 확인
-    if ('resIssueYN' in data) {
-      const issueYn = data.resIssueYN;
-      switch (issueYn) {
-        case '1':
-          return {
-            isSuccess: true,
-            status: 'SUCCESS',
-            message: '등기부등본 발급이 성공했습니다.',
-          };
-        case '0':
-          return {
-            isSuccess: false,
-            status: 'FAILED',
-            message: '등기사항증명서가 100매 이상으로 발급이 실패했습니다.',
-          };
-        case '2':
-          return {
-            isSuccess: true,
-            status: 'INQUIRY',
-            message: '고유번호 조회가 완료되었습니다.',
-          };
-        case '3':
-          return {
-            isSuccess: false,
-            status: 'PROCESSING_FAILED',
-            message: '결과처리 실패 (발급성공)',
-          };
-        case '4':
-          return {
-            isSuccess: false,
-            status: 'POST_PROCESSING_FAILED',
-            message: '발급성공 이후 처리실패',
-          };
-        default:
-          return {
-            isSuccess: false,
-            status: 'UNKNOWN',
-            message: '알 수 없는 발급 상태입니다.',
-          };
-      }
+    if ('resRegisterEntriesList' in data && data.resRegisterEntriesList) {
+      return data.resRegisterEntriesList.map((entry: any) => ({
+        title: entry.resDocTitle,
+        realtyName: entry.resRealty,
+        uniqueNo: entry.commUniqueNo,
+        publishDate: entry.resPublishDate,
+        registryOffice: entry.commCompetentRegistryOffice,
+        publishNo: entry.resPublishNo,
+      }));
     }
 
-    return {
-      isSuccess: false,
-      status: 'UNKNOWN',
-      message: '발급 상태 정보를 찾을 수 없습니다.',
-    };
+    return [];
   }
 
   /**
-   * 주소 리스트에서 선택 가능한 부동산 정보 추출
+   * 선택 가능한 주소 목록 추출
    * @param response API 응답
-   * @returns 선택 가능한 부동산 목록
+   * @returns 주소 목록
    */
   getSelectableAddresses(response: GetRealEstateResponse): Array<{
     uniqueNo: string;
@@ -311,25 +205,25 @@ export class GetRealEstateDataUseCase {
       return [];
     }
 
-    // RealEstateRegisterResponse 타입인지 확인
-    if ('resAddrList' in data && data.resAddrList) {
-      return data.resAddrList.map((item: any) => ({
-        uniqueNo: item.commUniqueNo,
-        address: item.commAddrLotNumber,
-        owner: item.resUserNm || '',
-        state: item.resState,
-        type: item.resType || '',
+    // 추가인증에서 주소 목록 확인
+    if (data.extraInfo && data.extraInfo.resAddrList) {
+      return data.extraInfo.resAddrList.map((addr: any) => ({
+        uniqueNo: addr.commUniqueNo,
+        address: addr.commAddrLotNumber,
+        owner: addr.resUserNm || '',
+        state: addr.resState,
+        type: addr.resType || '',
       }));
     }
 
-    // TwoWayResponse 타입인지 확인
-    if ('extraInfo' in data && data.extraInfo?.resAddrList) {
-      return data.extraInfo.resAddrList.map((item: any) => ({
-        uniqueNo: item.commUniqueNo,
-        address: item.commAddrLotNumber,
-        owner: item.resUserNm || '',
-        state: item.resState,
-        type: item.resType || '',
+    // 일반 응답에서 주소 목록 확인
+    if (data.resAddrList) {
+      return data.resAddrList.map((addr: any) => ({
+        uniqueNo: addr.commUniqueNo,
+        address: addr.commAddrLotNumber,
+        owner: addr.resUserNm || '',
+        state: addr.resState,
+        type: addr.resType || '',
       }));
     }
 
