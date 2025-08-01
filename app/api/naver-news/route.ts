@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { NaverNewsRepository } from "@/backend/naver-news/infrastructure/repository/NaverNewsRepository";
-import { GetNaverNewsUseCase } from "@/backend/naver-news/applications/usecases/GetNaverNewsUseCase";
+import { NewsRepositoryImpl } from "@be/naver-news/infrastructure/repository/NewsRepositoryImpl";
+import { GetNaverNewsUseCase } from "@be/naver-news/applications/usecases/GetNaverNewsUseCase";
 
 export async function GET() {
-  const useCase = new GetNaverNewsUseCase(new NaverNewsRepository());
+  const usecase = new GetNaverNewsUseCase(new NewsRepositoryImpl());
 
   try {
-    const result = await useCase.fetchNaverNews();
+    const result = await usecase.fetchNaverNews();
     return NextResponse.json(result);
   } catch (error) {
     console.error("뉴스 요청 실패:", error);

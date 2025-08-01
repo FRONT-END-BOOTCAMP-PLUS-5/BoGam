@@ -1,6 +1,6 @@
 export interface SaveSelectedAddressDto {
-  name: string;
+  userId: string;
   address: string;
-  x: string;
-  y: string;
+  latitude: string;
+  longitude: string;
 }
