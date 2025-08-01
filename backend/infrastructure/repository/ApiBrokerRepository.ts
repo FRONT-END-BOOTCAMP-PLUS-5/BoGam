@@ -1,5 +1,5 @@
-import { BrokerRepository } from '../../../domain/brokers/Repositories/BrokerRepository';
-import { Broker } from '../../../domain/brokers/Entities/Broker';
+import { BrokerRepository } from '../../domain/repository/BrokerRepository';
+import { Broker } from '../../domain/entities/Broker';
 import axios from 'axios';
 
 // API 응답 타입 정의

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { GetRealEstateTransactionRequest } from '../../../applications/realEstate/dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '../../../applications/realEstate/dtos/GetRealEstateTransactionResponse';
+import { GetRealEstateTransactionRequest } from '../../applications/realEstate/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '../../applications/realEstate/dtos/GetRealEstateTransactionResponse';
 import PublicDataAxiosInstance from '@utils/axiosInstance';
 import { parseXmlResponse } from '@utils/xmlParser';
 

@@ -1,6 +1,6 @@
 import axios from "axios";
-import { NewsRepository } from "../../../domain/naverNews/repository/NewsRepository";
-import { NaverNewsResponseDto } from "../../../applications/naverNews/dtos/NaverNewsDto";
+import { NewsRepository } from "../../domain/repository/NewsRepository";
+import { NaverNewsResponseDto } from "../../applications/naverNews/dtos/NaverNewsDto";
 const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID!;
 const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET_NO!;
 
