@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '../../../../backend/realEstate/applications/usecases/GetRealEstateDataUseCase';
+import { GetRealEstateDataUseCase } from '../../../../backend/realEstate/applications/usecases/RealEstateDataUseCase';
 
 const useCase = new GetRealEstateDataUseCase();
 

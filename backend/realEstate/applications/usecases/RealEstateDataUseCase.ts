@@ -1,9 +1,12 @@
 import { GetRealEstateDataInfrastructure } from '../../infrastrctures/repositories/GetRealEstateDataInfrastructure';
 import {
+  DetailInquiryRequest,
   GetRealEstateRequest,
+  IssueRequest,
   IssueResultRequest,
-} from '../dtos/GetRealEstateRequest';
-import { GetRealEstateResponse } from '../dtos/GetRealEstateResponse';
+  SummaryInquiryRequest,
+} from '../dtos/RealEstateRequest';
+import { GetRealEstateResponse } from '../dtos/RealEstateResponse';
 
 /**
  * 부동산등기부등본 조회 UseCase
@@ -30,7 +33,7 @@ export class GetRealEstateDataUseCase {
    * 토큰 캐시 초기화
    */
   clearTokenCache(): void {
-    this.infrastructure.clearTokenCache();
+    this.infrastructure['codefAuth'].clearTokenCache();
   }
 
   // ===== 부동산등기부등본 API =====
@@ -41,7 +44,11 @@ export class GetRealEstateDataUseCase {
    * @returns 응답 데이터
    */
   async getRealEstateRegistry(
-    request: IssueResultRequest
+    request:
+      | IssueResultRequest
+      | DetailInquiryRequest
+      | IssueRequest
+      | SummaryInquiryRequest
   ): Promise<GetRealEstateResponse> {
     return this.infrastructure.getRealEstateRegistry(request);
   }
@@ -66,25 +73,13 @@ export class GetRealEstateDataUseCase {
 
   /**
    * 고유번호로 부동산 조회
-   * @param uniqueNo 부동산 고유번호
-   * @param password 비밀번호
-   * @param options 추가 옵션
+   * @param request 요청 데이터
    * @returns 응답 데이터
    */
   async getRealEstateByUniqueNo(
-    uniqueNo: string,
-    password: string,
-    options: {
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
+    request: SummaryInquiryRequest
   ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.getRealEstateByUniqueNo(
-      uniqueNo,
-      password,
-      options
-    );
+    return this.getRealEstateRegistry(request);
   }
 
   /**
@@ -110,11 +105,23 @@ export class GetRealEstateDataUseCase {
       ho?: string;
     } = {}
   ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.searchRealEstateByAddress(
-      address,
+    const request: DetailInquiryRequest = {
+      organization: options.organization || '0002',
+      phoneNo: options.phoneNo || '01000000000',
       password,
-      options
-    );
+      inquiryType: '1',
+      address,
+      realtyType: options.realtyType,
+      addr_sido: options.addrSido || '',
+      recordStatus: options.recordStatus || '0',
+      startPageNo: options.startPageNo,
+      pageCount: options.pageCount || '100',
+      issueType: options.issueType || '1',
+      dong: options.dong || '',
+      ho: options.ho || '',
+    };
+
+    return this.getRealEstateRegistry(request);
   }
 
   /**
@@ -140,11 +147,20 @@ export class GetRealEstateDataUseCase {
       organization?: string;
     } = {}
   ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.searchRealEstateByLotNumber(
-      addrLotNumber,
+    const request: IssueRequest = {
+      organization: options.organization || '0002',
+      phoneNo: options.phoneNo || '01000000000',
       password,
-      options
-    );
+      inquiryType: '2',
+      addr_lotNumber: addrLotNumber,
+      realtyType: options.realtyType,
+      addr_sido: options.addrSido || '',
+      addr_dong: options.addrDong || '',
+      inputSelect: options.inputSelect,
+      issueType: options.issueType || '1',
+    };
+
+    return this.getRealEstateRegistry(request);
   }
 
   /**
@@ -156,26 +172,9 @@ export class GetRealEstateDataUseCase {
    * @returns 응답 데이터
    */
   async searchRealEstateByRoadAddress(
-    addrRoadName: string,
-    addrBuildingNumber: string,
-    password: string,
-    options: {
-      realtyType?: string;
-      addrSido?: string;
-      addrSigungu?: string;
-      dong?: string;
-      ho?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
+    request: IssueResultRequest
   ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.searchRealEstateByRoadAddress(
-      addrRoadName,
-      addrBuildingNumber,
-      password,
-      options
-    );
+    return this.getRealEstateRegistry(request);
   }
 
   // ===== 비즈니스 로직 메서드들 =====
@@ -223,75 +222,6 @@ export class GetRealEstateDataUseCase {
       return response.data.continue2Way === true;
     }
     return false;
-  }
-
-  /**
-   * 등기부등본 발급 상태 확인
-   * @param response API 응답
-   * @returns 발급 상태 정보
-   */
-  getIssueStatus(response: GetRealEstateResponse): {
-    isSuccess: boolean;
-    status: string;
-    message: string;
-  } {
-    const data = response.data;
-    if (!data) {
-      return {
-        isSuccess: false,
-        status: 'UNKNOWN',
-        message: '응답 데이터가 없습니다.',
-      };
-    }
-
-    // RealEstateRegisterResponse 타입인지 확인
-    if ('resIssueYN' in data) {
-      const issueYn = data.resIssueYN;
-      switch (issueYn) {
-        case '1':
-          return {
-            isSuccess: true,
-            status: 'SUCCESS',
-            message: '등기부등본 발급이 성공했습니다.',
-          };
-        case '0':
-          return {
-            isSuccess: false,
-            status: 'FAILED',
-            message: '등기사항증명서가 100매 이상으로 발급이 실패했습니다.',
-          };
-        case '2':
-          return {
-            isSuccess: true,
-            status: 'INQUIRY',
-            message: '고유번호 조회가 완료되었습니다.',
-          };
-        case '3':
-          return {
-            isSuccess: false,
-            status: 'PROCESSING_FAILED',
-            message: '결과처리 실패 (발급성공)',
-          };
-        case '4':
-          return {
-            isSuccess: false,
-            status: 'POST_PROCESSING_FAILED',
-            message: '발급성공 이후 처리실패',
-          };
-        default:
-          return {
-            isSuccess: false,
-            status: 'UNKNOWN',
-            message: '알 수 없는 발급 상태입니다.',
-          };
-      }
-    }
-
-    return {
-      isSuccess: false,
-      status: 'UNKNOWN',
-      message: '발급 상태 정보를 찾을 수 없습니다.',
-    };
   }
 
   /**

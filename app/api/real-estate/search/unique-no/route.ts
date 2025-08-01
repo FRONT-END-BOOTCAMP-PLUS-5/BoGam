@@ -1,64 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '../../../../backend/realEstate/applications/usecases/GetRealEstateDataUseCase';
-import { encryptPassword } from '../../../../backend/utils/rsaEncryption';
-import { SummaryInquiryRequest } from '../../../../backend/realEstate/applications/dtos/GetRealEstateRequest';
+
+import { SummaryInquiryRequest } from '@/backend/realEstate/applications/dtos/RealEstateRequest';
+import { encryptPassword } from '@/backend/utils/rsaEncryption';
+import { GetRealEstateDataUseCase } from '@/backend/realEstate/applications/usecases/RealEstateDataUseCase';
 
 const useCase = new GetRealEstateDataUseCase();
 
 export async function POST(request: NextRequest) {
   try {
     const body: SummaryInquiryRequest = await request.json();
-    const {
-      organization,
-      phoneNo,
-      password,
-      inquiryType,
-      uniqueNo,
-      issueType,
-      joinMortgageJeonseYN,
-      tradingYN,
-      listNumber,
-      electronicClosedYN,
-      ePrepayNo,
-      ePrepayPass,
-      originDataYN,
-      warningSkipYN,
-      registerSummaryYN,
-      selectAddress,
-      isIdentityViewYn,
-      identityList,
-    } = body;
 
-    // 요청 검증
-    if (!password) {
+    // 필수 필드 검증
+    if (!body.password) {
       return NextResponse.json(
         { success: false, message: '비밀번호는 필수입니다.' },
         { status: 400 }
       );
     }
 
-    if (password.length !== 4 || !/^\d{4}$/.test(password)) {
+    if (body.password.length !== 4 || !/^\d{4}$/.test(body.password)) {
       return NextResponse.json(
         { success: false, message: '비밀번호는 4자리 숫자여야 합니다.' },
         { status: 400 }
       );
     }
 
-    if (inquiryType !== '0') {
+    if (body.inquiryType !== '0') {
       return NextResponse.json(
         { success: false, message: 'inquiryType은 0이어야 합니다.' },
         { status: 400 }
       );
     }
 
-    if (!uniqueNo) {
+    if (!body.uniqueNo) {
       return NextResponse.json(
         { success: false, message: '부동산 고유번호는 필수입니다.' },
         { status: 400 }
       );
     }
 
-    if (uniqueNo.length !== 14 || !/^\d{14}$/.test(uniqueNo)) {
+    if (body.uniqueNo.length !== 14 || !/^\d{14}$/.test(body.uniqueNo)) {
       return NextResponse.json(
         {
           success: false,
@@ -68,31 +49,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // API 요청 데이터 구성 (body를 직접 사용하되 password만 암호화)
+    // API 요청 데이터 구성 (body에서 직접 추출하여 기본값 적용)
     const apiRequest: SummaryInquiryRequest = {
-      organization: organization || '0002',
-      phoneNo: phoneNo || '01000000000',
-      password: encryptPassword(password), // RSA 암호화
-      inquiryType: '0' as const,
-      issueType: issueType || '1',
-      uniqueNo,
+      uniqueNo: body.uniqueNo,
 
-      joinMortgageJeonseYN: joinMortgageJeonseYN || '0',
-      tradingYN: tradingYN || '0',
-      listNumber: listNumber || undefined,
-      electronicClosedYN: electronicClosedYN || '0',
-      ePrepayNo: ePrepayNo || undefined,
-      ePrepayPass: ePrepayPass || undefined,
-      originDataYN: originDataYN || '0',
-      warningSkipYN: warningSkipYN || '0',
-      registerSummaryYN: registerSummaryYN || '0',
-      selectAddress: selectAddress || '0',
-      isIdentityViewYn: isIdentityViewYn || '0',
-      identityList: identityList || undefined,
+      //------------------공통 필수 파라미터-------------------
+      organization: body.organization || '0002',
+      phoneNo: body.phoneNo || '01000000000',
+      password: encryptPassword(body.password), // RSA 암호화
+      inquiryType: '0' as const,
+      issueType: body.issueType || '1',
+      ePrepayNo: body.ePrepayNo || undefined,
+      ePrepayPass: body.ePrepayPass || undefined,
+
+      //------------------공통 옵션 파라미터-------------------
+      joinMortgageJeonseYN: body.joinMortgageJeonseYN || '0',
+      tradingYN: body.tradingYN || '0',
+      listNumber: body.listNumber,
+      electronicClosedYN: body.electronicClosedYN || '0',
+
+      originDataYN: body.originDataYN || '0',
+      warningSkipYN: body.warningSkipYN || '0',
+      registerSummaryYN: body.registerSummaryYN || '0',
+      selectAddress: body.selectAddress || '0',
+      isIdentityViewYn: body.isIdentityViewYn || '0',
+      identityList: body.identityList,
     };
 
     // UseCase 호출
-    const response = await useCase.getRealEstateRegistry(apiRequest);
+    const response = await useCase.getRealEstateByUniqueNo(apiRequest);
 
     // 응답 검증
     const validationResult = useCase.validateResponse(response);
