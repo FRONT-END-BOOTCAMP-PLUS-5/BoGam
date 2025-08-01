@@ -1,14 +1,16 @@
 import { BrokerRepository } from '../../domains/repositories/BrokerRepository';
 import { Broker } from '../../domains/entities/Broker';
+import axios from 'axios';
 
 export class ApiBrokerRepository implements BrokerRepository {
 
-    async findAll(url:string): Promise<Broker | undefined> {
+    async find(brkrNm:string, bsnmCmpnm:string): Promise<Broker> {
         try {
-            const response = await fetch(url);
-            const jsonData = await response.json();
+            const key = process.env.VWORLD_BROKER_KEY;
+            const response = await axios.get(`http://api.vworld.kr/ned/data/getEBBrokerInfo?key=${key}&brkrNm=${encodeURIComponent(brkrNm)}&domain=localhost&bsnmCmpnm=${encodeURIComponent(bsnmCmpnm)}`);
+            const jsonData = await response.data;
             const data = jsonData.EDBrokers.field[0];
-            return{
+            return {
                 idCode: data.ldCode,
                 idCodeNm: data.ldCodeNm,
                 jurirno: data.jurirno,
@@ -23,9 +25,9 @@ export class ApiBrokerRepository implements BrokerRepository {
                 lastUpdtDt: data.lastUpdtDt
             }
         }
-        catch(error) {
+        catch (error) {
             console.error('error in infrastructure:', error);
-            return undefined;
+            throw new Error();
         }
     }
 }

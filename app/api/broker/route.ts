@@ -14,6 +14,6 @@ export async function GET(req: NextRequest){
         return NextResponse.json({status:500});
     }
     const usecase = new GetBrokerUsecase(new ApiBrokerRepository());
-    const result = await usecase.execute(`http://api.vworld.kr/ned/data/getEBBrokerInfo?key=${key}&brkrNm=${encodeURIComponent(brkrNm)}&domain=localhost&bsnmCmpnm=${encodeURIComponent(bsnmCmpnm)}`);
+    const result = await usecase.execute(brkrNm, bsnmCmpnm);
     return NextResponse.json(result);
 }
