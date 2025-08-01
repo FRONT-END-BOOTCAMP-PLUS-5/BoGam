@@ -1,7 +1,7 @@
 import { DanJiRequest } from '../../applications/dtos/DanJiDto';
-import { getCodefAuth } from '../../../../utils/codefAuth';
-import { decodeCodefResponse } from '../../../../utils/codefDecoder';
-import { loadCodefConfig, validateCodefConfig } from '@/lib/config';
+import { CodefAuth, createCodefAuth } from '@/libs/codefAuth';
+import { decodeCodefResponse } from '@/utils/codefDecoder';
+import { loadCodefConfig, validateCodefConfig } from '@/libs/codefEnvironment';
 import { getCurrentConfig } from '@/libs/codefEnvironment';
 import axios from 'axios';
 import { DanJiApiResponse } from '../../applications/dtos/DanJiDto';
@@ -11,7 +11,7 @@ import { DanJiApiResponse } from '../../applications/dtos/DanJiDto';
  * Infrastructure 레이어에서 실제 CODEF API 호출을 담당
  */
 export class DanJiRepository {
-  private readonly codefAuth = getCodefAuth();
+  private codefAuth!: CodefAuth;
   private readonly endpoint = '/v1/kr/public/lt/real-estate-board/estate-list';
 
   /**
@@ -24,6 +24,8 @@ export class DanJiRepository {
       // CODEF 설정 검증
       const config = loadCodefConfig();
       validateCodefConfig(config);
+
+      this.codefAuth = createCodefAuth();
 
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
@@ -46,21 +48,17 @@ export class DanJiRepository {
         timeout: 300000, // 300초 (5분)
       });
 
-      // 응답 데이터 디코딩 후 반환
-      const decodedResponse = decodeCodefResponse(response);
+      console.log(response);
 
-      console.log(decodedResponse);
+      // 응답 데이터 디코딩 후 반환
+      const decodedResponse = decodeCodefResponse(
+        response as unknown as string
+      );
+
       return decodedResponse.data as unknown as DanJiApiResponse;
     } catch (error) {
       console.error('❌ 단지목록 조회 실패:', error);
       throw new Error(`단지목록 조회에 실패했습니다: ${error}`);
     }
-  }
-
-  /**
-   * 토큰 캐시 초기화
-   */
-  clearTokenCache(): void {
-    this.codefAuth.clearTokenCache();
   }
 }

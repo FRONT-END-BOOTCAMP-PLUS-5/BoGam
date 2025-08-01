@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { createCodefAuth } from '../../../../libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
 import {
   loadCodefConfig,
   validateCodefConfig,
@@ -11,6 +11,7 @@ import {
   SummaryInquiryRequest,
 } from '../../applications/dtos/RealEstateRequest';
 import { GetRealEstateResponse } from '../../applications/dtos/RealEstateResponse';
+import { decodeCodefResponse } from '@/utils/codefDecoder';
 
 /**
  * 부동산등기부등본 조회 API 인프라스트럭처
@@ -18,7 +19,7 @@ import { GetRealEstateResponse } from '../../applications/dtos/RealEstateRespons
  * 순수하게 API 호출과 HTTP 통신만 담당
  */
 export class GetRealEstateDataInfrastructure {
-  private readonly codefAuth;
+  private codefAuth: CodefAuth;
   private readonly baseUrl: string;
   private readonly timeout: number = 300000; // 5분 (등기부등본 API는 시간이 오래 걸림)
 
@@ -60,7 +61,7 @@ export class GetRealEstateDataInfrastructure {
       const accessToken = await this.codefAuth.getAccessToken();
 
       // API 요청 실행
-      const response: AxiosResponse<GetRealEstateResponse> = await axios.post(
+      const response = await axios.post(
         `https://development.codef.io/v1/kr/public/ck/real-estate-register/status`,
         request,
         {
@@ -73,10 +74,16 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      // const decodedResponse = decodeCodefResponse(response);
+      console.log(response);
+
+      const decodedResponse = decodeCodefResponse(
+        response as unknown as string
+      );
+
+      console.log(decodedResponse);
 
       // 응답 데이터 디코딩 후 반환
-      return response.data as unknown as GetRealEstateResponse;
+      return decodedResponse.data as unknown as GetRealEstateResponse;
     } catch (error) {
       console.error('❌ 부동산등기부등본 조회 실패:', error);
       this.handleError(error as AxiosError | Error);
@@ -123,9 +130,11 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      // const decodedData = decodeCodefResponse(response.data);
+      const decodedResponse = decodeCodefResponse(
+        response as unknown as string
+      );
 
-      return response.data;
+      return decodedResponse.data as unknown as GetRealEstateResponse;
     } catch (error) {
       console.error('❌ 2-way 인증 처리 실패:', error);
       this.handleError(error as AxiosError | Error);

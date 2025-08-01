@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { getCodefAuth } from '../../../../utils/codefAuth';
-import { decodeCodefResponse } from '../../../../utils/codefDecoder';
-import { loadCodefConfig, validateCodefConfig } from '@/lib/config';
+import { CodefAuth, createCodefAuth } from '@/libs/codefAuth';
+import { decodeCodefResponse } from '@/utils/codefDecoder';
+import { loadCodefConfig, validateCodefConfig } from '@/libs/codefEnvironment';
 import { SISE_API_ENDPOINT } from '../../../constants/apiEndPoint';
 import { SiseApiResponse, SiseRequest } from '../../applications/dtos/SiseDto';
 import { getCurrentConfig } from '@/libs/codefEnvironment';
@@ -11,7 +11,7 @@ import { getCurrentConfig } from '@/libs/codefEnvironment';
  * Infrastructure 레이어에서 실제 CODEF API 호출을 담당
  */
 export class SiseRepository {
-  private readonly codefAuth = getCodefAuth();
+  private codefAuth!: CodefAuth;
   private readonly endpoint = SISE_API_ENDPOINT;
 
   /**
@@ -24,6 +24,8 @@ export class SiseRepository {
       // CODEF 설정 검증
       const config = loadCodefConfig();
       validateCodefConfig(config);
+
+      this.codefAuth = createCodefAuth();
 
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
@@ -50,27 +52,15 @@ export class SiseRepository {
 
       console.log(response);
 
-      console.log('✅ 시세정보 조회 성공', {
-        status: response.status,
-        resultCode: response.data?.result?.code,
-        hasData: !!response.data?.data,
-      });
-
       // 응답 데이터 디코딩 후 반환
-      const decodedResponse = decodeCodefResponse(response);
+      const decodedResponse = decodeCodefResponse(
+        response as unknown as string
+      );
 
-      console.log(decodedResponse);
       return decodedResponse.data as unknown as SiseApiResponse;
     } catch (error) {
       console.error('❌ 시세정보 조회 실패:', error);
       throw new Error(`시세정보 조회에 실패했습니다: ${error}`);
     }
-  }
-
-  /**
-   * 토큰 캐시 초기화
-   */
-  clearTokenCache(): void {
-    this.codefAuth.clearTokenCache();
   }
 }
