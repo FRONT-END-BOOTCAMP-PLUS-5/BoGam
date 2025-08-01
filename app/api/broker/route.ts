@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetBrokerUsecase } from '../../../backend/brokers/applications/Usecases/GetBrokerUsecase';
-import { ApiBrokerRepository } from '@be/brokers/infrastructures/Repositories/ApiBrokerRepository';
+import { GetBrokerUsecase } from '../../../backend/brokers/applications/usecases/GetBrokerUsecase';
+import { ApiBrokerRepository } from '@be/brokers/infrastructures/repositories/ApiBrokerRepository';
 
 export async function GET(req: NextRequest){
     const { searchParams } = new URL(req.url);
