@@ -18,7 +18,7 @@ export class GetRealEstateTransactionUseCase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async execute(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async getApartmentTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
       const response = await this.repository.findAll(request);
       
@@ -42,7 +42,7 @@ export class GetRealEstateTransactionUseCase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async executeDetachedHouse(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async getDetachedHouseTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
       const response = await this.repository.findDetachedHouseAll(request);
       
@@ -66,7 +66,7 @@ export class GetRealEstateTransactionUseCase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async executeOfficetel(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async getOfficetelTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
       const response = await this.repository.findOfficetelAll(request);
       
@@ -92,7 +92,7 @@ export class GetRealEstateTransactionUseCase {
    * @param options 추가 옵션
    * @returns 응답 데이터
    */
-  async executeByLocationAndDate(
+  async getTransactionsByLocationAndDate(
     lawdCd: string,
     dealYmd: string,
     options: {
