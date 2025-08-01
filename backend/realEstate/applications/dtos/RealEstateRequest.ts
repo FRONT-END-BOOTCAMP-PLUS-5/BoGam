@@ -55,7 +55,6 @@ export interface IssueRequest extends BaseRealEstateRequest {
   addr_dong: string; // 주소_읍면동로
   addr_lotNumber: string; // 주소_지번
   inputSelect?: string; // 입력 선택(realtyType='1'(집합건물)인 경우 필수)[0: 지번, 1: 건물 명칭]
-  issueReason: string; // 발급 사유
 }
 
 // 도로명 주소로 찾기
