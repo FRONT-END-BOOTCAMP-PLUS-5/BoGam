@@ -1,6 +1,6 @@
 // CODEF API OAuth 2.0 인증 라이브러리
 import axios from 'axios';
-import { loadCodefConfig, validateCodefConfig } from './codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 
 export interface CodefAuthConfig {
   clientId: string;
@@ -50,19 +50,20 @@ export class CodefAuth {
         }
       );
 
-      const tokenData: CodefTokenResponse = response.data;
+      const tokenData: CodefTokenResponse = response.data as CodefTokenResponse;
       
       console.log('✅ CODEF OAuth 토큰 발급 성공');
       return tokenData.access_token;
 
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorText = error.response?.data || error.message;
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const httpError = error as { response?: { status?: number; statusText?: string; data?: any }; message?: string };
+        const errorText = httpError.response?.data || httpError.message || 'Unknown error';
         console.error('❌ OAuth 토큰 발급 실패:', errorText);
-        throw new Error(`토큰 발급 실패: ${error.response?.status} ${error.response?.statusText}`);
+        throw new Error(`토큰 발급 실패: ${httpError.response?.status} ${httpError.response?.statusText}`);
       } else {
         console.error('❌ CODEF OAuth 토큰 발급 실패:', error);
-        throw error;
+        throw error instanceof Error ? error : new Error(String(error));
       }
     }
   }

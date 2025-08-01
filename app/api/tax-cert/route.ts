@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaxCertUseCase } from '../../../backend/tax-cert/application/usecase/TaxCertUseCase';
-import { TaxCertRepositoryImpl } from '../../../backend/tax-cert/infrastructure/repository/TaxCertRepositoryImpl';
-import { encryptPassword } from '../../../libs/codefEncryption';
+import { TaxCertUseCase } from '@be/applications/taxCert/usecase/TaxCertUseCase';
+import { TaxCertRepositoryImpl } from '@be/infrastructure/repository/TaxCertRepositoryImpl';
+import { encryptPassword } from '@libs/codefEncryption';
 
 export async function POST(request: NextRequest) {
   try {

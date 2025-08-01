@@ -1,11 +1,44 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
+
+// Axios 타입 정의
+interface AxiosInstanceType {
+  get: (url: string, config?: unknown) => Promise<unknown>;
+  post: (url: string, data?: unknown, config?: unknown) => Promise<unknown>;
+  interceptors: {
+    request: {
+      use: (onFulfilled: (config: AxiosConfigType) => AxiosConfigType, onRejected: (error: AxiosErrorType) => Promise<AxiosErrorType>) => void;
+    };
+    response: {
+      use: (onFulfilled: (response: AxiosResponseType) => AxiosResponseType, onRejected: (error: AxiosErrorType) => Promise<AxiosErrorType>) => void;
+    };
+  };
+}
+
+interface AxiosConfigType {
+  method?: string;
+  url?: string;
+}
+
+interface AxiosResponseType {
+  status: number;
+  config: AxiosConfigType;
+}
+
+interface AxiosErrorType {
+  response?: {
+    status?: number;
+    statusText?: string;
+  };
+  config?: AxiosConfigType;
+  message?: string;
+}
 
 /**
  * 공공데이터포털 API용 axios 인스턴스 싱글톤
  * 클린 아키텍처의 Infrastructure 레이어
  */
 class PublicDataAxiosInstance {
-  private static instance: AxiosInstance;
+  private static instance: AxiosInstanceType;
   private static readonly timeout: number = 30000; // 30초
 
   private constructor() {}
@@ -14,7 +47,7 @@ class PublicDataAxiosInstance {
    * 싱글톤 인스턴스 반환
    * @returns axios 인스턴스
    */
-  public static getInstance(): AxiosInstance {
+  public static getInstance(): AxiosInstanceType {
     if (!PublicDataAxiosInstance.instance) {
       PublicDataAxiosInstance.instance = axios.create({
         timeout: PublicDataAxiosInstance.timeout,
@@ -27,15 +60,15 @@ class PublicDataAxiosInstance {
           'Referer': 'https://www.data.go.kr/',
           'Origin': 'https://www.data.go.kr',
         },
-      });
+      }) as unknown as AxiosInstanceType;
 
       // 요청 인터셉터 추가 (로깅용)
       PublicDataAxiosInstance.instance.interceptors.request.use(
-        (config) => {
+        (config: AxiosConfigType) => {
           console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
           return config;
         },
-        (error) => {
+        (error: AxiosErrorType) => {
           console.error('[API Request Error]', error);
           return Promise.reject(error);
         }
@@ -43,11 +76,11 @@ class PublicDataAxiosInstance {
 
       // 응답 인터셉터 추가 (로깅용)
       PublicDataAxiosInstance.instance.interceptors.response.use(
-        (response) => {
+        (response: AxiosResponseType) => {
           console.log(`[API Response] ${response.status} ${response.config.url}`);
           return response;
         },
-        (error) => {
+        (error: AxiosErrorType) => {
           console.error('[API Response Error]', {
             status: error.response?.status,
             statusText: error.response?.statusText,
@@ -66,7 +99,7 @@ class PublicDataAxiosInstance {
    * 인스턴스 재설정 (테스트용)
    */
   public static resetInstance(): void {
-    PublicDataAxiosInstance.instance = undefined as unknown as AxiosInstance;
+    PublicDataAxiosInstance.instance = undefined as unknown as AxiosInstanceType;
   }
 }
 

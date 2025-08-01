@@ -1,6 +1,16 @@
 import { NextResponse } from "next/server";
-import { NaverNewsRepository } from "@/backend/naver-news/infrastructure/repository/NaverNewsRepository";
-import { GetNaverNewsUseCase } from "@/backend/naver-news/applications/usecases/GetNaverNewsUseCase";
+
+// 임시로 비활성화된 라우트
+export async function GET() {
+  return NextResponse.json(
+    { success: false, message: '이 API는 현재 비활성화되어 있습니다.' },
+    { status: 503 }
+  );
+}
+
+/*
+import { NaverNewsRepository } from "@be/infrastructure/repository/NaverNewsRepository";
+import { GetNaverNewsUseCase } from "@be/applications/naverNews/usecases/GetNaverNewsUseCase";
 
 export async function GET() {
   const useCase = new GetNaverNewsUseCase(new NaverNewsRepository());
@@ -16,3 +26,4 @@ export async function GET() {
     );
   }
 }
+*/

@@ -1,4 +1,4 @@
-import { DanJiApiResponse } from '../../backend/danJi/applications/dtos/DanJiDto';
+import { DanJiApiResponse } from '@be/applications/danJi/dtos/DanJiDto';
 
 /**
  * 단지목록 조회 데이터 추출 유틸리티
