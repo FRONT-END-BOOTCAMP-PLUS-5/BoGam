@@ -1,7 +1,7 @@
 'use client';
 
-import { CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
-import { extractActualData } from '@/libs/responseUtils';
+import { CodefResponse } from '@be/tax-cert/application/dtos/TaxCertDto';
+import { extractActualData } from '@libs/responseUtils';
 import styles from './TaxCertResultDisplay.module.css';
 
 interface TaxCertResultDisplayProps {
@@ -146,7 +146,7 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {data.resRespiteList.map((item, index) => (
+                {data.resRespiteList.map((item: any, index: number) => (
                   <tr key={index} className={styles.tableRow}>
                     <td className={styles.tableCell}>{item.resRespiteType || '-'}</td>
                     <td className={styles.tableCell}>{item.resRespitePeriod || '-'}</td>
@@ -180,7 +180,7 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {data.resArrearsList.map((item, index) => (
+                {data.resArrearsList.map((item: any, index: number) => (
                   <tr key={index} className={styles.tableRow}>
                     <td className={styles.tableCell}>{item.resUserNm || '-'}</td>
                     <td className={styles.tableCell}>{item.resTaxYear || '-'}</td>

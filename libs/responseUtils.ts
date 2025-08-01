@@ -4,7 +4,7 @@
  * - CODEF API 응답 데이터 추출
  */
 
-import { CodefResponse, TaxCertResponseData, NestedTaxCertResponseData } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { CodefResponse, TaxCertResponseData, NestedTaxCertResponseData } from '@be/tax-cert/application/dtos/TaxCertDto';
 
 /**
  * URL 인코딩된 문자열을 디코딩합니다.

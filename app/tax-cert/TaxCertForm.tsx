@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
-import { extractActualData } from '@/libs/responseUtils';
-import ApiResultDisplay from '@/components/common/ApiResultDisplay';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@be/tax-cert/application/dtos/TaxCertDto';
+import { extractActualData } from '@libs/responseUtils';
+import ApiResultDisplay from '../../components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
-import { API_ENDPOINTS } from '@/libs/api-endpoints';
+import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
 import styles from './TaxCertForm.module.css';
 import commonStyles from './components/Common.module.css';
@@ -19,28 +19,30 @@ import SimpleAuthForm from './components/SimpleAuthForm';
 
 export default function TaxCertForm() {
   const [formData, setFormData] = useState<TaxCertRequest>({
-    organization: '0001',
-    loginType: '', // 초기값을 빈 문자열로 설정
-    loginTypeLevel: '1', // 카카오톡
-    phoneNo: '', // 필수
-    userName: '', // 필수
-    loginIdentity: '', // 필수 (주민번호 13자리)
-    loginBirthDate: '', // 생년월일 6자리
+    organization: "0001",
+    loginType: "", // 초기값을 빈 문자열로 설정
+    loginTypeLevel: "1", // 카카오톡
+    phoneNo: "", // 필수
+    userName: "", // 필수
+    loginIdentity: "", // 필수 (주민번호 13자리)
+    loginBirthDate: "", // 생년월일 6자리
     id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // 세션/다건 처리용
-    isIdentityViewYN: '1',
-    isAddrViewYn: '0',
-    proofType: 'B0006',
-    submitTargets: '04',
-    applicationType: '01',
-    clientTypeLevel: '1',
-    identity: '',
-    birthDate: '',
-    telecom: '',
-    originDataYN: '0',
-    originDataYN1: '0',
+    isIdentityViewYN: "1",
+    isAddrViewYn: "0",
+    proofType: "B0006",
+    submitTargets: "04",
+    applicationType: "01",
+    clientTypeLevel: "1",
+    identity: "",
+    birthDate: "",
+    telecom: "",
+    originDataYN: "0",
+    originDataYN1: "0",
   });
 
-  const [twoWayData, setTwoWayData] = useState<TaxCertTwoWayRequest | null>(null);
+  const [twoWayData, setTwoWayData] = useState<TaxCertTwoWayRequest | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<CodefResponse | null>(null);
@@ -51,15 +53,15 @@ export default function TaxCertForm() {
 
   // loginTypeLevel에 따른 telecom 필드 자동 관리
   useEffect(() => {
-    if (formData.loginTypeLevel === '5') {
+    if (formData.loginTypeLevel === "5") {
       // 통신사인증서인 경우 telecom이 비어있으면 기본값 설정
       if (!formData.telecom) {
-        setFormData(prev => ({ ...prev, telecom: '0' })); // SKT 기본값
+        setFormData((prev: TaxCertRequest) => ({ ...prev, telecom: "0" })); // SKT 기본값
       }
     } else {
       // 통신사인증서가 아닌 경우 telecom 필드 초기화
       if (formData.telecom) {
-        setFormData(prev => ({ ...prev, telecom: '' }));
+        setFormData((prev: TaxCertRequest) => ({ ...prev, telecom: "" }));
       }
     }
   }, [formData.loginTypeLevel, formData.telecom]);
@@ -75,77 +77,77 @@ export default function TaxCertForm() {
 
     // 기본 필수 필드 검증
     if (!formData.loginType) {
-      errors.push('로그인 구분은 필수입니다.');
+      errors.push("로그인 구분은 필수입니다.");
     }
 
     if (!formData.phoneNo) {
-      errors.push('전화번호는 필수입니다.');
+      errors.push("전화번호는 필수입니다.");
     }
 
     if (!formData.userName) {
-      errors.push('사용자 이름은 필수입니다.');
+      errors.push("사용자 이름은 필수입니다.");
     }
 
     if (!formData.loginIdentity) {
-      errors.push('사용자 주민번호는 필수입니다.');
+      errors.push("사용자 주민번호는 필수입니다.");
     }
 
     // 로그인 타입별 필수 필드 검증
     switch (formData.loginType) {
-      case '0': // 회원 인증서로그인
-      case '2': // 비회원 인증서로그인
+      case "0": // 회원 인증서로그인
+      case "2": // 비회원 인증서로그인
         if (!formData.certType) {
-          errors.push('인증서 구분은 필수입니다.');
+          errors.push("인증서 구분은 필수입니다.");
         }
-        if (formData.certType === '1') {
+        if (formData.certType === "1") {
           if (!formData.certFile) {
-            errors.push('인증서 der 파일은 필수입니다.');
+            errors.push("인증서 der 파일은 필수입니다.");
           }
           if (!formData.keyFile) {
-            errors.push('인증서 key 파일은 필수입니다.');
+            errors.push("인증서 key 파일은 필수입니다.");
           }
           if (!formData.certPassword) {
-            errors.push('인증서 비밀번호는 필수입니다.');
+            errors.push("인증서 비밀번호는 필수입니다.");
           }
         }
-        if (formData.certType === '2' && !formData.id) {
-          errors.push('요청 식별 아이디는 필수입니다.');
+        if (formData.certType === "2" && !formData.id) {
+          errors.push("요청 식별 아이디는 필수입니다.");
         }
         break;
-      case '1': // 회원 아이디로그인
+      case "1": // 회원 아이디로그인
         if (!formData.userId) {
-          errors.push('아이디는 필수입니다.');
+          errors.push("아이디는 필수입니다.");
         }
         if (!formData.userPassword) {
-          errors.push('비밀번호는 필수입니다.');
+          errors.push("비밀번호는 필수입니다.");
         }
         break;
-      case '5': // 회원 간편인증
-      case '6': // 비회원 간편인증
+      case "5": // 회원 간편인증
+      case "6": // 비회원 간편인증
         if (!formData.loginTypeLevel) {
-          errors.push('간편인증 로그인 구분은 필수입니다.');
+          errors.push("간편인증 로그인 구분은 필수입니다.");
         }
-        if (formData.loginTypeLevel === '5' && !formData.telecom) {
-          errors.push('통신사는 필수입니다.');
+        if (formData.loginTypeLevel === "5" && !formData.telecom) {
+          errors.push("통신사는 필수입니다.");
         }
         break;
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('🚀 폼 제출 시작');
-    
+
+    console.log("🚀 폼 제출 시작");
+
     // 폼 데이터 유효성 검사
     const validation = validateFormData();
     if (!validation.isValid) {
-      setError(`❌ 오류 발생\n${validation.errors.join('\n')}`);
+      setError(`❌ 오류 발생\n${validation.errors.join("\n")}`);
       return;
     }
 
@@ -154,7 +156,7 @@ export default function TaxCertForm() {
       setError(null);
       updateStep(2);
 
-      console.log('📋 폼 데이터:', formData);
+      console.log("📋 폼 데이터:", formData);
 
       // 폼 데이터 준비 (암호화는 서버에서 처리)
       const preparedFormData = prepareFormData(formData);
@@ -163,7 +165,7 @@ export default function TaxCertForm() {
 
       const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, preparedFormData, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -173,15 +175,18 @@ export default function TaxCertForm() {
         throw new Error(data.error);
       }
 
-      console.log('✅ API 응답:', data);
+      console.log("✅ API 응답:", data);
       setResponse(data);
-      
+
       // 1차 요청 완료 처리
       handleFirstRequestComplete(data);
-
     } catch (error) {
-      console.error('❌ API 요청 오류:', error);
-      setError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+      console.error("❌ API 요청 오류:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "알 수 없는 오류가 발생했습니다."
+      );
       updateStep(1);
     } finally {
       setIsLoading(false);
@@ -194,7 +199,11 @@ export default function TaxCertForm() {
   };
 
   // 추가인증 제출 시 단계 업데이트
-  const handleTwoWaySubmit = async (simpleAuth: string, signedData?: string, extraInfo?: Record<string, unknown>) => {
+  const handleTwoWaySubmit = async (
+    simpleAuth: string,
+    signedData?: string,
+    extraInfo?: Record<string, unknown>
+  ) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -211,9 +220,9 @@ export default function TaxCertForm() {
         jti: responseActualData?.jti || '',
         twoWayTimestamp: responseActualData?.twoWayTimestamp || Date.now()
       };
-      
-      console.log('🔐 twoWayInfo:', twoWayInfo);
-      
+
+      console.log("🔐 twoWayInfo:", twoWayInfo);
+
       // 1차 응답에서 간편인증 토큰들 추출
       const simpleKeyToken = responseActualData?.simpleKeyToken || responseActualData?.extraInfo?.simpleKeyToken;
       const rValue = responseActualData?.rValue || responseActualData?.extraInfo?.rValue;
@@ -256,14 +265,17 @@ export default function TaxCertForm() {
         simpleKeyToken,
         rValue,
         certificate,
-        ...(extraInfo && { extraInfo })
+        ...(extraInfo && { extraInfo }),
       };
 
-      console.log('🔐 2차 요청 데이터:', JSON.stringify(twoWayRequest, null, 2));
+      console.log(
+        "🔐 2차 요청 데이터:",
+        JSON.stringify(twoWayRequest, null, 2)
+      );
 
       const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, twoWayRequest, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -273,13 +285,16 @@ export default function TaxCertForm() {
         throw new Error(data.error);
       }
 
-      console.log('🔐 추가인증 응답:', data);
+      console.log("🔐 추가인증 응답:", data);
       setResponse(data);
       updateStep(4); // 4단계로 이동
-
     } catch (error) {
-      console.error('❌ 추가인증 요청 오류:', error);
-      setError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+      console.error("❌ 추가인증 요청 오류:", error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "알 수 없는 오류가 발생했습니다."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -354,10 +369,10 @@ export default function TaxCertForm() {
           jti: actualData?.jti || '',
           twoWayTimestamp: actualData?.twoWayTimestamp || Date.now()
         },
-        simpleAuth: 'true', // TaxCertTwoWayRequest 타입에 맞게 필수 필드 추가 (string 타입으로 수정)
+        simpleAuth: "true", // TaxCertTwoWayRequest 타입에 맞게 필수 필드 추가 (string 타입으로 수정)
         simpleKeyToken,
         rValue,
-        certificate
+        certificate,
       };
       setTwoWayData(twoWayRequest);
 
@@ -376,13 +391,17 @@ export default function TaxCertForm() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: TaxCertRequest) => ({ ...prev, [name]: value }));
   };
 
   const handleLoginTypeLevelChange = (level: string) => {
-    setFormData(prev => ({ ...prev, loginTypeLevel: level }));
+    setFormData((prev: TaxCertRequest) => ({ ...prev, loginTypeLevel: level }));
   };
 
   const renderLoginTypeFields = () => {
@@ -397,27 +416,24 @@ export default function TaxCertForm() {
     }
 
     switch (formData.loginType) {
-      case '0': // 회원 인증서로그인
-      case '2': // 비회원 인증서로그인
+      case "0": // 회원 인증서로그인
+      case "2": // 비회원 인증서로그인
         return (
-          <CertificateLoginForm 
-            formData={formData} 
-            onInputChange={handleInputChange} 
+          <CertificateLoginForm
+            formData={formData}
+            onInputChange={handleInputChange}
             loginType={formData.loginType}
           />
         );
-      case '1': // 회원 아이디로그인
+      case "1": // 회원 아이디로그인
         return (
-          <IdLoginForm 
-            formData={formData} 
-            onInputChange={handleInputChange}
-          />
+          <IdLoginForm formData={formData} onInputChange={handleInputChange} />
         );
-      case '5': // 회원 간편인증
-      case '6': // 비회원 간편인증
+      case "5": // 회원 간편인증
+      case "6": // 비회원 간편인증
         return (
-          <SimpleAuthForm 
-            formData={formData} 
+          <SimpleAuthForm
+            formData={formData}
             onInputChange={handleInputChange}
             onLoginTypeLevelChange={handleLoginTypeLevelChange}
             loginType={formData.loginType}
@@ -429,36 +445,34 @@ export default function TaxCertForm() {
   };
 
   const handleSimpleAuthApprove = () => {
-    handleTwoWaySubmit('1');
+    handleTwoWaySubmit("1");
   };
 
   const handleSimpleAuthCancel = () => {
-    handleTwoWaySubmit('0');
+    handleTwoWaySubmit("0");
   };
 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>납세증명서 발급</h2>
-      
+
       {/* 단계별 진행 상태 */}
-      <StepGuide 
-        currentStep={currentStep} 
-        isLoading={isLoading} 
-        response={response} 
+      <StepGuide
+        currentStep={currentStep}
+        isLoading={isLoading}
+        response={response}
       />
 
       <div className={styles.formContainer}>
         <h2 className={styles.formTitle}>📄 납세증명서 발급</h2>
-        
+
         <form onSubmit={handleSubmit} className={styles.form}>
           {/* 로그인 구분 선택 (맨 위로 이동) */}
           <div className={commonStyles.formField}>
-            <label className={commonStyles.labelRequired}>
-              로그인 구분
-            </label>
+            <label className={commonStyles.labelRequired}>로그인 구분</label>
             <select
               name="loginType"
-              value={formData.loginType || ''}
+              value={formData.loginType || ""}
               onChange={handleInputChange}
               className={commonStyles.selectRequired}
               required
@@ -475,13 +489,11 @@ export default function TaxCertForm() {
           {/* 기본 정보 */}
           <div className={commonStyles.formGridTwo}>
             <div className={commonStyles.formField}>
-              <label className={commonStyles.label}>
-                기관코드
-              </label>
+              <label className={commonStyles.label}>기관코드</label>
               <input
                 type="text"
                 name="organization"
-                value={formData.organization || ''}
+                value={formData.organization || ""}
                 onChange={handleInputChange}
                 className={commonStyles.input}
                 readOnly
@@ -498,7 +510,7 @@ export default function TaxCertForm() {
               <label className={commonStyles.labelRequired}>증명구분</label>
               <select
                 name="proofType"
-                value={formData.proofType || ''}
+                value={formData.proofType || ""}
                 onChange={handleInputChange}
                 className={commonStyles.selectRequired}
                 required
@@ -511,7 +523,7 @@ export default function TaxCertForm() {
               <label className={commonStyles.labelRequired}>제출처</label>
               <select
                 name="submitTargets"
-                value={formData.submitTargets || ''}
+                value={formData.submitTargets || ""}
                 onChange={handleInputChange}
                 className={commonStyles.selectRequired}
                 required
@@ -525,12 +537,10 @@ export default function TaxCertForm() {
           {/* 신청구분 및 의뢰인구분 */}
           <div className={styles.formGridTwo}>
             <div className={styles.formField}>
-              <label className={styles.label}>
-                신청 구분
-              </label>
+              <label className={styles.label}>신청 구분</label>
               <select
                 name="applicationType"
-                value={formData.applicationType || ''}
+                value={formData.applicationType || ""}
                 onChange={handleInputChange}
                 className={commonStyles.select}
               >
@@ -539,12 +549,10 @@ export default function TaxCertForm() {
               </select>
             </div>
             <div className={commonStyles.formField}>
-              <label className={commonStyles.label}>
-                의뢰인 구분
-              </label>
+              <label className={commonStyles.label}>의뢰인 구분</label>
               <select
                 name="clientTypeLevel"
-                value={formData.clientTypeLevel || ''}
+                value={formData.clientTypeLevel || ""}
                 onChange={handleInputChange}
                 className={commonStyles.select}
               >
@@ -564,20 +572,18 @@ export default function TaxCertForm() {
               <input
                 type="text"
                 name="identity"
-                value={formData.identity || ''}
+                value={formData.identity || ""}
                 onChange={handleInputChange}
                 className={commonStyles.input}
                 placeholder="사업자번호 또는 주민등록번호"
               />
             </div>
             <div className={commonStyles.formField}>
-              <label className={commonStyles.label}>
-                생년월일
-              </label>
+              <label className={commonStyles.label}>생년월일</label>
               <input
                 type="text"
                 name="birthDate"
-                value={formData.birthDate || ''}
+                value={formData.birthDate || ""}
                 onChange={handleInputChange}
                 className={commonStyles.input}
                 placeholder="960413"
@@ -588,12 +594,10 @@ export default function TaxCertForm() {
           {/* 원문 데이터 포함 여부 */}
           <div className={commonStyles.formGridTwo}>
             <div className={commonStyles.formField}>
-              <label className={commonStyles.label}>
-                원문 DATA 포함 여부
-              </label>
+              <label className={commonStyles.label}>원문 DATA 포함 여부</label>
               <select
                 name="originDataYN"
-                value={formData.originDataYN || ''}
+                value={formData.originDataYN || ""}
                 onChange={handleInputChange}
                 className={commonStyles.select}
               >
@@ -602,12 +606,10 @@ export default function TaxCertForm() {
               </select>
             </div>
             <div className={commonStyles.formField}>
-              <label className={commonStyles.label}>
-                PDF 원문 포함 여부
-              </label>
+              <label className={commonStyles.label}>PDF 원문 포함 여부</label>
               <select
                 name="originDataYN1"
-                value={formData.originDataYN1 || ''}
+                value={formData.originDataYN1 || ""}
                 onChange={handleInputChange}
                 className={commonStyles.select}
               >
@@ -623,7 +625,7 @@ export default function TaxCertForm() {
               disabled={isLoading}
               className={commonStyles.submitButton}
             >
-              {isLoading ? '처리중...' : '납세증명서 발급'}
+              {isLoading ? "처리중..." : "납세증명서 발급"}
             </button>
           </div>
         </form>
@@ -636,7 +638,7 @@ export default function TaxCertForm() {
       </div>
 
       {/* 간편인증 추가인증 UI */}
-      <SimpleAuthModal 
+      <SimpleAuthModal
         showModal={showSimpleAuthModal}
         onClose={() => setShowSimpleAuthModal(false)}
         onApprove={handleSimpleAuthApprove}
@@ -653,4 +655,4 @@ export default function TaxCertForm() {
       )}
     </div>
   );
-} 
+}
