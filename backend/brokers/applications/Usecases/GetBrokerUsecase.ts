@@ -6,8 +6,8 @@ export class GetBrokerUsecase {
         private brokerRepository: BrokerRepository
     ) {}
 
-    async execute(url: string) : Promise<Broker> {
-        const broker = await this.brokerRepository.findAll(url);
+    async execute(brkrNm:string, bsnmCmpnm:string) : Promise<Broker> {
+        const broker = await this.brokerRepository.find(brkrNm, bsnmCmpnm);
         console.log('broker: ',broker);
         if (!broker) {
             throw new Error('Broker not found');
