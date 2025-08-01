@@ -1,7 +1,5 @@
-import { KakaoSearchResponseDto } from "../../applications/dtos/KakaoSearchResponseDto";
-import { SaveSelectedAddressDto } from "../../applications/dtos/SaveSelectedAddressDto";
+import { KakaoPlace } from "../entities/KakaoPlace";
 
 export interface KakaoSearchRepository {
-  search(query: string): Promise<KakaoSearchResponseDto>;
-  saveSelectedAddress(data: SaveSelectedAddressDto): Promise<void>;
+  search(query: string): Promise<KakaoPlace[]>;
 }

@@ -1,11 +1,6 @@
-export interface KakaoPlace {
-  name: string;
-  address: string;
-  x: string;
-  y: string;
-  source: "keyword" | "address";
-}
-
 export interface KakaoSearchResponseDto {
-  results: KakaoPlace[];
+  name: string; // 장소명
+  address: string; // 주소
+  longitude: string; //위도
+  latitude: string; // 경도
 }
