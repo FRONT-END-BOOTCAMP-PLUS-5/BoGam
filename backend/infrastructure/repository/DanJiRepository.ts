@@ -1,14 +1,14 @@
-import { DanJiRequest } from '../../../applications/danJi/dtos/DanJiDto';
-import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
-import { decodeCodefResponse } from '../../../../utils/codefDecoder';
+import { DanJiRequest } from '../../applications/danJi/dtos/DanJiDto';
+import { CodefAuth, createCodefAuth } from '../../../libs/codefAuth';
+import { decodeCodefResponse } from '../../../utils/codefDecoder';
 import {
   loadCodefConfig,
   validateCodefConfig,
-} from '../../../../libs/codefEnvironment';
-import { getCurrentConfig } from '../../../../libs/codefEnvironment';
+} from '../../../libs/codefEnvironment';
+import { getCurrentConfig } from '../../../libs/codefEnvironment';
 import axios from 'axios';
-import { DanJiApiResponse } from '../../../applications/danJi/dtos/DanJiDto';
-import { CODEF_API_CONFIG } from '../../../../libs/api-endpoints';
+import { DanJiApiResponse } from '../../applications/danJi/dtos/DanJiDto';
+import { CODEF_API_CONFIG } from '../../../libs/api-endpoints';
 
 /**
  * 단지목록 조회 Repository 구현체

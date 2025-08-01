@@ -1,17 +1,17 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '../../../libs/codefAuth';
 import {
   loadCodefConfig,
   validateCodefConfig,
-} from '../../../../libs/codefEnvironment';
+} from '../../../libs/codefEnvironment';
 import {
   DetailInquiryRequest,
   GetRealEstateRequest,
   IssueResultRequest,
   SummaryInquiryRequest,
-} from '../../../applications/realEstate/dtos/RealEstateRequest';
-import { GetRealEstateResponse } from '../../../applications/realEstate/dtos/RealEstateResponse';
-import { decodeCodefResponse } from '../../../../utils/codefDecoder';
+} from '../../applications/realEstate/dtos/RealEstateRequest';
+import { GetRealEstateResponse } from '../../applications/realEstate/dtos/RealEstateResponse';
+import { decodeCodefResponse } from '../../../utils/codefDecoder';
 
 /**
  * 부동산등기부등본 조회 API 인프라스트럭처
