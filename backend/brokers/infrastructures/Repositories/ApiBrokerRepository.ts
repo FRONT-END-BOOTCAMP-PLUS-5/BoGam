@@ -1,5 +1,5 @@
-import { BrokerRepository } from '../../domains/Repositories/BrokerRepository';
-import { Broker } from '../../domains/Entities/Broker';
+import { BrokerRepository } from '../../domains/repositories/BrokerRepository';
+import { Broker } from '../../domains/entities/Broker';
 
 export class ApiBrokerRepository implements BrokerRepository {
 
