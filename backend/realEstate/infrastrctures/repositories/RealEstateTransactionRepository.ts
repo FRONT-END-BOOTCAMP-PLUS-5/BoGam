@@ -1,8 +1,8 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { GetRealEstateTransactionRequest } from '../../applications/dtos/GetRealEstateTransactionRequest';
 import { GetRealEstateTransactionResponse } from '../../applications/dtos/GetRealEstateTransactionResponse';
-import PublicDataAxiosInstance from '../../../utils/axiosInstance';
-import { parseXmlResponse } from '../../../utils/xmlParser';
+import PublicDataAxiosInstance from '@utils/axiosInstance';
+import { parseXmlResponse } from '@utils/xmlParser';
 
 /**
  * 실거래가 조회 API 레포지토리
