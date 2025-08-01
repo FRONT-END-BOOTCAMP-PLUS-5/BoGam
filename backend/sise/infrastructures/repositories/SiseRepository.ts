@@ -1,10 +1,13 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@/libs/codefAuth';
-import { decodeCodefResponse } from '@/utils/codefDecoder';
-import { loadCodefConfig, validateCodefConfig } from '@/libs/codefEnvironment';
-import { SISE_API_ENDPOINT } from '../../../constants/apiEndPoint';
+import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
+import { decodeCodefResponse } from '../../../../utils/codefDecoder';
+import {
+  loadCodefConfig,
+  validateCodefConfig,
+} from '../../../../libs/codefEnvironment';
 import { SiseApiResponse, SiseRequest } from '../../applications/dtos/SiseDto';
-import { getCurrentConfig } from '@/libs/codefEnvironment';
+import { getCurrentConfig } from '../../../../libs/codefEnvironment';
+import { CODEF_API_CONFIG } from '../../../../libs/api-endpoints';
 
 /**
  * 시세정보 조회 Repository 구현체
@@ -12,7 +15,7 @@ import { getCurrentConfig } from '@/libs/codefEnvironment';
  */
 export class SiseRepository {
   private codefAuth!: CodefAuth;
-  private readonly endpoint = SISE_API_ENDPOINT;
+  private readonly endpoint = CODEF_API_CONFIG.SISE_FULL_URL;
 
   /**
    * 시세정보 조회
@@ -40,7 +43,7 @@ export class SiseRepository {
         is2Way: 'is2Way' in request ? request.is2Way : false,
       });
 
-      const url = `${getCurrentConfig().apiUrl}${this.endpoint}`;
+      const url = `${this.endpoint}`;
 
       const response = await axios.post(url, request, {
         headers: {

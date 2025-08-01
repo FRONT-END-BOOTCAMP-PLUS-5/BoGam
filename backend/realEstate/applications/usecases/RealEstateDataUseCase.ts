@@ -1,4 +1,4 @@
-import { CodefAuth, createCodefAuth } from '@/libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
 import { GetRealEstateDataInfrastructure } from '../../infrastrctures/repositories/GetRealEstateDataInfrastructure';
 import {
   DetailInquiryRequest,

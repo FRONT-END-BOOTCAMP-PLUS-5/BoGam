@@ -11,7 +11,7 @@ import {
   SummaryInquiryRequest,
 } from '../../applications/dtos/RealEstateRequest';
 import { GetRealEstateResponse } from '../../applications/dtos/RealEstateResponse';
-import { decodeCodefResponse } from '@/utils/codefDecoder';
+import { decodeCodefResponse } from '../../../../utils/codefDecoder';
 
 /**
  * 부동산등기부등본 조회 API 인프라스트럭처

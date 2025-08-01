@@ -1,10 +1,14 @@
 import { DanJiRequest } from '../../applications/dtos/DanJiDto';
-import { CodefAuth, createCodefAuth } from '@/libs/codefAuth';
-import { decodeCodefResponse } from '@/utils/codefDecoder';
-import { loadCodefConfig, validateCodefConfig } from '@/libs/codefEnvironment';
-import { getCurrentConfig } from '@/libs/codefEnvironment';
+import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
+import { decodeCodefResponse } from '../../../../utils/codefDecoder';
+import {
+  loadCodefConfig,
+  validateCodefConfig,
+} from '../../../../libs/codefEnvironment';
+import { getCurrentConfig } from '../../../../libs/codefEnvironment';
 import axios from 'axios';
 import { DanJiApiResponse } from '../../applications/dtos/DanJiDto';
+import { CODEF_API_CONFIG } from '../../../../libs/api-endpoints';
 
 /**
  * 단지목록 조회 Repository 구현체
@@ -12,7 +16,7 @@ import { DanJiApiResponse } from '../../applications/dtos/DanJiDto';
  */
 export class DanJiRepository {
   private codefAuth!: CodefAuth;
-  private readonly endpoint = '/v1/kr/public/lt/real-estate-board/estate-list';
+  private readonly endpoint = CODEF_API_CONFIG.DANJI_FULL_URL;
 
   /**
    * 단지목록 조회
@@ -38,7 +42,7 @@ export class DanJiRepository {
         addrDong: request.addrDong,
       });
 
-      const url = `${getCurrentConfig().apiUrl}${this.endpoint}`;
+      const url = `${this.endpoint}`;
 
       const response = await axios.post(url, request, {
         headers: {
