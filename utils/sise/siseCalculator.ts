@@ -1,4 +1,4 @@
-import { SiseEntity } from '../../backend/sise/domains/Entities/SiseEntity';
+import { SiseEntity } from '../../backend/domain/sise/Entities/SiseEntity';
 
 /**
  * 시세정보 계산 및 변환 유틸리티

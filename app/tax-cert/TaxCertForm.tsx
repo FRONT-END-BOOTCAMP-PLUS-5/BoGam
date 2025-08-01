@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@be/tax-cert/application/dtos/TaxCertDto';
-import { extractActualData } from '@libs/responseUtils';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../backend/applications/tax-cert/dtos/TaxCertDto';
+import { extractActualData } from '../../libs/responseUtils';
 import ApiResultDisplay from '../../components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
-import { API_ENDPOINTS } from '@libs/api-endpoints';
+import { API_ENDPOINTS } from '../../libs/api-endpoints';
 import axios from 'axios';
 import styles from './TaxCertForm.module.css';
 import commonStyles from './components/Common.module.css';
@@ -40,7 +40,7 @@ export default function TaxCertForm() {
     originDataYN1: "0",
   });
 
-  const [twoWayData, setTwoWayData] = useState<TaxCertTwoWayRequest | null>(
+  const [, setTwoWayData] = useState<TaxCertTwoWayRequest | null>(
     null
   );
   const [error, setError] = useState<string | null>(null);
@@ -48,8 +48,6 @@ export default function TaxCertForm() {
   const [response, setResponse] = useState<CodefResponse | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
-
-  twoWayData;
 
   // loginTypeLevel에 따른 telecom 필드 자동 관리
   useEffect(() => {
@@ -169,10 +167,10 @@ export default function TaxCertForm() {
         },
       });
 
-      const data = apiResponse.data;
+      const data = apiResponse.data as CodefResponse;
       
-      if (data.error) {
-        throw new Error(data.error);
+      if (data && typeof data === 'object' && 'error' in data) {
+        throw new Error(String(data.error));
       }
 
       console.log("✅ API 응답:", data);
@@ -279,10 +277,10 @@ export default function TaxCertForm() {
         },
       });
 
-      const data = apiResponse.data;
+      const data = apiResponse.data as CodefResponse;
       
-      if (data.error) {
-        throw new Error(data.error);
+      if (data && typeof data === 'object' && 'error' in data) {
+        throw new Error(String(data.error));
       }
 
       console.log("🔐 추가인증 응답:", data);

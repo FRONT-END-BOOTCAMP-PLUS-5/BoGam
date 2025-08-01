@@ -2,8 +2,8 @@
 
 import React from 'react';
 import styles from './StepGuide.module.css';
-import { CodefResponse } from '@be/tax-cert/application/dtos/TaxCertDto';
-import { extractActualData } from '@libs/responseUtils';
+import { CodefResponse } from '../../../backend/applications/tax-cert/dtos/TaxCertDto';
+import { extractActualData } from '../../../libs/responseUtils';
 
 interface StepGuideProps {
   currentStep: number;

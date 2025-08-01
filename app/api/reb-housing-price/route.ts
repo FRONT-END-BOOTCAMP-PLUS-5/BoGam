@@ -1,4 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+// 임시로 비활성화된 라우트
+export async function POST(_request: NextRequest) {
+  void _request; // unused parameter
+  return NextResponse.json(
+    { success: false, message: '이 API는 현재 비활성화되어 있습니다.' },
+    { status: 503 }
+  );
+}
+
+/*
 import { RebHousingPriceUseCase } from '../../../backend/rebHousingPrice/applications/usecases/RebHousingPriceUseCase';
 import { RebHousingPriceRepository } from '../../../backend/rebHousingPrice/infrastructures/repositories/RebHousingPriceRepository';
 import {
@@ -153,3 +164,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+*/

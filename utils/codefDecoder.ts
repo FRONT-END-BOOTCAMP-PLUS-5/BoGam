@@ -3,7 +3,7 @@
  * URL 인코딩된 응답 데이터를 디코딩하고 JSON 파싱
  */
 
-import { GetRealEstateResponse } from '@/backend/realEstate/applications/dtos/RealEstateResponse';
+import { GetRealEstateResponse } from '../backend/applications/realEstate/dtos/RealEstateResponse';
 
 /**
  * URL 인코딩된 문자열을 디코딩합니다.

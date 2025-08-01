@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SiseUseCase } from '../../../backend/sise/applications/usecases/SiseUseCase';
-import { SiseRepository } from '../../../backend/sise/infrastructures/repositories/SiseRepository';
+import { SiseUseCase } from '../../../backend/applications/sise/usecases/SiseUseCase';
+import { SiseRepository } from '../../../backend/infrastructure/sise/repositories/SiseRepository';
 import {
   SiseRequest,
   SiseTwoWayRequest,
-} from '../../../backend/sise/applications/dtos/SiseDto';
+} from '../../../backend/applications/sise/dtos/SiseDto';
 
 const repository = new SiseRepository();
 const useCase = new SiseUseCase(repository);

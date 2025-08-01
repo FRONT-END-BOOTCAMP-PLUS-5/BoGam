@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateTransactionUseCase } from '../../../../../backend/realEstate/applications/usecases/GetRealEstateTransactionUseCase';
-import { GetRealEstateTransactionRequest } from '../../../../../backend/realEstate/applications/dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '../../../../../backend/realEstate/applications/dtos/GetRealEstateTransactionResponse';
+import { GetRealEstateTransactionUseCase } from '../../../../../backend/applications/realEstate/usecases/GetRealEstateTransactionUseCase';
+import { GetRealEstateTransactionRequest } from '../../../../../backend/applications/realEstate/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '../../../../../backend/applications/realEstate/dtos/GetRealEstateTransactionResponse';
 
 /**
  * 실거래가 조회 API

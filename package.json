@@ -11,6 +11,7 @@
   "dependencies": {
     "@types/node-rsa": "^1.1.4",
     "axios": "^1.11.0",
+    "follow-redirects": "^1.15.11",
     "next": "15.4.4",
     "node-rsa": "^1.1.1",
     "react": "19.1.0",
