@@ -124,6 +124,15 @@ export interface TaxCertArrearsItem {
   resAdditionalCharges?: string; // 가산금
 }
 
+// 중첩된 응답 구조를 위한 타입 (실제 CODEF API 응답 구조)
+export interface NestedTaxCertResponseData {
+  data?: TaxCertResponseData; // 중첩된 데이터 구조
+  // 다른 가능한 필드들 (필요시 추가)
+  success?: boolean;
+  message?: string;
+  timestamp?: number;
+}
+
 export interface CodefResponse {
   result: {
     code: string; // 결과 코드
@@ -131,7 +140,7 @@ export interface CodefResponse {
     extraMessage?: string; // 추가 메시지
     transactionId?: string; // 트랜잭션 ID
   };
-  data?: TaxCertResponseData; // 응답 데이터
+  data?: TaxCertResponseData | NestedTaxCertResponseData; // 응답 데이터 (단일 또는 중첩 구조)
 }
 
 // Application Layer DTOs

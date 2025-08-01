@@ -2,6 +2,7 @@ import { TaxCertRepository } from '../../domain/repository/TaxCertRepository';
 import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../application/dtos/TaxCertDto';
 import { CODEF_API_CONFIG } from '@/libs/api-endpoints';
 import { createCodefAuth, CodefAuth } from '@/libs/codefAuth';
+import { processResponse } from '@/libs/responseUtils';
 import axios from 'axios';
 
 export class TaxCertRepositoryImpl implements TaxCertRepository {
@@ -28,20 +29,12 @@ export class TaxCertRepositoryImpl implements TaxCertRepository {
     try {
       const response = await axios.post(url, requestBody, {
         headers,
-        responseType: 'text',
+        // responseType을 제거하여 axios가 자동으로 Content-Type에 따라 처리하도록 함
       });
 
-      let data: CodefResponse;
-      const responseText = response.data;
-    
-      // JSON 파싱
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('❌ JSON 파싱 실패:', parseError);
-        throw new Error(`응답 파싱 실패: ${parseError}`);
-      }
-
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: CodefResponse = processResponse<CodefResponse>(response.data);
+      
       console.log('🔐 CODEF API 응답:', {
         status: response.status,
         resultCode: data?.result?.code,

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, NestedTaxCertResponseData, TaxCertResponseData } from '@/backend/tax-cert/application/dtos/TaxCertDto';
 import ApiResultDisplay from '@/components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
 import { API_ENDPOINTS } from '@/libs/api-endpoints';
@@ -65,6 +65,23 @@ export default function TaxCertForm() {
 
   const updateStep = (newStep: number) => {
     setCurrentStep(newStep);
+  };
+
+  // 타입 가드: 중첩된 응답 구조인지 확인
+  const isNestedResponseData = (data: TaxCertResponseData | NestedTaxCertResponseData): data is NestedTaxCertResponseData => {
+    return 'data' in data && typeof data.data === 'object';
+  };
+
+  // 실제 TaxCertResponseData 추출
+  const extractActualData = (responseData: CodefResponse): TaxCertResponseData | undefined => {
+    if (!responseData.data) return undefined;
+    
+    if (isNestedResponseData(responseData.data)) {
+      return responseData.data.data;
+    }
+    
+    // 중첩되지 않은 경우 타입 가드로 안전하게 반환
+    return !isNestedResponseData(responseData.data) ? responseData.data : undefined;
   };
 
   const validateFormData = (): { isValid: boolean; errors: string[] } => {
@@ -198,20 +215,23 @@ export default function TaxCertForm() {
       
       console.log('🔐 추가인증 요청:', { simpleAuth, signedData, extraInfo });
       
+      // 1차 응답에서 실제 데이터 추출
+      const responseActualData = response ? extractActualData(response) : undefined;
+      
       // 1차 응답에서 twoWayInfo 추출
       const twoWayInfo = {
-        jobIndex: response?.data?.jobIndex || 0,
-        threadIndex: response?.data?.threadIndex || 0,
-        jti: response?.data?.jti || '',
-        twoWayTimestamp: response?.data?.twoWayTimestamp || Date.now()
+        jobIndex: responseActualData?.jobIndex || 0,
+        threadIndex: responseActualData?.threadIndex || 0,
+        jti: responseActualData?.jti || '',
+        twoWayTimestamp: responseActualData?.twoWayTimestamp || Date.now()
       };
       
       console.log('🔐 twoWayInfo:', twoWayInfo);
       
       // 1차 응답에서 간편인증 토큰들 추출
-      const simpleKeyToken = response?.data?.simpleKeyToken || response?.data?.extraInfo?.simpleKeyToken;
-      const rValue = response?.data?.rValue || response?.data?.extraInfo?.rValue;
-      const certificate = response?.data?.certificate || response?.data?.extraInfo?.certificate;
+      const simpleKeyToken = responseActualData?.simpleKeyToken || responseActualData?.extraInfo?.simpleKeyToken;
+      const rValue = responseActualData?.rValue || responseActualData?.extraInfo?.rValue;
+      const certificate = responseActualData?.certificate || responseActualData?.extraInfo?.certificate;
       
       console.log('🔐 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
       
@@ -281,16 +301,38 @@ export default function TaxCertForm() {
 
   // 1차 API 요청 후 추가인증 UI 표시
   const handleFirstRequestComplete = (responseData: CodefResponse) => {
-    if (responseData.data?.continue2Way && responseData.data?.method === 'simpleAuth') {
+    const actualData = extractActualData(responseData);
+    
+    // 직접 접근 가능한 데이터 추출
+    const directData = responseData.data && !isNestedResponseData(responseData.data) ? responseData.data : undefined;
+    
+    console.log('🔍 1차 API 응답 데이터 확인:', {
+      continue2Way: directData?.continue2Way,
+      method: directData?.method,
+      // 중첩된 데이터 확인
+      nested_continue2Way: actualData?.continue2Way,
+      nested_method: actualData?.method,
+      hasData: !!responseData.data,
+      isNested: responseData.data ? isNestedResponseData(responseData.data) : false,
+      fullData: responseData.data
+    });
+    
+    // 실제 데이터에서 추가인증 필드 가져오기
+    const actualContinue2Way = actualData?.continue2Way;
+    const actualMethod = actualData?.method;
+    
+    console.log('🔍 실제 값:', { actualContinue2Way, actualMethod, actualData });
+    
+    if (actualContinue2Way && actualMethod === 'simpleAuth') {
       console.log('🔐 간편인증 추가인증 필요');
       
       // 3단계로 업데이트
       updateStep(3);
       
-      // 1차 응답의 간편인증 토큰들 저장
-      const simpleKeyToken = responseData.data?.simpleKeyToken || responseData.data?.extraInfo?.simpleKeyToken;
-      const rValue = responseData.data?.rValue || responseData.data?.extraInfo?.rValue;
-      const certificate = responseData.data?.certificate || responseData.data?.extraInfo?.certificate;
+      // 1차 응답의 간편인증 토큰들 저장 (actualData에서)
+      const simpleKeyToken = actualData?.simpleKeyToken || actualData?.extraInfo?.simpleKeyToken;
+      const rValue = actualData?.rValue || actualData?.extraInfo?.rValue;
+      const certificate = actualData?.certificate || actualData?.extraInfo?.certificate;
       
       console.log('🔐 1차 응답 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
 
@@ -326,10 +368,10 @@ export default function TaxCertForm() {
         identityEncYn: formData.identityEncYn,
         is2Way: true,
         twoWayInfo: {
-          jobIndex: responseData.data.jobIndex || 0,
-          threadIndex: responseData.data.threadIndex || 0,
-          jti: responseData.data.jti || '',
-          twoWayTimestamp: responseData.data.twoWayTimestamp || Date.now()
+          jobIndex: actualData?.jobIndex || 0,
+          threadIndex: actualData?.threadIndex || 0,
+          jti: actualData?.jti || '',
+          twoWayTimestamp: actualData?.twoWayTimestamp || Date.now()
         },
         simpleAuth: 'true', // TaxCertTwoWayRequest 타입에 맞게 필수 필드 추가 (string 타입으로 수정)
         simpleKeyToken,
@@ -341,6 +383,13 @@ export default function TaxCertForm() {
       // 간편인증 모달 표시
       setShowSimpleAuthModal(true);
     } else {
+      console.log('❌ 추가인증 조건 불만족:', {
+        continue2Way: actualContinue2Way,
+        method: actualMethod,
+        reason: !actualContinue2Way ? 'continue2Way가 false 또는 undefined' : 
+                actualMethod !== 'simpleAuth' ? `method가 '${actualMethod}' (simpleAuth가 아님)` : '기타'
+      });
+      
       // 추가인증이 필요하지 않은 경우 4단계로 이동
       updateStep(4);
     }
@@ -618,7 +667,7 @@ export default function TaxCertForm() {
       {response && (
         <>
           <ApiResultDisplay response={response} error={error} />
-          {response.data?.resIssueNo && <TaxCertResultDisplay response={response} />}
+          {extractActualData(response)?.resIssueNo && <TaxCertResultDisplay response={response} />}
         </>
       )}
     </div>
