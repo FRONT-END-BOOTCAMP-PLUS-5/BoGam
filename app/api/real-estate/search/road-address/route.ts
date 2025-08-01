@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '@/backend/realEstate/applications/usecases/RealEstateDataUseCase';
-import { encryptPassword } from '@/libs/codefEncryption';
-import { IssueResultRequest } from '@/backend/realEstate/applications/dtos/RealEstateRequest';
+import { GetRealEstateDataUseCase } from '../../../../../backend/realEstate/applications/usecases/RealEstateDataUseCase';
+import { encryptPassword } from '../../../../../libs/codefEncryption';
+import { IssueResultRequest } from '../../../../../backend/realEstate/applications/dtos/RealEstateRequest';
 
 const useCase = new GetRealEstateDataUseCase();
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     };
 
     // UseCase 호출
-    const response = await useCase.searchRealEstateByRoadAddress(apiRequest);
+    const response = await useCase.getRealEstateRegistry(apiRequest);
 
     // 응답 검증은 주석 처리 (개발 중)
     // const validationResult = useCase.validateResponse(response);
@@ -112,6 +112,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
       data: response,
+      status: 200,
     });
   } catch (error) {
     console.error('❌ 부동산등기부등본 조회 API 오류:', error);

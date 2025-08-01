@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DanJiUseCase } from '@/backend/danJi/applications/usecases/DanJiUseCase';
-import { DanJiRepository } from '@/backend/danJi/infrastuctures/repositories/DanJiRepository';
-import { DanJiRequest } from '@/backend/danJi/applications/dtos/DanJiDto';
+import { DanJiUseCase } from '../../../backend/danJi/applications/usecases/DanJiUseCase';
+import { DanJiRepository } from '../../../backend/danJi/infrastuctures/repositories/DanJiRepository';
+import { DanJiRequest } from '../../../backend/danJi/applications/dtos/DanJiDto';
 
 const repository = new DanJiRepository();
 const useCase = new DanJiUseCase(repository);
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         danJiList,
         rawData: response.data,
       },
+      status: 200,
     });
   } catch (error) {
     console.error('단지목록 조회 에러:', error);
