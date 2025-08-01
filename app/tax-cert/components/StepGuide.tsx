@@ -3,6 +3,7 @@
 import React from 'react';
 import styles from './StepGuide.module.css';
 import { CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { extractActualData } from '@/libs/responseUtils';
 
 interface StepGuideProps {
   currentStep: number;
@@ -11,6 +12,9 @@ interface StepGuideProps {
 }
 
 export default function StepGuide({ currentStep, isLoading, response }: StepGuideProps) {
+  // 실제 데이터 추출
+  const actualData = response ? extractActualData(response) : undefined;
+
   // 단계별 가이드 메시지
   const getStepGuide = () => {
     switch (currentStep) {
@@ -29,10 +33,10 @@ export default function StepGuide({ currentStep, isLoading, response }: StepGuid
       case 3:
         return {
           title: '✅ 3단계: 추가인증 진행',
-          description: response?.data?.continue2Way ? 
-            `${response.data.method === 'simpleAuth' ? '간편인증' : '금융인증서'} 추가인증을 진행해주세요.` :
+          description: actualData?.continue2Way ? 
+            `${actualData.method === 'simpleAuth' ? '간편인증' : '금융인증서'} 추가인증을 진행해주세요.` :
             '추가인증이 필요하지 않습니다.',
-          status: response?.data?.continue2Way ? 'current' : 'completed'
+          status: actualData?.continue2Way ? 'current' : 'completed'
         };
       case 4:
         return {
@@ -129,7 +133,7 @@ export default function StepGuide({ currentStep, isLoading, response }: StepGuid
                 </div>
               )}
               
-              {currentStep === 3 && response?.data?.continue2Way && (
+              {currentStep === 3 && actualData?.continue2Way && (
                 <div className={styles.actionContainer}>
                   <p className={styles.guideDescription}>
                     추가인증이 필요합니다. 아래 버튼을 클릭하여 진행하세요.

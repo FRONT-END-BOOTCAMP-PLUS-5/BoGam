@@ -1,6 +1,7 @@
 'use client';
 
 import { CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { extractActualData } from '@/libs/responseUtils';
 import styles from './TaxCertResultDisplay.module.css';
 
 interface TaxCertResultDisplayProps {
@@ -11,7 +12,10 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
   // 디버깅을 위한 로그
   console.log('🔍 원본 응답:', response);
   
-  const { data } = response;
+  // 중첩된 응답 구조에서 실제 데이터 추출
+  const data = extractActualData(response);
+  
+  console.log('🔍 추출된 데이터:', data);
 
   if (!data) {
     // data가 없으면 원본 응답을 표시

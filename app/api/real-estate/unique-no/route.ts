@@ -15,7 +15,6 @@ export async function POST(request: NextRequest) {
       inquiryType,
       uniqueNo,
       issueType,
-      jointMortgageJeonseYN,
       tradingYN,
       listNumber,
       electronicClosedYN,
@@ -77,7 +76,6 @@ export async function POST(request: NextRequest) {
       issueType: issueType || '1',
       uniqueNo,
 
-      jointMortgageJeonseYN: jointMortgageJeonseYN || '0',
       tradingYN: tradingYN || '0',
       listNumber: listNumber || undefined,
       electronicClosedYN: electronicClosedYN || '0',

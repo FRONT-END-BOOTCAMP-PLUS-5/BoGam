@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { createCodefAuth } from '../../../../libs/codefAuth';
-import { loadCodefConfig, validateCodefConfig } from '../../../../libs/codefEnvironment';
+import { processResponse } from '../../../../libs/responseUtils';
 import {
   DetailInquiryRequest,
   GetRealEstateRequest,
@@ -19,21 +19,8 @@ export class GetRealEstateDataInfrastructure {
   private readonly timeout: number = 300000; // 5분 (등기부등본 API는 시간이 오래 걸림)
 
   constructor() {
-    // CODEF 설정 로드
-    const config = loadCodefConfig();
-    const validation = validateCodefConfig(config);
-    
-    if (!validation.isValid) {
-      console.warn('⚠️ CODEF 설정 검증 실패:', validation.errors);
-      console.warn('⚠️ 기본 설정으로 진행합니다.');
-    }
-    
-    // CODEF 인증 인스턴스 생성
-    this.codefAuth = createCodefAuth({
-      clientId: config.oauth.clientId,
-      clientSecret: config.oauth.clientSecret,
-      baseUrl: config.oauth.baseUrl,
-    });
+    // CODEF 인증 싱글톤 인스턴스 생성 (환경변수 자동 로드)
+    this.codefAuth = createCodefAuth();
     
     this.baseUrl = process.env.CODEF_API_URL || 'https://development.codef.io';
   }
@@ -68,8 +55,8 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      // 응답 데이터에서 base64 URL 디코딩 처리
-      const decodedData = this.decodeBase64Response(response.data);
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const decodedData = processResponse<GetRealEstateResponse>(response.data);
 
       return decodedData;
     } catch (error) {
@@ -118,7 +105,7 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      const decodedData = this.decodeBase64Response(response.data);
+      const decodedData = processResponse<GetRealEstateResponse>(response.data);
       console.log('✅ 2-way 인증 처리 완료');
 
       return decodedData;
@@ -233,14 +220,11 @@ export class GetRealEstateDataInfrastructure {
       password,
       inquiryType: '2',
       addr_sido: options.addrSido || '',
-      addr_sigungu: options.addrSigungu || '',
       addr_dong: options.addrDong || '',
       addr_lotNumber: addrLotNumber,
       realtyType: options.realtyType || '',
       inputSelect: options.inputSelect || '0',
-      buildingName: options.buildingName || '',
-      dong: options.dong || '',
-      ho: options.ho || '',
+      issueReason: '기타', // IssueRequest 필수 필드
       issueType: options.issueType || '1',
     };
 
@@ -283,6 +267,7 @@ export class GetRealEstateDataInfrastructure {
       dong: options.dong || '',
       ho: options.ho || '',
       issueType: options.issueType || '1',
+      originData: '', // IssueResultRequest 필수 필드
     };
 
     return this.getRealEstateRegistry(request);
@@ -303,56 +288,6 @@ export class GetRealEstateDataInfrastructure {
   clearTokenCache(): void {
     // 현재 간단한 구현에서는 로그만 출력
     console.log('🔄 토큰 캐시 초기화');
-  }
-
-  /**
-   * Base64 URL 디코딩 처리
-   * CODEF API 응답에 포함된 base64 인코딩된 URL을 디코딩
-   */
-  private decodeBase64Response(data: any): any {
-    if (!data) return data;
-
-    try {
-      // 재귀적으로 객체 내의 모든 base64 URL 디코딩
-      const decoded = this.recursiveBase64Decode(data);
-      return decoded;
-    } catch (error) {
-      console.warn('⚠️ Base64 디코딩 실패, 원본 데이터 반환:', error);
-      return data;
-    }
-  }
-
-  /**
-   * 재귀적으로 base64 디코딩
-   */
-  private recursiveBase64Decode(obj: any): any {
-    if (typeof obj === 'string') {
-      // base64로 인코딩된 URL 패턴 확인 및 디코딩
-      try {
-        if (obj.startsWith('data:') || obj.includes('base64,')) {
-          return obj; // data URL은 그대로 유지
-        }
-        // URL 디코딩 시도
-        const decoded = decodeURIComponent(obj);
-        return decoded !== obj ? decoded : obj;
-      } catch {
-        return obj;
-      }
-    }
-
-    if (Array.isArray(obj)) {
-      return obj.map((item) => this.recursiveBase64Decode(item));
-    }
-
-    if (obj !== null && typeof obj === 'object') {
-      const result: any = {};
-      for (const [key, value] of Object.entries(obj)) {
-        result[key] = this.recursiveBase64Decode(value);
-      }
-      return result;
-    }
-
-    return obj;
   }
 
   /**

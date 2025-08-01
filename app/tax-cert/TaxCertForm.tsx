@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, NestedTaxCertResponseData, TaxCertResponseData } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { extractActualData } from '@/libs/responseUtils';
 import ApiResultDisplay from '@/components/common/ApiResultDisplay';
 import TaxCertResultDisplay from './TaxCertResultDisplay';
 import { API_ENDPOINTS } from '@/libs/api-endpoints';
@@ -67,22 +68,7 @@ export default function TaxCertForm() {
     setCurrentStep(newStep);
   };
 
-  // 타입 가드: 중첩된 응답 구조인지 확인
-  const isNestedResponseData = (data: TaxCertResponseData | NestedTaxCertResponseData): data is NestedTaxCertResponseData => {
-    return 'data' in data && typeof data.data === 'object';
-  };
 
-  // 실제 TaxCertResponseData 추출
-  const extractActualData = (responseData: CodefResponse): TaxCertResponseData | undefined => {
-    if (!responseData.data) return undefined;
-    
-    if (isNestedResponseData(responseData.data)) {
-      return responseData.data.data;
-    }
-    
-    // 중첩되지 않은 경우 타입 가드로 안전하게 반환
-    return !isNestedResponseData(responseData.data) ? responseData.data : undefined;
-  };
 
   const validateFormData = (): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
@@ -303,18 +289,13 @@ export default function TaxCertForm() {
   const handleFirstRequestComplete = (responseData: CodefResponse) => {
     const actualData = extractActualData(responseData);
     
-    // 직접 접근 가능한 데이터 추출
-    const directData = responseData.data && !isNestedResponseData(responseData.data) ? responseData.data : undefined;
-    
     console.log('🔍 1차 API 응답 데이터 확인:', {
-      continue2Way: directData?.continue2Way,
-      method: directData?.method,
-      // 중첩된 데이터 확인
-      nested_continue2Way: actualData?.continue2Way,
-      nested_method: actualData?.method,
+      // 실제 데이터에서 추출
+      continue2Way: actualData?.continue2Way,
+      method: actualData?.method,
       hasData: !!responseData.data,
-      isNested: responseData.data ? isNestedResponseData(responseData.data) : false,
-      fullData: responseData.data
+      fullData: responseData.data,
+      extractedData: actualData
     });
     
     // 실제 데이터에서 추가인증 필드 가져오기

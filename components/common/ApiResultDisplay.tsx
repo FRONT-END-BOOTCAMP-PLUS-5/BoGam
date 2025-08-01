@@ -1,6 +1,7 @@
 'use client';
 
 import { CodefResponse } from '@/backend/tax-cert/application/dtos/TaxCertDto';
+import { extractActualData } from '@/libs/responseUtils';
 
 interface ApiResultDisplayProps {
   response: CodefResponse;
@@ -23,7 +24,8 @@ export default function ApiResultDisplay({ response, error }: ApiResultDisplayPr
     return null;
   }
 
-  const { result, data } = response;
+  const { result } = response;
+  const data = extractActualData(response);
   const isSuccess = result?.code === 'CF-00000';
   const hasData = data && Object.keys(data).length > 0;
 
