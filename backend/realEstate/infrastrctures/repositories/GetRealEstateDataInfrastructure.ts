@@ -1,6 +1,9 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
-import { getCodefAuth } from '../../../../utils/codefAuth';
-import { decodeCodefResponse } from '../../../../utils/codefDecoder';
+import { createCodefAuth } from '../../../../libs/codefAuth';
+import {
+  loadCodefConfig,
+  validateCodefConfig,
+} from '../../../../libs/codefEnvironment';
 import {
   DetailInquiryRequest,
   GetRealEstateRequest,
@@ -15,12 +18,29 @@ import { GetRealEstateResponse } from '../../applications/dtos/RealEstateRespons
  * 순수하게 API 호출과 HTTP 통신만 담당
  */
 export class GetRealEstateDataInfrastructure {
-  private readonly codefAuth = getCodefAuth();
+  private readonly codefAuth;
   private readonly baseUrl: string;
   private readonly timeout: number = 300000; // 5분 (등기부등본 API는 시간이 오래 걸림)
 
   constructor() {
-    this.baseUrl = process.env.CODEF_API_URL || 'https://api.codef.io';
+    // CODEF 설정 로드
+    const config = loadCodefConfig();
+    const validation = validateCodefConfig(config);
+
+    if (!validation.isValid) {
+      console.warn('⚠️ CODEF 설정 검증 실패:', validation.errors);
+      console.warn('⚠️ 기본 설정으로 진행합니다.');
+    }
+
+    // CODEF 인증 인스턴스 생성
+    // this.codefAuth = createCodefAuth({
+    //   clientId: config.oauth.clientId,
+    //   clientSecret: config.oauth.clientSecret,
+    //   baseUrl: config.oauth.baseUrl,
+    // });
+    this.codefAuth = createCodefAuth();
+
+    this.baseUrl = process.env.CODEF_API_URL || 'https://development.codef.io';
   }
 
   /**
@@ -53,10 +73,10 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      const decodedResponse = decodeCodefResponse(response);
+      // const decodedResponse = decodeCodefResponse(response);
 
       // 응답 데이터 디코딩 후 반환
-      return decodedResponse.data as unknown as GetRealEstateResponse;
+      return response.data as unknown as GetRealEstateResponse;
     } catch (error) {
       console.error('❌ 부동산등기부등본 조회 실패:', error);
       this.handleError(error as AxiosError | Error);
@@ -70,7 +90,7 @@ export class GetRealEstateDataInfrastructure {
    * @param twoWayInfo 추가인증 정보
    * @returns 응답 데이터
    */
-  async processTwoWayAuth(
+  async handleTwoWayAuth(
     uniqueNo: string,
     twoWayInfo: {
       jobIndex: number;
@@ -80,9 +100,8 @@ export class GetRealEstateDataInfrastructure {
     }
   ): Promise<GetRealEstateResponse> {
     try {
-      console.log('🔐 2-way 인증 처리 시작:', { uniqueNo });
+      console.log('🔐 2-way 인증 처리 시작:', { uniqueNo, twoWayInfo });
 
-      // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
 
       const twoWayRequest = {
@@ -91,9 +110,8 @@ export class GetRealEstateDataInfrastructure {
         twoWayInfo,
       };
 
-      // API 요청 실행
       const response: AxiosResponse<GetRealEstateResponse> = await axios.post(
-        `https://development.codef.io/v1/kr/public/ck/real-estate-register/status`,
+        `${this.baseUrl}/v1/kr/public/ck/real-estate-register/status`,
         twoWayRequest,
         {
           headers: {
@@ -101,29 +119,18 @@ export class GetRealEstateDataInfrastructure {
             'Content-Type': 'application/json',
             'User-Agent': 'CodefSandbox/1.0',
           },
-          timeout: 120000, // 2-way 인증은 2분 타임아웃
+          timeout: 120000, // 2분 (2-way 인증은 시간이 짧음)
         }
       );
 
-      console.log('✅ 2-way 인증 처리 성공:', {
-        uniqueNo,
-        resultCode: response.data.result?.code,
-      });
+      // const decodedData = decodeCodefResponse(response.data);
 
-      // 응답 데이터 디코딩 후 반환
-      return decodeCodefResponse(response) as unknown as GetRealEstateResponse;
-    } catch (error: unknown) {
+      return response.data;
+    } catch (error) {
       console.error('❌ 2-way 인증 처리 실패:', error);
       this.handleError(error as AxiosError | Error);
       throw error;
     }
-  }
-
-  /**
-   * 토큰 캐시 초기화
-   */
-  clearTokenCache(): void {
-    this.codefAuth.clearTokenCache();
   }
 
   /**

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '../../../../../backend/realEstate/applications/usecases/RealEstateDataUseCase';
-import { encryptPassword } from '../../../../../backend/utils/rsaEncryption';
-import { DetailInquiryRequest } from '../../../../../backend/realEstate/applications/dtos/RealEstateRequest';
+import { encryptPassword } from '@/libs/codefEncryption';
+import { DetailInquiryRequest } from '@/backend/realEstate/applications/dtos/RealEstateRequest';
+import { GetRealEstateDataUseCase } from '@/backend/realEstate/applications/usecases/RealEstateDataUseCase';
 
 const useCase = new GetRealEstateDataUseCase();
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       //------------------공통 필수 파라미터-------------------
       organization: body.organization || '0002',
       phoneNo: body.phoneNo || '01000000000',
-      password: encryptPassword(body.password), // RSA 암호화
+      password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '1' as const,
       issueType: body.issueType || '1',
 
@@ -85,43 +85,47 @@ export async function POST(request: NextRequest) {
     // UseCase 호출
     const response = await useCase.getRealEstateRegistry(apiRequest);
 
-    // 응답 검증
-    const validationResult = useCase.validateResponse(response);
-    if (!validationResult.isValid) {
-      if (validationResult.requiresTwoWayAuth) {
-        return NextResponse.json({
-          success: false,
-          message: '추가인증이 필요합니다.',
-          requiresTwoWayAuth: true,
-          twoWayInfo: response.data,
-        });
-      }
-      return NextResponse.json(
-        { success: false, message: validationResult.message },
-        { status: 400 }
-      );
-    }
+    // 응답 검증은 주석 처리 (개발 중)
+    // const validationResult = useCase.validateResponse(response);
+    // if (!validationResult.isValid) {
+    //   if (validationResult.requiresTwoWayAuth) {
+    //     return NextResponse.json({
+    //       success: false,
+    //       message: '추가인증이 필요합니다.',
+    //       requiresTwoWayAuth: true,
+    //       twoWayInfo: response.data,
+    //     });
+    //   }
+    //   return NextResponse.json(
+    //     { success: false, message: validationResult.message },
+    //     { status: 400 }
+    //   );
+    // }
 
-    // 2-way 인증 필요 여부 확인
-    if (useCase.requiresTwoWayAuth(response)) {
-      return NextResponse.json({
-        success: false,
-        message: '추가인증이 필요합니다.',
-        requiresTwoWayAuth: true,
-        twoWayInfo: response.data,
-      });
-    }
+    // // 2-way 인증 필요 여부 확인
+    // if (useCase.requiresTwoWayAuth(response)) {
+    //   return NextResponse.json({
+    //     success: false,
+    //     message: '추가인증이 필요합니다.',
+    //     requiresTwoWayAuth: true,
+    //     twoWayInfo: response.data,
+    //   });
+    // }
 
     // 성공 응답
     return NextResponse.json({
       success: true,
       message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
-      data: response.data,
+      data: response,
     });
   } catch (error) {
-    console.error('간편검색 에러:', error);
+    console.error('❌ 부동산등기부등본 조회 API 오류:', error);
     return NextResponse.json(
-      { success: false, message: '서버 내부 오류가 발생했습니다.' },
+      {
+        success: false,
+        message: '부동산등기부등본 조회 중 오류가 발생했습니다.',
+        error: error instanceof Error ? error.message : '알 수 없는 오류',
+      },
       { status: 500 }
     );
   }

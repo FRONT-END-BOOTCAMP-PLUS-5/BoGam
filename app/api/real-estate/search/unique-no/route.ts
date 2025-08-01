@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { SummaryInquiryRequest } from '@/backend/realEstate/applications/dtos/RealEstateRequest';
-import { encryptPassword } from '@/backend/utils/rsaEncryption';
 import { GetRealEstateDataUseCase } from '@/backend/realEstate/applications/usecases/RealEstateDataUseCase';
+import { encryptPassword } from '@/libs/codefEncryption';
+import { SummaryInquiryRequest } from '@/backend/realEstate/applications/dtos/RealEstateRequest';
 
 const useCase = new GetRealEstateDataUseCase();
 
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       //------------------공통 필수 파라미터-------------------
       organization: body.organization || '0002',
       phoneNo: body.phoneNo || '01000000000',
-      password: encryptPassword(body.password), // RSA 암호화
+      password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '0' as const,
       issueType: body.issueType || '1',
       ePrepayNo: body.ePrepayNo || undefined,
@@ -110,12 +110,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
-      data: response.data,
+      data: response,
     });
   } catch (error) {
-    console.error('고유번호 조회 에러:', error);
+    console.error('❌ 부동산등기부등본 조회 API 오류:', error);
     return NextResponse.json(
-      { success: false, message: '서버 내부 오류가 발생했습니다.' },
+      {
+        success: false,
+        message: '부동산등기부등본 조회 중 오류가 발생했습니다.',
+        error: error instanceof Error ? error.message : '알 수 없는 오류',
+      },
       { status: 500 }
     );
   }
