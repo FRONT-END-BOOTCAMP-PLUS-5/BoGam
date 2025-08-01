@@ -1,6 +1,6 @@
-import { GetRealEstateTransactionRequest } from '../dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '../dtos/GetRealEstateTransactionResponse';
-import { RealEstateTransactionRepository } from '../../../infrastructure/realEstate/repositories/RealEstateTransactionRepository';
+import { GetRealEstateTransactionRequest } from '@be/applications/realEstate/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '@be/applications/realEstate/dtos/GetRealEstateTransactionResponse';
+import { RealEstateTransactionRepository } from '@be/infrastructure/repository/RealEstateTransactionRepository';
 
 /**
  * 실거래가 조회 유스케이스

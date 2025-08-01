@@ -1,4 +1,4 @@
-import { SiseEntity } from '../../../domain/sise/Entities/SiseEntity';
+import { SiseEntity } from '@be/domain/entities/SiseEntity';
 
 // 기본 시세정보 조회 요청 인터페이스
 export interface SiseRequest {

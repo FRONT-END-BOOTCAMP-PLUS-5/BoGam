@@ -1,10 +1,10 @@
-import { DanJiRepository } from '../../../infrastructure/danJi/repositories/DanJiRepository';
+import { DanJiRepository } from '@be/infrastructure/repository/DanJiRepository';
 import {
   DanJiRequest,
   DanJiApiResponse,
-} from '../dtos/DanJiDto';
-import { DanJiValidator } from '../../../../utils/danJi/danJiValidator';
-import { DanJiExtractor } from '../../../../utils/danJi/danJiExtractor';
+} from '@be/applications/danJi/dtos/DanJiDto';
+import { DanJiValidator } from '@utils/danJi/danJiValidator';
+import { DanJiExtractor } from '@utils/danJi/danJiExtractor';
 
 /**
  * 단지목록 조회 UseCase

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { encryptPassword } from '../../../../../libs/codefEncryption';
-import { DetailInquiryRequest } from '../../../../../backend/applications/realEstate/dtos/RealEstateRequest';
-import { GetRealEstateDataUseCase } from '../../../../../backend/applications/realEstate/usecases/RealEstateDataUseCase';
+import { encryptPassword } from '@libs/codefEncryption';
+import { DetailInquiryRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
+import { GetRealEstateDataUseCase } from '@be/applications/realEstate/usecases/RealEstateDataUseCase';
 
 const useCase = new GetRealEstateDataUseCase();
 

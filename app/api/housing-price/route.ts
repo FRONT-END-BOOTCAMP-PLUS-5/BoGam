@@ -10,9 +10,9 @@ export async function POST(_request: NextRequest) {
 }
 
 /*
-import { HousingPriceUseCase } from '../../../backend/housingPrice/applications/usecases/HousingPriceUseCase';
-import { HousingPriceRepository } from '../../../backend/housingPrice/infrastructures/repositories/HousingPriceRepository';
-import { HousingPriceRequest } from '../../../backend/housingPrice/applications/dtos/HousingPriceDto';
+import { HousingPriceUseCase } from '@be/applications/housingPrice/usecases/HousingPriceUseCase';
+import { HousingPriceRepository } from '@be/infrastructure/repository/HousingPriceRepository';
+import { HousingPriceRequest } from '@be/applications/housingPrice/dtos/HousingPriceDto';
 
 const repository = new HousingPriceRepository();
 const useCase = new HousingPriceUseCase(repository);

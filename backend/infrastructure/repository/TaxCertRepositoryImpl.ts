@@ -1,5 +1,5 @@
-import { TaxCertRepository } from '../../domain/repository/TaxCertRepository';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../applications/taxCert/dtos/TaxCertDto';
+import { TaxCertRepository } from '@be/domain/repository/TaxCertRepository';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { createCodefAuth, CodefAuth } from '@libs/codefAuth';
 import { processResponse } from '@libs/responseUtils';

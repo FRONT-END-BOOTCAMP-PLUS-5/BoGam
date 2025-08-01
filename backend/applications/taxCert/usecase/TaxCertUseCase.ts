@@ -1,5 +1,5 @@
-import { TaxCertRepository } from '../../../domain/taxCert/repository/TaxCertRepository';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, TaxCertRequestDto, TaxCertResponseDto, TaxCertValidationDto } from '../dtos/TaxCertDto';
+import { TaxCertRepository } from '@be/domain/repository/TaxCertRepository';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, TaxCertRequestDto, TaxCertResponseDto, TaxCertValidationDto } from '@be/applications/taxCert/dtos/TaxCertDto';
 
 export class TaxCertUseCase {
   constructor(private taxCertRepository: TaxCertRepository) {}

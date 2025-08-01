@@ -1,4 +1,4 @@
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../../applications/taxCert/dtos/TaxCertDto';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
 
 export interface TaxCertRepository {
   requestTaxCert(request: TaxCertRequest): Promise<CodefResponse>;

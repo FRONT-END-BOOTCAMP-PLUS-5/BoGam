@@ -10,12 +10,12 @@ export async function POST(_request: NextRequest) {
 }
 
 /*
-import { RebHousingPriceUseCase } from '../../../backend/rebHousingPrice/applications/usecases/RebHousingPriceUseCase';
-import { RebHousingPriceRepository } from '../../../backend/rebHousingPrice/infrastructures/repositories/RebHousingPriceRepository';
+import { RebHousingPriceUseCase } from '@be/applications/rebHousingPrice/usecases/RebHousingPriceUseCase';
+import { RebHousingPriceRepository } from '@be/infrastructure/repository/RebHousingPriceRepository';
 import {
   RebHousingPriceRequest,
   RebHousingPriceTwoWayRequest,
-} from '../../../backend/rebHousingPrice/applications/dtos/RebHousingPriceDto';
+} from '@be/applications/rebHousingPrice/dtos/RebHousingPriceDto';
 
 const repository = new RebHousingPriceRepository();
 const useCase = new RebHousingPriceUseCase(repository);

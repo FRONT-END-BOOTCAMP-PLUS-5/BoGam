@@ -1,9 +1,9 @@
-import { SiseRepository } from '../../../infrastructure/sise/repositories/SiseRepository';
-import { SiseEntity } from '../../../domain/sise/Entities/SiseEntity';
-import { SiseRequest, SiseTwoWayRequest } from '../dtos/SiseDto';
-import { SiseValidator } from '../../../../utils/sise/siseValidator';
-import { SiseCalculator } from '../../../../utils/sise/siseCalculator';
-import { SiseExtractor } from '../../../../utils/sise/siseExtractor';
+import { SiseRepository } from '@be/infrastructure/repository/SiseRepository';
+import { SiseEntity } from '@be/domain/entities/SiseEntity';
+import { SiseRequest, SiseTwoWayRequest } from '@be/applications/sise/dtos/SiseDto';
+import { SiseValidator } from '@utils/sise/siseValidator';
+import { SiseCalculator } from '@utils/sise/siseCalculator';
+import { SiseExtractor } from '@utils/sise/siseExtractor';
 
 /**
  * 시세정보 조회 UseCase

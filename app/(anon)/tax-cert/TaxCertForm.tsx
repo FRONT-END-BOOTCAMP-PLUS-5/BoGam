@@ -1,21 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '../../../backend/applications/taxCert/dtos/TaxCertDto';
-import { extractActualData } from '../../../libs/responseUtils';
-import ApiResultDisplay from '../_components/common/ApiResultDisplay';
-import TaxCertResultDisplay from './TaxCertResultDisplay';
-import { API_ENDPOINTS } from '../../../libs/api-endpoints';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
+import { extractActualData } from '@libs/responseUtils';
+import ApiResultDisplay from '@/(anon)/_components/common/ApiResultDisplay';
+import TaxCertResultDisplay from '@/(anon)/tax-cert/TaxCertResultDisplay';
+import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
-import styles from './TaxCertForm.module.css';
-import commonStyles from './components/Common.module.css';
+import styles from '@/(anon)/tax-cert/TaxCertForm.module.css';
+import commonStyles from '@/(anon)/tax-cert/_components/Common.module.css';
 
 // 분리된 컴포넌트들 import
-import StepGuide from './components/StepGuide';
-import SimpleAuthModal from './components/SimpleAuthModal';
-import CertificateLoginForm from './components/CertificateLoginForm';
-import IdLoginForm from './components/IdLoginForm';
-import SimpleAuthForm from './components/SimpleAuthForm';
+import StepGuide from '@/(anon)/tax-cert/_components/StepGuide';
+import SimpleAuthModal from '@/(anon)/tax-cert/_components/SimpleAuthModal';
+import CertificateLoginForm from '@/(anon)/tax-cert/_components/CertificateLoginForm';
+import IdLoginForm from '@/(anon)/tax-cert/_components/IdLoginForm';
+import SimpleAuthForm from '@/(anon)/tax-cert/_components/SimpleAuthForm';
 
 export default function TaxCertForm() {
   const [formData, setFormData] = useState<TaxCertRequest>({

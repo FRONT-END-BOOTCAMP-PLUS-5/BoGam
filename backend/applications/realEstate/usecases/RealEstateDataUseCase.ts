@@ -1,12 +1,12 @@
-import { CodefAuth, createCodefAuth } from '../../../../libs/codefAuth';
-import { GetRealEstateDataInfrastructure } from '../../../infrastructure/realEstate/repositories/GetRealEstateDataInfrastructure';
+import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { GetRealEstateDataInfrastructure } from '@be/infrastructure/repository/GetRealEstateDataInfrastructure';
 import {
   DetailInquiryRequest,
   GetRealEstateRequest,
   IssueResultRequest,
   SummaryInquiryRequest,
-} from '../dtos/RealEstateRequest';
-import { GetRealEstateResponse } from '../dtos/RealEstateResponse';
+} from '@be/applications/realEstate/dtos/RealEstateRequest';
+import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
 
 /**
  * 부동산등기부등본 조회 UseCase

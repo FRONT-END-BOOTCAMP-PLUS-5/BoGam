@@ -1,5 +1,5 @@
-import { BrokerRepository } from '../../../domain/brokers/Repositories/BrokerRepository';
-import { Broker } from '../../../domain/brokers/Entities/Broker';
+import { BrokerRepository } from '@be/domain/repository/BrokerRepository';
+import { Broker } from '@be/domain/entities/Broker';
 
 export class GetBrokerUsecase {
     constructor(

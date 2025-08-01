@@ -1,13 +1,13 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '../../../libs/codefAuth';
-import { decodeCodefResponse } from '../../../utils/codefDecoder';
+import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { decodeCodefResponse } from '@utils/codefDecoder';
 import {
   loadCodefConfig,
   validateCodefConfig,
-} from '../../../libs/codefEnvironment';
-import { SiseApiResponse, SiseRequest } from '../../applications/sise/dtos/SiseDto';
-import { getCurrentConfig } from '../../../libs/codefEnvironment';
-import { CODEF_API_CONFIG } from '../../../libs/api-endpoints';
+} from '@libs/codefEnvironment';
+import { SiseApiResponse, SiseRequest } from '@be/applications/sise/dtos/SiseDto';
+import { getCurrentConfig } from '@libs/codefEnvironment';
+import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 
 /**
  * 시세정보 조회 Repository 구현체

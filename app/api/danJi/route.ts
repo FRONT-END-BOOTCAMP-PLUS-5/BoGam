@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DanJiUseCase } from '../../../backend/applications/danJi/usecases/DanJiUseCase';
-import { DanJiRepository } from '../../../backend/infrastructure/danJi/repositories/DanJiRepository';
-import { DanJiRequest } from '../../../backend/applications/danJi/dtos/DanJiDto';
+import { DanJiUseCase } from '@be/applications/danJi/usecases/DanJiUseCase';
+import { DanJiRepository } from '@be/infrastructure/repository/DanJiRepository';
+import { DanJiRequest } from '@be/applications/danJi/dtos/DanJiDto';
 
 const repository = new DanJiRepository();
 const useCase = new DanJiUseCase(repository);

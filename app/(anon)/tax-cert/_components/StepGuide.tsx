@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import styles from './StepGuide.module.css';
-import { CodefResponse } from '../../../../backend/applications/taxCert/dtos/TaxCertDto';
-import { extractActualData } from '../../../../libs/responseUtils';
+import styles from '@/(anon)/tax-cert/_components/StepGuide.module.css';
+import { CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
+import { extractActualData } from '@libs/responseUtils';
 
 interface StepGuideProps {
   currentStep: number;

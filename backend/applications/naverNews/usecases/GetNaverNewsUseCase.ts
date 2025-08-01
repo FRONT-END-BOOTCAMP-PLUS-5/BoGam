@@ -1,5 +1,5 @@
-import { NewsRepository } from "../../../domain/naverNews/repository/NewsRepository";
-import { NaverNewsResponseDto } from "../dtos/NaverNewsDto";
+import { NewsRepository } from '@be/domain/repository/NewsRepository';
+import { NaverNewsResponseDto } from '@be/applications/naverNews/dtos/NaverNewsDto';
 
 export class GetNaverNewsUseCase {
   constructor(private readonly repository: NewsRepository) {}

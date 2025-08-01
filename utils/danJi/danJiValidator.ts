@@ -2,7 +2,7 @@ import {
   DanJiRequest,
   DanJiApiResponse,
   DanJiValidationDto,
-} from '../../backend/applications/danJi/dtos/DanJiDto';
+} from '@be/applications/danJi/dtos/DanJiDto';
 
 /**
  * 단지목록 조회 검증 유틸리티

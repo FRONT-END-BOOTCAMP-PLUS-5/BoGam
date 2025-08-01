@@ -1,4 +1,4 @@
-import { DanJiEntity } from '../../../domain/danJi/entities/DanJiEntity';
+import { DanJiEntity } from '@be/domain/entities/DanJiEntity';
 
 /**
  * 단지목록 조회 요청 DTO

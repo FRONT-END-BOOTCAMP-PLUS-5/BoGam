@@ -1,6 +1,6 @@
 'use client';
 
-import { CodefResponse } from '../../../../backend/applications/taxCert/dtos/TaxCertDto';
+import { CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
 import { extractActualData } from '@libs/responseUtils';
 
 interface ApiResultDisplayProps {

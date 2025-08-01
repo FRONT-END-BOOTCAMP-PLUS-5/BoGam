@@ -1,6 +1,6 @@
 // CODEF API OAuth 2.0 인증 라이브러리
 import axios from 'axios';
-import { loadCodefConfig, validateCodefConfig } from './codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 
 export interface CodefAuthConfig {
   clientId: string;
