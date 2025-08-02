@@ -66,33 +66,4 @@ export class SiseValidator {
       errors,
     };
   }
-
-  /**
-   * 시세정보 데이터 검증
-   * @param siseData 시세정보 데이터
-   * @returns 검증 결과
-   */
-  static validateSiseData(siseData: any): {
-    isValid: boolean;
-    message: string;
-  } {
-    if (!siseData) {
-      return {
-        isValid: false,
-        message: '시세정보 데이터가 없습니다.',
-      };
-    }
-
-    if (!siseData.resFixedDate || !siseData.resComplexName) {
-      return {
-        isValid: false,
-        message: '시세정보 데이터가 불완전합니다.',
-      };
-    }
-
-    return {
-      isValid: true,
-      message: '시세정보 데이터가 유효합니다.',
-    };
-  }
 }
