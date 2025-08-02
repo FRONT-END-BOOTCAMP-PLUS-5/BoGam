@@ -15,6 +15,7 @@
     "next": "15.4.4",
     "node-rsa": "^1.1.1",
     "react": "19.1.0",
+    "react-daum-postcode": "^3.2.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
