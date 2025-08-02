@@ -1,15 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// 임시로 비활성화된 라우트
-export async function POST(_request: NextRequest) {
-  void _request; // unused parameter
-  return NextResponse.json(
-    { success: false, message: '이 API는 현재 비활성화되어 있습니다.' },
-    { status: 503 }
-  );
-}
-
-/*
 import { RebHousingPriceUseCase } from '@be/applications/rebHousingPrice/usecases/RebHousingPriceUseCase';
 import { RebHousingPriceRepository } from '@be/infrastructure/repository/RebHousingPriceRepository';
 import {
@@ -95,15 +84,6 @@ export async function POST(request: NextRequest) {
       // 2-way 인증 처리
       const response = await useCase.getRebHousingPrice(body);
 
-      // 응답 검증
-      const validationResult = useCase.validateResponse(response);
-      if (!validationResult.isValid) {
-        return NextResponse.json(
-          { success: false, message: validationResult.message },
-          { status: 400 }
-        );
-      }
-
       return NextResponse.json({
         success: true,
         message: '2-way 인증이 성공적으로 완료되었습니다.',
@@ -113,23 +93,6 @@ export async function POST(request: NextRequest) {
 
     // 일반 공시가격 조회
     const response = await useCase.getRebHousingPrice(body);
-
-    // 응답 데이터 검증
-    const validationResult = useCase.validateResponse(response);
-    if (!validationResult.isValid) {
-      if (validationResult.requiresTwoWayAuth) {
-        return NextResponse.json({
-          success: false,
-          message: '추가인증이 필요합니다.',
-          requiresTwoWayAuth: true,
-          twoWayInfo: response.data,
-        });
-      }
-      return NextResponse.json(
-        { success: false, message: validationResult.message },
-        { status: 400 }
-      );
-    }
 
     // 2-way 인증 필요 여부 확인
     if (useCase.requiresTwoWayAuth(response)) {
@@ -155,6 +118,7 @@ export async function POST(request: NextRequest) {
         statistics,
         rawData: response.data,
       },
+      status: 200,
     });
   } catch (error) {
     console.error('부동산 공시가격(공동주택) 조회 에러:', error);
@@ -164,4 +128,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-*/

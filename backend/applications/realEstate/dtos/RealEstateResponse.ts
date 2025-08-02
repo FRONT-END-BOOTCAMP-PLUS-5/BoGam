@@ -7,7 +7,7 @@ export interface BaseRealEstateResponse {
     message: string;
     extraMessage?: string;
   };
-  data?: any;
+  data?: RealEstateRegisterResponse;
 }
 
 // 주소 목록 항목
@@ -19,7 +19,7 @@ export interface AddressListItem {
   resType?: string; // 구분
 }
 
-// 검색 목록 항목  
+// 검색 목록 항목
 export interface SearchListItem {
   resType: string; // 구분 (1:매매목록, 2:공동담보/전세목록)
   resNumber: string; // 순번
@@ -77,7 +77,12 @@ export interface RealEstateRegisterEntry {
 }
 
 // 등기부등본 조회 성공 응답
-export interface RealEstateRegisterResponse extends BaseRealEstateResponse {
+export interface RealEstateRegisterResponse {
+  result: {
+    code: string;
+    message: string;
+    extraMessage?: string;
+  };
   data: {
     commIssueCode?: string; // 발행코드
     resIssueYN: string; // 발행여부
@@ -89,7 +94,7 @@ export interface RealEstateRegisterResponse extends BaseRealEstateResponse {
     resAddrList?: AddressListItem[]; // 주소 List
     resSearchList?: SearchListItem[]; // 검색 List
     resRegisterEntriesList?: RealEstateRegisterEntry[]; // 등기사항 List
-    
+
     // 추가인증 관련
     continue2Way?: boolean; // 추가 인증 필요 유무
     method?: string; // 추가 인증 방식

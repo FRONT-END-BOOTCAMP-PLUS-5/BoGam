@@ -3,7 +3,7 @@ import {
   DanJiRequest,
   DanJiApiResponse,
 } from '@be/applications/danJi/dtos/DanJiDto';
-import { DanJiValidator } from '@utils/danJi/danJiValidator';
+
 import { DanJiExtractor } from '@utils/danJi/danJiExtractor';
 
 /**
@@ -24,26 +24,8 @@ export class DanJiUseCase {
    * @returns 단지목록 조회 응답 데이터
    */
   async getDanJiList(request: DanJiRequest): Promise<DanJiApiResponse> {
-    // 요청 데이터 검증
-    const validation = DanJiValidator.validateRequest(request);
-    if (!validation.isValid) {
-      throw new Error(`요청 데이터 검증 실패: ${validation.errors.join(', ')}`);
-    }
-
     // Repository를 통해 API 호출
     return this.repository.fetchDanJiList(request);
-  }
-
-  /**
-   * 응답 데이터 검증
-   * @param response API 응답
-   * @returns 검증 결과
-   */
-  validateResponse(response: DanJiApiResponse): {
-    isValid: boolean;
-    message: string;
-  } {
-    return DanJiValidator.validateResponse(response);
   }
 
   /**
