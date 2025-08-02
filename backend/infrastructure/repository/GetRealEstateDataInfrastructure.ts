@@ -1,9 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
   DetailInquiryRequest,
   GetRealEstateRequest,
@@ -11,7 +8,7 @@ import {
   SummaryInquiryRequest,
 } from '@be/applications/realEstate/dtos/RealEstateRequest';
 import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
-import { decodeCodefResponse } from '@utils/codefDecoder';
+import { processResponse } from '@libs/responseUtils';
 
 /**
  * 부동산등기부등본 조회 API 인프라스트럭처
@@ -69,19 +66,20 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      console.log(response);
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: GetRealEstateResponse =
+        processResponse<GetRealEstateResponse>(response.data);
 
-      const decodedResponse = decodeCodefResponse(
-        response as unknown as string
-      );
+      console.log('✅ 부동산등기부등본 조회 성공:', {
+        status: response.status,
+        resultCode: data?.result?.code,
+        resultMessage: data?.result?.message,
+        hasData: !!data?.data,
+      });
 
-      console.log(decodedResponse);
-
-      // 응답 데이터 디코딩 후 반환
-      return decodedResponse.data as unknown as GetRealEstateResponse;
-    } catch (error) {
+      return data;
+    } catch (error: unknown) {
       console.error('❌ 부동산등기부등본 조회 실패:', error);
-      this.handleError(error);
       throw error;
     }
   }
@@ -125,198 +123,29 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      const decodedResponse = decodeCodefResponse(
-        response as unknown as string
-      );
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: GetRealEstateResponse =
+        processResponse<GetRealEstateResponse>(response.data);
 
-      console.log('✅ 2-way 인증 처리 완료');
+      console.log('✅ 2-way 인증 처리 성공:', {
+        status: response.status,
+        resultCode: data?.result?.code,
+        resultMessage: data?.result?.message,
+        hasData: !!data?.data,
+      });
 
-      return decodedResponse.data as unknown as GetRealEstateResponse;
-    } catch (error) {
+      return data;
+    } catch (error: unknown) {
       console.error('❌ 2-way 인증 처리 실패:', error);
-      this.handleError(error);
       throw error;
     }
-  }
-
-  /**
-   * 간단한 메소드들을 제공하는 편의 함수들
-   */
-
-  /**
-   * 고유번호로 부동산 정보 조회
-   * @param uniqueNo 부동산 고유번호
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async getRealEstateByUniqueNo(
-    uniqueNo: string,
-    password: string,
-    options: {
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    const request: GetRealEstateRequest = {
-      organization: options.organization || '0002',
-      phoneNo: options.phoneNo || '01000000000',
-      password,
-      inquiryType: '0',
-      uniqueNo,
-      issueType: options.issueType || '1',
-    };
-
-    return this.getRealEstateRegistry(request);
-  }
-
-  /**
-   * 간편검색으로 부동산 검색
-   * @param address 검색 주소
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async searchRealEstateByAddress(
-    address: string,
-    password: string,
-    options: {
-      realtyType?: string;
-      addrSido?: string;
-      recordStatus?: string;
-      startPageNo?: string;
-      pageCount?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-      dong?: string;
-      ho?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    const request: GetRealEstateRequest = {
-      organization: options.organization || '0002',
-      phoneNo: options.phoneNo || '01000000000',
-      password,
-      inquiryType: '1',
-      address,
-      realtyType: options.realtyType,
-      addr_sido: options.addrSido || '',
-      recordStatus: options.recordStatus || '0',
-      startPageNo: options.startPageNo,
-      pageCount: options.pageCount || '100',
-      issueType: options.issueType || '1',
-      dong: options.dong || '',
-      ho: options.ho || '',
-    };
-
-    return this.getRealEstateRegistry(request);
-  }
-
-  /**
-   * 소재지번으로 부동산 검색
-   * @param addrLotNumber 지번
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async searchRealEstateByLotNumber(
-    addrLotNumber: string,
-    password: string,
-    options: {
-      addrSido?: string;
-      addrSigungu?: string;
-      addrDong?: string;
-      realtyType?: string;
-      inputSelect?: string;
-      buildingName?: string;
-      dong?: string;
-      ho?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    const request: GetRealEstateRequest = {
-      organization: options.organization || '0002',
-      phoneNo: options.phoneNo || '01000000000',
-      password,
-      inquiryType: '2',
-      addr_sido: options.addrSido || '',
-      addr_dong: options.addrDong || '',
-      addr_lotNumber: addrLotNumber,
-      realtyType: options.realtyType || '',
-      inputSelect: options.inputSelect || '0',
-      issueType: options.issueType || '1',
-    };
-
-    return this.getRealEstateRegistry(request);
-  }
-
-  /**
-   * 도로명주소로 부동산 검색
-   * @param roadName 도로명
-   * @param buildingNumber 건물번호
-   * @param password 비밀번호
-   * @param options 추가 옵션
-   * @returns 응답 데이터
-   */
-  async searchRealEstateByRoadAddress(
-    roadName: string,
-    buildingNumber: string,
-    password: string,
-    options: {
-      addrSido?: string;
-      addrSigungu?: string;
-      realtyType?: string;
-      dong?: string;
-      ho?: string;
-      issueType?: string;
-      phoneNo?: string;
-      organization?: string;
-    } = {}
-  ): Promise<GetRealEstateResponse> {
-    const request: GetRealEstateRequest = {
-      organization: options.organization || '0002',
-      phoneNo: options.phoneNo || '01000000000',
-      password,
-      inquiryType: '3',
-      addr_sido: options.addrSido || '',
-      addr_sigungu: options.addrSigungu || '',
-      addr_roadName: roadName,
-      addr_buildingNumber: buildingNumber,
-      realtyType: options.realtyType || '',
-      dong: options.dong || '',
-      ho: options.ho || '',
-      issueType: options.issueType || '1',
-      originData: '', // IssueResultRequest 필수 필드
-    };
-
-    return this.getRealEstateRegistry(request);
-  }
-
-  // ===== 유틸리티 메소드 =====
-
-  /**
-   * 액세스 토큰 획득
-   */
-  async getAccessToken(): Promise<string> {
-    return this.codefAuth.getAccessToken();
-  }
-
-  /**
-   * 토큰 캐시 초기화
-   */
-  clearTokenCache(): void {
-    // 현재 간단한 구현에서는 로그만 출력
-    console.log('🔄 토큰 캐시 초기화');
   }
 
   /**
    * 에러 처리
    * @param error 에러 객체
    */
-  private handleError(error: any): void {
+  private handleError(error: AxiosError | Error): void {
     if ('response' in error && error.response) {
       // 서버 응답이 있는 경우
       const { status, data } = error.response;

@@ -1,15 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// 임시로 비활성화된 라우트
-export async function POST(_request: NextRequest) {
-  void _request; // unused parameter
-  return NextResponse.json(
-    { success: false, message: '이 API는 현재 비활성화되어 있습니다.' },
-    { status: 503 }
-  );
-}
-
-/*
 import { HousingPriceUseCase } from '@be/applications/housingPrice/usecases/HousingPriceUseCase';
 import { HousingPriceRepository } from '@be/infrastructure/repository/HousingPriceRepository';
 import { HousingPriceRequest } from '@be/applications/housingPrice/dtos/HousingPriceDto';
@@ -71,15 +60,6 @@ export async function POST(request: NextRequest) {
     // 부동산 공시가격 조회
     const response = await useCase.getHousingPrice(body);
 
-    // 응답 데이터 검증
-    const validationResult = useCase.validateResponse(response);
-    if (!validationResult.isValid) {
-      return NextResponse.json(
-        { success: false, message: validationResult.message },
-        { status: 400 }
-      );
-    }
-
     // 공시가격 데이터 추출
     const housingPriceList = useCase.extractHousingPriceList(response);
     const statistics = useCase.getStatistics(response);
@@ -94,6 +74,7 @@ export async function POST(request: NextRequest) {
         statistics,
         rawData: response.data,
       },
+      status: 200,
     });
   } catch (error) {
     console.error('부동산 공시가격 조회 에러:', error);
@@ -103,4 +84,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-*/

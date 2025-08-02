@@ -1,11 +1,7 @@
 import { DanJiRequest } from '@be/applications/danJi/dtos/DanJiDto';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { decodeCodefResponse } from '@utils/codefDecoder';
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codefEnvironment';
-import { getCurrentConfig } from '@libs/codefEnvironment';
+import { processResponse } from '@libs/responseUtils';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import axios from 'axios';
 import { DanJiApiResponse } from '@be/applications/danJi/dtos/DanJiDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
@@ -52,14 +48,19 @@ export class DanJiRepository {
         timeout: 300000, // 300초 (5분)
       });
 
-      console.log(response);
-
-      // 응답 데이터 디코딩 후 반환
-      const decodedResponse = decodeCodefResponse(
-        response as unknown as string
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: DanJiApiResponse = processResponse<DanJiApiResponse>(
+        response.data
       );
 
-      return decodedResponse.data as unknown as DanJiApiResponse;
+      console.log('✅ 단지목록 조회 성공:', {
+        status: response.status,
+        resultCode: data?.result?.code,
+        resultMessage: data?.result?.message,
+        hasData: !!data?.data,
+      });
+
+      return data;
     } catch (error) {
       console.error('❌ 단지목록 조회 실패:', error);
       throw new Error(`단지목록 조회에 실패했습니다: ${error}`);
