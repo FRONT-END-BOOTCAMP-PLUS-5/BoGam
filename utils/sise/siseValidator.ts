@@ -2,7 +2,7 @@ import {
   SiseRequest,
   SiseTwoWayRequest,
   SiseValidationDto,
-} from '../../backend/sise/applications/dtos/SiseDto';
+} from '@be/applications/sise/dtos/SiseDto';
 
 /**
  * 시세정보 요청 데이터 검증 유틸리티
