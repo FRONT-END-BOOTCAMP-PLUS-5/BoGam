@@ -76,24 +76,7 @@ export async function POST(request: NextRequest) {
     };
 
     // UseCase 호출
-    const response = await useCase.getRealEstateByUniqueNo(apiRequest);
-
-    // 응답 검증
-    const validationResult = useCase.validateResponse(response);
-    if (!validationResult.isValid) {
-      if (validationResult.requiresTwoWayAuth) {
-        return NextResponse.json({
-          success: false,
-          message: '추가인증이 필요합니다.',
-          requiresTwoWayAuth: true,
-          twoWayInfo: response.data,
-        });
-      }
-      return NextResponse.json(
-        { success: false, message: validationResult.message },
-        { status: 400 }
-      );
-    }
+    const response = await useCase.getRealEstateRegistry(apiRequest);
 
     // 2-way 인증 필요 여부 확인
     if (useCase.requiresTwoWayAuth(response)) {

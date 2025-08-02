@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     };
 
     // UseCase 호출
-    const response = await useCase.searchRealEstateByRoadAddress(apiRequest);
+    const response = await useCase.getRealEstateRegistry(apiRequest);
 
     // 응답 검증은 주석 처리 (개발 중)
     // const validationResult = useCase.validateResponse(response);
