@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateTransactionUseCase } from '../../../../../backend/realEstate/applications/usecases/GetRealEstateTransactionUseCase';
-import { GetRealEstateTransactionRequest } from '../../../../../backend/realEstate/applications/dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '../../../../../backend/realEstate/applications/dtos/GetRealEstateTransactionResponse';
+import { GetRealEstateTransactionUseCase } from '@be/applications/realEstate/usecases/GetRealEstateTransactionUseCase';
+import { GetRealEstateTransactionRequest } from '@be/applications/realEstate/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '@be/applications/realEstate/dtos/GetRealEstateTransactionResponse';
 
 /**
  * 실거래가 조회 API
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const DEAL_YMD = searchParams.get('DEAL_YMD');
     const numOfRows = searchParams.get('numOfRows') || '10';
     const pageNo = searchParams.get('pageNo') || '1';
-    
+
     // 필수 파라미터 검증
     if (!LAWD_CD) {
       return NextResponse.json(
@@ -23,14 +23,14 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
-    
+
     if (!DEAL_YMD) {
       return NextResponse.json(
         { success: false, message: 'DEAL_YMD 파라미터가 필요합니다.' },
         { status: 400 }
       );
     }
-    
+
     // 2. 쿼리를 위해 전달할 DTO 생성한 후
     const requestData: GetRealEstateTransactionRequest = {
       LAWD_CD,
@@ -38,26 +38,29 @@ export async function GET(request: NextRequest) {
       numOfRows,
       pageNo,
     };
-    
+
     // 3. 쿼리를 위해 전달할 DTO를 Usecase에게 전달해서 실행한다.
     const useCase = new GetRealEstateTransactionUseCase();
-    const response: GetRealEstateTransactionResponse = await useCase.execute(requestData);
+    const response: GetRealEstateTransactionResponse = await useCase.getApartmentTransactions(requestData);
     
     // 응답 데이터를 JSON 형식으로 반환 (DTO 타입 명시)
     return NextResponse.json({
       success: true,
       data: response as GetRealEstateTransactionResponse,
-    }, { status: 200 });
-    
+      status: 200,
+    });
   } catch (error) {
     console.error('실거래가 조회 API 에러:', error);
-    
+
     return NextResponse.json(
-      { 
-        success: false, 
-        message: error instanceof Error ? error.message : '서버 내부 오류가 발생했습니다.' 
+      {
+        success: false,
+        message:
+          error instanceof Error
+            ? error.message
+            : '서버 내부 오류가 발생했습니다.',
       },
       { status: 500 }
     );
   }
-} 
+}

@@ -1,4 +1,4 @@
-import { loadCodefConfig, validateCodefConfig } from './codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 
 export async function encryptWithRSA(text: string, publicKey: string): Promise<string> {
   try {
