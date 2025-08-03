@@ -1,7 +1,9 @@
 import { SiseRepository } from '@be/infrastructure/repository/SiseRepository';
 import { SiseEntity } from '@be/domain/entities/SiseEntity';
-import { SiseRequest, SiseTwoWayRequest } from '@be/applications/sise/dtos/SiseDto';
-import { SiseValidator } from '@utils/sise/siseValidator';
+import {
+  SiseRequest,
+  SiseTwoWayRequest,
+} from '@be/applications/sise/dtos/SiseDto';
 import { SiseCalculator } from '@utils/sise/siseCalculator';
 import { SiseExtractor } from '@utils/sise/siseExtractor';
 
@@ -29,18 +31,6 @@ export class SiseUseCase {
     const siseData = response.data as SiseEntity;
 
     return siseData;
-  }
-
-  /**
-   * 시세정보 데이터 검증
-   * @param siseData 시세정보 데이터
-   * @returns 검증 결과
-   */
-  validateSiseData(siseData: SiseEntity): {
-    isValid: boolean;
-    message: string;
-  } {
-    return SiseValidator.validateSiseData(siseData);
   }
 
   /**
