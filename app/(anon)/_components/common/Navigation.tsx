@@ -9,19 +9,21 @@ export default function Navigation() {
   const navItems = [
     { href: '/', label: '홈' },
     { href: '/tax-cert', label: '납세증명서' },
+    { href: '/estate-list', label: '단지목록' },
+    { href: '/market-price', label: '시세정보' },
   ];
 
   return (
-    <nav className="bg-white shadow-sm border-b">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">
+    <nav className='bg-white shadow-sm border-b'>
+      <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='flex justify-between h-16'>
+          <div className='flex'>
+            <div className='flex-shrink-0 flex items-center'>
+              <h1 className='text-xl font-bold text-gray-900'>
                 CODEF API 테스트
               </h1>
             </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <div className='hidden sm:ml-6 sm:flex sm:space-x-8'>
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -41,4 +43,4 @@ export default function Navigation() {
       </div>
     </nav>
   );
-} 
+}
