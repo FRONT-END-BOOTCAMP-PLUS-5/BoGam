@@ -1,11 +1,13 @@
 import axios from "axios";
+import { NaverNews } from "@be/domain/entities/NaverNews";
 import { NewsRepository } from "@be/domain/repository/NewsRepository";
-import { NaverNewsResponseDto } from "@be/applications/naverNews/dtos/NaverNewsDto";
+import { NaverNewsItemDto, NaverNewsResponseDto } from "@be/applications/naverNews/dtos/NaverNewsDto";
+
 const NAVER_CLIENT_ID = process.env.NAVER_CLIENT_ID!;
 const NAVER_CLIENT_SECRET = process.env.NAVER_CLIENT_SECRET_NO!;
 
-export class NaverNewsRepository implements NewsRepository {
-  async fetchNews(): Promise<NaverNewsResponseDto> {
+export class NewsRepositoryImpl implements NewsRepository {
+  async fetchNews(): Promise<NaverNews[]> {
     const response = await axios.get<NaverNewsResponseDto>(
       "https://openapi.naver.com/v1/search/news.json",
       {
@@ -17,6 +19,8 @@ export class NaverNewsRepository implements NewsRepository {
       }
     );
 
-    return response.data;
+    return response.data.items.map((item: NaverNewsItemDto) =>
+      NaverNews.fromDto(item)
+    );
   }
 }
