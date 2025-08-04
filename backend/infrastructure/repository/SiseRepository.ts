@@ -1,12 +1,11 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { decodeCodefResponse } from '@utils/codefDecoder';
+import { processResponse } from '@libs/responseUtils';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codefEnvironment';
-import { SiseApiResponse, SiseRequest } from '@be/applications/sise/dtos/SiseDto';
-import { getCurrentConfig } from '@libs/codefEnvironment';
+  SiseApiResponse,
+  SiseRequest,
+} from '@be/applications/sise/dtos/SiseDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 
 /**
@@ -53,14 +52,19 @@ export class SiseRepository {
         timeout: 300000, // 300초 (5분)
       });
 
-      console.log(response);
-
-      // 응답 데이터 디코딩 후 반환
-      const decodedResponse = decodeCodefResponse(
-        response as unknown as string
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: SiseApiResponse = processResponse<SiseApiResponse>(
+        response.data
       );
 
-      return decodedResponse.data as unknown as SiseApiResponse;
+      console.log('✅ 시세정보 조회 성공:', {
+        status: response.status,
+        resultCode: data?.result?.code,
+        resultMessage: data?.result?.message,
+        hasData: !!data?.data,
+      });
+
+      return data;
     } catch (error) {
       console.error('❌ 시세정보 조회 실패:', error);
       throw new Error(`시세정보 조회에 실패했습니다: ${error}`);
