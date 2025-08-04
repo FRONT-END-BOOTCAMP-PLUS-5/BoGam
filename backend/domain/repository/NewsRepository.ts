@@ -1,5 +1,5 @@
-import { NaverNewsResponseDto } from "@be/applications/naverNews/dtos/NaverNewsDto";
+import { NaverNews } from '@be/domain/entities/NaverNews';
 
 export interface NewsRepository {
-  fetchNews(): Promise<NaverNewsResponseDto>;
+  fetchNews(): Promise<NaverNews[]>;
 }

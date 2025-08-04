@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
 import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
