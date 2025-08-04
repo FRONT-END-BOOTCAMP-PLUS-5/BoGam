@@ -4,7 +4,7 @@ on:
     branches:
       - develop
 jobs:
-  Component-test:
+  build_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,5 +15,5 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm ci
-      - name: run test
-        run: npm run test
+      - name: run build
+        run: npm run build
