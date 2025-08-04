@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
   RebHousingPriceRequest,
   RebHousingPriceTwoWayRequest,
@@ -26,10 +25,6 @@ export class RebHousingPriceRepository {
     request: RebHousingPriceRequest | RebHousingPriceTwoWayRequest
   ): Promise<RebHousingPriceApiResponse> {
     try {
-      // CODEF 설정 검증
-      const config = loadCodefConfig();
-      validateCodefConfig(config);
-
       this.codefAuth = createCodefAuth();
 
       // 액세스 토큰 획득

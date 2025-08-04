@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
   HousingPriceRequest,
   HousingPriceApiResponse,
@@ -25,10 +24,6 @@ export class HousingPriceRepository {
     request: HousingPriceRequest
   ): Promise<HousingPriceApiResponse> {
     try {
-      // CODEF 설정 검증
-      const config = loadCodefConfig();
-      validateCodefConfig(config);
-
       this.codefAuth = createCodefAuth();
 
       // 액세스 토큰 획득
