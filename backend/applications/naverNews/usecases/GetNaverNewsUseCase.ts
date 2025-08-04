@@ -1,10 +1,10 @@
+import { NaverNews } from '@be/domain/entities/NaverNews';
 import { NewsRepository } from '@be/domain/repository/NewsRepository';
-import { NaverNewsResponseDto } from '@be/applications/naverNews/dtos/NaverNewsDto';
 
 export class GetNaverNewsUseCase {
   constructor(private readonly repository: NewsRepository) {}
 
-  async fetchNaverNews(): Promise<NaverNewsResponseDto> {
+  async fetchNaverNews(): Promise<NaverNews[]> {
     return await this.repository.fetchNews();
   }
 }

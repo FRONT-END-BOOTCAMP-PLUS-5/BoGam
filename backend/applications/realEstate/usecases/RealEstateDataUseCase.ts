@@ -6,7 +6,10 @@ import {
   IssueResultRequest,
   SummaryInquiryRequest,
 } from '@be/applications/realEstate/dtos/RealEstateRequest';
-import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
+import {
+  AddressListItem,
+  GetRealEstateResponse,
+} from '@be/applications/realEstate/dtos/RealEstateResponse';
 
 /**
  * 부동산등기부등본 조회 UseCase
@@ -69,44 +72,6 @@ export class GetRealEstateDataUseCase {
   // ===== 응답 검증 및 처리 =====
 
   /**
-   * API 응답 검증
-   * @param response API 응답
-   * @returns 검증 결과
-   */
-  validateResponse(response: GetRealEstateResponse): {
-    isValid: boolean;
-    message?: string;
-    requiresTwoWayAuth?: boolean;
-  } {
-    // 응답 코드 확인
-    if (!response.result) {
-      return { isValid: false, message: '응답 형식이 올바르지 않습니다.' };
-    }
-
-    const { code, message } = response.result;
-
-    // 성공 코드 확인
-    if (code === 'CF-00000') {
-      return { isValid: true };
-    }
-
-    // 추가인증 필요 (CF-03002)
-    if (code === 'CF-03002') {
-      return {
-        isValid: false,
-        requiresTwoWayAuth: true,
-        message: message || '추가인증이 필요합니다.',
-      };
-    }
-
-    // 기타 오류
-    return {
-      isValid: false,
-      message: message || `API 오류: ${code}`,
-    };
-  }
-
-  /**
    * 2-way 인증 필요 여부 확인
    * @param response API 응답
    * @returns 2-way 인증 필요 여부
@@ -132,7 +97,9 @@ export class GetRealEstateDataUseCase {
     jti: string;
     twoWayTimestamp: number;
     method?: string;
-    extraInfo?: any;
+    extraInfo?: {
+      resAddrList?: AddressListItem[];
+    };
   } | null {
     const data = response.data;
     if (!data) return null;
