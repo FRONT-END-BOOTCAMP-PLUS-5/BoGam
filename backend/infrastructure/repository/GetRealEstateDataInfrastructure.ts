@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
 import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
@@ -8,7 +8,7 @@ import {
   SummaryInquiryRequest,
 } from '@be/applications/realEstate/dtos/RealEstateRequest';
 import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
-import { decodeCodefResponse } from '@utils/codefDecoder';
+import { processResponse } from '@libs/responseUtils';
 
 /**
  * 부동산등기부등본 조회 API 인프라스트럭처
@@ -66,19 +66,20 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      console.log(response);
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: GetRealEstateResponse =
+        processResponse<GetRealEstateResponse>(response.data);
 
-      const decodedResponse = decodeCodefResponse(
-        response as unknown as string
-      );
+      console.log('✅ 부동산등기부등본 조회 성공:', {
+        status: response.status,
+        resultCode: data?.result?.code,
+        resultMessage: data?.result?.message,
+        hasData: !!data?.data,
+      });
 
-      console.log(decodedResponse);
-
-      // 응답 데이터 디코딩 후 반환
-      return decodedResponse.data as unknown as GetRealEstateResponse;
-    } catch (error) {
+      return data;
+    } catch (error: unknown) {
       console.error('❌ 부동산등기부등본 조회 실패:', error);
-      this.handleError(error);
       throw error;
     }
   }
@@ -122,11 +123,18 @@ export class GetRealEstateDataInfrastructure {
         }
       );
 
-      const decodedResponse = decodeCodefResponse(
-        response as unknown as string
-      );
+      // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
+      const data: GetRealEstateResponse =
+        processResponse<GetRealEstateResponse>(response.data);
 
-      return decodedResponse.data as unknown as GetRealEstateResponse;
+      console.log('✅ 2-way 인증 처리 성공:', {
+        status: response.status,
+        resultCode: data?.result?.code,
+        resultMessage: data?.result?.message,
+        hasData: !!data?.data,
+      });
+
+      return data;
     } catch (error: unknown) {
       console.error('❌ 2-way 인증 처리 실패:', error);
       throw error;
@@ -137,7 +145,7 @@ export class GetRealEstateDataInfrastructure {
    * 에러 처리
    * @param error 에러 객체
    */
-  private handleError(error: AxiosError | Error): void {
+  private handleError(error: any): void {
     if ('response' in error && error.response) {
       // 서버 응답이 있는 경우
       const { status, data } = error.response;
