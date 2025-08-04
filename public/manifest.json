@@ -1,0 +1,27 @@
+{
+  "name": "전세보감 - 부동산 정보 서비스",
+  "short_name": "전세보감",
+  "description": "부동산 정보를 한눈에 확인하는 서비스",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "finance", "lifestyle"],
+  "lang": "ko",
+  "dir": "ltr"
+} 
