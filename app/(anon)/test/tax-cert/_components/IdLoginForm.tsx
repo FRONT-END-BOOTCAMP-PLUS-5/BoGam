@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { TaxCertRequest } from '@be/applications/taxCert/dtos/TaxCertDto';
-import commonStyles from '@/(anon)/tax-cert/_components/Common.module.css';
+import commonStyles from '@/(anon)/test/tax-cert/_components/Common.module.css';
 
 interface IdLoginFormProps {
   formData: TaxCertRequest;
