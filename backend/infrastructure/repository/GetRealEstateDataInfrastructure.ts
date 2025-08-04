@@ -145,7 +145,7 @@ export class GetRealEstateDataInfrastructure {
    * 에러 처리
    * @param error 에러 객체
    */
-  private handleError(error: AxiosError | Error): void {
+  private handleError(error: any): void {
     if ('response' in error && error.response) {
       // 서버 응답이 있는 경우
       const { status, data } = error.response;
