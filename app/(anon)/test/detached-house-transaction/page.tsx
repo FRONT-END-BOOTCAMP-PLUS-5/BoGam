@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import styles from '@/(anon)/test/transaction/page.module.css';
 
-interface RealEstateTransactionItem {
-  aptDong: string;
-  aptNm: string;
+interface DetachedHouseTransactionItem {
   buildYear: string;
   buyerGbn: string;
   cdealDay: string;
@@ -16,13 +14,12 @@ interface RealEstateTransactionItem {
   dealYear: string;
   dealingGbn: string;
   estateAgentSggNm: string;
-  excluUseAr: string;
-  floor: string;
+  houseType: string;
   jibun: string;
-  landLeaseholdGbn: string;
-  rgstDate: string;
+  plottageAr: string;
   sggCd: string;
   slerGbn: string;
+  totalFloorAr: string;
   umdNm: string;
 }
 
@@ -35,7 +32,7 @@ interface TransactionResponse {
     };
     body: {
       items: {
-        item: RealEstateTransactionItem[];
+        item: DetachedHouseTransactionItem[];
       };
       numOfRows: string;
       pageNo: string;
@@ -44,14 +41,14 @@ interface TransactionResponse {
   };
 }
 
-export default function TransactionTestPage() {
+export default function DetachedHouseTransactionTestPage() {
   const [formData, setFormData] = useState({
     LAWD_CD: '11680',
     DEAL_YMD: '202406',
     pageNo: '1',
     numOfRows: '10',
   });
-  const [transactionList, setTransactionList] = useState<RealEstateTransactionItem[]>([]);
+  const [transactionList, setTransactionList] = useState<DetachedHouseTransactionItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,10 +72,10 @@ export default function TransactionTestPage() {
         numOfRows: formData.numOfRows,
       });
 
-      const response = await fetch(`/api/transaction/apartment?${params}`);
+      const response = await fetch(`/api/transaction/detached-house?${params}`);
       const data: TransactionResponse = await response.json();
       
-      console.log('API Response:', data); // 디버깅용
+      console.log('API Response:', data);
       
       if (data.success && data.data?.body?.items?.item) {
         setTransactionList(data.data.body.items.item);
@@ -96,7 +93,7 @@ export default function TransactionTestPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>실거래가 조회 테스트</h1>
+      <h1 className={styles.title}>단독/다가구 매매 실거래가 조회 테스트</h1>
       
       <div className={styles.form}>
         <div className={styles.formGroup}>
@@ -169,7 +166,7 @@ export default function TransactionTestPage() {
           disabled={loading}
           className={styles.button}
         >
-          {loading ? '조회 중...' : '실거래가 조회'}
+          {loading ? '조회 중...' : '단독/다가구 실거래가 조회'}
         </button>
       </div>
 
@@ -185,12 +182,11 @@ export default function TransactionTestPage() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>아파트명</th>
-                <th>동</th>
+                <th>주택유형</th>
                 <th>거래일</th>
                 <th>거래금액</th>
-                <th>전용면적</th>
-                <th>층</th>
+                <th>대지면적</th>
+                <th>연면적</th>
                 <th>지번</th>
                 <th>읍면동</th>
                 <th>거래구분</th>
@@ -202,12 +198,11 @@ export default function TransactionTestPage() {
             <tbody>
               {transactionList.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.aptNm}</td>
-                  <td>{item.aptDong}</td>
+                  <td>{item.houseType}</td>
                   <td>{`${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`}</td>
                   <td>{item.dealAmount}</td>
-                  <td>{item.excluUseAr}</td>
-                  <td>{item.floor}</td>
+                  <td>{item.plottageAr}</td>
+                  <td>{item.totalFloorAr}</td>
                   <td>{item.jibun}</td>
                   <td>{item.umdNm}</td>
                   <td>{item.dealingGbn}</td>
