@@ -1,5 +1,5 @@
-import { GetRealEstateTransactionRequest } from '@be/applications/realEstate/dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '@be/applications/realEstate/dtos/GetRealEstateTransactionResponse';
+import { GetRealEstateTransactionRequest } from '@be/applications/transaction/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '@be/applications/transaction/dtos/GetRealEstateTransactionResponse';
 import { RealEstateTransactionRepository } from '@be/infrastructure/repository/RealEstateTransactionRepository';
 
 /**
@@ -14,7 +14,79 @@ export class GetRealEstateTransactionUseCase {
   }
 
   /**
-   * 아파트 전월세 실거래가 조회
+   * 연립다세대 매매 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async getRowHouseTradeTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const response = await this.repository.findRowHouseTradeAll(request);
+      
+      // 계약일 포맷팅 (YYYY-MM-DD 형식)
+      if (response.body.items.item) {
+        response.body.items.item = response.body.items.item.map(item => ({
+          ...item,
+          dealDate: `${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`,
+        }));
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('연립다세대 매매 실거래가 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 오피스텔 매매 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async getOfficetelTradeTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const response = await this.repository.findOfficetelTradeAll(request);
+      
+      // 계약일 포맷팅 (YYYY-MM-DD 형식)
+      if (response.body.items.item) {
+        response.body.items.item = response.body.items.item.map(item => ({
+          ...item,
+          dealDate: `${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`,
+        }));
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('오피스텔 매매 실거래가 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 단독/다가구 매매 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async getDetachedHouseTradeTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const response = await this.repository.findDetachedHouseTradeAll(request);
+      
+      // 계약일 포맷팅 (YYYY-MM-DD 형식)
+      if (response.body.items.item) {
+        response.body.items.item = response.body.items.item.map(item => ({
+          ...item,
+          dealDate: `${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`,
+        }));
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('단독/다가구 매매 실거래가 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 아파트 매매 실거래가 조회 (기본)
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
@@ -32,7 +104,31 @@ export class GetRealEstateTransactionUseCase {
       
       return response;
     } catch (error) {
-      console.error('실거래가 조회 실패:', error);
+      console.error('아파트 매매 실거래가 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 아파트 전월세 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async getApartmentRentTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const response = await this.repository.findApartmentRentAll(request);
+      
+      // 계약일 포맷팅 (YYYY-MM-DD 형식)
+      if (response.body.items.item) {
+        response.body.items.item = response.body.items.item.map(item => ({
+          ...item,
+          dealDate: `${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`,
+        }));
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('아파트 전월세 실거래가 조회 실패:', error);
       throw error;
     }
   }

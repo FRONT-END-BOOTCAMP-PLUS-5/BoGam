@@ -1,8 +1,8 @@
 /**
- * 실거래가 조회 응답 DTO
+ * 연립다세대 매매 실거래가 조회 응답 DTO
  * 클린 아키텍처의 Application 레이어
  */
-export interface GetRealEstateTransactionResponse {
+export interface GetRowHouseTransactionResponse {
   /** 응답 헤더 */
   header: {
     /** 결과 코드 */
@@ -16,7 +16,7 @@ export interface GetRealEstateTransactionResponse {
     /** 아이템 목록 */
     items: {
       /** 실거래가 아이템 배열 */
-      item: GetRealEstateTransactionItem[];
+      item: GetRowHouseTransactionItem[];
     };
     /** 한 페이지 결과 수 */
     numOfRows: string;
@@ -28,41 +28,47 @@ export interface GetRealEstateTransactionResponse {
 }
 
 /**
- * 실거래가 아이템 DTO
+ * 연립다세대 매매 실거래가 아이템 DTO
  */
-export interface GetRealEstateTransactionItem {
-  /** 아파트명 */
-  aptNm: string;
+export interface GetRowHouseTransactionItem {
   /** 건축년도 */
   buildYear: string;
-  /** 계약기간 */
-  contractTerm: string;
-  /** 계약구분 */
-  contractType: string;
+  /** 매수자 구분 */
+  buyerGbn: string;
   /** 계약일 */
+  cdealDay: string;
+  /** 계약구분 */
+  cdealType: string;
+  /** 거래금액 */
+  dealAmount: string;
+  /** 거래일 */
   dealDay: string;
-  /** 계약월 */
+  /** 거래월 */
   dealMonth: string;
-  /** 계약년 */
+  /** 거래년 */
   dealYear: string;
-  /** 보증금 */
-  deposit: string;
+  /** 거래구분 */
+  dealingGbn: string;
+  /** 중개사소재지 */
+  estateAgentSggNm: string;
   /** 전용면적 */
   excluUseAr: string;
   /** 층 */
   floor: string;
+  /** 주택유형 */
+  houseType: string;
   /** 지번 */
   jibun: string;
-  /** 월세 */
-  monthlyRent: string;
-  /** 이전 보증금 */
-  preDeposit: string;
-  /** 이전 월세 */
-  preMonthlyRent: string;
+  /** 대지면적 */
+  landAr: string;
+  /** 주택명 */
+  mhouseNm: string;
+  /** 등기일자 */
+  rgstDate: string;
   /** 시군구코드 */
   sggCd: string;
+  /** 매도자 구분 */
+  slerGbn: string;
   /** 읍면동명 */
   umdNm: string;
-  /** 사용승인일 */
-  useRRRight: string;
 } 
