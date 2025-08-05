@@ -195,7 +195,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/okand/front/likelion/BoGam/prisma/generated",
+      "value": "/Users/jihye/BoGam/prisma/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -209,7 +209,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/okand/front/likelion/BoGam/prisma/schema.prisma",
+    "sourceFilePath": "/Users/jihye/BoGam/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
