@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import styles from '@/(anon)/tax-cert/_components/StepGuide.module.css';
+import styles from '@/(anon)/test/tax-cert/_components/StepGuide.module.css';
 import { CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
 import { extractActualData } from '@libs/responseUtils';
 

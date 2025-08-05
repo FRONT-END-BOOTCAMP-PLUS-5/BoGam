@@ -2,7 +2,7 @@
 
 import { CodefResponse, TaxCertRespiteItem, TaxCertArrearsItem } from '@be/applications/taxCert/dtos/TaxCertDto';
 import { extractActualData } from '@libs/responseUtils';
-import styles from '@/(anon)/tax-cert/TaxCertResultDisplay.module.css';
+import styles from '@/(anon)/test/tax-cert/TaxCertResultDisplay.module.css';
 
 interface TaxCertResultDisplayProps {
   response: CodefResponse;
