@@ -42,8 +42,7 @@ const handler = NextAuth({
           return {
             id: user.id,
             name: user.name,
-            email: user.username, // NextAuth는 email 필드를 요구하므로 username을 사용
-            image: null,
+            email: user.username,
           };
         } catch (error) {
           console.error('Auth error:', error);
