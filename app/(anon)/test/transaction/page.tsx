@@ -73,7 +73,7 @@ export default function TransactionTestPage() {
         numOfRows: formData.numOfRows,
       });
 
-      const response = await fetch(`/api/real-estate/search/transaction-price?${params}`);
+      const response = await fetch(`/api/transaction?${params}`);
       const data: TransactionResponse = await response.json();
       
       if (data.success) {

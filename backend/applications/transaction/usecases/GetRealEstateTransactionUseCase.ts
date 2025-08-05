@@ -1,5 +1,5 @@
-import { GetRealEstateTransactionRequest } from '@be/applications/realEstate/dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '@be/applications/realEstate/dtos/GetRealEstateTransactionResponse';
+import { GetRealEstateTransactionRequest } from '@be/applications/transaction/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '@be/applications/transaction/dtos/GetRealEstateTransactionResponse';
 import { RealEstateTransactionRepository } from '@be/infrastructure/repository/RealEstateTransactionRepository';
 
 /**
