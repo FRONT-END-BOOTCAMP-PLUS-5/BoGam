@@ -40,8 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-
+# Ignore Prisma generated files
+prisma/generated/
 
 # PWA 자동 생성 파일 무시
 public/sw.js
