@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// UUID 생성 함수 사용을 위한 확장 설치
+//  
+
+// users 테이블
+model User {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String?
+  nickname     String?
+  username     String?
+  password     String?
+  pinNumber    String?  @map("pin_number")
+  phoneNumber  String?  @map("phone_number")
+  
+  // 관계
+  taxCerts     TaxCert[]
+  userAddresses UserAddress[]
+  
+  @@map("users")
+}
+
+// tax_certs 테이블
+model TaxCert {
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id") @db.Uuid
+  taxCertJson Json?    @map("tax_cert_json")
+  
+  // 관계
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("tax_certs")
+}
+
+// addresses 테이블
+model Address {
+  id                Int      @id @default(autoincrement())
+  latitude          Float?   @db.DoublePrecision
+  longitude         Float?   @db.DoublePrecision
+  legalDistrictCode String?  @map("legal_district_code")
+  dong              String?
+  ho                String?
+  
+  // 관계
+  userAddresses     UserAddress[]
+  
+  @@map("addresses")
+}
+
+// user_addresses 테이블
+model UserAddress {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id") @db.Uuid
+  addressId Int      @map("address_id")
+  isPrimary Boolean? @map("is_primary")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  nickname  String?
+  
+  // 관계
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  realEstates RealEstate[]
+  stepResults StepResult[]
+  
+  @@map("user_addresses")
+}
+
+// real_estates 테이블
+model RealEstate {
+  id              Int      @id @default(autoincrement())
+  userAddressId   Int      @map("user_address_id")
+  realEstateJson  Json?    @map("real_estate_json")
+  
+  // 관계
+  userAddress     UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  
+  @@map("real_estates")
+}
+
+// steps 테이블
+model Step {
+  id        Int      @id @default(autoincrement())
+  mainNum   Int      @map("main_num")
+  subNum    Int      @map("sub_num")
+  
+  // 관계
+  stepResults StepResult[]
+  
+  @@map("steps")
+}
+
+// step_results 테이블
+model StepResult {
+  id            Int      @id @default(autoincrement())
+  userAddressId Int      @map("user_address_id")
+  stepId        Int      @map("step_id")
+  mismatch      Int?
+  match         Int?
+  unchecked     Int?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  
+  // 관계
+  userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  step          Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  
+  @@map("step_results")
+}
