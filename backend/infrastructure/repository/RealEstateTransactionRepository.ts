@@ -49,7 +49,7 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -78,7 +78,7 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -107,7 +107,7 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -121,10 +121,8 @@ export class RealEstateTransactionRepository {
    */
   async findAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      // 서비스키 디코딩 (URL 인코딩된 경우)
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
       
-      // API 요청 실행
       const response = await this.axiosInstance.get(
         REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_TRADE_FULL_URL,
         {
@@ -135,12 +133,10 @@ export class RealEstateTransactionRepository {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          responseType: 'text', // XML 응답을 텍스트로 받기
+          responseType: 'text',
         }
       );
-      
-      // XML을 JSON으로 파싱
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -154,12 +150,11 @@ export class RealEstateTransactionRepository {
    */
   async findApartmentRentAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      // 서비스키 디코딩 (URL 인코딩된 경우)
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
       
-      // API 요청 실행
+      // 전월세 API는 현재 구현되지 않음 - 매매 API로 대체
       const response = await this.axiosInstance.get(
-        REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_RENT_FULL_URL,
+        REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_TRADE_FULL_URL,
         {
           params: {
             LAWD_CD: request.LAWD_CD,
@@ -168,12 +163,10 @@ export class RealEstateTransactionRepository {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          responseType: 'text', // XML 응답을 텍스트로 받기
+          responseType: 'text',
         }
       );
-      
-      // XML을 JSON으로 파싱
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -187,12 +180,11 @@ export class RealEstateTransactionRepository {
    */
   async findDetachedHouseAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      // 서비스키 디코딩 (URL 인코딩된 경우)
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
       
-      // API 요청 실행
+      // 전월세 API는 현재 구현되지 않음 - 매매 API로 대체
       const response = await this.axiosInstance.get(
-        REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_RENT_FULL_URL,
+        REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_TRADE_FULL_URL,
         {
           params: {
             LAWD_CD: request.LAWD_CD,
@@ -201,12 +193,10 @@ export class RealEstateTransactionRepository {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          responseType: 'text', // XML 응답을 텍스트로 받기
+          responseType: 'text',
         }
       );
-      
-      // XML을 JSON으로 파싱
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -220,12 +210,11 @@ export class RealEstateTransactionRepository {
    */
   async findOfficetelAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
     try {
-      // 서비스키 디코딩 (URL 인코딩된 경우)
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
       
-      // API 요청 실행
+      // 전월세 API는 현재 구현되지 않음 - 매매 API로 대체
       const response = await this.axiosInstance.get(
-        REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_RENT_FULL_URL,
+        REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_TRADE_FULL_URL,
         {
           params: {
             LAWD_CD: request.LAWD_CD,
@@ -234,12 +223,10 @@ export class RealEstateTransactionRepository {
             numOfRows: request.numOfRows || '10',
             pageNo: request.pageNo || '1',
           },
-          responseType: 'text', // XML 응답을 텍스트로 받기
+          responseType: 'text',
         }
       );
-      
-      // XML을 JSON으로 파싱
-      return parseXmlResponse((response as { data: string }).data);
+      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -273,7 +260,7 @@ export class RealEstateTransactionRepository {
 
   /**
    * 에러 처리
-   * @param error 에러 객체
+   * @param error 에러 객체 (axios 에러 타입이 복잡하여 any 사용)
    */
   private handleError(error: any): void {
     if ('response' in error && error.response) {

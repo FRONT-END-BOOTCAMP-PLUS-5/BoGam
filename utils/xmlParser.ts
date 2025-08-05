@@ -14,8 +14,25 @@ export interface XmlParseResult {
   body: {
     items: {
       item: Array<{
+        // 아파트 관련 필드
         aptDong?: string;
         aptNm?: string;
+        landLeaseholdGbn?: string;
+        
+        // 연립다세대 관련 필드
+        houseType?: string;
+        landAr?: string;
+        mhouseNm?: string;
+        
+        // 오피스텔 관련 필드
+        offiNm?: string;
+        sggNm?: string;
+        
+        // 단독/다가구 관련 필드
+        plottageAr?: string;
+        totalFloorAr?: string;
+        
+        // 공통 필드
         buildYear: string;
         buyerGbn: string;
         cdealDay: string;
@@ -28,18 +45,10 @@ export interface XmlParseResult {
         estateAgentSggNm: string;
         excluUseAr?: string;
         floor?: string;
-        houseType?: string;
         jibun: string;
-        landAr?: string;
-        landLeaseholdGbn?: string;
-        mhouseNm?: string;
-        offiNm?: string;
-        plottageAr?: string;
         rgstDate?: string;
         sggCd: string;
-        sggNm?: string;
         slerGbn: string;
-        totalFloorAr?: string;
         umdNm: string;
       }>;
     };
