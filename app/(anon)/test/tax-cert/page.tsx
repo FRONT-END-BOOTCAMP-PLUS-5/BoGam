@@ -1,6 +1,6 @@
 import Navigation from '@/(anon)/_components/common/Navigation';
-import TaxCertForm from "@/(anon)/tax-cert/TaxCertForm";
-import styles from "@/(anon)/tax-cert/page.module.css";
+import TaxCertForm from "@/(anon)/test/tax-cert/TaxCertForm";
+import styles from "@/(anon)/test/tax-cert/page.module.css";
 
 export default function TaxCertPage() {
   return (

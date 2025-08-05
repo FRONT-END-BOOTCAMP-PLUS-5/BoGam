@@ -3,8 +3,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { TaxCertRequest } from '@be/applications/taxCert/dtos/TaxCertDto';
-import styles from '@/(anon)/tax-cert/_components/SimpleAuthForm.module.css';
-import commonStyles from '@/(anon)/tax-cert/_components/Common.module.css';
+import styles from '@/(anon)/test/tax-cert/_components/SimpleAuthForm.module.css';
+import commonStyles from '@/(anon)/test/tax-cert/_components/Common.module.css';
 
 interface SimpleAuthFormProps {
   formData: TaxCertRequest;

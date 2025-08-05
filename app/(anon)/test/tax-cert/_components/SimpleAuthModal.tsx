@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import styles from '@/(anon)/tax-cert/_components/SimpleAuthModal.module.css';
+import styles from '@/(anon)/test/tax-cert/_components/SimpleAuthModal.module.css';
 
 interface SimpleAuthModalProps {
   showModal: boolean;
