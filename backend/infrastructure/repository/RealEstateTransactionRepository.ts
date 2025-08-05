@@ -1,5 +1,6 @@
 import { GetRealEstateTransactionRequest } from '@be/applications/transaction/dtos/GetRealEstateTransactionRequest';
 import { GetRealEstateTransactionResponse } from '@be/applications/transaction/dtos/GetRealEstateTransactionResponse';
+import { REAL_ESTATE_TRANSACTION_API_CONFIG } from '@libs/api-endpoints';
 import PublicDataAxiosInstance from '@utils/axiosInstance';
 import { parseXmlResponse } from '@utils/xmlParser';
 
@@ -13,12 +14,12 @@ export class RealEstateTransactionRepository {
   private readonly axiosInstance: ReturnType<typeof PublicDataAxiosInstance.getInstance>;
 
   constructor() {
-    this.baseUrl = 'https://apis.data.go.kr/1613000/RTMSDataSvcAptRent';
+    this.baseUrl = REAL_ESTATE_TRANSACTION_API_CONFIG.BASE_URL;
     
     // 서비스키 환경변수에서 가져오기
-    const serviceKey = process.env.RTMSDATA_TRANSACTION_PRICE_KEY;
+    const serviceKey = process.env[REAL_ESTATE_TRANSACTION_API_CONFIG.SERVICE_KEY_ENV];
     if (!serviceKey) {
-      throw new Error('RTMSDATA_TRANSACTION_PRICE_KEY 환경변수가 설정되지 않았습니다.');
+      throw new Error(`${REAL_ESTATE_TRANSACTION_API_CONFIG.SERVICE_KEY_ENV} 환경변수가 설정되지 않았습니다.`);
     }
     this.serviceKey = serviceKey;
     
@@ -27,7 +28,7 @@ export class RealEstateTransactionRepository {
   }
 
   /**
-   * 아파트 전월세 실거래가 조회
+   * 아파트 매매 실거래가 조회 (기본)
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
@@ -38,7 +39,40 @@ export class RealEstateTransactionRepository {
       
       // API 요청 실행
       const response = await this.axiosInstance.get(
-        `${this.baseUrl}/getRTMSDataSvcAptRent`,
+        REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_TRADE_FULL_URL,
+        {
+          params: {
+            LAWD_CD: request.LAWD_CD,
+            DEAL_YMD: request.DEAL_YMD,
+            serviceKey: decodedServiceKey,
+            numOfRows: request.numOfRows || '10',
+            pageNo: request.pageNo || '1',
+          },
+          responseType: 'text', // XML 응답을 텍스트로 받기
+        }
+      );
+      
+      // XML을 JSON으로 파싱
+      return parseXmlResponse((response as { data: string }).data);
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * 아파트 전월세 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async findApartmentRentAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      // 서비스키 디코딩 (URL 인코딩된 경우)
+      const decodedServiceKey = decodeURIComponent(this.serviceKey);
+      
+      // API 요청 실행
+      const response = await this.axiosInstance.get(
+        REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_RENT_FULL_URL,
         {
           params: {
             LAWD_CD: request.LAWD_CD,
@@ -71,7 +105,7 @@ export class RealEstateTransactionRepository {
       
       // API 요청 실행
       const response = await this.axiosInstance.get(
-        `${this.baseUrl}/getRTMSDataSvcSHRent`,
+        REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_RENT_FULL_URL,
         {
           params: {
             LAWD_CD: request.LAWD_CD,
@@ -104,7 +138,7 @@ export class RealEstateTransactionRepository {
       
       // API 요청 실행
       const response = await this.axiosInstance.get(
-        `${this.baseUrl}/getRTMSDataSvcORTRent`,
+        REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_RENT_FULL_URL,
         {
           params: {
             LAWD_CD: request.LAWD_CD,

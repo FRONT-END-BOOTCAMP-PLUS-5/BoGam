@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GetRealEstateTransactionUseCase } from '@be/applications/transaction/usecases/GetRealEstateTransactionUseCase';
 import { GetRealEstateTransactionRequest } from '@be/applications/transaction/dtos/GetRealEstateTransactionRequest';
 import { GetRealEstateTransactionResponse } from '@be/applications/transaction/dtos/GetRealEstateTransactionResponse';
+import { API_ENDPOINTS } from '@libs/api-endpoints';
 
 /**
  * 실거래가 조회 API
- * GET /api/transaction/transaction-price
+ * GET /api/transaction
  */
 export async function GET(request: NextRequest) {
   try {

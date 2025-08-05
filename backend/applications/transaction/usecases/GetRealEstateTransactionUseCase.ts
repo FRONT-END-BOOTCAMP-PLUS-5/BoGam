@@ -14,7 +14,7 @@ export class GetRealEstateTransactionUseCase {
   }
 
   /**
-   * 아파트 전월세 실거래가 조회
+   * 아파트 매매 실거래가 조회 (기본)
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
@@ -32,7 +32,31 @@ export class GetRealEstateTransactionUseCase {
       
       return response;
     } catch (error) {
-      console.error('실거래가 조회 실패:', error);
+      console.error('아파트 매매 실거래가 조회 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 아파트 전월세 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async getApartmentRentTransactions(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const response = await this.repository.findApartmentRentAll(request);
+      
+      // 계약일 포맷팅 (YYYY-MM-DD 형식)
+      if (response.body.items.item) {
+        response.body.items.item = response.body.items.item.map(item => ({
+          ...item,
+          dealDate: `${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`,
+        }));
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('아파트 전월세 실거래가 조회 실패:', error);
       throw error;
     }
   }

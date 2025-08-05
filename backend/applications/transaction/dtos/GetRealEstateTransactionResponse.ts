@@ -28,41 +28,47 @@ export interface GetRealEstateTransactionResponse {
 }
 
 /**
- * 실거래가 아이템 DTO
+ * 실거래가 아이템 DTO (매매 실거래가 - 실제 외부 API 응답)
  */
 export interface GetRealEstateTransactionItem {
+  /** 아파트 동 */
+  aptDong: string;
   /** 아파트명 */
   aptNm: string;
   /** 건축년도 */
   buildYear: string;
-  /** 계약기간 */
-  contractTerm: string;
-  /** 계약구분 */
-  contractType: string;
+  /** 매수자 구분 */
+  buyerGbn: string;
   /** 계약일 */
+  cdealDay: string;
+  /** 계약구분 */
+  cdealType: string;
+  /** 거래금액 */
+  dealAmount: string;
+  /** 거래일 */
   dealDay: string;
-  /** 계약월 */
+  /** 거래월 */
   dealMonth: string;
-  /** 계약년 */
+  /** 거래년 */
   dealYear: string;
-  /** 보증금 */
-  deposit: string;
+  /** 거래구분 */
+  dealingGbn: string;
+  /** 중개사소재지 */
+  estateAgentSggNm: string;
   /** 전용면적 */
   excluUseAr: string;
   /** 층 */
   floor: string;
   /** 지번 */
   jibun: string;
-  /** 월세 */
-  monthlyRent: string;
-  /** 이전 보증금 */
-  preDeposit: string;
-  /** 이전 월세 */
-  preMonthlyRent: string;
+  /** 토지임야구분 */
+  landLeaseholdGbn: string;
+  /** 등기일자 */
+  rgstDate: string;
   /** 시군구코드 */
   sggCd: string;
+  /** 매도자 구분 */
+  slerGbn: string;
   /** 읍면동명 */
   umdNm: string;
-  /** 사용승인일 */
-  useRRRight: string;
 } 
