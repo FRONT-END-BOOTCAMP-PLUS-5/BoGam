@@ -28,6 +28,93 @@ export class RealEstateTransactionRepository {
   }
 
   /**
+   * 연립다세대 매매 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async findRowHouseTradeAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const decodedServiceKey = decodeURIComponent(this.serviceKey);
+      
+      const response = await this.axiosInstance.get(
+        REAL_ESTATE_TRANSACTION_API_CONFIG.ROW_HOUSE_TRADE_FULL_URL,
+        {
+          params: {
+            LAWD_CD: request.LAWD_CD,
+            DEAL_YMD: request.DEAL_YMD,
+            serviceKey: decodedServiceKey,
+            numOfRows: request.numOfRows || '10',
+            pageNo: request.pageNo || '1',
+          },
+          responseType: 'text',
+        }
+      );
+      return parseXmlResponse((response as { data: string }).data);
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * 오피스텔 매매 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async findOfficetelTradeAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const decodedServiceKey = decodeURIComponent(this.serviceKey);
+      
+      const response = await this.axiosInstance.get(
+        REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_TRADE_FULL_URL,
+        {
+          params: {
+            LAWD_CD: request.LAWD_CD,
+            DEAL_YMD: request.DEAL_YMD,
+            serviceKey: decodedServiceKey,
+            numOfRows: request.numOfRows || '10',
+            pageNo: request.pageNo || '1',
+          },
+          responseType: 'text',
+        }
+      );
+      return parseXmlResponse((response as { data: string }).data);
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  /**
+   * 단독/다가구 매매 실거래가 조회
+   * @param request 요청 데이터
+   * @returns 응답 데이터
+   */
+  async findDetachedHouseTradeAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+    try {
+      const decodedServiceKey = decodeURIComponent(this.serviceKey);
+      
+      const response = await this.axiosInstance.get(
+        REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_TRADE_FULL_URL,
+        {
+          params: {
+            LAWD_CD: request.LAWD_CD,
+            DEAL_YMD: request.DEAL_YMD,
+            serviceKey: decodedServiceKey,
+            numOfRows: request.numOfRows || '10',
+            pageNo: request.pageNo || '1',
+          },
+          responseType: 'text',
+        }
+      );
+      return parseXmlResponse((response as { data: string }).data);
+    } catch (error) {
+      this.handleError(error);
+      throw error;
+    }
+  }
+
+  /**
    * 아파트 매매 실거래가 조회 (기본)
    * @param request 요청 데이터
    * @returns 응답 데이터

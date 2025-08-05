@@ -14,8 +14,8 @@ export interface XmlParseResult {
   body: {
     items: {
       item: Array<{
-        aptDong: string;
-        aptNm: string;
+        aptDong?: string;
+        aptNm?: string;
         buildYear: string;
         buyerGbn: string;
         cdealDay: string;
@@ -26,13 +26,20 @@ export interface XmlParseResult {
         dealYear: string;
         dealingGbn: string;
         estateAgentSggNm: string;
-        excluUseAr: string;
-        floor: string;
+        excluUseAr?: string;
+        floor?: string;
+        houseType?: string;
         jibun: string;
-        landLeaseholdGbn: string;
-        rgstDate: string;
+        landAr?: string;
+        landLeaseholdGbn?: string;
+        mhouseNm?: string;
+        offiNm?: string;
+        plottageAr?: string;
+        rgstDate?: string;
         sggCd: string;
+        sggNm?: string;
         slerGbn: string;
+        totalFloorAr?: string;
         umdNm: string;
       }>;
     };
@@ -96,11 +103,18 @@ export function parseXmlResponse(xmlString: string): XmlParseResult {
       const estateAgentSggNmMatch = itemXml.match(/<estateAgentSggNm>(.*?)<\/estateAgentSggNm>/);
       const excluUseArMatch = itemXml.match(/<excluUseAr>(.*?)<\/excluUseAr>/);
       const floorMatch = itemXml.match(/<floor>(.*?)<\/floor>/);
+      const houseTypeMatch = itemXml.match(/<houseType>(.*?)<\/houseType>/);
       const jibunMatch = itemXml.match(/<jibun>(.*?)<\/jibun>/);
+      const landArMatch = itemXml.match(/<landAr>(.*?)<\/landAr>/);
       const landLeaseholdGbnMatch = itemXml.match(/<landLeaseholdGbn>(.*?)<\/landLeaseholdGbn>/);
+      const mhouseNmMatch = itemXml.match(/<mhouseNm>(.*?)<\/mhouseNm>/);
+      const offiNmMatch = itemXml.match(/<offiNm>(.*?)<\/offiNm>/);
+      const plottageArMatch = itemXml.match(/<plottageAr>(.*?)<\/plottageAr>/);
       const rgstDateMatch = itemXml.match(/<rgstDate>(.*?)<\/rgstDate>/);
       const sggCdMatch = itemXml.match(/<sggCd>(.*?)<\/sggCd>/);
+      const sggNmMatch = itemXml.match(/<sggNm>(.*?)<\/sggNm>/);
       const slerGbnMatch = itemXml.match(/<slerGbn>(.*?)<\/slerGbn>/);
+      const totalFloorArMatch = itemXml.match(/<totalFloorAr>(.*?)<\/totalFloorAr>/);
       const umdNmMatch = itemXml.match(/<umdNm>(.*?)<\/umdNm>/);
       
       return {
@@ -118,11 +132,18 @@ export function parseXmlResponse(xmlString: string): XmlParseResult {
         estateAgentSggNm: estateAgentSggNmMatch ? estateAgentSggNmMatch[1] : '',
         excluUseAr: excluUseArMatch ? excluUseArMatch[1] : '',
         floor: floorMatch ? floorMatch[1] : '',
+        houseType: houseTypeMatch ? houseTypeMatch[1] : '',
         jibun: jibunMatch ? jibunMatch[1] : '',
+        landAr: landArMatch ? landArMatch[1] : '',
         landLeaseholdGbn: landLeaseholdGbnMatch ? landLeaseholdGbnMatch[1] : '',
+        mhouseNm: mhouseNmMatch ? mhouseNmMatch[1] : '',
+        offiNm: offiNmMatch ? offiNmMatch[1] : '',
+        plottageAr: plottageArMatch ? plottageArMatch[1] : '',
         rgstDate: rgstDateMatch ? rgstDateMatch[1] : '',
         sggCd: sggCdMatch ? sggCdMatch[1] : '',
+        sggNm: sggNmMatch ? sggNmMatch[1] : '',
         slerGbn: slerGbnMatch ? slerGbnMatch[1] : '',
+        totalFloorAr: totalFloorArMatch ? totalFloorArMatch[1] : '',
         umdNm: umdNmMatch ? umdNmMatch[1] : '',
       };
     }) : [];
