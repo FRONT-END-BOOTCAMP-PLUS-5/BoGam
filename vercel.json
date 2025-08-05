@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "functions": {
+    "app/api/**/*.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "env": {
+    "PRISMA_GENERATE_DATAPROXY": "true"
+  }
+}
