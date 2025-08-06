@@ -1,9 +1,9 @@
-import { User } from '@be/domain/entities/User';
+import { UserEntity } from '@be/domain/entities/UserEntity';
+import { UserInfo } from '@be/applications/user/dtos/UserDto';
 
 export interface UserRepository {
-  findByUsername(username: string): Promise<User | null>;
-  findByPhoneNumber(phoneNumber: string): Promise<User | null>;
-  findById(id: string): Promise<User | null>;
+  findByNickname(nickname: string): Promise<UserInfo | null>;
+  findByUserId(userId: string): Promise<UserInfo | null>;
   create(userData: {
     name?: string;
     nickname?: string;
@@ -11,7 +11,7 @@ export interface UserRepository {
     password?: string;
     pinNumber?: string;
     phoneNumber?: string;
-  }): Promise<User>;
-  update(id: string, userData: Partial<User>): Promise<User | null>;
+  }): Promise<UserEntity>;
+  update(id: string, userData: Partial<UserEntity>): Promise<UserEntity | null>;
   delete(id: string): Promise<boolean>;
 }
