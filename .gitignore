@@ -41,6 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 # Ignore Prisma generated files
+prisma/generated/
+prisma/generated/**
 
 prisma/migrations/
 prisma/migrations/**
