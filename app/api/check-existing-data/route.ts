@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
       existingData: hasExistingData ? {
         id: existingData!.id,
         userAddressId: existingData!.userAddressId,
-        createdAt: existingData!.createdAt,
         updatedAt: existingData!.updatedAt
       } : null
     });

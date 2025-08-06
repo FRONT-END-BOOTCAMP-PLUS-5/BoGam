@@ -6,16 +6,15 @@ export interface TaxCertJson {
 export interface TaxCert {
   id: number;
   userAddressId: number;
-  taxCertJson: TaxCertJson;
-  createdAt?: Date;
+  taxCertData: string;
   updatedAt?: Date;
 }
 
 export interface CreateTaxCertDto {
   userAddressId: number;
-  taxCertJson: TaxCertJson;
+  taxCertData: string;
 }
 
 export interface UpdateTaxCertDto {
-  taxCertJson?: TaxCertJson;
+  taxCertData?: string;
 } 

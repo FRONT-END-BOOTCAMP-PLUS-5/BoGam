@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from '@prisma/generated';
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
-import { TaxCert, CreateTaxCertDto, UpdateTaxCertDto, TaxCertJson } from '@be/domain/entities/TaxCert';
+import { TaxCert, CreateTaxCertDto, UpdateTaxCertDto } from '@be/domain/entities/TaxCert';
 
 export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
   private prisma: PrismaClient;
@@ -13,14 +13,15 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     const taxCert = await this.prisma.taxCert.create({
       data: {
         userAddressId: data.userAddressId,
-        taxCertJson: data.taxCertJson as Prisma.InputJsonValue,
+        taxCertData: data.taxCertData,
       },
     });
 
     return {
       id: taxCert.id,
       userAddressId: taxCert.userAddressId,
-      taxCertJson: taxCert.taxCertJson as TaxCertJson,
+      taxCertData: taxCert.taxCertData,
+      updatedAt: taxCert.updatedAt,
     };
   }
 
@@ -32,7 +33,8 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     return taxCerts.map(taxCert => ({
       id: taxCert.id,
       userAddressId: taxCert.userAddressId,
-      taxCertJson: taxCert.taxCertJson as TaxCertJson,
+      taxCertData: taxCert.taxCertData,
+      updatedAt: taxCert.updatedAt,
     }));
   }
 
@@ -40,7 +42,7 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     const taxCert = await this.prisma.taxCert.updateMany({
       where: { userAddressId },
       data: {
-        taxCertJson: data.taxCertJson as Prisma.InputJsonValue,
+        taxCertData: data.taxCertData,
       },
     });
 
@@ -56,7 +58,8 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     return {
       id: updatedTaxCert.id,
       userAddressId: updatedTaxCert.userAddressId,
-      taxCertJson: updatedTaxCert.taxCertJson as TaxCertJson,
+      taxCertData: updatedTaxCert.taxCertData,
+      updatedAt: updatedTaxCert.updatedAt,
     };
   }
 

@@ -9,7 +9,6 @@ interface RealEstateCopy {
   id: number;
   userAddressId: number;
   realEstateJson: Record<string, unknown>;
-  createdAt?: string;
   updatedAt?: string;
 }
 
@@ -187,9 +186,9 @@ export default function RealEstateCopyTestPage() {
             
             <div className={styles.copyInfo}>
               <p><strong>사용자 주소 ID:</strong> {realEstateCopy.userAddressId}</p>
-              {realEstateCopy.createdAt && (
-                <p><strong>생성일:</strong> {new Date(realEstateCopy.createdAt).toLocaleString()}</p>
-              )}
+                              {realEstateCopy.updatedAt && (
+                  <p><strong>마지막 업데이트:</strong> {new Date(realEstateCopy.updatedAt).toLocaleString()}</p>
+                )}
             </div>
 
             <div className={styles.jsonData}>

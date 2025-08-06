@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from '@prisma/generated';
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
-import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto, RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto } from '@be/domain/entities/RealEstateCopy';
 
 export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
   private prisma: PrismaClient;
@@ -13,14 +13,15 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     const realEstate = await this.prisma.realEstate.create({
       data: {
         userAddressId: data.userAddressId,
-        realEstateJson: data.realEstateJson as Prisma.InputJsonValue,
+        realEstateData: data.realEstateData,
       },
     });
 
     return {
       id: realEstate.id,
       userAddressId: realEstate.userAddressId,
-      realEstateJson: realEstate.realEstateJson as RealEstateCopyJson,
+      realEstateData: realEstate.realEstateData,
+      updatedAt: realEstate.updatedAt,
     };
   }
 
@@ -32,7 +33,8 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     return realEstates.map(realEstate => ({
       id: realEstate.id,
       userAddressId: realEstate.userAddressId,
-      realEstateJson: realEstate.realEstateJson as RealEstateCopyJson,
+      realEstateData: realEstate.realEstateData,
+      updatedAt: realEstate.updatedAt,
     }));
   }
 
@@ -40,7 +42,7 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     const realEstate = await this.prisma.realEstate.updateMany({
       where: { userAddressId },
       data: {
-        realEstateJson: data.realEstateJson as Prisma.InputJsonValue,
+        realEstateData: data.realEstateData,
       },
     });
 
@@ -56,7 +58,8 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     return {
       id: updatedRealEstate.id,
       userAddressId: updatedRealEstate.userAddressId,
-      realEstateJson: updatedRealEstate.realEstateJson as RealEstateCopyJson,
+      realEstateData: updatedRealEstate.realEstateData,
+      updatedAt: updatedRealEstate.updatedAt,
     };
   }
 

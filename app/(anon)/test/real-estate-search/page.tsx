@@ -49,14 +49,14 @@ export default function RealEstateSearchTestPage() {
 
       const data = response.data as { success: boolean; hasExistingData?: boolean; existingData?: any };
       if (data.success && data.hasExistingData) {
-        const existingData = data.existingData;
-        const createdAt = existingData.createdAt ? new Date(existingData.createdAt).toLocaleString() : '알 수 없음';
-        
-        return confirm(
-          `이미 저장된 등기부등본이 있습니다.\n` +
-          `생성일: ${createdAt}\n\n` +
-          `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
-        );
+                  const existingData = data.existingData;
+          const updatedAt = existingData.updatedAt ? new Date(existingData.updatedAt).toLocaleString() : '알 수 없음';
+          
+          return confirm(
+            `이미 저장된 등기부등본이 있습니다.\n` +
+            `마지막 업데이트: ${updatedAt}\n\n` +
+            `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
+          );
       }
       
       return true; // 기존 데이터가 없으면 진행

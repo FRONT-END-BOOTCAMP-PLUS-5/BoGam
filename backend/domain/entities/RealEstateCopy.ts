@@ -6,16 +6,15 @@ export interface RealEstateCopyJson {
 export interface RealEstateCopy {
   id: number;
   userAddressId: number;
-  realEstateJson: RealEstateCopyJson;
-  createdAt?: Date;
+  realEstateData: string;
   updatedAt?: Date;
 }
 
 export interface CreateRealEstateCopyDto {
   userAddressId: number;
-  realEstateJson: RealEstateCopyJson;
+  realEstateData: string;
 }
 
 export interface UpdateRealEstateCopyDto {
-  realEstateJson?: RealEstateCopyJson;
+  realEstateData?: string;
 }

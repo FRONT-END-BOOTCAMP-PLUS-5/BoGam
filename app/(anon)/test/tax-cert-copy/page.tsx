@@ -9,7 +9,6 @@ interface TaxCert {
   id: number;
   userAddressId: number;
   taxCertJson: Record<string, unknown>;
-  createdAt?: string;
   updatedAt?: string;
 }
 
@@ -245,10 +244,10 @@ export default function TaxCertCopyTestPage() {
                     </Fragment>
                   );
                 })()}
-                {taxCert.createdAt && (
+                {taxCert.updatedAt && (
                   <div className={styles.infoItem}>
-                    <strong>생성일:</strong>
-                    <span>{new Date(taxCert.createdAt).toLocaleString()}</span>
+                    <strong>마지막 업데이트:</strong>
+                    <span>{new Date(taxCert.updatedAt).toLocaleString()}</span>
                   </div>
                 )}
               </div>

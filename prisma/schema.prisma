@@ -16,17 +16,17 @@ model User {
   password         String
   pinNumber        String          @map("pin_number")
   phoneNumber      String          @unique(map: "users_unique_phone_number") @map("phone_number")
-  primaryAddresses PrimaryAddress?
   userAddresses    UserAddress[]
 
   @@map("users")
 }
 
 model TaxCert {
-  id            Int         @id @default(autoincrement())
-  userAddressId Int         @map("user_address_id")
-  taxCertJson   Json        @unique(map: "tax_certs_unique") @map("tax_cert_json")
-  userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  id               Int         @id @default(autoincrement())
+  userAddressId    Int         @unique @map("user_address_id")
+  taxCertData      String      @map("tax_cert_data") @db.Text
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAddress      UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("tax_certs")
 }
@@ -48,9 +48,9 @@ model UserAddress {
   id               Int              @id @default(autoincrement())
   userId           String           @map("user_id") @db.Uuid
   addressId        Int              @map("address_id")
+  isPrimary        Boolean          @default(false) @map("is_primary")
   createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   nickname         String?
-  primaryAddresses PrimaryAddress[]
   realEstates      RealEstate[]
   stepResults      StepResult[]
   taxCerts         TaxCert[]
@@ -61,10 +61,11 @@ model UserAddress {
 }
 
 model RealEstate {
-  id             Int         @id @default(autoincrement())
-  userAddressId  Int         @map("user_address_id")
-  realEstateJson Json?       @map("real_estate_json")
-  userAddress    UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  id               Int         @id @default(autoincrement())
+  userAddressId    Int         @unique @map("user_address_id")
+  realEstateData   String      @map("real_estate_data") @db.Text
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAddress      UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("real_estates")
 }
@@ -90,14 +91,4 @@ model StepResult {
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("step_results")
-}
-
-model PrimaryAddress {
-  id            Int         @id @default(autoincrement())
-  userAddressId Int         @map("user_address_id")
-  userId        String      @unique @map("user_id") @db.Uuid
-  userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("primary_addresses")
 }
