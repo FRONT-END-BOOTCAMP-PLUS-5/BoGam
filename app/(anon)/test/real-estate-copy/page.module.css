@@ -159,6 +159,44 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.infoItem strong {
+  color: #374151;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.infoItem span {
+  color: #6b7280;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.successCode {
+  color: #059669 !important;
+  font-weight: 600;
+}
+
+.errorCode {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
 .copyHeader {
   display: flex;
   justify-content: space-between;

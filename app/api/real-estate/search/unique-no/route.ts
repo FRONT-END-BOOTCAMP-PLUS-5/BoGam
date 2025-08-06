@@ -98,45 +98,63 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 성공적으로 발급된 경우 DB에 저장 (upsert 방식)
-    let savedRealEstateCopy = null;
-    let isUpdated = false;
-    try {
-      const dbRepository = new RealEstateCopyRepositoryImpl();
-      const dbUseCase = new RealEstateCopyUseCase(dbRepository);
-      
-      // 기존 데이터 확인
-      const existing = await dbUseCase.findRealEstateCopyByUserAddressId(body.userAddressId);
-      isUpdated = !!existing;
-      
-      savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
-        userAddressId: body.userAddressId,
-        realEstateJson: JSON.parse(JSON.stringify(response))
-      });
+    // CODEF API 성공 코드 확인 (CF-00000일 때만 성공으로 처리)
+    const codefResultCode = response?.result?.code;
+    const isCodefSuccess = codefResultCode === 'CF-00000';
 
-      console.log(`✅ 등기부등본 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
-        realEstateCopyId: savedRealEstateCopy.id,
-        userAddressId: savedRealEstateCopy.userAddressId
-      });
-    } catch (dbError) {
-      console.error('❌ 등기부등본 DB 저장 실패:', dbError);
-      // DB 저장 실패해도 API 응답은 성공으로 처리 (발급 자체는 성공했으므로)
-    }
+    if (isCodefSuccess) {
+      // CF-00000 (완전 성공) - DB에 저장
+      let savedRealEstateCopy = null;
+      let isUpdated = false;
+      try {
+        const dbRepository = new RealEstateCopyRepositoryImpl();
+        const dbUseCase = new RealEstateCopyUseCase(dbRepository);
+        
+        // 기존 데이터 확인
+        const existing = await dbUseCase.findRealEstateCopyByUserAddressId(body.userAddressId);
+        isUpdated = !!existing;
+        
+        savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
+          userAddressId: body.userAddressId,
+          realEstateJson: JSON.parse(JSON.stringify(response))
+        });
 
-      // 성공 응답
-  return NextResponse.json({
-    success: true,
-    message: `부동산등기부등본 조회가 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
-    data: response,
-    ...(savedRealEstateCopy && {
-      savedRealEstateCopy: {
-        id: savedRealEstateCopy.id,
-        userAddressId: savedRealEstateCopy.userAddressId,
-        isUpdated: isUpdated
+        console.log(`✅ 등기부등본 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
+          realEstateCopyId: savedRealEstateCopy.id,
+          userAddressId: savedRealEstateCopy.userAddressId
+        });
+
+        // 성공 응답 (DB 저장 포함)
+        return NextResponse.json({
+          success: true,
+          message: `부동산등기부등본 조회가 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
+          data: response,
+          savedRealEstateCopy: {
+            id: savedRealEstateCopy.id,
+            userAddressId: savedRealEstateCopy.userAddressId,
+            isUpdated: isUpdated
+          }
+        }, { status: 200 });
+      } catch (dbError) {
+        console.error('❌ 등기부등본 DB 저장 실패:', dbError);
+        
+        // DB 저장 실패해도 API 응답은 성공으로 처리 (발급 자체는 성공했으므로)
+        return NextResponse.json({
+          success: true,
+          message: '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
+          data: response,
+          warning: 'DB 저장 실패'
+        }, { status: 200 });
       }
-    }),
-    status: 200,
-  });
+    } else {
+      // CF-00000이 아닌 모든 코드는 실패로 처리 (DB 저장하지 않음)
+      return NextResponse.json({
+        success: false,
+        message: `부동산등기부등본 조회 실패: ${response?.result?.message || '알 수 없는 오류'}`,
+        data: response,
+        resultCode: codefResultCode
+      }, { status: 400 });
+    }
   } catch (error) {
     console.error('❌ 부동산등기부등본 조회 API 오류:', error);
     return NextResponse.json(

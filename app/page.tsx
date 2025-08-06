@@ -35,6 +35,14 @@ export default function Home() {
           </Link>
 
           <Link
+            href="/test/real-estate-search"
+            className={styles.card}
+          >
+            <h2>🏢 등기부등본 조회 테스트</h2>
+            <p>고유번호, 지번, 도로명 주소로 등기부등본을 조회합니다.</p>
+          </Link>
+
+          <Link
             href="/test/copy-test"
             className={styles.card}
           >

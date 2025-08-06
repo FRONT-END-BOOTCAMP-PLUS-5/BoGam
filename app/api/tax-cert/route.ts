@@ -166,12 +166,13 @@ export async function POST(request: NextRequest) {
         data: result.data
       }, { status: 202 });
     } else {
-      // 기타 성공 코드 - 200 OK
+      // CF-00000이 아닌 모든 코드는 실패로 처리 (DB 저장하지 않음)
       return NextResponse.json({
-        success: true,
-        message: '납세증명서 발급이 완료되었습니다.',
-        data: result.data
-      }, { status: 200 });
+        success: false,
+        message: `납세증명서 발급 실패: ${result.data?.result?.message || '알 수 없는 오류'}`,
+        data: result.data,
+        resultCode: codefResultCode
+      }, { status: 400 });
     }
   } catch (error) {
     console.error('❌ 납세증명서 API 엔드포인트 오류:', {
