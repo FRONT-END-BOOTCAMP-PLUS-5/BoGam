@@ -9,14 +9,15 @@ datasource db {
 }
 
 model User {
-  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String        @unique(map: "users_unique_name")
-  nickname      String        @unique(map: "users_unique_nickname")
-  username      String        @unique(map: "users_unique_username")
-  password      String        @unique(map: "users_unique_password")
-  pinNumber     String        @unique(map: "users_unique_pin_number") @map("pin_number")
-  phoneNumber   String        @unique(map: "users_unique_phone_number") @map("phone_number")
-  userAddresses UserAddress[]
+  id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  nickname         String          @unique(map: "users_unique_nickname")
+  username         String          @unique(map: "users_unique_username")
+  password         String
+  pinNumber        String          @map("pin_number")
+  phoneNumber      String          @unique(map: "users_unique_phone_number") @map("phone_number")
+  primaryAddresses PrimaryAddress?
+  userAddresses    UserAddress[]
 
   @@map("users")
 }
@@ -32,29 +33,29 @@ model TaxCert {
 
 model Address {
   id                Int           @id @default(autoincrement())
-  latitude          Float         @db.DoublePrecision
-  longitude         Float         @db.DoublePrecision
+  latitude          Float
+  longitude         Float
   legalDistrictCode String        @map("legal_district_code")
   dong              String?
   ho                String?
   userAddresses     UserAddress[]
 
-  @@unique([latitude, longitude], map: "addresses_coordinate")
+  @@unique([latitude, longitude, dong, ho], map: "addresses_coordinate_dong_ho")
   @@map("addresses")
 }
 
 model UserAddress {
-  id                Int              @id @default(autoincrement())
-  userId            String           @map("user_id") @db.Uuid
-  addressId         Int              @map("address_id")
-  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  nickname          String?
-  realEstates       RealEstate[]
-  stepResults       StepResult[]
-  primaryAddresses  PrimaryAddress[]
-  taxCerts          TaxCert[]
-  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address           Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  id               Int              @id @default(autoincrement())
+  userId           String           @map("user_id") @db.Uuid
+  addressId        Int              @map("address_id")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  nickname         String?
+  primaryAddresses PrimaryAddress[]
+  realEstates      RealEstate[]
+  stepResults      StepResult[]
+  taxCerts         TaxCert[]
+  address          Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_addresses")
 }
@@ -92,9 +93,11 @@ model StepResult {
 }
 
 model PrimaryAddress {
-  id              Int         @id @default(autoincrement())
-  userAddressId   Int         @map("user_address_id")
-  userAddress     UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  id            Int         @id @default(autoincrement())
+  userAddressId Int         @map("user_address_id")
+  userId        String      @unique @map("user_id") @db.Uuid
+  userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("primary_addresses")
 }

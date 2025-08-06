@@ -14,7 +14,7 @@ export default function Home() {
             href="/test/post-code"
             className={styles.card}
           >
-            <h2>우편번호 테스트</h2>
+            <h2>🏠 우편번호 테스트</h2>
             <p>우편번호 검색 및 주소 입력 기능을 테스트합니다.</p>
           </Link>
           
@@ -22,7 +22,7 @@ export default function Home() {
             href="/test/transaction"
             className={styles.card}
           >
-            <h2>거래내역 테스트</h2>
+            <h2>📊 거래내역 테스트</h2>
             <p>부동산 거래내역 조회 기능을 테스트합니다.</p>
           </Link>
           
@@ -30,8 +30,16 @@ export default function Home() {
             href="/test/tax-cert"
             className={styles.card}
           >
-            <h2>납세확인서 테스트</h2>
-            <p>납세확인서 발급 및 조회 기능을 테스트합니다.</p>
+            <h2>📋 납세확인서 발급 테스트</h2>
+            <p>납세확인서 발급 및 CODEF API 연동을 테스트합니다.</p>
+          </Link>
+
+          <Link
+            href="/test/copy-test"
+            className={styles.card}
+          >
+            <h2>📁 문서 조회 테스트 모음</h2>
+            <p>등기부등본과 납세확인서 조회 테스트를 한 곳에서 관리합니다.</p>
           </Link>
         </div>
       </main>

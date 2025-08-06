@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GetRealEstateDataUseCase } from '@be/applications/realEstate/usecases/RealEstateDataUseCase';
 import { encryptPassword } from '@libs/codefEncryption';
 import { IssueResultRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
+import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
+import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 
 const useCase = new GetRealEstateDataUseCase();
 
 export async function POST(request: NextRequest) {
   try {
-    const body: IssueResultRequest = await request.json();
+    const body: IssueResultRequest & { userAddressId: number } = await request.json();
 
     // 요청 검증
     if (!body.password) {
@@ -45,6 +47,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!body.userAddressId || typeof body.userAddressId !== 'number') {
+      return NextResponse.json(
+        { success: false, message: '사용자 주소 ID는 필수입니다.' },
+        { status: 400 }
+      );
+    }
+
     // API 요청 데이터 구성 (body를 직접 사용하되 password만 암호화)
     const apiRequest: IssueResultRequest = {
       addr_sido: body.addr_sido || '',
@@ -60,6 +69,7 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '3' as const,
+      userAddressId: body.userAddressId,
       issueType: body.issueType || '1',
       ePrepayNo: body.ePrepayNo || '',
       ePrepayPass: body.ePrepayPass || '',
@@ -107,13 +117,45 @@ export async function POST(request: NextRequest) {
     //   });
     // }
 
-    // 성공 응답
-    return NextResponse.json({
-      success: true,
-      message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
-      data: response,
-      status: 200,
-    });
+    // 성공적으로 발급된 경우 DB에 저장 (upsert 방식)
+    let savedRealEstateCopy = null;
+    let isUpdated = false;
+    try {
+      const dbRepository = new RealEstateCopyRepositoryImpl();
+      const dbUseCase = new RealEstateCopyUseCase(dbRepository);
+      
+      // 기존 데이터 확인
+      const existing = await dbUseCase.findRealEstateCopyByUserAddressId(body.userAddressId);
+      isUpdated = !!existing;
+      
+      savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
+        userAddressId: body.userAddressId,
+        realEstateJson: JSON.parse(JSON.stringify(response))
+      });
+
+      console.log(`✅ 등기부등본 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
+        realEstateCopyId: savedRealEstateCopy.id,
+        userAddressId: savedRealEstateCopy.userAddressId
+      });
+    } catch (dbError) {
+      console.error('❌ 등기부등본 DB 저장 실패:', dbError);
+      // DB 저장 실패해도 API 응답은 성공으로 처리 (발급 자체는 성공했으므로)
+    }
+
+      // 성공 응답
+  return NextResponse.json({
+    success: true,
+    message: `부동산등기부등본 조회가 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
+    data: response,
+    ...(savedRealEstateCopy && {
+      savedRealEstateCopy: {
+        id: savedRealEstateCopy.id,
+        userAddressId: savedRealEstateCopy.userAddressId,
+        isUpdated: isUpdated
+      }
+    }),
+    status: 200,
+  });
   } catch (error) {
     console.error('❌ 부동산등기부등본 조회 API 오류:', error);
     return NextResponse.json(

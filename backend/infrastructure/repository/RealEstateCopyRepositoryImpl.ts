@@ -1,15 +1,15 @@
 import { PrismaClient, Prisma } from '@prisma/generated';
-import { RegistryCopyRepository } from '@be/domain/repository/RegistryCopyRepository';
-import { RegistryCopy, CreateRegistryCopyDto, UpdateRegistryCopyDto, RegistryCopyJson } from '@be/domain/entities/RegistryCopy';
+import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
+import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto, RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
 
-export class RegistryCopyRepositoryImpl implements RegistryCopyRepository {
+export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
   private prisma: PrismaClient;
 
   constructor() {
     this.prisma = new PrismaClient();
   }
 
-  async create(data: CreateRegistryCopyDto): Promise<RegistryCopy> {
+  async create(data: CreateRealEstateCopyDto): Promise<RealEstateCopy> {
     const realEstate = await this.prisma.realEstate.create({
       data: {
         userAddressId: data.userAddressId,
@@ -20,11 +20,11 @@ export class RegistryCopyRepositoryImpl implements RegistryCopyRepository {
     return {
       id: realEstate.id,
       userAddressId: realEstate.userAddressId,
-      realEstateJson: realEstate.realEstateJson as RegistryCopyJson,
+      realEstateJson: realEstate.realEstateJson as RealEstateCopyJson,
     };
   }
 
-  async findByUserAddressId(userAddressId: number): Promise<RegistryCopy[]> {
+  async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy[]> {
     const realEstates = await this.prisma.realEstate.findMany({
       where: { userAddressId },
     });
@@ -32,11 +32,11 @@ export class RegistryCopyRepositoryImpl implements RegistryCopyRepository {
     return realEstates.map(realEstate => ({
       id: realEstate.id,
       userAddressId: realEstate.userAddressId,
-      realEstateJson: realEstate.realEstateJson as RegistryCopyJson,
+      realEstateJson: realEstate.realEstateJson as RealEstateCopyJson,
     }));
   }
 
-  async updateByUserAddressId(userAddressId: number, data: UpdateRegistryCopyDto): Promise<RegistryCopy> {
+  async updateByUserAddressId(userAddressId: number, data: UpdateRealEstateCopyDto): Promise<RealEstateCopy> {
     const realEstate = await this.prisma.realEstate.updateMany({
       where: { userAddressId },
       data: {
@@ -50,13 +50,13 @@ export class RegistryCopyRepositoryImpl implements RegistryCopyRepository {
     });
 
     if (!updatedRealEstate) {
-      throw new Error('RegistryCopy not found for the given userAddressId');
+      throw new Error('RealEstateCopy not found for the given userAddressId');
     }
 
     return {
       id: updatedRealEstate.id,
       userAddressId: updatedRealEstate.userAddressId,
-      realEstateJson: updatedRealEstate.realEstateJson as RegistryCopyJson,
+      realEstateJson: updatedRealEstate.realEstateJson as RealEstateCopyJson,
     };
   }
 
@@ -65,4 +65,4 @@ export class RegistryCopyRepositoryImpl implements RegistryCopyRepository {
       where: { userAddressId },
     });
   }
-} 
+}

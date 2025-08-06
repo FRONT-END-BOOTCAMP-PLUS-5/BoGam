@@ -177,7 +177,8 @@ exports.Prisma.StepResultScalarFieldEnum = {
 
 exports.Prisma.PrimaryAddressScalarFieldEnum = {
   id: 'id',
-  userAddressId: 'userAddressId'
+  userAddressId: 'userAddressId',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {
