@@ -3,11 +3,13 @@ import { StepResultUseCase } from '@be/applications/stepResult/usecase/StepResul
 import { StepResultRepositoryImpl } from '@be/infrastructure/repository/StepResultRepositoryImpl';
 import { GetStepResultQueryDto } from '@be/applications/stepResult/dtos/StepResultDto';
 
-// GET /api/step-result?userAddressId=1
+// GET /api/step-result?userAddressId=1&mainNum=1&subNum=2
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userAddressId = searchParams.get('userAddressId');
+    const mainNum = searchParams.get('mainNum');
+    const subNum = searchParams.get('subNum');
 
     // 입력 유효성 검사
     if (!userAddressId) {
@@ -34,8 +36,46 @@ export async function GET(request: NextRequest) {
     const repository = new StepResultRepositoryImpl();
     const useCase = new StepResultUseCase(repository);
     
-    const queryDto = new GetStepResultQueryDto(userAddressIdNum);
-    const result = await useCase.getStepResultsByUserAddress(queryDto);
+    let result;
+
+    // mainNum과 subNum이 모두 있으면 특정 스탭 조회
+    if (mainNum && subNum) {
+      const mainNumInt = parseInt(mainNum);
+      const subNumInt = parseInt(subNum);
+      
+      if (isNaN(mainNumInt) || isNaN(subNumInt)) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            message: '유효하지 않은 mainNum 또는 subNum입니다.' 
+          },
+          { status: 400 }
+        );
+      }
+
+      result = await useCase.getStepResultByUserAddressAndMainSubNum(userAddressIdNum, mainNumInt, subNumInt);
+    }
+    // mainNum만 있으면 해당 mainNum의 모든 스탭 조회
+    else if (mainNum) {
+      const mainNumInt = parseInt(mainNum);
+      
+      if (isNaN(mainNumInt)) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            message: '유효하지 않은 mainNum입니다.' 
+          },
+          { status: 400 }
+        );
+      }
+
+      result = await useCase.getStepResultsByUserAddressAndMainNum(userAddressIdNum, mainNumInt);
+    }
+    // 둘 다 없으면 전체 조회
+    else {
+      const queryDto = new GetStepResultQueryDto(userAddressIdNum);
+      result = await useCase.getStepResultsByUserAddress(queryDto);
+    }
 
     if (!result.success) {
       return NextResponse.json(

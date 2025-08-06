@@ -25,6 +25,54 @@ export class StepResultUseCase {
     }
   }
 
+  async getStepResultsByUserAddressAndMainNum(userAddressId: number, mainNum: number): Promise<StepResultResponseDto> {
+    try {
+      const stepResults = await this.stepResultRepository.findByUserAddressAndMainNum(userAddressId, mainNum);
+      
+      return new StepResultResponseDto(
+        true,
+        stepResults,
+        undefined,
+        '스탭 결과 조회 성공'
+      );
+    } catch (error) {
+      console.error('❌ 스탭 결과 조회 오류:', error);
+      return new StepResultResponseDto(
+        false,
+        undefined,
+        error instanceof Error ? error.message : '스탭 결과 조회 중 오류가 발생했습니다.'
+      );
+    }
+  }
+
+  async getStepResultByUserAddressAndMainSubNum(userAddressId: number, mainNum: number, subNum: number): Promise<StepResultResponseDto> {
+    try {
+      const stepResult = await this.stepResultRepository.findByUserAddressAndMainSubNum(userAddressId, mainNum, subNum);
+      
+      if (!stepResult) {
+        return new StepResultResponseDto(
+          false,
+          undefined,
+          '해당 스탭 결과를 찾을 수 없습니다.'
+        );
+      }
+
+      return new StepResultResponseDto(
+        true,
+        stepResult,
+        undefined,
+        '스탭 결과 조회 성공'
+      );
+    } catch (error) {
+      console.error('❌ 스탭 결과 조회 오류:', error);
+      return new StepResultResponseDto(
+        false,
+        undefined,
+        error instanceof Error ? error.message : '스탭 결과 조회 중 오류가 발생했습니다.'
+      );
+    }
+  }
+
   async getStepResultById(id: number): Promise<StepResultResponseDto> {
     try {
       const stepResult = await this.stepResultRepository.findById(id);
