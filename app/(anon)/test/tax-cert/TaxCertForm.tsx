@@ -45,6 +45,7 @@ export default function TaxCertForm() {
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingExisting, setIsCheckingExisting] = useState(false);
   const [response, setResponse] = useState<CodefResponse | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
@@ -152,13 +153,20 @@ export default function TaxCertForm() {
     try {
       setIsLoading(true);
       setError(null);
-      updateStep(2);
-
-      console.log("📋 폼 데이터:", formData);
 
       // 폼 데이터 준비 (암호화는 서버에서 처리)
       const preparedFormData = prepareFormData(formData);
       
+      // 기존 데이터 확인 및 사용자 확인
+      const shouldProceed = await checkExistingData(preparedFormData.userAddressId);
+      if (!shouldProceed) {
+        setIsLoading(false);
+        return; // 사용자가 취소한 경우
+      }
+
+      updateStep(2);
+
+      console.log("📋 폼 데이터:", formData);
       console.log('📋 전송할 폼 데이터:', preparedFormData);
 
       const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, preparedFormData, {
@@ -192,8 +200,42 @@ export default function TaxCertForm() {
   };
 
   // 암호화는 서버에서 처리하므로 클라이언트에서는 평문 그대로 전송
-  const prepareFormData = (formData: TaxCertRequest): TaxCertRequest => {
-    return { ...formData };
+  const prepareFormData = (formData: TaxCertRequest): TaxCertRequest & { userAddressId: number } => {
+    return { 
+      ...formData,
+      userAddressId: 1 // 임시 테스트 값 - 실제로는 사용자 선택이나 세션에서 가져와야 함
+    };
+  };
+
+  // 기존 데이터 확인
+  const checkExistingData = async (userAddressId: number): Promise<boolean> => {
+    try {
+      setIsCheckingExisting(true);
+      const response = await axios.post('/api/check-existing-data', {
+        userAddressId,
+        type: 'tax-cert'
+      });
+
+      const data = response.data as { success: boolean; hasExistingData?: boolean; existingData?: any };
+      if (data.success && data.hasExistingData) {
+                   const existingData = data.existingData;
+           const updatedAt = existingData.updatedAt ? new Date(existingData.updatedAt).toLocaleString() : '알 수 없음';
+           
+           return confirm(
+             `이미 저장된 납세증명서가 있습니다.\n` +
+             `마지막 업데이트: ${updatedAt}\n\n` +
+             `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
+           );
+      }
+      
+      return true; // 기존 데이터가 없으면 진행
+    } catch (error) {
+      console.error('기존 데이터 확인 실패:', error);
+      // 에러가 발생해도 진행 (최악의 경우 백엔드에서 upsert 처리)
+      return true;
+    } finally {
+      setIsCheckingExisting(false);
+    }
   };
 
   // 추가인증 제출 시 단계 업데이트
@@ -228,7 +270,7 @@ export default function TaxCertForm() {
       
       console.log('🔐 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
       
-      const twoWayRequest: TaxCertTwoWayRequest = {
+      const twoWayRequest: TaxCertTwoWayRequest & { userAddressId: number } = {
         organization: formData.organization,
         loginType: formData.loginType,
         isIdentityViewYN: formData.isIdentityViewYN,
@@ -263,6 +305,7 @@ export default function TaxCertForm() {
         simpleKeyToken,
         rValue,
         certificate,
+        userAddressId: 1, // 임시 테스트 값 - 실제로는 사용자 선택이나 세션에서 가져와야 함
         ...(extraInfo && { extraInfo }),
       };
 

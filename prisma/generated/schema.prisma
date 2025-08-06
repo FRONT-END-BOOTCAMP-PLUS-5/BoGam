@@ -23,8 +23,14 @@ model User {
 
 model TaxCert {
   id            Int         @id @default(autoincrement())
+<<<<<<< HEAD
   userAddressId Int         @map("user_address_id")
   taxCertJson   Json        @unique(map: "tax_certs_unique") @map("tax_cert_json")
+=======
+  userAddressId Int         @unique @map("user_address_id")
+  taxCertData   String      @map("tax_cert_data") @db.Text
+  updatedAt     DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+>>>>>>> develop
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("tax_certs")
@@ -61,8 +67,14 @@ model UserAddress {
 
 model RealEstate {
   id             Int         @id @default(autoincrement())
+<<<<<<< HEAD
   userAddressId  Int         @map("user_address_id")
   realEstateJson Json?       @map("real_estate_json")
+=======
+  userAddressId  Int         @unique @map("user_address_id")
+  realEstateData String      @map("real_estate_data") @db.Text
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+>>>>>>> develop
   userAddress    UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("real_estates")

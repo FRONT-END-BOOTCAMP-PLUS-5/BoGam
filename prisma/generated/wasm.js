@@ -133,7 +133,12 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.TaxCertScalarFieldEnum = {
   id: 'id',
   userAddressId: 'userAddressId',
+<<<<<<< HEAD
   taxCertJson: 'taxCertJson'
+=======
+  taxCertData: 'taxCertData',
+  updatedAt: 'updatedAt'
+>>>>>>> develop
 };
 
 exports.Prisma.AddressScalarFieldEnum = {
@@ -157,7 +162,8 @@ exports.Prisma.UserAddressScalarFieldEnum = {
 exports.Prisma.RealEstateScalarFieldEnum = {
   id: 'id',
   userAddressId: 'userAddressId',
-  realEstateJson: 'realEstateJson'
+  realEstateData: 'realEstateData',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.StepScalarFieldEnum = {
@@ -181,6 +187,7 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+<<<<<<< HEAD
 exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
@@ -190,17 +197,22 @@ exports.Prisma.NullableJsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
+=======
+>>>>>>> develop
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
 
+<<<<<<< HEAD
 exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
 
+=======
+>>>>>>> develop
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'

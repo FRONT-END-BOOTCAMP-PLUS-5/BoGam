@@ -2690,17 +2690,32 @@ export namespace Prisma {
   export type TaxCertMinAggregateOutputType = {
     id: number | null
     userAddressId: number | null
+<<<<<<< HEAD
+=======
+    taxCertData: string | null
+    updatedAt: Date | null
+>>>>>>> develop
   }
 
   export type TaxCertMaxAggregateOutputType = {
     id: number | null
     userAddressId: number | null
+<<<<<<< HEAD
+=======
+    taxCertData: string | null
+    updatedAt: Date | null
+>>>>>>> develop
   }
 
   export type TaxCertCountAggregateOutputType = {
     id: number
     userAddressId: number
+<<<<<<< HEAD
     taxCertJson: number
+=======
+    taxCertData: number
+    updatedAt: number
+>>>>>>> develop
     _all: number
   }
 
@@ -2718,17 +2733,32 @@ export namespace Prisma {
   export type TaxCertMinAggregateInputType = {
     id?: true
     userAddressId?: true
+<<<<<<< HEAD
+=======
+    taxCertData?: true
+    updatedAt?: true
+>>>>>>> develop
   }
 
   export type TaxCertMaxAggregateInputType = {
     id?: true
     userAddressId?: true
+<<<<<<< HEAD
+=======
+    taxCertData?: true
+    updatedAt?: true
+>>>>>>> develop
   }
 
   export type TaxCertCountAggregateInputType = {
     id?: true
     userAddressId?: true
+<<<<<<< HEAD
     taxCertJson?: true
+=======
+    taxCertData?: true
+    updatedAt?: true
+>>>>>>> develop
     _all?: true
   }
 
@@ -2821,7 +2851,12 @@ export namespace Prisma {
   export type TaxCertGroupByOutputType = {
     id: number
     userAddressId: number
+<<<<<<< HEAD
     taxCertJson: JsonValue
+=======
+    taxCertData: string
+    updatedAt: Date
+>>>>>>> develop
     _count: TaxCertCountAggregateOutputType | null
     _avg: TaxCertAvgAggregateOutputType | null
     _sum: TaxCertSumAggregateOutputType | null
@@ -2846,31 +2881,54 @@ export namespace Prisma {
   export type TaxCertSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userAddressId?: boolean
+<<<<<<< HEAD
     taxCertJson?: boolean
+=======
+    taxCertData?: boolean
+    updatedAt?: boolean
+>>>>>>> develop
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taxCert"]>
 
   export type TaxCertSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userAddressId?: boolean
+<<<<<<< HEAD
     taxCertJson?: boolean
+=======
+    taxCertData?: boolean
+    updatedAt?: boolean
+>>>>>>> develop
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taxCert"]>
 
   export type TaxCertSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userAddressId?: boolean
+<<<<<<< HEAD
     taxCertJson?: boolean
+=======
+    taxCertData?: boolean
+    updatedAt?: boolean
+>>>>>>> develop
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taxCert"]>
 
   export type TaxCertSelectScalar = {
     id?: boolean
     userAddressId?: boolean
+<<<<<<< HEAD
     taxCertJson?: boolean
   }
 
   export type TaxCertOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userAddressId" | "taxCertJson", ExtArgs["result"]["taxCert"]>
+=======
+    taxCertData?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TaxCertOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userAddressId" | "taxCertData" | "updatedAt", ExtArgs["result"]["taxCert"]>
+>>>>>>> develop
   export type TaxCertInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
@@ -2889,7 +2947,12 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       userAddressId: number
+<<<<<<< HEAD
       taxCertJson: Prisma.JsonValue
+=======
+      taxCertData: string
+      updatedAt: Date
+>>>>>>> develop
     }, ExtArgs["result"]["taxCert"]>
     composites: {}
   }
@@ -3316,7 +3379,12 @@ export namespace Prisma {
   interface TaxCertFieldRefs {
     readonly id: FieldRef<"TaxCert", 'Int'>
     readonly userAddressId: FieldRef<"TaxCert", 'Int'>
+<<<<<<< HEAD
     readonly taxCertJson: FieldRef<"TaxCert", 'Json'>
+=======
+    readonly taxCertData: FieldRef<"TaxCert", 'String'>
+    readonly updatedAt: FieldRef<"TaxCert", 'DateTime'>
+>>>>>>> develop
   }
     
 
@@ -6084,17 +6152,22 @@ export namespace Prisma {
   export type RealEstateMinAggregateOutputType = {
     id: number | null
     userAddressId: number | null
+    realEstateData: string | null
+    updatedAt: Date | null
   }
 
   export type RealEstateMaxAggregateOutputType = {
     id: number | null
     userAddressId: number | null
+    realEstateData: string | null
+    updatedAt: Date | null
   }
 
   export type RealEstateCountAggregateOutputType = {
     id: number
     userAddressId: number
-    realEstateJson: number
+    realEstateData: number
+    updatedAt: number
     _all: number
   }
 
@@ -6112,17 +6185,22 @@ export namespace Prisma {
   export type RealEstateMinAggregateInputType = {
     id?: true
     userAddressId?: true
+    realEstateData?: true
+    updatedAt?: true
   }
 
   export type RealEstateMaxAggregateInputType = {
     id?: true
     userAddressId?: true
+    realEstateData?: true
+    updatedAt?: true
   }
 
   export type RealEstateCountAggregateInputType = {
     id?: true
     userAddressId?: true
-    realEstateJson?: true
+    realEstateData?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -6215,7 +6293,8 @@ export namespace Prisma {
   export type RealEstateGroupByOutputType = {
     id: number
     userAddressId: number
-    realEstateJson: JsonValue | null
+    realEstateData: string
+    updatedAt: Date
     _count: RealEstateCountAggregateOutputType | null
     _avg: RealEstateAvgAggregateOutputType | null
     _sum: RealEstateSumAggregateOutputType | null
@@ -6240,31 +6319,35 @@ export namespace Prisma {
   export type RealEstateSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userAddressId?: boolean
-    realEstateJson?: boolean
+    realEstateData?: boolean
+    updatedAt?: boolean
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["realEstate"]>
 
   export type RealEstateSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userAddressId?: boolean
-    realEstateJson?: boolean
+    realEstateData?: boolean
+    updatedAt?: boolean
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["realEstate"]>
 
   export type RealEstateSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userAddressId?: boolean
-    realEstateJson?: boolean
+    realEstateData?: boolean
+    updatedAt?: boolean
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["realEstate"]>
 
   export type RealEstateSelectScalar = {
     id?: boolean
     userAddressId?: boolean
-    realEstateJson?: boolean
+    realEstateData?: boolean
+    updatedAt?: boolean
   }
 
-  export type RealEstateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userAddressId" | "realEstateJson", ExtArgs["result"]["realEstate"]>
+  export type RealEstateOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userAddressId" | "realEstateData" | "updatedAt", ExtArgs["result"]["realEstate"]>
   export type RealEstateInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
@@ -6283,7 +6366,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: number
       userAddressId: number
-      realEstateJson: Prisma.JsonValue | null
+      realEstateData: string
+      updatedAt: Date
     }, ExtArgs["result"]["realEstate"]>
     composites: {}
   }
@@ -6710,7 +6794,8 @@ export namespace Prisma {
   interface RealEstateFieldRefs {
     readonly id: FieldRef<"RealEstate", 'Int'>
     readonly userAddressId: FieldRef<"RealEstate", 'Int'>
-    readonly realEstateJson: FieldRef<"RealEstate", 'Json'>
+    readonly realEstateData: FieldRef<"RealEstate", 'String'>
+    readonly updatedAt: FieldRef<"RealEstate", 'DateTime'>
   }
     
 
@@ -9387,7 +9472,12 @@ export namespace Prisma {
   export const TaxCertScalarFieldEnum: {
     id: 'id',
     userAddressId: 'userAddressId',
+<<<<<<< HEAD
     taxCertJson: 'taxCertJson'
+=======
+    taxCertData: 'taxCertData',
+    updatedAt: 'updatedAt'
+>>>>>>> develop
   };
 
   export type TaxCertScalarFieldEnum = (typeof TaxCertScalarFieldEnum)[keyof typeof TaxCertScalarFieldEnum]
@@ -9420,7 +9510,8 @@ export namespace Prisma {
   export const RealEstateScalarFieldEnum: {
     id: 'id',
     userAddressId: 'userAddressId',
-    realEstateJson: 'realEstateJson'
+    realEstateData: 'realEstateData',
+    updatedAt: 'updatedAt'
   };
 
   export type RealEstateScalarFieldEnum = (typeof RealEstateScalarFieldEnum)[keyof typeof RealEstateScalarFieldEnum]
@@ -9456,6 +9547,7 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+<<<<<<< HEAD
   export const JsonNullValueInput: {
     JsonNull: typeof JsonNull
   };
@@ -9471,6 +9563,8 @@ export namespace Prisma {
   export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
+=======
+>>>>>>> develop
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -9479,6 +9573,7 @@ export namespace Prisma {
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
+<<<<<<< HEAD
   export const JsonNullValueFilter: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull,
@@ -9488,6 +9583,8 @@ export namespace Prisma {
   export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
+=======
+>>>>>>> develop
   export const NullsOrder: {
     first: 'first',
     last: 'last'
@@ -9530,16 +9627,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Json'
+   * Reference to a field of type 'DateTime'
    */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
     
 
 
   /**
-   * Reference to a field of type 'QueryMode'
+   * Reference to a field of type 'DateTime[]'
    */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
 
 
@@ -9561,20 +9658,6 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-  /**
-   * Reference to a field of type 'DateTime'
-   */
-  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
-    
-
-
-  /**
-   * Reference to a field of type 'DateTime[]'
-   */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
     
   /**
    * Deep Input Types
@@ -9652,19 +9735,30 @@ export namespace Prisma {
     NOT?: TaxCertWhereInput | TaxCertWhereInput[]
     id?: IntFilter<"TaxCert"> | number
     userAddressId?: IntFilter<"TaxCert"> | number
+<<<<<<< HEAD
     taxCertJson?: JsonFilter<"TaxCert">
+=======
+    taxCertData?: StringFilter<"TaxCert"> | string
+    updatedAt?: DateTimeFilter<"TaxCert"> | Date | string
+>>>>>>> develop
     userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
   }
 
   export type TaxCertOrderByWithRelationInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+<<<<<<< HEAD
     taxCertJson?: SortOrder
+=======
+    taxCertData?: SortOrder
+    updatedAt?: SortOrder
+>>>>>>> develop
     userAddress?: UserAddressOrderByWithRelationInput
   }
 
   export type TaxCertWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+<<<<<<< HEAD
     taxCertJson?: InputJsonValue
     AND?: TaxCertWhereInput | TaxCertWhereInput[]
     OR?: TaxCertWhereInput[]
@@ -9672,11 +9766,26 @@ export namespace Prisma {
     userAddressId?: IntFilter<"TaxCert"> | number
     userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
   }, "id" | "taxCertJson">
+=======
+    userAddressId?: number
+    AND?: TaxCertWhereInput | TaxCertWhereInput[]
+    OR?: TaxCertWhereInput[]
+    NOT?: TaxCertWhereInput | TaxCertWhereInput[]
+    taxCertData?: StringFilter<"TaxCert"> | string
+    updatedAt?: DateTimeFilter<"TaxCert"> | Date | string
+    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
+  }, "id" | "userAddressId">
+>>>>>>> develop
 
   export type TaxCertOrderByWithAggregationInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+<<<<<<< HEAD
     taxCertJson?: SortOrder
+=======
+    taxCertData?: SortOrder
+    updatedAt?: SortOrder
+>>>>>>> develop
     _count?: TaxCertCountOrderByAggregateInput
     _avg?: TaxCertAvgOrderByAggregateInput
     _max?: TaxCertMaxOrderByAggregateInput
@@ -9690,7 +9799,12 @@ export namespace Prisma {
     NOT?: TaxCertScalarWhereWithAggregatesInput | TaxCertScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"TaxCert"> | number
     userAddressId?: IntWithAggregatesFilter<"TaxCert"> | number
+<<<<<<< HEAD
     taxCertJson?: JsonWithAggregatesFilter<"TaxCert">
+=======
+    taxCertData?: StringWithAggregatesFilter<"TaxCert"> | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TaxCert"> | Date | string
+>>>>>>> develop
   }
 
   export type AddressWhereInput = {
@@ -9836,31 +9950,35 @@ export namespace Prisma {
     NOT?: RealEstateWhereInput | RealEstateWhereInput[]
     id?: IntFilter<"RealEstate"> | number
     userAddressId?: IntFilter<"RealEstate"> | number
-    realEstateJson?: JsonNullableFilter<"RealEstate">
+    realEstateData?: StringFilter<"RealEstate"> | string
+    updatedAt?: DateTimeFilter<"RealEstate"> | Date | string
     userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
   }
 
   export type RealEstateOrderByWithRelationInput = {
     id?: SortOrder
     userAddressId?: SortOrder
-    realEstateJson?: SortOrderInput | SortOrder
+    realEstateData?: SortOrder
+    updatedAt?: SortOrder
     userAddress?: UserAddressOrderByWithRelationInput
   }
 
   export type RealEstateWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    userAddressId?: number
     AND?: RealEstateWhereInput | RealEstateWhereInput[]
     OR?: RealEstateWhereInput[]
     NOT?: RealEstateWhereInput | RealEstateWhereInput[]
-    userAddressId?: IntFilter<"RealEstate"> | number
-    realEstateJson?: JsonNullableFilter<"RealEstate">
+    realEstateData?: StringFilter<"RealEstate"> | string
+    updatedAt?: DateTimeFilter<"RealEstate"> | Date | string
     userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
-  }, "id">
+  }, "id" | "userAddressId">
 
   export type RealEstateOrderByWithAggregationInput = {
     id?: SortOrder
     userAddressId?: SortOrder
-    realEstateJson?: SortOrderInput | SortOrder
+    realEstateData?: SortOrder
+    updatedAt?: SortOrder
     _count?: RealEstateCountOrderByAggregateInput
     _avg?: RealEstateAvgOrderByAggregateInput
     _max?: RealEstateMaxOrderByAggregateInput
@@ -9874,7 +9992,8 @@ export namespace Prisma {
     NOT?: RealEstateScalarWhereWithAggregatesInput | RealEstateScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"RealEstate"> | number
     userAddressId?: IntWithAggregatesFilter<"RealEstate"> | number
-    realEstateJson?: JsonNullableWithAggregatesFilter<"RealEstate">
+    realEstateData?: StringWithAggregatesFilter<"RealEstate"> | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RealEstate"> | Date | string
   }
 
   export type StepWhereInput = {
@@ -10069,41 +10188,76 @@ export namespace Prisma {
   }
 
   export type TaxCertCreateInput = {
+<<<<<<< HEAD
     taxCertJson: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData: string
+    updatedAt?: Date | string
+>>>>>>> develop
     userAddress: UserAddressCreateNestedOneWithoutTaxCertsInput
   }
 
   export type TaxCertUncheckedCreateInput = {
     id?: number
     userAddressId: number
+<<<<<<< HEAD
     taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
   export type TaxCertUpdateInput = {
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData: string
+    updatedAt?: Date | string
+  }
+
+  export type TaxCertUpdateInput = {
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
     userAddress?: UserAddressUpdateOneRequiredWithoutTaxCertsNestedInput
   }
 
   export type TaxCertUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userAddressId?: IntFieldUpdateOperationsInput | number
+<<<<<<< HEAD
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
   }
 
   export type TaxCertCreateManyInput = {
     id?: number
     userAddressId: number
+<<<<<<< HEAD
     taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
   export type TaxCertUpdateManyMutationInput = {
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData: string
+    updatedAt?: Date | string
+  }
+
+  export type TaxCertUpdateManyMutationInput = {
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
   }
 
   export type TaxCertUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     userAddressId?: IntFieldUpdateOperationsInput | number
+<<<<<<< HEAD
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
   }
 
   export type AddressCreateInput = {
@@ -10241,41 +10395,48 @@ export namespace Prisma {
   }
 
   export type RealEstateCreateInput = {
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData: string
+    updatedAt?: Date | string
     userAddress: UserAddressCreateNestedOneWithoutRealEstatesInput
   }
 
   export type RealEstateUncheckedCreateInput = {
     id?: number
     userAddressId: number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData: string
+    updatedAt?: Date | string
   }
 
   export type RealEstateUpdateInput = {
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userAddress?: UserAddressUpdateOneRequiredWithoutRealEstatesNestedInput
   }
 
   export type RealEstateUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userAddressId?: IntFieldUpdateOperationsInput | number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RealEstateCreateManyInput = {
     id?: number
     userAddressId: number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData: string
+    updatedAt?: Date | string
   }
 
   export type RealEstateUpdateManyMutationInput = {
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RealEstateUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     userAddressId?: IntFieldUpdateOperationsInput | number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StepCreateInput = {
@@ -10496,6 +10657,7 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
   }
+<<<<<<< HEAD
   export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -10518,6 +10680,18 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+=======
+
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+>>>>>>> develop
   }
 
   export type UserAddressScalarRelationFilter = {
@@ -10528,7 +10702,12 @@ export namespace Prisma {
   export type TaxCertCountOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+<<<<<<< HEAD
     taxCertJson?: SortOrder
+=======
+    taxCertData?: SortOrder
+    updatedAt?: SortOrder
+>>>>>>> develop
   }
 
   export type TaxCertAvgOrderByAggregateInput = {
@@ -10539,11 +10718,21 @@ export namespace Prisma {
   export type TaxCertMaxOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+<<<<<<< HEAD
+=======
+    taxCertData?: SortOrder
+    updatedAt?: SortOrder
+>>>>>>> develop
   }
 
   export type TaxCertMinOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+<<<<<<< HEAD
+=======
+    taxCertData?: SortOrder
+    updatedAt?: SortOrder
+>>>>>>> develop
   }
 
   export type TaxCertSumOrderByAggregateInput = {
@@ -10566,6 +10755,7 @@ export namespace Prisma {
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
   }
+<<<<<<< HEAD
   export type JsonWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
@@ -10591,6 +10781,21 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedJsonFilter<$PrismaModel>
     _max?: NestedJsonFilter<$PrismaModel>
+=======
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+>>>>>>> develop
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -10684,6 +10889,7 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+<<<<<<< HEAD
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -10704,11 +10910,34 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+=======
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+>>>>>>> develop
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+<<<<<<< HEAD
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -10720,6 +10949,8 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+=======
+>>>>>>> develop
   export type RealEstateListRelationFilter = {
     every?: RealEstateWhereInput
     some?: RealEstateWhereInput
@@ -10800,6 +11031,7 @@ export namespace Prisma {
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+<<<<<<< HEAD
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
@@ -10840,12 +11072,18 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+=======
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+>>>>>>> develop
   }
 
   export type RealEstateCountOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
-    realEstateJson?: SortOrder
+    realEstateData?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type RealEstateAvgOrderByAggregateInput = {
@@ -10856,11 +11094,15 @@ export namespace Prisma {
   export type RealEstateMaxOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+    realEstateData?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type RealEstateMinOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+    realEstateData?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type RealEstateSumOrderByAggregateInput = {
@@ -11056,6 +11298,13 @@ export namespace Prisma {
     connect?: UserAddressWhereUniqueInput
   }
 
+<<<<<<< HEAD
+=======
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
+  }
+
+>>>>>>> develop
   export type UserAddressUpdateOneRequiredWithoutTaxCertsNestedInput = {
     create?: XOR<UserAddressCreateWithoutTaxCertsInput, UserAddressUncheckedCreateWithoutTaxCertsInput>
     connectOrCreate?: UserAddressCreateOrConnectWithoutTaxCertsInput
@@ -11178,6 +11427,7 @@ export namespace Prisma {
     connectOrCreate?: TaxCertCreateOrConnectWithoutUserAddressInput | TaxCertCreateOrConnectWithoutUserAddressInput[]
     createMany?: TaxCertCreateManyUserAddressInputEnvelope
     connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+<<<<<<< HEAD
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -11186,6 +11436,12 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+=======
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+>>>>>>> develop
   }
 
   export type RealEstateUpdateManyWithoutUserAddressNestedInput = {
@@ -11447,6 +11703,20 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
+<<<<<<< HEAD
+=======
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+>>>>>>> develop
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -11473,6 +11743,7 @@ export namespace Prisma {
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
   }
+<<<<<<< HEAD
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -11495,6 +11766,21 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+=======
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+>>>>>>> develop
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -11560,6 +11846,7 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+<<<<<<< HEAD
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -11571,6 +11858,8 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+=======
+>>>>>>> develop
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -11579,6 +11868,7 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+<<<<<<< HEAD
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -11616,6 +11906,8 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+=======
+>>>>>>> develop
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -11808,12 +12100,14 @@ export namespace Prisma {
   }
 
   export type RealEstateCreateWithoutUserAddressInput = {
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData: string
+    updatedAt?: Date | string
   }
 
   export type RealEstateUncheckedCreateWithoutUserAddressInput = {
     id?: number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData: string
+    updatedAt?: Date | string
   }
 
   export type RealEstateCreateOrConnectWithoutUserAddressInput = {
@@ -11854,12 +12148,22 @@ export namespace Prisma {
   }
 
   export type TaxCertCreateWithoutUserAddressInput = {
+<<<<<<< HEAD
     taxCertJson: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData: string
+    updatedAt?: Date | string
+>>>>>>> develop
   }
 
   export type TaxCertUncheckedCreateWithoutUserAddressInput = {
     id?: number
+<<<<<<< HEAD
     taxCertJson: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData: string
+    updatedAt?: Date | string
+>>>>>>> develop
   }
 
   export type TaxCertCreateOrConnectWithoutUserAddressInput = {
@@ -11941,7 +12245,8 @@ export namespace Prisma {
     NOT?: RealEstateScalarWhereInput | RealEstateScalarWhereInput[]
     id?: IntFilter<"RealEstate"> | number
     userAddressId?: IntFilter<"RealEstate"> | number
-    realEstateJson?: JsonNullableFilter<"RealEstate">
+    realEstateData?: StringFilter<"RealEstate"> | string
+    updatedAt?: DateTimeFilter<"RealEstate"> | Date | string
   }
 
   export type StepResultUpsertWithWhereUniqueWithoutUserAddressInput = {
@@ -11995,7 +12300,12 @@ export namespace Prisma {
     NOT?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
     id?: IntFilter<"TaxCert"> | number
     userAddressId?: IntFilter<"TaxCert"> | number
+<<<<<<< HEAD
     taxCertJson?: JsonFilter<"TaxCert">
+=======
+    taxCertData?: StringFilter<"TaxCert"> | string
+    updatedAt?: DateTimeFilter<"TaxCert"> | Date | string
+>>>>>>> develop
   }
 
   export type AddressUpsertWithoutUserAddressesInput = {
@@ -12330,7 +12640,8 @@ export namespace Prisma {
 
   export type RealEstateCreateManyUserAddressInput = {
     id?: number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData: string
+    updatedAt?: Date | string
   }
 
   export type StepResultCreateManyUserAddressInput = {
@@ -12344,21 +12655,29 @@ export namespace Prisma {
 
   export type TaxCertCreateManyUserAddressInput = {
     id?: number
+<<<<<<< HEAD
     taxCertJson: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData: string
+    updatedAt?: Date | string
+>>>>>>> develop
   }
 
   export type RealEstateUpdateWithoutUserAddressInput = {
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RealEstateUncheckedUpdateWithoutUserAddressInput = {
     id?: IntFieldUpdateOperationsInput | number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RealEstateUncheckedUpdateManyWithoutUserAddressInput = {
     id?: IntFieldUpdateOperationsInput | number
-    realEstateJson?: NullableJsonNullValueInput | InputJsonValue
+    realEstateData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StepResultUpdateWithoutUserAddressInput = {
@@ -12388,17 +12707,32 @@ export namespace Prisma {
   }
 
   export type TaxCertUpdateWithoutUserAddressInput = {
+<<<<<<< HEAD
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
   }
 
   export type TaxCertUncheckedUpdateWithoutUserAddressInput = {
     id?: IntFieldUpdateOperationsInput | number
+<<<<<<< HEAD
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
   }
 
   export type TaxCertUncheckedUpdateManyWithoutUserAddressInput = {
     id?: IntFieldUpdateOperationsInput | number
+<<<<<<< HEAD
     taxCertJson?: JsonNullValueInput | InputJsonValue
+=======
+    taxCertData?: StringFieldUpdateOperationsInput | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+>>>>>>> develop
   }
 
   export type StepResultCreateManyStepInput = {
