@@ -1,4 +1,5 @@
 import { User } from '@be/domain/entities/User';
+import { Prisma } from '@prisma/generated';
 
 export class UserMapper {
   /**
@@ -43,13 +44,13 @@ export class UserMapper {
    * User 엔티티를 생성용 데이터로 변환합니다 (id 제외).
    */
   static toCreateData(userData: {
-    name?: string;
-    nickname?: string;
-    username?: string;
-    password?: string;
-    pinNumber?: string;
-    phoneNumber?: string;
-  }) {
+    name: string;
+    nickname: string;
+    username: string;
+    password: string;
+    pinNumber: string;
+    phoneNumber: string;
+  }): Prisma.UserCreateInput {
     return {
       name: userData.name,
       nickname: userData.nickname,

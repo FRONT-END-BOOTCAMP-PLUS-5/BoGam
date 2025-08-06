@@ -32,12 +32,12 @@ export class UserRepositoryImpl implements UserRepository {
   }
 
   async create(userData: {
-    name?: string;
-    nickname?: string;
-    username?: string;
-    password?: string;
-    pinNumber?: string;
-    phoneNumber?: string;
+    name: string;
+    nickname: string;
+    username: string;
+    password: string;
+    pinNumber: string;
+    phoneNumber: string;
   }): Promise<User> {
     const user = await this.prisma.user.create({
       data: UserMapper.toCreateData(userData),
