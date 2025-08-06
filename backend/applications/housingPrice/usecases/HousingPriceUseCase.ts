@@ -3,7 +3,7 @@ import { HousingPriceEntity } from '@be/domain/entities/HousingPriceEntity';
 import {
   HousingPriceRequest,
   HousingPriceApiResponse,
-} from '../dtos/HousingPriceDto';
+} from '@be/applications/housingPrice/dtos/HousingPriceDto';
 
 /**
  * 부동산 공시가격 알리미 개별주택 가격 UseCase

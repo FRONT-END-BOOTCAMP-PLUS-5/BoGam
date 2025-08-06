@@ -42,6 +42,10 @@ next-env.d.ts
 
 # Ignore Prisma generated files
 prisma/generated/
+prisma/generated/**
+
+prisma/migrations/
+prisma/migrations/**
 
 # PWA 자동 생성 파일 무시
 public/sw.js
