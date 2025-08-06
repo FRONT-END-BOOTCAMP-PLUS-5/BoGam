@@ -195,7 +195,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/jihye/BoGam/prisma/generated",
+      "value": "C:\\Users\\dblim\\front\\BoGam\\prisma\\generated",
       "fromEnvVar": null
     },
     "config": {
@@ -204,16 +204,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "windows",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/jihye/BoGam/prisma/schema.prisma",
+    "sourceFilePath": "C:\\Users\\dblim\\front\\BoGam\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../.env",
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "..",
