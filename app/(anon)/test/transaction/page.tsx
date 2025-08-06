@@ -4,24 +4,26 @@ import { useState } from 'react';
 import styles from '@/(anon)/test/transaction/page.module.css';
 
 interface RealEstateTransactionItem {
+  aptDong: string;
   aptNm: string;
   buildYear: string;
-  contractTerm: string;
-  contractType: string;
+  buyerGbn: string;
+  cdealDay: string;
+  cdealType: string;
+  dealAmount: string;
   dealDay: string;
   dealMonth: string;
   dealYear: string;
-  dealDate?: string;
-  deposit: string;
+  dealingGbn: string;
+  estateAgentSggNm: string;
   excluUseAr: string;
   floor: string;
   jibun: string;
-  monthlyRent: string;
-  preDeposit: string;
-  preMonthlyRent: string;
+  landLeaseholdGbn: string;
+  rgstDate: string;
   sggCd: string;
+  slerGbn: string;
   umdNm: string;
-  useRRRight: string;
 }
 
 interface TransactionResponse {
@@ -73,13 +75,16 @@ export default function TransactionTestPage() {
         numOfRows: formData.numOfRows,
       });
 
-      const response = await fetch(`/api/real-estate/search/transaction-price?${params}`);
+      const response = await fetch(`/api/transaction/apartment?${params}`);
       const data: TransactionResponse = await response.json();
       
-      if (data.success) {
+      console.log('API Response:', data); // 디버깅용
+      
+      if (data.success && data.data?.body?.items?.item) {
         setTransactionList(data.data.body.items.item);
       } else {
         setError('데이터 조회에 실패했습니다.');
+        console.error('API Error:', data);
       }
     } catch (err) {
       setError('서버 오류가 발생했습니다.');
@@ -176,30 +181,39 @@ export default function TransactionTestPage() {
 
       {transactionList.length > 0 && (
         <div className={styles.tableContainer}>
+          <h3>조회 결과: {transactionList.length}건</h3>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>아파트명</th>
-                <th>계약일</th>
-                <th>보증금</th>
-                <th>월세</th>
+                <th>동</th>
+                <th>거래일</th>
+                <th>거래금액</th>
                 <th>전용면적</th>
                 <th>층</th>
                 <th>지번</th>
                 <th>읍면동</th>
+                <th>거래구분</th>
+                <th>매수자</th>
+                <th>매도자</th>
+                <th>건축년도</th>
               </tr>
             </thead>
             <tbody>
               {transactionList.map((item, index) => (
                 <tr key={index}>
                   <td>{item.aptNm}</td>
-                  <td>{item.dealDate}</td>
-                  <td>{item.deposit}</td>
-                  <td>{item.monthlyRent}</td>
+                  <td>{item.aptDong}</td>
+                  <td>{`${item.dealYear}-${item.dealMonth.padStart(2, '0')}-${item.dealDay.padStart(2, '0')}`}</td>
+                  <td>{item.dealAmount}</td>
                   <td>{item.excluUseAr}</td>
                   <td>{item.floor}</td>
                   <td>{item.jibun}</td>
                   <td>{item.umdNm}</td>
+                  <td>{item.dealingGbn}</td>
+                  <td>{item.buyerGbn}</td>
+                  <td>{item.slerGbn}</td>
+                  <td>{item.buildYear}</td>
                 </tr>
               ))}
             </tbody>

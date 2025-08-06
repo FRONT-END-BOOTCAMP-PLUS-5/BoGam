@@ -1,17 +1,6 @@
-import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
 import { Providers } from './providers';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+import type { Metadata, Viewport } from 'next';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: '전세보감 - 부동산 정보 서비스',
@@ -94,7 +83,7 @@ export default function RootLayout({
         <link rel='manifest' href='/manifest.json' />
         <link rel='shortcut icon' href='/favicon.ico' />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className='font-sans'>
         <Providers>{children}</Providers>
       </body>
     </html>

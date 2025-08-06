@@ -4,11 +4,66 @@
  */
 
 /**
+ * XML 응답 파싱 결과 타입
+ */
+export interface XmlParseResult {
+  header: {
+    resultCode: string;
+    resultMsg: string;
+  };
+  body: {
+    items: {
+      item: Array<{
+        // 아파트 관련 필드
+        aptDong?: string;
+        aptNm?: string;
+        landLeaseholdGbn?: string;
+        
+        // 연립다세대 관련 필드
+        houseType?: string;
+        landAr?: string;
+        mhouseNm?: string;
+        
+        // 오피스텔 관련 필드
+        offiNm?: string;
+        sggNm?: string;
+        
+        // 단독/다가구 관련 필드
+        plottageAr?: string;
+        totalFloorAr?: string;
+        
+        // 공통 필드
+        buildYear: string;
+        buyerGbn: string;
+        cdealDay: string;
+        cdealType: string;
+        dealAmount: string;
+        dealDay: string;
+        dealMonth: string;
+        dealYear: string;
+        dealingGbn: string;
+        estateAgentSggNm: string;
+        excluUseAr?: string;
+        floor?: string;
+        jibun: string;
+        rgstDate?: string;
+        sggCd: string;
+        slerGbn: string;
+        umdNm: string;
+      }>;
+    };
+    numOfRows: string;
+    pageNo: string;
+    totalCount: string;
+  };
+}
+
+/**
  * XML 응답을 JSON으로 파싱
  * @param xmlString XML 문자열
  * @returns 파싱된 JSON 객체
  */
-export function parseXmlResponse(xmlString: string): any {
+export function parseXmlResponse(xmlString: string): XmlParseResult {
   try {
     // 에러 체크
     if (xmlString.includes('<cmmMsgHeader>')) {
@@ -39,40 +94,66 @@ export function parseXmlResponse(xmlString: string): any {
     const pageNo = pageNoMatch ? pageNoMatch[1] : '';
     const totalCount = totalCountMatch ? totalCountMatch[1] : '';
     
-    // 아이템 파싱
+    // 아이템 파싱 (매매 실거래가 필드)
     const itemMatches = xmlString.match(/<item>([\s\S]*?)<\/item>/g);
     const itemArray = itemMatches ? itemMatches.map(itemXml => {
+      // 매매 실거래가 필드들
+      const aptDongMatch = itemXml.match(/<aptDong>(.*?)<\/aptDong>/);
       const aptNmMatch = itemXml.match(/<aptNm>(.*?)<\/aptNm>/);
       const buildYearMatch = itemXml.match(/<buildYear>(.*?)<\/buildYear>/);
+      const buyerGbnMatch = itemXml.match(/<buyerGbn>(.*?)<\/buyerGbn>/);
+      const cdealDayMatch = itemXml.match(/<cdealDay>(.*?)<\/cdealDay>/);
+      const cdealTypeMatch = itemXml.match(/<cdealType>(.*?)<\/cdealType>/);
+      const dealAmountMatch = itemXml.match(/<dealAmount>(.*?)<\/dealAmount>/);
       const dealDayMatch = itemXml.match(/<dealDay>(.*?)<\/dealDay>/);
       const dealMonthMatch = itemXml.match(/<dealMonth>(.*?)<\/dealMonth>/);
       const dealYearMatch = itemXml.match(/<dealYear>(.*?)<\/dealYear>/);
-      const depositMatch = itemXml.match(/<deposit>(.*?)<\/deposit>/);
+      const dealingGbnMatch = itemXml.match(/<dealingGbn>(.*?)<\/dealingGbn>/);
+      const estateAgentSggNmMatch = itemXml.match(/<estateAgentSggNm>(.*?)<\/estateAgentSggNm>/);
       const excluUseArMatch = itemXml.match(/<excluUseAr>(.*?)<\/excluUseAr>/);
       const floorMatch = itemXml.match(/<floor>(.*?)<\/floor>/);
+      const houseTypeMatch = itemXml.match(/<houseType>(.*?)<\/houseType>/);
       const jibunMatch = itemXml.match(/<jibun>(.*?)<\/jibun>/);
-      const monthlyRentMatch = itemXml.match(/<monthlyRent>(.*?)<\/monthlyRent>/);
+      const landArMatch = itemXml.match(/<landAr>(.*?)<\/landAr>/);
+      const landLeaseholdGbnMatch = itemXml.match(/<landLeaseholdGbn>(.*?)<\/landLeaseholdGbn>/);
+      const mhouseNmMatch = itemXml.match(/<mhouseNm>(.*?)<\/mhouseNm>/);
+      const offiNmMatch = itemXml.match(/<offiNm>(.*?)<\/offiNm>/);
+      const plottageArMatch = itemXml.match(/<plottageAr>(.*?)<\/plottageAr>/);
+      const rgstDateMatch = itemXml.match(/<rgstDate>(.*?)<\/rgstDate>/);
       const sggCdMatch = itemXml.match(/<sggCd>(.*?)<\/sggCd>/);
+      const sggNmMatch = itemXml.match(/<sggNm>(.*?)<\/sggNm>/);
+      const slerGbnMatch = itemXml.match(/<slerGbn>(.*?)<\/slerGbn>/);
+      const totalFloorArMatch = itemXml.match(/<totalFloorAr>(.*?)<\/totalFloorAr>/);
       const umdNmMatch = itemXml.match(/<umdNm>(.*?)<\/umdNm>/);
       
       return {
+        aptDong: aptDongMatch ? aptDongMatch[1] : '',
         aptNm: aptNmMatch ? aptNmMatch[1] : '',
         buildYear: buildYearMatch ? buildYearMatch[1] : '',
-        contractTerm: '',
-        contractType: '',
+        buyerGbn: buyerGbnMatch ? buyerGbnMatch[1] : '',
+        cdealDay: cdealDayMatch ? cdealDayMatch[1] : '',
+        cdealType: cdealTypeMatch ? cdealTypeMatch[1] : '',
+        dealAmount: dealAmountMatch ? dealAmountMatch[1] : '',
         dealDay: dealDayMatch ? dealDayMatch[1] : '',
         dealMonth: dealMonthMatch ? dealMonthMatch[1] : '',
         dealYear: dealYearMatch ? dealYearMatch[1] : '',
-        deposit: depositMatch ? depositMatch[1] : '',
+        dealingGbn: dealingGbnMatch ? dealingGbnMatch[1] : '',
+        estateAgentSggNm: estateAgentSggNmMatch ? estateAgentSggNmMatch[1] : '',
         excluUseAr: excluUseArMatch ? excluUseArMatch[1] : '',
         floor: floorMatch ? floorMatch[1] : '',
+        houseType: houseTypeMatch ? houseTypeMatch[1] : '',
         jibun: jibunMatch ? jibunMatch[1] : '',
-        monthlyRent: monthlyRentMatch ? monthlyRentMatch[1] : '',
-        preDeposit: '',
-        preMonthlyRent: '',
+        landAr: landArMatch ? landArMatch[1] : '',
+        landLeaseholdGbn: landLeaseholdGbnMatch ? landLeaseholdGbnMatch[1] : '',
+        mhouseNm: mhouseNmMatch ? mhouseNmMatch[1] : '',
+        offiNm: offiNmMatch ? offiNmMatch[1] : '',
+        plottageAr: plottageArMatch ? plottageArMatch[1] : '',
+        rgstDate: rgstDateMatch ? rgstDateMatch[1] : '',
         sggCd: sggCdMatch ? sggCdMatch[1] : '',
+        sggNm: sggNmMatch ? sggNmMatch[1] : '',
+        slerGbn: slerGbnMatch ? slerGbnMatch[1] : '',
+        totalFloorAr: totalFloorArMatch ? totalFloorArMatch[1] : '',
         umdNm: umdNmMatch ? umdNmMatch[1] : '',
-        useRRRight: '',
       };
     }) : [];
     
