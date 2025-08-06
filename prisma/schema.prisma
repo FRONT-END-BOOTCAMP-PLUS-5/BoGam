@@ -8,108 +8,85 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// UUID 생성 함수 사용을 위한 확장 설치
-//  
-
-// users 테이블
 model User {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String?
-  nickname     String?
-  username     String?
-  password     String?
-  pinNumber    String?  @map("pin_number")
-  phoneNumber  String?  @map("phone_number")
-  
-  // 관계
-  taxCerts     TaxCert[]
-  userAddresses UserAddress[]
-  
+  id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  nickname         String          @unique(map: "users_unique_nickname")
+  username         String          @unique(map: "users_unique_username")
+  password         String
+  pinNumber        String          @map("pin_number")
+  phoneNumber      String          @unique(map: "users_unique_phone_number") @map("phone_number")
+  userAddresses    UserAddress[]
+
   @@map("users")
 }
 
-// tax_certs 테이블
 model TaxCert {
-  id          Int      @id @default(autoincrement())
-  userId      String   @map("user_id") @db.Uuid
-  taxCertJson Json?    @map("tax_cert_json")
-  
-  // 관계
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id            Int         @id @default(autoincrement())
+  userAddressId Int         @map("user_address_id")
+  taxCertJson   Json        @unique(map: "tax_certs_unique") @map("tax_cert_json")
+  userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+
   @@map("tax_certs")
 }
 
-// addresses 테이블
 model Address {
-  id                Int      @id @default(autoincrement())
-  latitude          Float?   @db.DoublePrecision
-  longitude         Float?   @db.DoublePrecision
-  legalDistrictCode String?  @map("legal_district_code")
+  id                Int           @id @default(autoincrement())
+  latitude          Float
+  longitude         Float
+  legalDistrictCode String        @map("legal_district_code")
   dong              String?
   ho                String?
-  
-  // 관계
   userAddresses     UserAddress[]
-  
+
+  @@unique([latitude, longitude, dong, ho], map: "addresses_coordinate_dong_ho")
   @@map("addresses")
 }
 
-// user_addresses 테이블
 model UserAddress {
-  id        Int      @id @default(autoincrement())
-  userId    String   @map("user_id") @db.Uuid
-  addressId Int      @map("address_id")
-  isPrimary Boolean? @map("is_primary")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
-  nickname  String?
-  
-  // 관계
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address   Address  @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  realEstates RealEstate[]
-  stepResults StepResult[]
-  
+  id               Int              @id @default(autoincrement())
+  userId           String           @map("user_id") @db.Uuid
+  addressId        Int              @map("address_id")
+  isPrimary        Boolean          @default(false) @map("is_primary")
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  nickname         String?
+  realEstates      RealEstate[]
+  stepResults      StepResult[]
+  taxCerts         TaxCert[]
+  address          Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("user_addresses")
 }
 
-// real_estates 테이블
 model RealEstate {
-  id              Int      @id @default(autoincrement())
-  userAddressId   Int      @map("user_address_id")
-  realEstateJson  Json?    @map("real_estate_json")
-  
-  // 관계
-  userAddress     UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
-  
+  id             Int         @id @default(autoincrement())
+  userAddressId  Int         @map("user_address_id")
+  realEstateJson Json?       @map("real_estate_json")
+  userAddress    UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+
   @@map("real_estates")
 }
 
-// steps 테이블
 model Step {
-  id        Int      @id @default(autoincrement())
-  mainNum   Int      @map("main_num")
-  subNum    Int      @map("sub_num")
-  
-  // 관계
+  id          Int          @id @default(autoincrement())
+  mainNum     Int          @map("main_num")
+  subNum      Int          @map("sub_num")
   stepResults StepResult[]
-  
+
   @@map("steps")
 }
 
-// step_results 테이블
 model StepResult {
-  id            Int      @id @default(autoincrement())
-  userAddressId Int      @map("user_address_id")
-  stepId        Int      @map("step_id")
+  id            Int         @id @default(autoincrement())
+  userAddressId Int         @map("user_address_id")
+  stepId        Int         @map("step_id")
   mismatch      Int?
   match         Int?
   unchecked     Int?
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
-  
-  // 관계
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  step          Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
-  step          Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  
+
   @@map("step_results")
 }
