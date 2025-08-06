@@ -73,7 +73,9 @@ export async function GET(request: NextRequest) {
     }
     // 둘 다 없으면 전체 조회
     else {
-      const queryDto = new GetStepResultQueryDto(userAddressIdNum);
+      const queryDto: GetStepResultQueryDto = {
+        userAddressId: userAddressIdNum
+      };
       result = await useCase.getStepResultsByUserAddress(queryDto);
     }
 
@@ -106,7 +108,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/step-result
+// POST /api/step-result (upsert - 생성 또는 업데이트)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -136,13 +138,14 @@ export async function POST(request: NextRequest) {
     const repository = new StepResultRepositoryImpl();
     const useCase = new StepResultUseCase(repository);
     
-    const result = await useCase.createStepResult(body);
+    // upsert로 생성 또는 업데이트
+    const result = await useCase.upsertStepResult(body);
 
     if (!result.success) {
       return NextResponse.json(
         { 
           success: false, 
-          message: '스탭 결과 생성 실패',
+          message: '스탭 결과 생성/수정 실패',
           error: result.error 
         },
         { status: 400 }
@@ -156,7 +159,7 @@ export async function POST(request: NextRequest) {
     }, { status: 200 });
 
   } catch (error) {
-    console.error('❌ 스탭 결과 생성 오류:', error);
+    console.error('❌ 스탭 결과 생성/수정 오류:', error);
     return NextResponse.json(
       { 
         success: false, 

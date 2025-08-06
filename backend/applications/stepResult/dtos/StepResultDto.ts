@@ -1,34 +1,34 @@
 import { StepResult } from '@be/domain/entities/StepResult';
 
-export class CreateStepResultDto {
-  constructor(
-    public userAddressId: number,
-    public stepId: number,
-    public mismatch?: number,
-    public match?: number,
-    public unchecked?: number
-  ) {}
+export interface CreateStepResultDto {
+  userAddressId: number;
+  stepId: number;
+  mismatch?: number;
+  match?: number;
+  unchecked?: number;
 }
 
-export class UpdateStepResultDto {
-  constructor(
-    public mismatch?: number,
-    public match?: number,
-    public unchecked?: number
-  ) {}
+export interface UpdateStepResultDto {
+  mismatch?: number;
+  match?: number;
+  unchecked?: number;
 }
 
-export class StepResultResponseDto {
-  constructor(
-    public success: boolean,
-    public data?: StepResult | StepResult[],
-    public error?: string,
-    public message?: string
-  ) {}
+export interface StepResultResponseDto {
+  success: boolean;
+  data?: StepResult | StepResult[] | { results: StepResult[]; summary: StepResultSummaryDto };
+  error?: string;
+  message?: string;
 }
 
-export class GetStepResultQueryDto {
-  constructor(
-    public userAddressId: number
-  ) {}
+export interface GetStepResultQueryDto {
+  userAddressId: number;
+}
+
+export interface StepResultSummaryDto {
+  totalMismatch: number;
+  totalMatch: number;
+  totalUnchecked: number;
+  stepCount: number;
+  mainNum: number;
 } 

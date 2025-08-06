@@ -4,16 +4,57 @@ import { prisma } from '@utils/prisma';
 
 export class StepResultRepositoryImpl implements StepResultRepository {
 
-  async findByUserAddressId(userAddressId: number): Promise<StepResult[]> {
+  async findByParams(params: Record<string, unknown>): Promise<StepResult[]> {
     try {
+      // WHERE 조건 구성
+      const where: Record<string, unknown> = {};
+      
+      if (params.userAddressId) {
+        where.userAddressId = params.userAddressId;
+      }
+      
+      if (params.id) {
+        where.id = params.id;
+      }
+      
+      if (params.stepId) {
+        where.stepId = params.stepId;
+      }
+      
+      // step 테이블과의 JOIN 조건
+      if (params.mainNum || params.subNum) {
+        where.step = {};
+        if (params.mainNum) {
+          (where.step as Record<string, unknown>).mainNum = params.mainNum;
+        }
+        if (params.subNum) {
+          (where.step as Record<string, unknown>).subNum = params.subNum;
+        }
+      }
+
+      // ORDER BY 조건 구성
+      const orderBy: Record<string, unknown> = {};
+      if (params.mainNum && params.subNum) {
+        // 특정 스탭 조회 시
+        orderBy.stepId = 'asc';
+      } else if (params.mainNum) {
+        // mainNum으로 조회 시 subNum 순으로 정렬
+        orderBy.step = {
+          subNum: 'asc'
+        };
+      } else {
+        // 기본 정렬
+        orderBy.stepId = 'asc';
+      }
+
       const stepResults = await prisma.stepResult.findMany({
-        where: { userAddressId },
+        where,
         include: {
           step: true
         },
-        orderBy: {
-          stepId: 'asc'
-        }
+        orderBy,
+        take: params.limit as number,
+        skip: params.offset as number
       });
 
       return stepResults.map((result) => new StepResult(
@@ -25,133 +66,6 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         result.unchecked,
         result.createdAt
       ));
-    } catch (error) {
-      console.error('❌ StepResult 조회 오류:', error);
-      throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
-    }
-  }
-
-  async findByUserAddressAndMainNum(userAddressId: number, mainNum: number): Promise<StepResult[]> {
-    try {
-      const stepResults = await prisma.stepResult.findMany({
-        where: {
-          userAddressId,
-          step: {
-            mainNum
-          }
-        },
-        include: {
-          step: true
-        },
-        orderBy: {
-          step: {
-            subNum: 'asc'
-          }
-        }
-      });
-
-      return stepResults.map((result) => new StepResult(
-        result.id,
-        result.userAddressId,
-        result.stepId,
-        result.mismatch,
-        result.match,
-        result.unchecked,
-        result.createdAt
-      ));
-    } catch (error) {
-      console.error('❌ StepResult 조회 오류:', error);
-      throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
-    }
-  }
-
-  async findByUserAddressAndMainSubNum(userAddressId: number, mainNum: number, subNum: number): Promise<StepResult | null> {
-    try {
-      const stepResult = await prisma.stepResult.findFirst({
-        where: {
-          userAddressId,
-          step: {
-            mainNum,
-            subNum
-          }
-        },
-        include: {
-          step: true
-        }
-      });
-
-      if (!stepResult) {
-        return null;
-      }
-
-      return new StepResult(
-        stepResult.id,
-        stepResult.userAddressId,
-        stepResult.stepId,
-        stepResult.mismatch,
-        stepResult.match,
-        stepResult.unchecked,
-        stepResult.createdAt
-      );
-    } catch (error) {
-      console.error('❌ StepResult 조회 오류:', error);
-      throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
-    }
-  }
-
-  async findById(id: number): Promise<StepResult | null> {
-    try {
-      const stepResult = await prisma.stepResult.findUnique({
-        where: { id },
-        include: {
-          step: true
-        }
-      });
-
-      if (!stepResult) {
-        return null;
-      }
-
-      return new StepResult(
-        stepResult.id,
-        stepResult.userAddressId,
-        stepResult.stepId,
-        stepResult.mismatch,
-        stepResult.match,
-        stepResult.unchecked,
-        stepResult.createdAt
-      );
-    } catch (error) {
-      console.error('❌ StepResult 조회 오류:', error);
-      throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
-    }
-  }
-
-  async findByUserAddressAndStep(userAddressId: number, stepId: number): Promise<StepResult | null> {
-    try {
-      const stepResult = await prisma.stepResult.findFirst({
-        where: {
-          userAddressId,
-          stepId
-        },
-        include: {
-          step: true
-        }
-      });
-
-      if (!stepResult) {
-        return null;
-      }
-
-      return new StepResult(
-        stepResult.id,
-        stepResult.userAddressId,
-        stepResult.stepId,
-        stepResult.mismatch,
-        stepResult.match,
-        stepResult.unchecked,
-        stepResult.createdAt
-      );
     } catch (error) {
       console.error('❌ StepResult 조회 오류:', error);
       throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
@@ -228,37 +142,59 @@ export class StepResultRepositoryImpl implements StepResultRepository {
     }
   }
 
-  async findSummaryByMainStep(userAddressId: number, mainNum: number): Promise<StepResult[]> {
+  async upsert(stepResult: StepResult): Promise<StepResult> {
     try {
-      const stepResults = await prisma.stepResult.findMany({
+      // 먼저 기존 데이터가 있는지 확인
+      const existingStepResult = await prisma.stepResult.findFirst({
         where: {
-          userAddressId,
-          step: {
-            mainNum
-          }
-        },
-        include: {
-          step: true
-        },
-        orderBy: {
-          step: {
-            subNum: 'asc'
-          }
+          userAddressId: stepResult.userAddressId!,
+          stepId: stepResult.stepId!
         }
       });
 
-      return stepResults.map((result) => new StepResult(
-        result.id,
-        result.userAddressId,
-        result.stepId,
-        result.mismatch,
-        result.match,
-        result.unchecked,
-        result.createdAt
-      ));
+      let upsertedStepResult;
+
+      if (existingStepResult) {
+        // 기존 데이터가 있으면 UPDATE
+        upsertedStepResult = await prisma.stepResult.update({
+          where: { id: existingStepResult.id },
+          data: {
+            mismatch: stepResult.mismatch,
+            match: stepResult.match,
+            unchecked: stepResult.unchecked
+          },
+          include: {
+            step: true
+          }
+        });
+      } else {
+        // 기존 데이터가 없으면 CREATE
+        upsertedStepResult = await prisma.stepResult.create({
+          data: {
+            userAddressId: stepResult.userAddressId!,
+            stepId: stepResult.stepId!,
+            mismatch: stepResult.mismatch,
+            match: stepResult.match,
+            unchecked: stepResult.unchecked
+          },
+          include: {
+            step: true
+          }
+        });
+      }
+
+      return new StepResult(
+        upsertedStepResult.id,
+        upsertedStepResult.userAddressId,
+        upsertedStepResult.stepId,
+        upsertedStepResult.mismatch,
+        upsertedStepResult.match,
+        upsertedStepResult.unchecked,
+        upsertedStepResult.createdAt
+      );
     } catch (error) {
-      console.error('❌ StepResult 요약 조회 오류:', error);
-      throw new Error('스탭 결과 요약 조회 중 오류가 발생했습니다.');
+      console.error('❌ StepResult upsert 오류:', error);
+      throw new Error('스탭 결과 upsert 중 오류가 발생했습니다.');
     }
   }
 } 
