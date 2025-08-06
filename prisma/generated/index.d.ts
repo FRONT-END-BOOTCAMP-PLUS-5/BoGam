@@ -1428,12 +1428,10 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    taxCerts: number
     userAddresses: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    taxCerts?: boolean | UserCountOutputTypeCountTaxCertsArgs
     userAddresses?: boolean | UserCountOutputTypeCountUserAddressesArgs
   }
 
@@ -1446,13 +1444,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountTaxCertsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TaxCertWhereInput
   }
 
   /**
@@ -1501,11 +1492,13 @@ export namespace Prisma {
   export type UserAddressCountOutputType = {
     realEstates: number
     stepResults: number
+    taxCerts: number
   }
 
   export type UserAddressCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     realEstates?: boolean | UserAddressCountOutputTypeCountRealEstatesArgs
     stepResults?: boolean | UserAddressCountOutputTypeCountStepResultsArgs
+    taxCerts?: boolean | UserAddressCountOutputTypeCountTaxCertsArgs
   }
 
   // Custom InputTypes
@@ -1531,6 +1524,13 @@ export namespace Prisma {
    */
   export type UserAddressCountOutputTypeCountStepResultsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StepResultWhereInput
+  }
+
+  /**
+   * UserAddressCountOutputType without action
+   */
+  export type UserAddressCountOutputTypeCountTaxCertsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaxCertWhereInput
   }
 
 
@@ -1716,12 +1716,12 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    name: string | null
-    nickname: string | null
-    username: string | null
-    password: string | null
-    pinNumber: string | null
-    phoneNumber: string | null
+    name: string
+    nickname: string
+    username: string
+    password: string
+    pinNumber: string
+    phoneNumber: string
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1749,7 +1749,6 @@ export namespace Prisma {
     password?: boolean
     pinNumber?: boolean
     phoneNumber?: boolean
-    taxCerts?: boolean | User$taxCertsArgs<ExtArgs>
     userAddresses?: boolean | User$userAddressesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -1786,7 +1785,6 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "nickname" | "username" | "password" | "pinNumber" | "phoneNumber", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    taxCerts?: boolean | User$taxCertsArgs<ExtArgs>
     userAddresses?: boolean | User$userAddressesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -1796,17 +1794,16 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      taxCerts: Prisma.$TaxCertPayload<ExtArgs>[]
       userAddresses: Prisma.$UserAddressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string | null
-      nickname: string | null
-      username: string | null
-      password: string | null
-      pinNumber: string | null
-      phoneNumber: string | null
+      name: string
+      nickname: string
+      username: string
+      password: string
+      pinNumber: string
+      phoneNumber: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2201,7 +2198,6 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    taxCerts<T extends User$taxCertsArgs<ExtArgs> = {}>(args?: Subset<T, User$taxCertsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaxCertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userAddresses<T extends User$userAddressesArgs<ExtArgs> = {}>(args?: Subset<T, User$userAddressesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserAddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2457,7 +2453,7 @@ export namespace Prisma {
     /**
      * The data needed to create a User.
      */
-    data?: XOR<UserCreateInput, UserUncheckedCreateInput>
+    data: XOR<UserCreateInput, UserUncheckedCreateInput>
   }
 
   /**
@@ -2627,30 +2623,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.taxCerts
-   */
-  export type User$taxCertsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaxCert
-     */
-    select?: TaxCertSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaxCert
-     */
-    omit?: TaxCertOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaxCertInclude<ExtArgs> | null
-    where?: TaxCertWhereInput
-    orderBy?: TaxCertOrderByWithRelationInput | TaxCertOrderByWithRelationInput[]
-    cursor?: TaxCertWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TaxCertScalarFieldEnum | TaxCertScalarFieldEnum[]
-  }
-
-  /**
    * User.userAddresses
    */
   export type User$userAddressesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2707,25 +2679,27 @@ export namespace Prisma {
 
   export type TaxCertAvgAggregateOutputType = {
     id: number | null
+    userAddressId: number | null
   }
 
   export type TaxCertSumAggregateOutputType = {
     id: number | null
+    userAddressId: number | null
   }
 
   export type TaxCertMinAggregateOutputType = {
     id: number | null
-    userId: string | null
+    userAddressId: number | null
   }
 
   export type TaxCertMaxAggregateOutputType = {
     id: number | null
-    userId: string | null
+    userAddressId: number | null
   }
 
   export type TaxCertCountAggregateOutputType = {
     id: number
-    userId: number
+    userAddressId: number
     taxCertJson: number
     _all: number
   }
@@ -2733,25 +2707,27 @@ export namespace Prisma {
 
   export type TaxCertAvgAggregateInputType = {
     id?: true
+    userAddressId?: true
   }
 
   export type TaxCertSumAggregateInputType = {
     id?: true
+    userAddressId?: true
   }
 
   export type TaxCertMinAggregateInputType = {
     id?: true
-    userId?: true
+    userAddressId?: true
   }
 
   export type TaxCertMaxAggregateInputType = {
     id?: true
-    userId?: true
+    userAddressId?: true
   }
 
   export type TaxCertCountAggregateInputType = {
     id?: true
-    userId?: true
+    userAddressId?: true
     taxCertJson?: true
     _all?: true
   }
@@ -2844,8 +2820,8 @@ export namespace Prisma {
 
   export type TaxCertGroupByOutputType = {
     id: number
-    userId: string
-    taxCertJson: JsonValue | null
+    userAddressId: number
+    taxCertJson: JsonValue
     _count: TaxCertCountAggregateOutputType | null
     _avg: TaxCertAvgAggregateOutputType | null
     _sum: TaxCertSumAggregateOutputType | null
@@ -2869,51 +2845,51 @@ export namespace Prisma {
 
   export type TaxCertSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
+    userAddressId?: boolean
     taxCertJson?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taxCert"]>
 
   export type TaxCertSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
+    userAddressId?: boolean
     taxCertJson?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taxCert"]>
 
   export type TaxCertSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    userId?: boolean
+    userAddressId?: boolean
     taxCertJson?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["taxCert"]>
 
   export type TaxCertSelectScalar = {
     id?: boolean
-    userId?: boolean
+    userAddressId?: boolean
     taxCertJson?: boolean
   }
 
-  export type TaxCertOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "taxCertJson", ExtArgs["result"]["taxCert"]>
+  export type TaxCertOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userAddressId" | "taxCertJson", ExtArgs["result"]["taxCert"]>
   export type TaxCertInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
   export type TaxCertIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
   export type TaxCertIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
 
   export type $TaxCertPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TaxCert"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
+      userAddress: Prisma.$UserAddressPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      userId: string
-      taxCertJson: Prisma.JsonValue | null
+      userAddressId: number
+      taxCertJson: Prisma.JsonValue
     }, ExtArgs["result"]["taxCert"]>
     composites: {}
   }
@@ -3308,7 +3284,7 @@ export namespace Prisma {
    */
   export interface Prisma__TaxCertClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    userAddress<T extends UserAddressDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserAddressDefaultArgs<ExtArgs>>): Prisma__UserAddressClient<$Result.GetResult<Prisma.$UserAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3339,7 +3315,7 @@ export namespace Prisma {
    */
   interface TaxCertFieldRefs {
     readonly id: FieldRef<"TaxCert", 'Int'>
-    readonly userId: FieldRef<"TaxCert", 'String'>
+    readonly userAddressId: FieldRef<"TaxCert", 'Int'>
     readonly taxCertJson: FieldRef<"TaxCert", 'Json'>
   }
     
@@ -3936,9 +3912,9 @@ export namespace Prisma {
 
   export type AddressGroupByOutputType = {
     id: number
-    latitude: number | null
-    longitude: number | null
-    legalDistrictCode: string | null
+    latitude: number
+    longitude: number
+    legalDistrictCode: string
     dong: string | null
     ho: string | null
     _count: AddressCountAggregateOutputType | null
@@ -4015,9 +3991,9 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      latitude: number | null
-      longitude: number | null
-      legalDistrictCode: string | null
+      latitude: number
+      longitude: number
+      legalDistrictCode: string
       dong: string | null
       ho: string | null
     }, ExtArgs["result"]["address"]>
@@ -4668,7 +4644,7 @@ export namespace Prisma {
     /**
      * The data needed to create a Address.
      */
-    data?: XOR<AddressCreateInput, AddressUncheckedCreateInput>
+    data: XOR<AddressCreateInput, AddressUncheckedCreateInput>
   }
 
   /**
@@ -5059,7 +5035,7 @@ export namespace Prisma {
     id: number
     userId: string
     addressId: number
-    isPrimary: boolean | null
+    isPrimary: boolean
     createdAt: Date
     nickname: string | null
     _count: UserAddressCountAggregateOutputType | null
@@ -5090,10 +5066,11 @@ export namespace Prisma {
     isPrimary?: boolean
     createdAt?: boolean
     nickname?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    address?: boolean | AddressDefaultArgs<ExtArgs>
     realEstates?: boolean | UserAddress$realEstatesArgs<ExtArgs>
     stepResults?: boolean | UserAddress$stepResultsArgs<ExtArgs>
+    taxCerts?: boolean | UserAddress$taxCertsArgs<ExtArgs>
+    address?: boolean | AddressDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | UserAddressCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAddress"]>
 
@@ -5104,8 +5081,8 @@ export namespace Prisma {
     isPrimary?: boolean
     createdAt?: boolean
     nickname?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | AddressDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAddress"]>
 
   export type UserAddressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5115,8 +5092,8 @@ export namespace Prisma {
     isPrimary?: boolean
     createdAt?: boolean
     nickname?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | AddressDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userAddress"]>
 
   export type UserAddressSelectScalar = {
@@ -5130,34 +5107,36 @@ export namespace Prisma {
 
   export type UserAddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "addressId" | "isPrimary" | "createdAt" | "nickname", ExtArgs["result"]["userAddress"]>
   export type UserAddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    address?: boolean | AddressDefaultArgs<ExtArgs>
     realEstates?: boolean | UserAddress$realEstatesArgs<ExtArgs>
     stepResults?: boolean | UserAddress$stepResultsArgs<ExtArgs>
+    taxCerts?: boolean | UserAddress$taxCertsArgs<ExtArgs>
+    address?: boolean | AddressDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | UserAddressCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserAddressIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | AddressDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type UserAddressIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     address?: boolean | AddressDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $UserAddressPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "UserAddress"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      address: Prisma.$AddressPayload<ExtArgs>
       realEstates: Prisma.$RealEstatePayload<ExtArgs>[]
       stepResults: Prisma.$StepResultPayload<ExtArgs>[]
+      taxCerts: Prisma.$TaxCertPayload<ExtArgs>[]
+      address: Prisma.$AddressPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       userId: string
       addressId: number
-      isPrimary: boolean | null
+      isPrimary: boolean
       createdAt: Date
       nickname: string | null
     }, ExtArgs["result"]["userAddress"]>
@@ -5554,10 +5533,11 @@ export namespace Prisma {
    */
   export interface Prisma__UserAddressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    address<T extends AddressDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AddressDefaultArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     realEstates<T extends UserAddress$realEstatesArgs<ExtArgs> = {}>(args?: Subset<T, UserAddress$realEstatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RealEstatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     stepResults<T extends UserAddress$stepResultsArgs<ExtArgs> = {}>(args?: Subset<T, UserAddress$stepResultsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StepResultPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    taxCerts<T extends UserAddress$taxCertsArgs<ExtArgs> = {}>(args?: Subset<T, UserAddress$taxCertsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaxCertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    address<T extends AddressDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AddressDefaultArgs<ExtArgs>>): Prisma__AddressClient<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6034,6 +6014,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: StepResultScalarFieldEnum | StepResultScalarFieldEnum[]
+  }
+
+  /**
+   * UserAddress.taxCerts
+   */
+  export type UserAddress$taxCertsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TaxCert
+     */
+    select?: TaxCertSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TaxCert
+     */
+    omit?: TaxCertOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaxCertInclude<ExtArgs> | null
+    where?: TaxCertWhereInput
+    orderBy?: TaxCertOrderByWithRelationInput | TaxCertOrderByWithRelationInput[]
+    cursor?: TaxCertWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaxCertScalarFieldEnum | TaxCertScalarFieldEnum[]
   }
 
   /**
@@ -8441,8 +8445,8 @@ export namespace Prisma {
     match?: boolean
     unchecked?: boolean
     createdAt?: boolean
-    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
     step?: boolean | StepDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["stepResult"]>
 
   export type StepResultSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8453,8 +8457,8 @@ export namespace Prisma {
     match?: boolean
     unchecked?: boolean
     createdAt?: boolean
-    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
     step?: boolean | StepDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["stepResult"]>
 
   export type StepResultSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8465,8 +8469,8 @@ export namespace Prisma {
     match?: boolean
     unchecked?: boolean
     createdAt?: boolean
-    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
     step?: boolean | StepDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["stepResult"]>
 
   export type StepResultSelectScalar = {
@@ -8481,23 +8485,23 @@ export namespace Prisma {
 
   export type StepResultOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userAddressId" | "stepId" | "mismatch" | "match" | "unchecked" | "createdAt", ExtArgs["result"]["stepResult"]>
   export type StepResultInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
     step?: boolean | StepDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
   export type StepResultIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
     step?: boolean | StepDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
   export type StepResultIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
     step?: boolean | StepDefaultArgs<ExtArgs>
+    userAddress?: boolean | UserAddressDefaultArgs<ExtArgs>
   }
 
   export type $StepResultPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "StepResult"
     objects: {
-      userAddress: Prisma.$UserAddressPayload<ExtArgs>
       step: Prisma.$StepPayload<ExtArgs>
+      userAddress: Prisma.$UserAddressPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -8901,8 +8905,8 @@ export namespace Prisma {
    */
   export interface Prisma__StepResultClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    userAddress<T extends UserAddressDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserAddressDefaultArgs<ExtArgs>>): Prisma__UserAddressClient<$Result.GetResult<Prisma.$UserAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     step<T extends StepDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StepDefaultArgs<ExtArgs>>): Prisma__StepClient<$Result.GetResult<Prisma.$StepPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    userAddress<T extends UserAddressDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserAddressDefaultArgs<ExtArgs>>): Prisma__UserAddressClient<$Result.GetResult<Prisma.$UserAddressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9382,7 +9386,7 @@ export namespace Prisma {
 
   export const TaxCertScalarFieldEnum: {
     id: 'id',
-    userId: 'userId',
+    userAddressId: 'userAddressId',
     taxCertJson: 'taxCertJson'
   };
 
@@ -9452,6 +9456,13 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
   export const NullableJsonNullValueInput: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull
@@ -9468,14 +9479,6 @@ export namespace Prisma {
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-  export const NullsOrder: {
-    first: 'first',
-    last: 'last'
-  };
-
-  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
   export const JsonNullValueFilter: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull,
@@ -9483,6 +9486,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -9575,51 +9586,48 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: UuidFilter<"User"> | string
-    name?: StringNullableFilter<"User"> | string | null
-    nickname?: StringNullableFilter<"User"> | string | null
-    username?: StringNullableFilter<"User"> | string | null
-    password?: StringNullableFilter<"User"> | string | null
-    pinNumber?: StringNullableFilter<"User"> | string | null
-    phoneNumber?: StringNullableFilter<"User"> | string | null
-    taxCerts?: TaxCertListRelationFilter
+    name?: StringFilter<"User"> | string
+    nickname?: StringFilter<"User"> | string
+    username?: StringFilter<"User"> | string
+    password?: StringFilter<"User"> | string
+    pinNumber?: StringFilter<"User"> | string
+    phoneNumber?: StringFilter<"User"> | string
     userAddresses?: UserAddressListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrderInput | SortOrder
-    nickname?: SortOrderInput | SortOrder
-    username?: SortOrderInput | SortOrder
-    password?: SortOrderInput | SortOrder
-    pinNumber?: SortOrderInput | SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
-    taxCerts?: TaxCertOrderByRelationAggregateInput
+    name?: SortOrder
+    nickname?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    pinNumber?: SortOrder
+    phoneNumber?: SortOrder
     userAddresses?: UserAddressOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    nickname?: string
+    username?: string
+    phoneNumber?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    name?: StringNullableFilter<"User"> | string | null
-    nickname?: StringNullableFilter<"User"> | string | null
-    username?: StringNullableFilter<"User"> | string | null
-    password?: StringNullableFilter<"User"> | string | null
-    pinNumber?: StringNullableFilter<"User"> | string | null
-    phoneNumber?: StringNullableFilter<"User"> | string | null
-    taxCerts?: TaxCertListRelationFilter
+    name?: StringFilter<"User"> | string
+    password?: StringFilter<"User"> | string
+    pinNumber?: StringFilter<"User"> | string
     userAddresses?: UserAddressListRelationFilter
-  }, "id">
+  }, "id" | "nickname" | "username" | "phoneNumber">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrderInput | SortOrder
-    nickname?: SortOrderInput | SortOrder
-    username?: SortOrderInput | SortOrder
-    password?: SortOrderInput | SortOrder
-    pinNumber?: SortOrderInput | SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
+    name?: SortOrder
+    nickname?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    pinNumber?: SortOrder
+    phoneNumber?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -9630,12 +9638,12 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: UuidWithAggregatesFilter<"User"> | string
-    name?: StringNullableWithAggregatesFilter<"User"> | string | null
-    nickname?: StringNullableWithAggregatesFilter<"User"> | string | null
-    username?: StringNullableWithAggregatesFilter<"User"> | string | null
-    password?: StringNullableWithAggregatesFilter<"User"> | string | null
-    pinNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
-    phoneNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
+    name?: StringWithAggregatesFilter<"User"> | string
+    nickname?: StringWithAggregatesFilter<"User"> | string
+    username?: StringWithAggregatesFilter<"User"> | string
+    password?: StringWithAggregatesFilter<"User"> | string
+    pinNumber?: StringWithAggregatesFilter<"User"> | string
+    phoneNumber?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type TaxCertWhereInput = {
@@ -9643,32 +9651,32 @@ export namespace Prisma {
     OR?: TaxCertWhereInput[]
     NOT?: TaxCertWhereInput | TaxCertWhereInput[]
     id?: IntFilter<"TaxCert"> | number
-    userId?: UuidFilter<"TaxCert"> | string
-    taxCertJson?: JsonNullableFilter<"TaxCert">
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    userAddressId?: IntFilter<"TaxCert"> | number
+    taxCertJson?: JsonFilter<"TaxCert">
+    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
   }
 
   export type TaxCertOrderByWithRelationInput = {
     id?: SortOrder
-    userId?: SortOrder
-    taxCertJson?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
+    userAddressId?: SortOrder
+    taxCertJson?: SortOrder
+    userAddress?: UserAddressOrderByWithRelationInput
   }
 
   export type TaxCertWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    taxCertJson?: InputJsonValue
     AND?: TaxCertWhereInput | TaxCertWhereInput[]
     OR?: TaxCertWhereInput[]
     NOT?: TaxCertWhereInput | TaxCertWhereInput[]
-    userId?: UuidFilter<"TaxCert"> | string
-    taxCertJson?: JsonNullableFilter<"TaxCert">
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+    userAddressId?: IntFilter<"TaxCert"> | number
+    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
+  }, "id" | "taxCertJson">
 
   export type TaxCertOrderByWithAggregationInput = {
     id?: SortOrder
-    userId?: SortOrder
-    taxCertJson?: SortOrderInput | SortOrder
+    userAddressId?: SortOrder
+    taxCertJson?: SortOrder
     _count?: TaxCertCountOrderByAggregateInput
     _avg?: TaxCertAvgOrderByAggregateInput
     _max?: TaxCertMaxOrderByAggregateInput
@@ -9681,8 +9689,8 @@ export namespace Prisma {
     OR?: TaxCertScalarWhereWithAggregatesInput[]
     NOT?: TaxCertScalarWhereWithAggregatesInput | TaxCertScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"TaxCert"> | number
-    userId?: UuidWithAggregatesFilter<"TaxCert"> | string
-    taxCertJson?: JsonNullableWithAggregatesFilter<"TaxCert">
+    userAddressId?: IntWithAggregatesFilter<"TaxCert"> | number
+    taxCertJson?: JsonWithAggregatesFilter<"TaxCert">
   }
 
   export type AddressWhereInput = {
@@ -9690,9 +9698,9 @@ export namespace Prisma {
     OR?: AddressWhereInput[]
     NOT?: AddressWhereInput | AddressWhereInput[]
     id?: IntFilter<"Address"> | number
-    latitude?: FloatNullableFilter<"Address"> | number | null
-    longitude?: FloatNullableFilter<"Address"> | number | null
-    legalDistrictCode?: StringNullableFilter<"Address"> | string | null
+    latitude?: FloatFilter<"Address"> | number
+    longitude?: FloatFilter<"Address"> | number
+    legalDistrictCode?: StringFilter<"Address"> | string
     dong?: StringNullableFilter<"Address"> | string | null
     ho?: StringNullableFilter<"Address"> | string | null
     userAddresses?: UserAddressListRelationFilter
@@ -9700,9 +9708,9 @@ export namespace Prisma {
 
   export type AddressOrderByWithRelationInput = {
     id?: SortOrder
-    latitude?: SortOrderInput | SortOrder
-    longitude?: SortOrderInput | SortOrder
-    legalDistrictCode?: SortOrderInput | SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    legalDistrictCode?: SortOrder
     dong?: SortOrderInput | SortOrder
     ho?: SortOrderInput | SortOrder
     userAddresses?: UserAddressOrderByRelationAggregateInput
@@ -9710,22 +9718,23 @@ export namespace Prisma {
 
   export type AddressWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    latitude_longitude_dong_ho?: AddressLatitudeLongitudeDongHoCompoundUniqueInput
     AND?: AddressWhereInput | AddressWhereInput[]
     OR?: AddressWhereInput[]
     NOT?: AddressWhereInput | AddressWhereInput[]
-    latitude?: FloatNullableFilter<"Address"> | number | null
-    longitude?: FloatNullableFilter<"Address"> | number | null
-    legalDistrictCode?: StringNullableFilter<"Address"> | string | null
+    latitude?: FloatFilter<"Address"> | number
+    longitude?: FloatFilter<"Address"> | number
+    legalDistrictCode?: StringFilter<"Address"> | string
     dong?: StringNullableFilter<"Address"> | string | null
     ho?: StringNullableFilter<"Address"> | string | null
     userAddresses?: UserAddressListRelationFilter
-  }, "id">
+  }, "id" | "latitude_longitude_dong_ho">
 
   export type AddressOrderByWithAggregationInput = {
     id?: SortOrder
-    latitude?: SortOrderInput | SortOrder
-    longitude?: SortOrderInput | SortOrder
-    legalDistrictCode?: SortOrderInput | SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
+    legalDistrictCode?: SortOrder
     dong?: SortOrderInput | SortOrder
     ho?: SortOrderInput | SortOrder
     _count?: AddressCountOrderByAggregateInput
@@ -9740,9 +9749,9 @@ export namespace Prisma {
     OR?: AddressScalarWhereWithAggregatesInput[]
     NOT?: AddressScalarWhereWithAggregatesInput | AddressScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Address"> | number
-    latitude?: FloatNullableWithAggregatesFilter<"Address"> | number | null
-    longitude?: FloatNullableWithAggregatesFilter<"Address"> | number | null
-    legalDistrictCode?: StringNullableWithAggregatesFilter<"Address"> | string | null
+    latitude?: FloatWithAggregatesFilter<"Address"> | number
+    longitude?: FloatWithAggregatesFilter<"Address"> | number
+    legalDistrictCode?: StringWithAggregatesFilter<"Address"> | string
     dong?: StringNullableWithAggregatesFilter<"Address"> | string | null
     ho?: StringNullableWithAggregatesFilter<"Address"> | string | null
   }
@@ -9754,26 +9763,28 @@ export namespace Prisma {
     id?: IntFilter<"UserAddress"> | number
     userId?: UuidFilter<"UserAddress"> | string
     addressId?: IntFilter<"UserAddress"> | number
-    isPrimary?: BoolNullableFilter<"UserAddress"> | boolean | null
+    isPrimary?: BoolFilter<"UserAddress"> | boolean
     createdAt?: DateTimeFilter<"UserAddress"> | Date | string
     nickname?: StringNullableFilter<"UserAddress"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    address?: XOR<AddressScalarRelationFilter, AddressWhereInput>
     realEstates?: RealEstateListRelationFilter
     stepResults?: StepResultListRelationFilter
+    taxCerts?: TaxCertListRelationFilter
+    address?: XOR<AddressScalarRelationFilter, AddressWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type UserAddressOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
     addressId?: SortOrder
-    isPrimary?: SortOrderInput | SortOrder
+    isPrimary?: SortOrder
     createdAt?: SortOrder
     nickname?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
-    address?: AddressOrderByWithRelationInput
     realEstates?: RealEstateOrderByRelationAggregateInput
     stepResults?: StepResultOrderByRelationAggregateInput
+    taxCerts?: TaxCertOrderByRelationAggregateInput
+    address?: AddressOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type UserAddressWhereUniqueInput = Prisma.AtLeast<{
@@ -9783,20 +9794,21 @@ export namespace Prisma {
     NOT?: UserAddressWhereInput | UserAddressWhereInput[]
     userId?: UuidFilter<"UserAddress"> | string
     addressId?: IntFilter<"UserAddress"> | number
-    isPrimary?: BoolNullableFilter<"UserAddress"> | boolean | null
+    isPrimary?: BoolFilter<"UserAddress"> | boolean
     createdAt?: DateTimeFilter<"UserAddress"> | Date | string
     nickname?: StringNullableFilter<"UserAddress"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    address?: XOR<AddressScalarRelationFilter, AddressWhereInput>
     realEstates?: RealEstateListRelationFilter
     stepResults?: StepResultListRelationFilter
+    taxCerts?: TaxCertListRelationFilter
+    address?: XOR<AddressScalarRelationFilter, AddressWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type UserAddressOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
     addressId?: SortOrder
-    isPrimary?: SortOrderInput | SortOrder
+    isPrimary?: SortOrder
     createdAt?: SortOrder
     nickname?: SortOrderInput | SortOrder
     _count?: UserAddressCountOrderByAggregateInput
@@ -9813,7 +9825,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"UserAddress"> | number
     userId?: UuidWithAggregatesFilter<"UserAddress"> | string
     addressId?: IntWithAggregatesFilter<"UserAddress"> | number
-    isPrimary?: BoolNullableWithAggregatesFilter<"UserAddress"> | boolean | null
+    isPrimary?: BoolWithAggregatesFilter<"UserAddress"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"UserAddress"> | Date | string
     nickname?: StringNullableWithAggregatesFilter<"UserAddress"> | string | null
   }
@@ -9923,8 +9935,8 @@ export namespace Prisma {
     match?: IntNullableFilter<"StepResult"> | number | null
     unchecked?: IntNullableFilter<"StepResult"> | number | null
     createdAt?: DateTimeFilter<"StepResult"> | Date | string
-    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
     step?: XOR<StepScalarRelationFilter, StepWhereInput>
+    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
   }
 
   export type StepResultOrderByWithRelationInput = {
@@ -9935,8 +9947,8 @@ export namespace Prisma {
     match?: SortOrderInput | SortOrder
     unchecked?: SortOrderInput | SortOrder
     createdAt?: SortOrder
-    userAddress?: UserAddressOrderByWithRelationInput
     step?: StepOrderByWithRelationInput
+    userAddress?: UserAddressOrderByWithRelationInput
   }
 
   export type StepResultWhereUniqueInput = Prisma.AtLeast<{
@@ -9950,8 +9962,8 @@ export namespace Prisma {
     match?: IntNullableFilter<"StepResult"> | number | null
     unchecked?: IntNullableFilter<"StepResult"> | number | null
     createdAt?: DateTimeFilter<"StepResult"> | Date | string
-    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
     step?: XOR<StepScalarRelationFilter, StepWhereInput>
+    userAddress?: XOR<UserAddressScalarRelationFilter, UserAddressWhereInput>
   }, "id">
 
   export type StepResultOrderByWithAggregationInput = {
@@ -9984,124 +9996,120 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
-    name?: string | null
-    nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
-    taxCerts?: TaxCertCreateNestedManyWithoutUserInput
+    name: string
+    nickname: string
+    username: string
+    password: string
+    pinNumber: string
+    phoneNumber: string
     userAddresses?: UserAddressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
-    name?: string | null
-    nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
-    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserInput
+    name: string
+    nickname: string
+    username: string
+    password: string
+    pinNumber: string
+    phoneNumber: string
     userAddresses?: UserAddressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    taxCerts?: TaxCertUpdateManyWithoutUserNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    pinNumber?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
     userAddresses?: UserAddressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserNestedInput
+    name?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    pinNumber?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
     userAddresses?: UserAddressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
-    name?: string | null
-    nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
+    name: string
+    nickname: string
+    username: string
+    password: string
+    pinNumber: string
+    phoneNumber: string
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    pinNumber?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    pinNumber?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
   }
 
   export type TaxCertCreateInput = {
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-    user: UserCreateNestedOneWithoutTaxCertsInput
+    taxCertJson: JsonNullValueInput | InputJsonValue
+    userAddress: UserAddressCreateNestedOneWithoutTaxCertsInput
   }
 
   export type TaxCertUncheckedCreateInput = {
     id?: number
-    userId: string
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
+    userAddressId: number
+    taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
   export type TaxCertUpdateInput = {
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-    user?: UserUpdateOneRequiredWithoutTaxCertsNestedInput
+    taxCertJson?: JsonNullValueInput | InputJsonValue
+    userAddress?: UserAddressUpdateOneRequiredWithoutTaxCertsNestedInput
   }
 
   export type TaxCertUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: StringFieldUpdateOperationsInput | string
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
+    userAddressId?: IntFieldUpdateOperationsInput | number
+    taxCertJson?: JsonNullValueInput | InputJsonValue
   }
 
   export type TaxCertCreateManyInput = {
     id?: number
-    userId: string
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
+    userAddressId: number
+    taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
   export type TaxCertUpdateManyMutationInput = {
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
+    taxCertJson?: JsonNullValueInput | InputJsonValue
   }
 
   export type TaxCertUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    userId?: StringFieldUpdateOperationsInput | string
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
+    userAddressId?: IntFieldUpdateOperationsInput | number
+    taxCertJson?: JsonNullValueInput | InputJsonValue
   }
 
   export type AddressCreateInput = {
-    latitude?: number | null
-    longitude?: number | null
-    legalDistrictCode?: string | null
+    latitude: number
+    longitude: number
+    legalDistrictCode: string
     dong?: string | null
     ho?: string | null
     userAddresses?: UserAddressCreateNestedManyWithoutAddressInput
@@ -10109,18 +10117,18 @@ export namespace Prisma {
 
   export type AddressUncheckedCreateInput = {
     id?: number
-    latitude?: number | null
-    longitude?: number | null
-    legalDistrictCode?: string | null
+    latitude: number
+    longitude: number
+    legalDistrictCode: string
     dong?: string | null
     ho?: string | null
     userAddresses?: UserAddressUncheckedCreateNestedManyWithoutAddressInput
   }
 
   export type AddressUpdateInput = {
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    legalDistrictCode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    legalDistrictCode?: StringFieldUpdateOperationsInput | string
     dong?: NullableStringFieldUpdateOperationsInput | string | null
     ho?: NullableStringFieldUpdateOperationsInput | string | null
     userAddresses?: UserAddressUpdateManyWithoutAddressNestedInput
@@ -10128,9 +10136,9 @@ export namespace Prisma {
 
   export type AddressUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    legalDistrictCode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    legalDistrictCode?: StringFieldUpdateOperationsInput | string
     dong?: NullableStringFieldUpdateOperationsInput | string | null
     ho?: NullableStringFieldUpdateOperationsInput | string | null
     userAddresses?: UserAddressUncheckedUpdateManyWithoutAddressNestedInput
@@ -10138,83 +10146,87 @@ export namespace Prisma {
 
   export type AddressCreateManyInput = {
     id?: number
-    latitude?: number | null
-    longitude?: number | null
-    legalDistrictCode?: string | null
+    latitude: number
+    longitude: number
+    legalDistrictCode: string
     dong?: string | null
     ho?: string | null
   }
 
   export type AddressUpdateManyMutationInput = {
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    legalDistrictCode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    legalDistrictCode?: StringFieldUpdateOperationsInput | string
     dong?: NullableStringFieldUpdateOperationsInput | string | null
     ho?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AddressUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    legalDistrictCode?: NullableStringFieldUpdateOperationsInput | string | null
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    legalDistrictCode?: StringFieldUpdateOperationsInput | string
     dong?: NullableStringFieldUpdateOperationsInput | string | null
     ho?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserAddressCreateInput = {
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
-    user: UserCreateNestedOneWithoutUserAddressesInput
-    address: AddressCreateNestedOneWithoutUserAddressesInput
     realEstates?: RealEstateCreateNestedManyWithoutUserAddressInput
     stepResults?: StepResultCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertCreateNestedManyWithoutUserAddressInput
+    address: AddressCreateNestedOneWithoutUserAddressesInput
+    user: UserCreateNestedOneWithoutUserAddressesInput
   }
 
   export type UserAddressUncheckedCreateInput = {
     id?: number
     userId: string
     addressId: number
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
     realEstates?: RealEstateUncheckedCreateNestedManyWithoutUserAddressInput
     stepResults?: StepResultUncheckedCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserAddressInput
   }
 
   export type UserAddressUpdateInput = {
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
-    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
     realEstates?: RealEstateUpdateManyWithoutUserAddressNestedInput
     stepResults?: StepResultUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUpdateManyWithoutUserAddressNestedInput
+    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
+    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
   }
 
   export type UserAddressUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
     addressId?: IntFieldUpdateOperationsInput | number
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
     realEstates?: RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput
     stepResults?: StepResultUncheckedUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type UserAddressCreateManyInput = {
     id?: number
     userId: string
     addressId: number
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
   }
 
   export type UserAddressUpdateManyMutationInput = {
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -10223,7 +10235,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
     addressId?: IntFieldUpdateOperationsInput | number
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -10314,8 +10326,8 @@ export namespace Prisma {
     match?: number | null
     unchecked?: number | null
     createdAt?: Date | string
-    userAddress: UserAddressCreateNestedOneWithoutStepResultsInput
     step: StepCreateNestedOneWithoutStepResultsInput
+    userAddress: UserAddressCreateNestedOneWithoutStepResultsInput
   }
 
   export type StepResultUncheckedCreateInput = {
@@ -10333,8 +10345,8 @@ export namespace Prisma {
     match?: NullableIntFieldUpdateOperationsInput | number | null
     unchecked?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userAddress?: UserAddressUpdateOneRequiredWithoutStepResultsNestedInput
     step?: StepUpdateOneRequiredWithoutStepResultsNestedInput
+    userAddress?: UserAddressUpdateOneRequiredWithoutStepResultsNestedInput
   }
 
   export type StepResultUncheckedUpdateInput = {
@@ -10386,10 +10398,10 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+  export type StringFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -10398,28 +10410,13 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type TaxCertListRelationFilter = {
-    every?: TaxCertWhereInput
-    some?: TaxCertWhereInput
-    none?: TaxCertWhereInput
+    not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type UserAddressListRelationFilter = {
     every?: UserAddressWhereInput
     some?: UserAddressWhereInput
     none?: UserAddressWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
-  export type TaxCertOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type UserAddressOrderByRelationAggregateInput = {
@@ -10471,10 +10468,10 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -10483,10 +10480,10 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -10499,14 +10496,14 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
   }
-  export type JsonNullableFilter<$PrismaModel = never> =
+  export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
       >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
+  export type JsonFilterBase<$PrismaModel = never> = {
     equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
     path?: string[]
     mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
@@ -10523,33 +10520,35 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
+  export type UserAddressScalarRelationFilter = {
+    is?: UserAddressWhereInput
+    isNot?: UserAddressWhereInput
   }
 
   export type TaxCertCountOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userAddressId?: SortOrder
     taxCertJson?: SortOrder
   }
 
   export type TaxCertAvgOrderByAggregateInput = {
     id?: SortOrder
+    userAddressId?: SortOrder
   }
 
   export type TaxCertMaxOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userAddressId?: SortOrder
   }
 
   export type TaxCertMinOrderByAggregateInput = {
     id?: SortOrder
-    userId?: SortOrder
+    userAddressId?: SortOrder
   }
 
   export type TaxCertSumOrderByAggregateInput = {
     id?: SortOrder
+    userAddressId?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -10567,14 +10566,14 @@ export namespace Prisma {
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
   }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
       >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
 
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
     equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
     path?: string[]
     mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
@@ -10589,20 +10588,47 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
-  export type FloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type AddressLatitudeLongitudeDongHoCompoundUniqueInput = {
+    latitude: number
+    longitude: number
+    dong: string
+    ho: string
   }
 
   export type AddressCountOrderByAggregateInput = {
@@ -10644,25 +10670,43 @@ export namespace Prisma {
     longitude?: SortOrder
   }
 
-  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
     lt?: number | FloatFieldRefInput<$PrismaModel>
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type BoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -10674,11 +10718,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type AddressScalarRelationFilter = {
-    is?: AddressWhereInput
-    isNot?: AddressWhereInput
   }
 
   export type RealEstateListRelationFilter = {
@@ -10693,11 +10732,31 @@ export namespace Prisma {
     none?: StepResultWhereInput
   }
 
+  export type TaxCertListRelationFilter = {
+    every?: TaxCertWhereInput
+    some?: TaxCertWhereInput
+    none?: TaxCertWhereInput
+  }
+
+  export type AddressScalarRelationFilter = {
+    is?: AddressWhereInput
+    isNot?: AddressWhereInput
+  }
+
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
   export type RealEstateOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type StepResultOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TaxCertOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10738,12 +10797,12 @@ export namespace Prisma {
     addressId?: SortOrder
   }
 
-  export type BoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -10759,10 +10818,28 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
 
-  export type UserAddressScalarRelationFilter = {
-    is?: UserAddressWhereInput
-    isNot?: UserAddressWhereInput
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type RealEstateCountOrderByAggregateInput = {
@@ -10789,6 +10866,32 @@ export namespace Prisma {
   export type RealEstateSumOrderByAggregateInput = {
     id?: SortOrder
     userAddressId?: SortOrder
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type StepCountOrderByAggregateInput = {
@@ -10901,25 +11004,11 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type TaxCertCreateNestedManyWithoutUserInput = {
-    create?: XOR<TaxCertCreateWithoutUserInput, TaxCertUncheckedCreateWithoutUserInput> | TaxCertCreateWithoutUserInput[] | TaxCertUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TaxCertCreateOrConnectWithoutUserInput | TaxCertCreateOrConnectWithoutUserInput[]
-    createMany?: TaxCertCreateManyUserInputEnvelope
-    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-  }
-
   export type UserAddressCreateNestedManyWithoutUserInput = {
     create?: XOR<UserAddressCreateWithoutUserInput, UserAddressUncheckedCreateWithoutUserInput> | UserAddressCreateWithoutUserInput[] | UserAddressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserAddressCreateOrConnectWithoutUserInput | UserAddressCreateOrConnectWithoutUserInput[]
     createMany?: UserAddressCreateManyUserInputEnvelope
     connect?: UserAddressWhereUniqueInput | UserAddressWhereUniqueInput[]
-  }
-
-  export type TaxCertUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<TaxCertCreateWithoutUserInput, TaxCertUncheckedCreateWithoutUserInput> | TaxCertCreateWithoutUserInput[] | TaxCertUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TaxCertCreateOrConnectWithoutUserInput | TaxCertCreateOrConnectWithoutUserInput[]
-    createMany?: TaxCertCreateManyUserInputEnvelope
-    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
   }
 
   export type UserAddressUncheckedCreateNestedManyWithoutUserInput = {
@@ -10931,24 +11020,6 @@ export namespace Prisma {
 
   export type StringFieldUpdateOperationsInput = {
     set?: string
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
-  export type TaxCertUpdateManyWithoutUserNestedInput = {
-    create?: XOR<TaxCertCreateWithoutUserInput, TaxCertUncheckedCreateWithoutUserInput> | TaxCertCreateWithoutUserInput[] | TaxCertUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TaxCertCreateOrConnectWithoutUserInput | TaxCertCreateOrConnectWithoutUserInput[]
-    upsert?: TaxCertUpsertWithWhereUniqueWithoutUserInput | TaxCertUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: TaxCertCreateManyUserInputEnvelope
-    set?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    disconnect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    delete?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    update?: TaxCertUpdateWithWhereUniqueWithoutUserInput | TaxCertUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: TaxCertUpdateManyWithWhereWithoutUserInput | TaxCertUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
   }
 
   export type UserAddressUpdateManyWithoutUserNestedInput = {
@@ -10965,20 +11036,6 @@ export namespace Prisma {
     deleteMany?: UserAddressScalarWhereInput | UserAddressScalarWhereInput[]
   }
 
-  export type TaxCertUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<TaxCertCreateWithoutUserInput, TaxCertUncheckedCreateWithoutUserInput> | TaxCertCreateWithoutUserInput[] | TaxCertUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: TaxCertCreateOrConnectWithoutUserInput | TaxCertCreateOrConnectWithoutUserInput[]
-    upsert?: TaxCertUpsertWithWhereUniqueWithoutUserInput | TaxCertUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: TaxCertCreateManyUserInputEnvelope
-    set?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    disconnect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    delete?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
-    update?: TaxCertUpdateWithWhereUniqueWithoutUserInput | TaxCertUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: TaxCertUpdateManyWithWhereWithoutUserInput | TaxCertUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
-  }
-
   export type UserAddressUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserAddressCreateWithoutUserInput, UserAddressUncheckedCreateWithoutUserInput> | UserAddressCreateWithoutUserInput[] | UserAddressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserAddressCreateOrConnectWithoutUserInput | UserAddressCreateOrConnectWithoutUserInput[]
@@ -10993,18 +11050,18 @@ export namespace Prisma {
     deleteMany?: UserAddressScalarWhereInput | UserAddressScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutTaxCertsInput = {
-    create?: XOR<UserCreateWithoutTaxCertsInput, UserUncheckedCreateWithoutTaxCertsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTaxCertsInput
-    connect?: UserWhereUniqueInput
+  export type UserAddressCreateNestedOneWithoutTaxCertsInput = {
+    create?: XOR<UserAddressCreateWithoutTaxCertsInput, UserAddressUncheckedCreateWithoutTaxCertsInput>
+    connectOrCreate?: UserAddressCreateOrConnectWithoutTaxCertsInput
+    connect?: UserAddressWhereUniqueInput
   }
 
-  export type UserUpdateOneRequiredWithoutTaxCertsNestedInput = {
-    create?: XOR<UserCreateWithoutTaxCertsInput, UserUncheckedCreateWithoutTaxCertsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTaxCertsInput
-    upsert?: UserUpsertWithoutTaxCertsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTaxCertsInput, UserUpdateWithoutTaxCertsInput>, UserUncheckedUpdateWithoutTaxCertsInput>
+  export type UserAddressUpdateOneRequiredWithoutTaxCertsNestedInput = {
+    create?: XOR<UserAddressCreateWithoutTaxCertsInput, UserAddressUncheckedCreateWithoutTaxCertsInput>
+    connectOrCreate?: UserAddressCreateOrConnectWithoutTaxCertsInput
+    upsert?: UserAddressUpsertWithoutTaxCertsInput
+    connect?: UserAddressWhereUniqueInput
+    update?: XOR<XOR<UserAddressUpdateToOneWithWhereWithoutTaxCertsInput, UserAddressUpdateWithoutTaxCertsInput>, UserAddressUncheckedUpdateWithoutTaxCertsInput>
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -11029,12 +11086,16 @@ export namespace Prisma {
     connect?: UserAddressWhereUniqueInput | UserAddressWhereUniqueInput[]
   }
 
-  export type NullableFloatFieldUpdateOperationsInput = {
-    set?: number | null
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type UserAddressUpdateManyWithoutAddressNestedInput = {
@@ -11065,18 +11126,6 @@ export namespace Prisma {
     deleteMany?: UserAddressScalarWhereInput | UserAddressScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutUserAddressesInput = {
-    create?: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutUserAddressesInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type AddressCreateNestedOneWithoutUserAddressesInput = {
-    create?: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
-    connectOrCreate?: AddressCreateOrConnectWithoutUserAddressesInput
-    connect?: AddressWhereUniqueInput
-  }
-
   export type RealEstateCreateNestedManyWithoutUserAddressInput = {
     create?: XOR<RealEstateCreateWithoutUserAddressInput, RealEstateUncheckedCreateWithoutUserAddressInput> | RealEstateCreateWithoutUserAddressInput[] | RealEstateUncheckedCreateWithoutUserAddressInput[]
     connectOrCreate?: RealEstateCreateOrConnectWithoutUserAddressInput | RealEstateCreateOrConnectWithoutUserAddressInput[]
@@ -11089,6 +11138,25 @@ export namespace Prisma {
     connectOrCreate?: StepResultCreateOrConnectWithoutUserAddressInput | StepResultCreateOrConnectWithoutUserAddressInput[]
     createMany?: StepResultCreateManyUserAddressInputEnvelope
     connect?: StepResultWhereUniqueInput | StepResultWhereUniqueInput[]
+  }
+
+  export type TaxCertCreateNestedManyWithoutUserAddressInput = {
+    create?: XOR<TaxCertCreateWithoutUserAddressInput, TaxCertUncheckedCreateWithoutUserAddressInput> | TaxCertCreateWithoutUserAddressInput[] | TaxCertUncheckedCreateWithoutUserAddressInput[]
+    connectOrCreate?: TaxCertCreateOrConnectWithoutUserAddressInput | TaxCertCreateOrConnectWithoutUserAddressInput[]
+    createMany?: TaxCertCreateManyUserAddressInputEnvelope
+    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+  }
+
+  export type AddressCreateNestedOneWithoutUserAddressesInput = {
+    create?: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
+    connectOrCreate?: AddressCreateOrConnectWithoutUserAddressesInput
+    connect?: AddressWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutUserAddressesInput = {
+    create?: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUserAddressesInput
+    connect?: UserWhereUniqueInput
   }
 
   export type RealEstateUncheckedCreateNestedManyWithoutUserAddressInput = {
@@ -11105,28 +11173,19 @@ export namespace Prisma {
     connect?: StepResultWhereUniqueInput | StepResultWhereUniqueInput[]
   }
 
-  export type NullableBoolFieldUpdateOperationsInput = {
-    set?: boolean | null
+  export type TaxCertUncheckedCreateNestedManyWithoutUserAddressInput = {
+    create?: XOR<TaxCertCreateWithoutUserAddressInput, TaxCertUncheckedCreateWithoutUserAddressInput> | TaxCertCreateWithoutUserAddressInput[] | TaxCertUncheckedCreateWithoutUserAddressInput[]
+    connectOrCreate?: TaxCertCreateOrConnectWithoutUserAddressInput | TaxCertCreateOrConnectWithoutUserAddressInput[]
+    createMany?: TaxCertCreateManyUserAddressInputEnvelope
+    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
-  }
-
-  export type UserUpdateOneRequiredWithoutUserAddressesNestedInput = {
-    create?: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutUserAddressesInput
-    upsert?: UserUpsertWithoutUserAddressesInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserAddressesInput, UserUpdateWithoutUserAddressesInput>, UserUncheckedUpdateWithoutUserAddressesInput>
-  }
-
-  export type AddressUpdateOneRequiredWithoutUserAddressesNestedInput = {
-    create?: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
-    connectOrCreate?: AddressCreateOrConnectWithoutUserAddressesInput
-    upsert?: AddressUpsertWithoutUserAddressesInput
-    connect?: AddressWhereUniqueInput
-    update?: XOR<XOR<AddressUpdateToOneWithWhereWithoutUserAddressesInput, AddressUpdateWithoutUserAddressesInput>, AddressUncheckedUpdateWithoutUserAddressesInput>
   }
 
   export type RealEstateUpdateManyWithoutUserAddressNestedInput = {
@@ -11157,6 +11216,36 @@ export namespace Prisma {
     deleteMany?: StepResultScalarWhereInput | StepResultScalarWhereInput[]
   }
 
+  export type TaxCertUpdateManyWithoutUserAddressNestedInput = {
+    create?: XOR<TaxCertCreateWithoutUserAddressInput, TaxCertUncheckedCreateWithoutUserAddressInput> | TaxCertCreateWithoutUserAddressInput[] | TaxCertUncheckedCreateWithoutUserAddressInput[]
+    connectOrCreate?: TaxCertCreateOrConnectWithoutUserAddressInput | TaxCertCreateOrConnectWithoutUserAddressInput[]
+    upsert?: TaxCertUpsertWithWhereUniqueWithoutUserAddressInput | TaxCertUpsertWithWhereUniqueWithoutUserAddressInput[]
+    createMany?: TaxCertCreateManyUserAddressInputEnvelope
+    set?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    disconnect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    delete?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    update?: TaxCertUpdateWithWhereUniqueWithoutUserAddressInput | TaxCertUpdateWithWhereUniqueWithoutUserAddressInput[]
+    updateMany?: TaxCertUpdateManyWithWhereWithoutUserAddressInput | TaxCertUpdateManyWithWhereWithoutUserAddressInput[]
+    deleteMany?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
+  }
+
+  export type AddressUpdateOneRequiredWithoutUserAddressesNestedInput = {
+    create?: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
+    connectOrCreate?: AddressCreateOrConnectWithoutUserAddressesInput
+    upsert?: AddressUpsertWithoutUserAddressesInput
+    connect?: AddressWhereUniqueInput
+    update?: XOR<XOR<AddressUpdateToOneWithWhereWithoutUserAddressesInput, AddressUpdateWithoutUserAddressesInput>, AddressUncheckedUpdateWithoutUserAddressesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutUserAddressesNestedInput = {
+    create?: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUserAddressesInput
+    upsert?: UserUpsertWithoutUserAddressesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserAddressesInput, UserUpdateWithoutUserAddressesInput>, UserUncheckedUpdateWithoutUserAddressesInput>
+  }
+
   export type RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput = {
     create?: XOR<RealEstateCreateWithoutUserAddressInput, RealEstateUncheckedCreateWithoutUserAddressInput> | RealEstateCreateWithoutUserAddressInput[] | RealEstateUncheckedCreateWithoutUserAddressInput[]
     connectOrCreate?: RealEstateCreateOrConnectWithoutUserAddressInput | RealEstateCreateOrConnectWithoutUserAddressInput[]
@@ -11183,6 +11272,20 @@ export namespace Prisma {
     update?: StepResultUpdateWithWhereUniqueWithoutUserAddressInput | StepResultUpdateWithWhereUniqueWithoutUserAddressInput[]
     updateMany?: StepResultUpdateManyWithWhereWithoutUserAddressInput | StepResultUpdateManyWithWhereWithoutUserAddressInput[]
     deleteMany?: StepResultScalarWhereInput | StepResultScalarWhereInput[]
+  }
+
+  export type TaxCertUncheckedUpdateManyWithoutUserAddressNestedInput = {
+    create?: XOR<TaxCertCreateWithoutUserAddressInput, TaxCertUncheckedCreateWithoutUserAddressInput> | TaxCertCreateWithoutUserAddressInput[] | TaxCertUncheckedCreateWithoutUserAddressInput[]
+    connectOrCreate?: TaxCertCreateOrConnectWithoutUserAddressInput | TaxCertCreateOrConnectWithoutUserAddressInput[]
+    upsert?: TaxCertUpsertWithWhereUniqueWithoutUserAddressInput | TaxCertUpsertWithWhereUniqueWithoutUserAddressInput[]
+    createMany?: TaxCertCreateManyUserAddressInputEnvelope
+    set?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    disconnect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    delete?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    connect?: TaxCertWhereUniqueInput | TaxCertWhereUniqueInput[]
+    update?: TaxCertUpdateWithWhereUniqueWithoutUserAddressInput | TaxCertUpdateWithWhereUniqueWithoutUserAddressInput[]
+    updateMany?: TaxCertUpdateManyWithWhereWithoutUserAddressInput | TaxCertUpdateManyWithWhereWithoutUserAddressInput[]
+    deleteMany?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
   }
 
   export type UserAddressCreateNestedOneWithoutRealEstatesInput = {
@@ -11241,16 +11344,16 @@ export namespace Prisma {
     deleteMany?: StepResultScalarWhereInput | StepResultScalarWhereInput[]
   }
 
-  export type UserAddressCreateNestedOneWithoutStepResultsInput = {
-    create?: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
-    connectOrCreate?: UserAddressCreateOrConnectWithoutStepResultsInput
-    connect?: UserAddressWhereUniqueInput
-  }
-
   export type StepCreateNestedOneWithoutStepResultsInput = {
     create?: XOR<StepCreateWithoutStepResultsInput, StepUncheckedCreateWithoutStepResultsInput>
     connectOrCreate?: StepCreateOrConnectWithoutStepResultsInput
     connect?: StepWhereUniqueInput
+  }
+
+  export type UserAddressCreateNestedOneWithoutStepResultsInput = {
+    create?: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
+    connectOrCreate?: UserAddressCreateOrConnectWithoutStepResultsInput
+    connect?: UserAddressWhereUniqueInput
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -11261,20 +11364,20 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserAddressUpdateOneRequiredWithoutStepResultsNestedInput = {
-    create?: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
-    connectOrCreate?: UserAddressCreateOrConnectWithoutStepResultsInput
-    upsert?: UserAddressUpsertWithoutStepResultsInput
-    connect?: UserAddressWhereUniqueInput
-    update?: XOR<XOR<UserAddressUpdateToOneWithWhereWithoutStepResultsInput, UserAddressUpdateWithoutStepResultsInput>, UserAddressUncheckedUpdateWithoutStepResultsInput>
-  }
-
   export type StepUpdateOneRequiredWithoutStepResultsNestedInput = {
     create?: XOR<StepCreateWithoutStepResultsInput, StepUncheckedCreateWithoutStepResultsInput>
     connectOrCreate?: StepCreateOrConnectWithoutStepResultsInput
     upsert?: StepUpsertWithoutStepResultsInput
     connect?: StepWhereUniqueInput
     update?: XOR<XOR<StepUpdateToOneWithWhereWithoutStepResultsInput, StepUpdateWithoutStepResultsInput>, StepUncheckedUpdateWithoutStepResultsInput>
+  }
+
+  export type UserAddressUpdateOneRequiredWithoutStepResultsNestedInput = {
+    create?: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
+    connectOrCreate?: UserAddressCreateOrConnectWithoutStepResultsInput
+    upsert?: UserAddressUpsertWithoutStepResultsInput
+    connect?: UserAddressWhereUniqueInput
+    update?: XOR<XOR<UserAddressUpdateToOneWithWhereWithoutStepResultsInput, UserAddressUpdateWithoutStepResultsInput>, UserAddressUncheckedUpdateWithoutStepResultsInput>
   }
 
   export type NestedUuidFilter<$PrismaModel = never> = {
@@ -11288,10 +11391,10 @@ export namespace Prisma {
     not?: NestedUuidFilter<$PrismaModel> | string
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+  export type NestedStringFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
     lt?: string | StringFieldRefInput<$PrismaModel>
     lte?: string | StringFieldRefInput<$PrismaModel>
     gt?: string | StringFieldRefInput<$PrismaModel>
@@ -11299,7 +11402,7 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    not?: NestedStringFilter<$PrismaModel> | string
   }
 
   export type NestedUuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -11327,7 +11430,7 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedStringFilter<$PrismaModel = never> = {
+  export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -11338,7 +11441,90 @@ export namespace Prisma {
     contains?: string | StringFieldRefInput<$PrismaModel>
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringFilter<$PrismaModel> | string
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -11369,31 +11555,42 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -11419,71 +11616,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedFloatNullableFilter<$PrismaModel>
-    _min?: NestedFloatNullableFilter<$PrismaModel>
-    _max?: NestedFloatNullableFilter<$PrismaModel>
-  }
-
-  export type NestedBoolNullableFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableFilter<$PrismaModel> | boolean | null
-  }
-
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedBoolNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel> | null
-    not?: NestedBoolNullableWithAggregatesFilter<$PrismaModel> | boolean | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedBoolNullableFilter<$PrismaModel>
-    _max?: NestedBoolNullableFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -11500,42 +11632,36 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type TaxCertCreateWithoutUserInput = {
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type TaxCertUncheckedCreateWithoutUserInput = {
-    id?: number
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type TaxCertCreateOrConnectWithoutUserInput = {
-    where: TaxCertWhereUniqueInput
-    create: XOR<TaxCertCreateWithoutUserInput, TaxCertUncheckedCreateWithoutUserInput>
-  }
-
-  export type TaxCertCreateManyUserInputEnvelope = {
-    data: TaxCertCreateManyUserInput | TaxCertCreateManyUserInput[]
-    skipDuplicates?: boolean
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type UserAddressCreateWithoutUserInput = {
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
-    address: AddressCreateNestedOneWithoutUserAddressesInput
     realEstates?: RealEstateCreateNestedManyWithoutUserAddressInput
     stepResults?: StepResultCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertCreateNestedManyWithoutUserAddressInput
+    address: AddressCreateNestedOneWithoutUserAddressesInput
   }
 
   export type UserAddressUncheckedCreateWithoutUserInput = {
     id?: number
     addressId: number
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
     realEstates?: RealEstateUncheckedCreateNestedManyWithoutUserAddressInput
     stepResults?: StepResultUncheckedCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserAddressInput
   }
 
   export type UserAddressCreateOrConnectWithoutUserInput = {
@@ -11546,31 +11672,6 @@ export namespace Prisma {
   export type UserAddressCreateManyUserInputEnvelope = {
     data: UserAddressCreateManyUserInput | UserAddressCreateManyUserInput[]
     skipDuplicates?: boolean
-  }
-
-  export type TaxCertUpsertWithWhereUniqueWithoutUserInput = {
-    where: TaxCertWhereUniqueInput
-    update: XOR<TaxCertUpdateWithoutUserInput, TaxCertUncheckedUpdateWithoutUserInput>
-    create: XOR<TaxCertCreateWithoutUserInput, TaxCertUncheckedCreateWithoutUserInput>
-  }
-
-  export type TaxCertUpdateWithWhereUniqueWithoutUserInput = {
-    where: TaxCertWhereUniqueInput
-    data: XOR<TaxCertUpdateWithoutUserInput, TaxCertUncheckedUpdateWithoutUserInput>
-  }
-
-  export type TaxCertUpdateManyWithWhereWithoutUserInput = {
-    where: TaxCertScalarWhereInput
-    data: XOR<TaxCertUpdateManyMutationInput, TaxCertUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type TaxCertScalarWhereInput = {
-    AND?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
-    OR?: TaxCertScalarWhereInput[]
-    NOT?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
-    id?: IntFilter<"TaxCert"> | number
-    userId?: UuidFilter<"TaxCert"> | string
-    taxCertJson?: JsonNullableFilter<"TaxCert">
   }
 
   export type UserAddressUpsertWithWhereUniqueWithoutUserInput = {
@@ -11596,88 +11697,88 @@ export namespace Prisma {
     id?: IntFilter<"UserAddress"> | number
     userId?: UuidFilter<"UserAddress"> | string
     addressId?: IntFilter<"UserAddress"> | number
-    isPrimary?: BoolNullableFilter<"UserAddress"> | boolean | null
+    isPrimary?: BoolFilter<"UserAddress"> | boolean
     createdAt?: DateTimeFilter<"UserAddress"> | Date | string
     nickname?: StringNullableFilter<"UserAddress"> | string | null
   }
 
-  export type UserCreateWithoutTaxCertsInput = {
-    id?: string
-    name?: string | null
+  export type UserAddressCreateWithoutTaxCertsInput = {
+    isPrimary?: boolean
+    createdAt?: Date | string
     nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
-    userAddresses?: UserAddressCreateNestedManyWithoutUserInput
+    realEstates?: RealEstateCreateNestedManyWithoutUserAddressInput
+    stepResults?: StepResultCreateNestedManyWithoutUserAddressInput
+    address: AddressCreateNestedOneWithoutUserAddressesInput
+    user: UserCreateNestedOneWithoutUserAddressesInput
   }
 
-  export type UserUncheckedCreateWithoutTaxCertsInput = {
-    id?: string
-    name?: string | null
+  export type UserAddressUncheckedCreateWithoutTaxCertsInput = {
+    id?: number
+    userId: string
+    addressId: number
+    isPrimary?: boolean
+    createdAt?: Date | string
     nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
-    userAddresses?: UserAddressUncheckedCreateNestedManyWithoutUserInput
+    realEstates?: RealEstateUncheckedCreateNestedManyWithoutUserAddressInput
+    stepResults?: StepResultUncheckedCreateNestedManyWithoutUserAddressInput
   }
 
-  export type UserCreateOrConnectWithoutTaxCertsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTaxCertsInput, UserUncheckedCreateWithoutTaxCertsInput>
+  export type UserAddressCreateOrConnectWithoutTaxCertsInput = {
+    where: UserAddressWhereUniqueInput
+    create: XOR<UserAddressCreateWithoutTaxCertsInput, UserAddressUncheckedCreateWithoutTaxCertsInput>
   }
 
-  export type UserUpsertWithoutTaxCertsInput = {
-    update: XOR<UserUpdateWithoutTaxCertsInput, UserUncheckedUpdateWithoutTaxCertsInput>
-    create: XOR<UserCreateWithoutTaxCertsInput, UserUncheckedCreateWithoutTaxCertsInput>
-    where?: UserWhereInput
+  export type UserAddressUpsertWithoutTaxCertsInput = {
+    update: XOR<UserAddressUpdateWithoutTaxCertsInput, UserAddressUncheckedUpdateWithoutTaxCertsInput>
+    create: XOR<UserAddressCreateWithoutTaxCertsInput, UserAddressUncheckedCreateWithoutTaxCertsInput>
+    where?: UserAddressWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutTaxCertsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutTaxCertsInput, UserUncheckedUpdateWithoutTaxCertsInput>
+  export type UserAddressUpdateToOneWithWhereWithoutTaxCertsInput = {
+    where?: UserAddressWhereInput
+    data: XOR<UserAddressUpdateWithoutTaxCertsInput, UserAddressUncheckedUpdateWithoutTaxCertsInput>
   }
 
-  export type UserUpdateWithoutTaxCertsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+  export type UserAddressUpdateWithoutTaxCertsInput = {
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    userAddresses?: UserAddressUpdateManyWithoutUserNestedInput
+    realEstates?: RealEstateUpdateManyWithoutUserAddressNestedInput
+    stepResults?: StepResultUpdateManyWithoutUserAddressNestedInput
+    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
+    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutTaxCertsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
+  export type UserAddressUncheckedUpdateWithoutTaxCertsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    addressId?: IntFieldUpdateOperationsInput | number
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    userAddresses?: UserAddressUncheckedUpdateManyWithoutUserNestedInput
+    realEstates?: RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput
+    stepResults?: StepResultUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type UserAddressCreateWithoutAddressInput = {
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
-    user: UserCreateNestedOneWithoutUserAddressesInput
     realEstates?: RealEstateCreateNestedManyWithoutUserAddressInput
     stepResults?: StepResultCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertCreateNestedManyWithoutUserAddressInput
+    user: UserCreateNestedOneWithoutUserAddressesInput
   }
 
   export type UserAddressUncheckedCreateWithoutAddressInput = {
     id?: number
     userId: string
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
     realEstates?: RealEstateUncheckedCreateNestedManyWithoutUserAddressInput
     stepResults?: StepResultUncheckedCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserAddressInput
   }
 
   export type UserAddressCreateOrConnectWithoutAddressInput = {
@@ -11704,55 +11805,6 @@ export namespace Prisma {
   export type UserAddressUpdateManyWithWhereWithoutAddressInput = {
     where: UserAddressScalarWhereInput
     data: XOR<UserAddressUpdateManyMutationInput, UserAddressUncheckedUpdateManyWithoutAddressInput>
-  }
-
-  export type UserCreateWithoutUserAddressesInput = {
-    id?: string
-    name?: string | null
-    nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
-    taxCerts?: TaxCertCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutUserAddressesInput = {
-    id?: string
-    name?: string | null
-    nickname?: string | null
-    username?: string | null
-    password?: string | null
-    pinNumber?: string | null
-    phoneNumber?: string | null
-    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutUserAddressesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
-  }
-
-  export type AddressCreateWithoutUserAddressesInput = {
-    latitude?: number | null
-    longitude?: number | null
-    legalDistrictCode?: string | null
-    dong?: string | null
-    ho?: string | null
-  }
-
-  export type AddressUncheckedCreateWithoutUserAddressesInput = {
-    id?: number
-    latitude?: number | null
-    longitude?: number | null
-    legalDistrictCode?: string | null
-    dong?: string | null
-    ho?: string | null
-  }
-
-  export type AddressCreateOrConnectWithoutUserAddressesInput = {
-    where: AddressWhereUniqueInput
-    create: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
   }
 
   export type RealEstateCreateWithoutUserAddressInput = {
@@ -11801,65 +11853,70 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserUpsertWithoutUserAddressesInput = {
-    update: XOR<UserUpdateWithoutUserAddressesInput, UserUncheckedUpdateWithoutUserAddressesInput>
-    create: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
-    where?: UserWhereInput
+  export type TaxCertCreateWithoutUserAddressInput = {
+    taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
-  export type UserUpdateToOneWithWhereWithoutUserAddressesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutUserAddressesInput, UserUncheckedUpdateWithoutUserAddressesInput>
+  export type TaxCertUncheckedCreateWithoutUserAddressInput = {
+    id?: number
+    taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
-  export type UserUpdateWithoutUserAddressesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    taxCerts?: TaxCertUpdateManyWithoutUserNestedInput
+  export type TaxCertCreateOrConnectWithoutUserAddressInput = {
+    where: TaxCertWhereUniqueInput
+    create: XOR<TaxCertCreateWithoutUserAddressInput, TaxCertUncheckedCreateWithoutUserAddressInput>
   }
 
-  export type UserUncheckedUpdateWithoutUserAddressesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    pinNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserNestedInput
+  export type TaxCertCreateManyUserAddressInputEnvelope = {
+    data: TaxCertCreateManyUserAddressInput | TaxCertCreateManyUserAddressInput[]
+    skipDuplicates?: boolean
   }
 
-  export type AddressUpsertWithoutUserAddressesInput = {
-    update: XOR<AddressUpdateWithoutUserAddressesInput, AddressUncheckedUpdateWithoutUserAddressesInput>
+  export type AddressCreateWithoutUserAddressesInput = {
+    latitude: number
+    longitude: number
+    legalDistrictCode: string
+    dong?: string | null
+    ho?: string | null
+  }
+
+  export type AddressUncheckedCreateWithoutUserAddressesInput = {
+    id?: number
+    latitude: number
+    longitude: number
+    legalDistrictCode: string
+    dong?: string | null
+    ho?: string | null
+  }
+
+  export type AddressCreateOrConnectWithoutUserAddressesInput = {
+    where: AddressWhereUniqueInput
     create: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
-    where?: AddressWhereInput
   }
 
-  export type AddressUpdateToOneWithWhereWithoutUserAddressesInput = {
-    where?: AddressWhereInput
-    data: XOR<AddressUpdateWithoutUserAddressesInput, AddressUncheckedUpdateWithoutUserAddressesInput>
+  export type UserCreateWithoutUserAddressesInput = {
+    id?: string
+    name: string
+    nickname: string
+    username: string
+    password: string
+    pinNumber: string
+    phoneNumber: string
   }
 
-  export type AddressUpdateWithoutUserAddressesInput = {
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    legalDistrictCode?: NullableStringFieldUpdateOperationsInput | string | null
-    dong?: NullableStringFieldUpdateOperationsInput | string | null
-    ho?: NullableStringFieldUpdateOperationsInput | string | null
+  export type UserUncheckedCreateWithoutUserAddressesInput = {
+    id?: string
+    name: string
+    nickname: string
+    username: string
+    password: string
+    pinNumber: string
+    phoneNumber: string
   }
 
-  export type AddressUncheckedUpdateWithoutUserAddressesInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
-    legalDistrictCode?: NullableStringFieldUpdateOperationsInput | string | null
-    dong?: NullableStringFieldUpdateOperationsInput | string | null
-    ho?: NullableStringFieldUpdateOperationsInput | string | null
+  export type UserCreateOrConnectWithoutUserAddressesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
   }
 
   export type RealEstateUpsertWithWhereUniqueWithoutUserAddressInput = {
@@ -11916,23 +11973,109 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"StepResult"> | Date | string
   }
 
+  export type TaxCertUpsertWithWhereUniqueWithoutUserAddressInput = {
+    where: TaxCertWhereUniqueInput
+    update: XOR<TaxCertUpdateWithoutUserAddressInput, TaxCertUncheckedUpdateWithoutUserAddressInput>
+    create: XOR<TaxCertCreateWithoutUserAddressInput, TaxCertUncheckedCreateWithoutUserAddressInput>
+  }
+
+  export type TaxCertUpdateWithWhereUniqueWithoutUserAddressInput = {
+    where: TaxCertWhereUniqueInput
+    data: XOR<TaxCertUpdateWithoutUserAddressInput, TaxCertUncheckedUpdateWithoutUserAddressInput>
+  }
+
+  export type TaxCertUpdateManyWithWhereWithoutUserAddressInput = {
+    where: TaxCertScalarWhereInput
+    data: XOR<TaxCertUpdateManyMutationInput, TaxCertUncheckedUpdateManyWithoutUserAddressInput>
+  }
+
+  export type TaxCertScalarWhereInput = {
+    AND?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
+    OR?: TaxCertScalarWhereInput[]
+    NOT?: TaxCertScalarWhereInput | TaxCertScalarWhereInput[]
+    id?: IntFilter<"TaxCert"> | number
+    userAddressId?: IntFilter<"TaxCert"> | number
+    taxCertJson?: JsonFilter<"TaxCert">
+  }
+
+  export type AddressUpsertWithoutUserAddressesInput = {
+    update: XOR<AddressUpdateWithoutUserAddressesInput, AddressUncheckedUpdateWithoutUserAddressesInput>
+    create: XOR<AddressCreateWithoutUserAddressesInput, AddressUncheckedCreateWithoutUserAddressesInput>
+    where?: AddressWhereInput
+  }
+
+  export type AddressUpdateToOneWithWhereWithoutUserAddressesInput = {
+    where?: AddressWhereInput
+    data: XOR<AddressUpdateWithoutUserAddressesInput, AddressUncheckedUpdateWithoutUserAddressesInput>
+  }
+
+  export type AddressUpdateWithoutUserAddressesInput = {
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    legalDistrictCode?: StringFieldUpdateOperationsInput | string
+    dong?: NullableStringFieldUpdateOperationsInput | string | null
+    ho?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AddressUncheckedUpdateWithoutUserAddressesInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    latitude?: FloatFieldUpdateOperationsInput | number
+    longitude?: FloatFieldUpdateOperationsInput | number
+    legalDistrictCode?: StringFieldUpdateOperationsInput | string
+    dong?: NullableStringFieldUpdateOperationsInput | string | null
+    ho?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type UserUpsertWithoutUserAddressesInput = {
+    update: XOR<UserUpdateWithoutUserAddressesInput, UserUncheckedUpdateWithoutUserAddressesInput>
+    create: XOR<UserCreateWithoutUserAddressesInput, UserUncheckedCreateWithoutUserAddressesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutUserAddressesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutUserAddressesInput, UserUncheckedUpdateWithoutUserAddressesInput>
+  }
+
+  export type UserUpdateWithoutUserAddressesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    pinNumber?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UserUncheckedUpdateWithoutUserAddressesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    pinNumber?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: StringFieldUpdateOperationsInput | string
+  }
+
   export type UserAddressCreateWithoutRealEstatesInput = {
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
-    user: UserCreateNestedOneWithoutUserAddressesInput
-    address: AddressCreateNestedOneWithoutUserAddressesInput
     stepResults?: StepResultCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertCreateNestedManyWithoutUserAddressInput
+    address: AddressCreateNestedOneWithoutUserAddressesInput
+    user: UserCreateNestedOneWithoutUserAddressesInput
   }
 
   export type UserAddressUncheckedCreateWithoutRealEstatesInput = {
     id?: number
     userId: string
     addressId: number
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
     stepResults?: StepResultUncheckedCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserAddressInput
   }
 
   export type UserAddressCreateOrConnectWithoutRealEstatesInput = {
@@ -11952,22 +12095,24 @@ export namespace Prisma {
   }
 
   export type UserAddressUpdateWithoutRealEstatesInput = {
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
-    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
     stepResults?: StepResultUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUpdateManyWithoutUserAddressNestedInput
+    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
+    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
   }
 
   export type UserAddressUncheckedUpdateWithoutRealEstatesInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
     addressId?: IntFieldUpdateOperationsInput | number
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
     stepResults?: StepResultUncheckedUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type StepResultCreateWithoutStepInput = {
@@ -12013,30 +12158,6 @@ export namespace Prisma {
     data: XOR<StepResultUpdateManyMutationInput, StepResultUncheckedUpdateManyWithoutStepInput>
   }
 
-  export type UserAddressCreateWithoutStepResultsInput = {
-    isPrimary?: boolean | null
-    createdAt?: Date | string
-    nickname?: string | null
-    user: UserCreateNestedOneWithoutUserAddressesInput
-    address: AddressCreateNestedOneWithoutUserAddressesInput
-    realEstates?: RealEstateCreateNestedManyWithoutUserAddressInput
-  }
-
-  export type UserAddressUncheckedCreateWithoutStepResultsInput = {
-    id?: number
-    userId: string
-    addressId: number
-    isPrimary?: boolean | null
-    createdAt?: Date | string
-    nickname?: string | null
-    realEstates?: RealEstateUncheckedCreateNestedManyWithoutUserAddressInput
-  }
-
-  export type UserAddressCreateOrConnectWithoutStepResultsInput = {
-    where: UserAddressWhereUniqueInput
-    create: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
-  }
-
   export type StepCreateWithoutStepResultsInput = {
     mainNum: number
     subNum: number
@@ -12053,34 +12174,30 @@ export namespace Prisma {
     create: XOR<StepCreateWithoutStepResultsInput, StepUncheckedCreateWithoutStepResultsInput>
   }
 
-  export type UserAddressUpsertWithoutStepResultsInput = {
-    update: XOR<UserAddressUpdateWithoutStepResultsInput, UserAddressUncheckedUpdateWithoutStepResultsInput>
+  export type UserAddressCreateWithoutStepResultsInput = {
+    isPrimary?: boolean
+    createdAt?: Date | string
+    nickname?: string | null
+    realEstates?: RealEstateCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertCreateNestedManyWithoutUserAddressInput
+    address: AddressCreateNestedOneWithoutUserAddressesInput
+    user: UserCreateNestedOneWithoutUserAddressesInput
+  }
+
+  export type UserAddressUncheckedCreateWithoutStepResultsInput = {
+    id?: number
+    userId: string
+    addressId: number
+    isPrimary?: boolean
+    createdAt?: Date | string
+    nickname?: string | null
+    realEstates?: RealEstateUncheckedCreateNestedManyWithoutUserAddressInput
+    taxCerts?: TaxCertUncheckedCreateNestedManyWithoutUserAddressInput
+  }
+
+  export type UserAddressCreateOrConnectWithoutStepResultsInput = {
+    where: UserAddressWhereUniqueInput
     create: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
-    where?: UserAddressWhereInput
-  }
-
-  export type UserAddressUpdateToOneWithWhereWithoutStepResultsInput = {
-    where?: UserAddressWhereInput
-    data: XOR<UserAddressUpdateWithoutStepResultsInput, UserAddressUncheckedUpdateWithoutStepResultsInput>
-  }
-
-  export type UserAddressUpdateWithoutStepResultsInput = {
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
-    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
-    realEstates?: RealEstateUpdateManyWithoutUserAddressNestedInput
-  }
-
-  export type UserAddressUncheckedUpdateWithoutStepResultsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    userId?: StringFieldUpdateOperationsInput | string
-    addressId?: IntFieldUpdateOperationsInput | number
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    realEstates?: RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type StepUpsertWithoutStepResultsInput = {
@@ -12105,56 +12222,71 @@ export namespace Prisma {
     subNum?: IntFieldUpdateOperationsInput | number
   }
 
-  export type TaxCertCreateManyUserInput = {
-    id?: number
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
+  export type UserAddressUpsertWithoutStepResultsInput = {
+    update: XOR<UserAddressUpdateWithoutStepResultsInput, UserAddressUncheckedUpdateWithoutStepResultsInput>
+    create: XOR<UserAddressCreateWithoutStepResultsInput, UserAddressUncheckedCreateWithoutStepResultsInput>
+    where?: UserAddressWhereInput
+  }
+
+  export type UserAddressUpdateToOneWithWhereWithoutStepResultsInput = {
+    where?: UserAddressWhereInput
+    data: XOR<UserAddressUpdateWithoutStepResultsInput, UserAddressUncheckedUpdateWithoutStepResultsInput>
+  }
+
+  export type UserAddressUpdateWithoutStepResultsInput = {
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nickname?: NullableStringFieldUpdateOperationsInput | string | null
+    realEstates?: RealEstateUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUpdateManyWithoutUserAddressNestedInput
+    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
+    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
+  }
+
+  export type UserAddressUncheckedUpdateWithoutStepResultsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    addressId?: IntFieldUpdateOperationsInput | number
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nickname?: NullableStringFieldUpdateOperationsInput | string | null
+    realEstates?: RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type UserAddressCreateManyUserInput = {
     id?: number
     addressId: number
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
   }
 
-  export type TaxCertUpdateWithoutUserInput = {
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type TaxCertUncheckedUpdateWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-  }
-
-  export type TaxCertUncheckedUpdateManyWithoutUserInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    taxCertJson?: NullableJsonNullValueInput | InputJsonValue
-  }
-
   export type UserAddressUpdateWithoutUserInput = {
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
     realEstates?: RealEstateUpdateManyWithoutUserAddressNestedInput
     stepResults?: StepResultUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUpdateManyWithoutUserAddressNestedInput
+    address?: AddressUpdateOneRequiredWithoutUserAddressesNestedInput
   }
 
   export type UserAddressUncheckedUpdateWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     addressId?: IntFieldUpdateOperationsInput | number
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
     realEstates?: RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput
     stepResults?: StepResultUncheckedUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type UserAddressUncheckedUpdateManyWithoutUserInput = {
     id?: IntFieldUpdateOperationsInput | number
     addressId?: IntFieldUpdateOperationsInput | number
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -12162,34 +12294,36 @@ export namespace Prisma {
   export type UserAddressCreateManyAddressInput = {
     id?: number
     userId: string
-    isPrimary?: boolean | null
+    isPrimary?: boolean
     createdAt?: Date | string
     nickname?: string | null
   }
 
   export type UserAddressUpdateWithoutAddressInput = {
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
     realEstates?: RealEstateUpdateManyWithoutUserAddressNestedInput
     stepResults?: StepResultUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUpdateManyWithoutUserAddressNestedInput
+    user?: UserUpdateOneRequiredWithoutUserAddressesNestedInput
   }
 
   export type UserAddressUncheckedUpdateWithoutAddressInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
     realEstates?: RealEstateUncheckedUpdateManyWithoutUserAddressNestedInput
     stepResults?: StepResultUncheckedUpdateManyWithoutUserAddressNestedInput
+    taxCerts?: TaxCertUncheckedUpdateManyWithoutUserAddressNestedInput
   }
 
   export type UserAddressUncheckedUpdateManyWithoutAddressInput = {
     id?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
-    isPrimary?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    isPrimary?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     nickname?: NullableStringFieldUpdateOperationsInput | string | null
   }
@@ -12206,6 +12340,11 @@ export namespace Prisma {
     match?: number | null
     unchecked?: number | null
     createdAt?: Date | string
+  }
+
+  export type TaxCertCreateManyUserAddressInput = {
+    id?: number
+    taxCertJson: JsonNullValueInput | InputJsonValue
   }
 
   export type RealEstateUpdateWithoutUserAddressInput = {
@@ -12246,6 +12385,20 @@ export namespace Prisma {
     match?: NullableIntFieldUpdateOperationsInput | number | null
     unchecked?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaxCertUpdateWithoutUserAddressInput = {
+    taxCertJson?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type TaxCertUncheckedUpdateWithoutUserAddressInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    taxCertJson?: JsonNullValueInput | InputJsonValue
+  }
+
+  export type TaxCertUncheckedUpdateManyWithoutUserAddressInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    taxCertJson?: JsonNullValueInput | InputJsonValue
   }
 
   export type StepResultCreateManyStepInput = {
