@@ -9,7 +9,6 @@ export class AuthMapper {
   static toUserDto(user: UserEntity): UserInfo {
     return {
       id: user.id,
-      name: user.name,
       nickname: user.nickname || '', // nickname이 없으면 빈 문자열로 설정
       username: user.username,
       phoneNumber: user.phoneNumber,
