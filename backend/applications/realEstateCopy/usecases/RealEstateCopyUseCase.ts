@@ -17,27 +17,6 @@ export class RealEstateCopyUseCase {
     }));
   }
 
-  async updateRealEstateCopy(userAddressId: number, data: { realEstateJson: RealEstateCopyJson }): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; }> {
-    // JSON을 암호화된 문자열로 변환
-    const encryptedData: UpdateRealEstateCopyDto = {
-      realEstateData: encryptJson(data.realEstateJson)
-    };
-    
-    const result = await this.realEstateCopyRepository.updateByUserAddressId(userAddressId, encryptedData);
-    
-    // 응답 시에는 복호화된 데이터 반환
-    return {
-      id: result.id,
-      userAddressId: result.userAddressId,
-      realEstateJson: decryptJson(result.realEstateData) as RealEstateCopyJson,
-      updatedAt: result.updatedAt
-    };
-  }
-
-  async deleteRealEstateCopy(userAddressId: number): Promise<void> {
-    await this.realEstateCopyRepository.deleteByUserAddressId(userAddressId);
-  }
-
   async findRealEstateCopyByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; } | null> {
     const realEstateCopies = await this.realEstateCopyRepository.findByUserAddressId(userAddressId);
     if (realEstateCopies.length === 0) return null;

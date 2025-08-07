@@ -123,28 +123,23 @@ export async function POST(request: NextRequest) {
           throw new Error('발급된 납세증명서 데이터가 없습니다.');
         }
 
-        // 기존 데이터 확인
-        const existing = await dbUseCase.findTaxCertByUserAddressId(body.userAddressId);
-        const isUpdated = !!existing;
-
         const savedTaxCert = await dbUseCase.upsertTaxCert({
           userAddressId: body.userAddressId,
           taxCertJson: JSON.parse(JSON.stringify(result.data))
         });
 
-        console.log(`✅ 납세증명서 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
+        console.log('✅ 납세증명서 DB upsert 완료:', {
           taxCertId: savedTaxCert.id,
           userAddressId: savedTaxCert.userAddressId
         });
 
         return NextResponse.json({
           success: true,
-          message: `납세증명서 발급이 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
+          message: '납세증명서 발급이 성공적으로 완료되었습니다.',
           data: result.data,
           savedTaxCert: {
             id: savedTaxCert.id,
-            userAddressId: savedTaxCert.userAddressId,
-            isUpdated: isUpdated
+            userAddressId: savedTaxCert.userAddressId
           }
         }, { status: 200 });
       } catch (dbError) {

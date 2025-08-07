@@ -62,10 +62,4 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
       updatedAt: updatedRealEstate.updatedAt,
     };
   }
-
-  async deleteByUserAddressId(userAddressId: number): Promise<void> {
-    await this.prisma.realEstate.deleteMany({
-      where: { userAddressId },
-    });
-  }
 }

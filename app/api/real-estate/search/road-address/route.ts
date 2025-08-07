@@ -97,21 +97,16 @@ export async function POST(request: NextRequest) {
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장
       let savedRealEstateCopy = null;
-      let isUpdated = false;
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new RealEstateCopyUseCase(dbRepository);
-        
-        // 기존 데이터 확인
-        const existing = await dbUseCase.findRealEstateCopyByUserAddressId(body.userAddressId);
-        isUpdated = !!existing;
         
         savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
           userAddressId: body.userAddressId,
           realEstateJson: JSON.parse(JSON.stringify(response))
         });
 
-        console.log(`✅ 등기부등본 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
+        console.log('✅ 등기부등본 DB upsert 완료:', {
           realEstateCopyId: savedRealEstateCopy.id,
           userAddressId: savedRealEstateCopy.userAddressId
         });
@@ -119,12 +114,11 @@ export async function POST(request: NextRequest) {
         // 성공 응답 (DB 저장 포함)
         return NextResponse.json({
           success: true,
-          message: `부동산등기부등본 조회가 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
+          message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
           data: response,
           savedRealEstateCopy: {
             id: savedRealEstateCopy.id,
-            userAddressId: savedRealEstateCopy.userAddressId,
-            isUpdated: isUpdated
+            userAddressId: savedRealEstateCopy.userAddressId
           }
         }, { status: 200 });
       } catch (dbError) {

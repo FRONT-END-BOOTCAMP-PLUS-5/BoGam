@@ -62,10 +62,4 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
       updatedAt: updatedTaxCert.updatedAt,
     };
   }
-
-  async deleteByUserAddressId(userAddressId: number): Promise<void> {
-    await this.prisma.taxCert.deleteMany({
-      where: { userAddressId },
-    });
-  }
 } 

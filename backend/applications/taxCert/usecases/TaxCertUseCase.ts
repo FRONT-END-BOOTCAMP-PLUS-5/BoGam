@@ -17,27 +17,6 @@ export class TaxCertUseCase {
     }));
   }
 
-  async updateTaxCert(userAddressId: number, data: { taxCertJson: TaxCertJson }): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; }> {
-    // JSON을 암호화된 문자열로 변환
-    const encryptedData: UpdateTaxCertDto = {
-      taxCertData: encryptJson(data.taxCertJson)
-    };
-    
-    const result = await this.taxCertCopyRepository.updateByUserAddressId(userAddressId, encryptedData);
-    
-    // 응답 시에는 복호화된 데이터 반환
-    return {
-      id: result.id,
-      userAddressId: result.userAddressId,
-      taxCertJson: decryptJson(result.taxCertData) as TaxCertJson,
-      updatedAt: result.updatedAt
-    };
-  }
-
-  async deleteTaxCert(userAddressId: number): Promise<void> {
-    await this.taxCertCopyRepository.deleteByUserAddressId(userAddressId);
-  }
-
   async findTaxCertByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; } | null> {
     const taxCerts = await this.taxCertCopyRepository.findByUserAddressId(userAddressId);
     if (taxCerts.length === 0) return null;
