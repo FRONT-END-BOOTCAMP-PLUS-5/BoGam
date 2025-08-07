@@ -90,5 +90,6 @@ model StepResult {
   step          Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
+  @@unique([userAddressId, stepId], map: "step_results_user_address_step_unique")
   @@map("step_results")
 }
