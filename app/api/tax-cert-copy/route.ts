@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaxCertDbUseCase } from '@be/applications/taxCert/usecases/TaxCertDbUseCase';
+import { TaxCertCopyUseCase } from '@be/applications/taxCertCopy/usecase/TaxCertCopyUseCase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 
 export async function GET(request: NextRequest) {
@@ -23,12 +23,9 @@ export async function GET(request: NextRequest) {
     }
 
     const repository = new TaxCertCopyRepositoryImpl();
-    const useCase = new TaxCertDbUseCase(repository);
+    const useCase = new TaxCertCopyUseCase(repository);
 
-    const taxCerts = await useCase.getTaxCertsByUserAddressId(userAddressIdNum);
-    
-    // userAddressId당 1개만 존재하므로 첫 번째 요소를 반환
-    const taxCert = taxCerts.length > 0 ? taxCerts[0] : null;
+    const taxCert = await useCase.getTaxCertByUserAddressId(userAddressIdNum);
 
     if (!taxCert) {
       return NextResponse.json({

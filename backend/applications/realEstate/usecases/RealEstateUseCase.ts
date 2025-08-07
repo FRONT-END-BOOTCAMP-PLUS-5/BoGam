@@ -16,7 +16,7 @@ import {
  * 클린 아키텍처의 Application 레이어
  * CODEF API 호출 비즈니스 로직을 담당하며 Infrastructure를 통해 외부 API 호출
  */
-export class RealEstateCodefUseCase {
+export class RealEstateUseCase {
   private readonly infrastructure: GetRealEstateDataInfrastructure;
   private readonly codefAuth: CodefAuth;
 
@@ -121,4 +121,4 @@ export class RealEstateCodefUseCase {
 
     return null;
   }
-}
+} 

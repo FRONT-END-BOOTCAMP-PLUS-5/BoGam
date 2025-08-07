@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaxCertCodefUseCase } from '@be/applications/taxCert/usecase/TaxCertCodefUseCase';
+import { TaxCertUseCase } from '@be/applications/taxCert/usecase/TaxCertUseCase';
 import { TaxCertRepositoryImpl } from '@be/infrastructure/repository/TaxCertRepositoryImpl';
-import { TaxCertDbUseCase } from '@be/applications/taxCert/usecases/TaxCertDbUseCase';
+import { TaxCertCopyUseCase } from '@be/applications/taxCertCopy/usecase/TaxCertCopyUseCase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 import { encryptPassword } from '@libs/codefEncryption';
 
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     const repository = new TaxCertRepositoryImpl();
-    const useCase = new TaxCertCodefUseCase(repository);
+    const useCase = new TaxCertUseCase(repository);
     
     const result = await useCase.requestTaxCert(encryptedBody);
 
@@ -117,31 +117,37 @@ export async function POST(request: NextRequest) {
       // 완전 성공 (발급 완료) - DB에 저장
       try {
         const dbRepository = new TaxCertCopyRepositoryImpl();
-        const dbUseCase = new TaxCertDbUseCase(dbRepository);
+        const dbUseCase = new TaxCertCopyUseCase(dbRepository);
         
         if (!result.data) {
           throw new Error('발급된 납세증명서 데이터가 없습니다.');
         }
 
-        const savedTaxCert = await dbUseCase.upsertTaxCert({
+        const isSuccess = await dbUseCase.upsertTaxCert({
           userAddressId: body.userAddressId,
           taxCertJson: JSON.parse(JSON.stringify(result.data))
         });
 
-        console.log('✅ 납세증명서 DB upsert 완료:', {
-          taxCertId: savedTaxCert.id,
-          userAddressId: savedTaxCert.userAddressId
-        });
+        if (isSuccess) {
+          console.log('✅ 납세증명서 DB upsert 완료:', {
+            userAddressId: body.userAddressId
+          });
 
-        return NextResponse.json({
-          success: true,
-          message: '납세증명서 발급이 성공적으로 완료되었습니다.',
-          data: result.data,
-          savedTaxCert: {
-            id: savedTaxCert.id,
-            userAddressId: savedTaxCert.userAddressId
-          }
-        }, { status: 200 });
+          return NextResponse.json({
+            success: true,
+            message: '납세증명서 발급이 성공적으로 완료되었습니다.',
+            data: result.data
+          }, { status: 200 });
+        } else {
+          console.error('❌ 납세증명서 DB upsert 실패');
+          
+          return NextResponse.json({
+            success: true,
+            message: '납세증명서 발급이 완료되었지만 저장 중 문제가 발생했습니다.',
+            data: result.data,
+            warning: 'DB 저장 실패'
+          }, { status: 200 });
+        }
       } catch (dbError) {
         console.error('❌ 납세증명서 DB 저장 실패:', dbError);
         

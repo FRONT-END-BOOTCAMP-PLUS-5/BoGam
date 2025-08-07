@@ -1,7 +1,7 @@
 import { TaxCertRepository } from '@be/domain/repository/TaxCertRepository';
 import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, TaxCertRequestDto, TaxCertResponseDto } from '@be/applications/taxCert/dtos/TaxCertDto';
 
-export class TaxCertCodefUseCase {
+export class TaxCertUseCase {
   constructor(private taxCertRepository: TaxCertRepository) {}
 
   async requestTaxCert(request: TaxCertRequestDto): Promise<TaxCertResponseDto> {

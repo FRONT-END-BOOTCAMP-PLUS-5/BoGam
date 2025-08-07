@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
-import { TaxCertUseCase } from '@be/applications/taxCert/usecases/TaxCertUseCase';
+import { TaxCertUseCase } from '@be/applications/taxCertCopy/usecase/TaxCertUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 

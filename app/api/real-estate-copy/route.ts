@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RealEstateDbUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
+import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 
 export async function GET(request: NextRequest) {
@@ -23,12 +23,9 @@ export async function GET(request: NextRequest) {
     }
 
     const repository = new RealEstateCopyRepositoryImpl();
-    const useCase = new RealEstateDbUseCase(repository);
+    const useCase = new RealEstateCopyUseCase(repository);
 
-    const realEstateCopies = await useCase.getRealEstateCopiesByUserAddressId(userAddressIdNum);
-    
-    // userAddressId당 1개만 존재하므로 첫 번째 요소를 반환
-    const realEstateCopy = realEstateCopies.length > 0 ? realEstateCopies[0] : null;
+    const realEstateCopy = await useCase.getRealEstateCopyByUserAddressId(userAddressIdNum);
 
     if (!realEstateCopy) {
       return NextResponse.json({
