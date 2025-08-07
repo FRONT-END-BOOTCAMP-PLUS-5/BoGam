@@ -1,81 +1,56 @@
 import { StepResultRepository } from '@be/domain/repository/StepResultRepository';
 import { StepResult } from '@be/domain/entities/StepResult';
-import { CreateStepResultDto, StepResultResponseDto, GetStepResultQueryDto, StepResultSummaryDto } from '@be/applications/stepResult/dtos/StepResultDto';
+import { CreateStepResultDto, StepResultResponseDto, StepResultSummaryDto } from '@be/applications/stepResult/dtos/StepResultDto';
 
 export class StepResultUseCase {
   constructor(private stepResultRepository: StepResultRepository) {}
 
-  async getStepResultsByUserAddress(query: GetStepResultQueryDto): Promise<StepResultResponseDto> {
+  async getStepResults(userAddressId: number, mainNum?: number, subNum?: number): Promise<StepResultResponseDto> {
     try {
-      const params: Record<string, unknown> = {
-        userAddressId: query.userAddressId
-      };
+      const params: Record<string, unknown> = { userAddressId };
+      
+      if (mainNum) {
+        params.mainNum = mainNum;
+      }
+      
+      if (subNum) {
+        params.subNum = subNum;
+      }
       
       const stepResults = await this.stepResultRepository.findByParams(params);
       
+      // mainNum만 있는 경우 요약 정보 계산
+      if (mainNum && !subNum) {
+        const summary = this.calculateSummary(stepResults, mainNum);
+        return {
+          success: true,
+          data: {
+            results: stepResults,
+            summary: summary
+          },
+          message: '스탭 결과 조회 성공'
+        };
+      }
+      
+      // subNum도 있는 경우 단일 결과 반환
+      if (mainNum && subNum) {
+        if (stepResults.length === 0) {
+          return {
+            success: false,
+            error: '해당 스탭 결과를 찾을 수 없습니다.'
+          };
+        }
+        return {
+          success: true,
+          data: stepResults[0],
+          message: '스탭 결과 조회 성공'
+        };
+      }
+      
+      // 기본 조회 (userAddressId만)
       return {
         success: true,
         data: stepResults,
-        message: '스탭 결과 조회 성공'
-      };
-    } catch (error) {
-      console.error('❌ 스탭 결과 조회 오류:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '스탭 결과 조회 중 오류가 발생했습니다.'
-      };
-    }
-  }
-
-  async getStepResultsByUserAddressAndMainNum(userAddressId: number, mainNum: number): Promise<StepResultResponseDto> {
-    try {
-      const params: Record<string, unknown> = {
-        userAddressId,
-        mainNum
-      };
-      
-      const stepResults = await this.stepResultRepository.findByParams(params);
-      
-      // 요약 정보 계산
-      const summary = this.calculateSummary(stepResults, mainNum);
-      
-      return {
-        success: true,
-        data: {
-          results: stepResults,
-          summary: summary
-        },
-        message: '스탭 결과 조회 성공'
-      };
-    } catch (error) {
-      console.error('❌ 스탭 결과 조회 오류:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '스탭 결과 조회 중 오류가 발생했습니다.'
-      };
-    }
-  }
-
-  async getStepResultByUserAddressAndMainSubNum(userAddressId: number, mainNum: number, subNum: number): Promise<StepResultResponseDto> {
-    try {
-      const params: Record<string, unknown> = {
-        userAddressId,
-        mainNum,
-        subNum
-      };
-      
-      const stepResults = await this.stepResultRepository.findByParams(params);
-      
-      if (stepResults.length === 0) {
-        return {
-          success: false,
-          error: '해당 스탭 결과를 찾을 수 없습니다.'
-        };
-      }
-
-      return {
-        success: true,
-        data: stepResults[0], // 단일 결과 반환
         message: '스탭 결과 조회 성공'
       };
     } catch (error) {

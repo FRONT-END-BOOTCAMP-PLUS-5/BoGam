@@ -17,10 +17,6 @@ export interface StepResultResponseDto {
   message?: string;
 }
 
-export interface GetStepResultQueryDto {
-  userAddressId: number;
-}
-
 export interface StepResultSummaryDto {
   totalMismatch: number;
   totalMatch: number;

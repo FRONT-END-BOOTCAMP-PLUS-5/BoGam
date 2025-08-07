@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { StepResultUseCase } from '@be/applications/stepResult/usecase/StepResultUseCase';
 import { StepResultRepositoryImpl } from '@be/infrastructure/repository/StepResultRepositoryImpl';
-import { GetStepResultQueryDto } from '@be/applications/stepResult/dtos/StepResultDto';
 
 // GET /api/step-result?userAddressId=1&mainNum=1&subNum=2
 export async function GET(request: NextRequest) {
@@ -29,30 +28,25 @@ export async function GET(request: NextRequest) {
     const repository = new StepResultRepositoryImpl();
     const useCase = new StepResultUseCase(repository);
 
-    let result;
-    if (mainNum && subNum) {
-      const mainNumInt = parseInt(mainNum);
-      const subNumInt = parseInt(subNum);
-      if (isNaN(mainNumInt) || isNaN(subNumInt)) {
-        return NextResponse.json(
-          { success: false, error: 'mainNum과 subNum은 숫자여야 합니다.' },
-          { status: 400 }
-        );
-      }
-      result = await useCase.getStepResultByUserAddressAndMainSubNum(userAddressIdNum, mainNumInt, subNumInt);
-    } else if (mainNum) {
-      const mainNumInt = parseInt(mainNum);
-      if (isNaN(mainNumInt)) {
-        return NextResponse.json(
-          { success: false, error: 'mainNum은 숫자여야 합니다.' },
-          { status: 400 }
-        );
-      }
-      result = await useCase.getStepResultsByUserAddressAndMainNum(userAddressIdNum, mainNumInt);
-    } else {
-      const queryDto: GetStepResultQueryDto = { userAddressId: userAddressIdNum };
-      result = await useCase.getStepResultsByUserAddress(queryDto);
+    // mainNum과 subNum 파싱
+    const mainNumInt = mainNum ? parseInt(mainNum) : undefined;
+    const subNumInt = subNum ? parseInt(subNum) : undefined;
+
+    if (mainNum && isNaN(mainNumInt!)) {
+      return NextResponse.json(
+        { success: false, error: 'mainNum은 숫자여야 합니다.' },
+        { status: 400 }
+      );
     }
+
+    if (subNum && isNaN(subNumInt!)) {
+      return NextResponse.json(
+        { success: false, error: 'subNum은 숫자여야 합니다.' },
+        { status: 400 }
+      );
+    }
+
+    const result = await useCase.getStepResults(userAddressIdNum, mainNumInt, subNumInt);
 
     if (!result.success) {
       return NextResponse.json(

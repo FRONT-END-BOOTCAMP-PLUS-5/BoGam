@@ -46,33 +46,27 @@ export class StepResultRepositoryImpl implements StepResultRepository {
 
   async upsert(stepResult: StepResult): Promise<StepResult> {
     try {
-      const existingStepResult = await prisma.stepResult.findFirst({
+      const upsertedStepResult = await prisma.stepResult.upsert({
         where: {
+          userAddressId_stepId: {
+            userAddressId: stepResult.userAddressId!,
+            stepId: stepResult.stepId!
+          }
+        },
+        create: {
           userAddressId: stepResult.userAddressId!,
-          stepId: stepResult.stepId!
-        }
+          stepId: stepResult.stepId!,
+          mismatch: stepResult.mismatch,
+          match: stepResult.match,
+          unchecked: stepResult.unchecked
+        },
+        update: {
+          mismatch: stepResult.mismatch,
+          match: stepResult.match,
+          unchecked: stepResult.unchecked
+        },
+        include: { step: true }
       });
-
-      const upsertedStepResult = existingStepResult
-        ? await prisma.stepResult.update({
-            where: { id: existingStepResult.id },
-            data: {
-              mismatch: stepResult.mismatch,
-              match: stepResult.match,
-              unchecked: stepResult.unchecked
-            },
-            include: { step: true }
-          })
-        : await prisma.stepResult.create({
-            data: {
-              userAddressId: stepResult.userAddressId!,
-              stepId: stepResult.stepId!,
-              mismatch: stepResult.mismatch,
-              match: stepResult.match,
-              unchecked: stepResult.unchecked
-            },
-            include: { step: true }
-          });
 
       return new StepResult(
         upsertedStepResult.id, upsertedStepResult.userAddressId, upsertedStepResult.stepId,
