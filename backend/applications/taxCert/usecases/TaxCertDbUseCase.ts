@@ -1,5 +1,6 @@
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
 import { TaxCertJson } from '@be/domain/entities/TaxCert';
+import { TaxCertCopy } from '@be/domain/entities/TaxCertCopy';
 import { encryptJson, decryptJson } from '../../../../utils/encryption';
 
 /**
@@ -10,16 +11,18 @@ import { encryptJson, decryptJson } from '../../../../utils/encryption';
 export class TaxCertDbUseCase {
   constructor(private taxCertCopyRepository: TaxCertCopyRepository) {}
 
-  async getTaxCertsByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; }[]> {
-    const taxCerts = await this.taxCertCopyRepository.findByUserAddressId(userAddressId);
+  async getTaxCertByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; } | null> {
+    const taxCert = await this.taxCertCopyRepository.findByUserAddressId(userAddressId);
+    
+    if (!taxCert) return null;
     
     // 복호화 처리
-    return taxCerts.map(cert => ({
-      id: cert.id,
-      userAddressId: cert.userAddressId,
-      taxCertJson: decryptJson(cert.taxCertData) as TaxCertJson,
-      updatedAt: cert.updatedAt
-    }));
+    return {
+      id: taxCert.id,
+      userAddressId: taxCert.userAddressId,
+      taxCertJson: decryptJson(taxCert.taxCertData) as TaxCertJson,
+      updatedAt: taxCert.updatedAt
+    };
   }
 
   async upsertTaxCert(data: { userAddressId: number; taxCertJson: TaxCertJson }): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; }> {

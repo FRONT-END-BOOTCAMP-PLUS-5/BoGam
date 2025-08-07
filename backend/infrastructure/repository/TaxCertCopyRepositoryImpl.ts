@@ -1,29 +1,25 @@
-import { PrismaClient, Prisma } from '@prisma/generated';
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
-import { TaxCert } from '@be/domain/entities/TaxCert';
+import { TaxCertCopy } from '@be/domain/entities/TaxCertCopy';
+import { prisma } from '@utils/prisma';
 
 export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
-  private prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
-
-  async findByUserAddressId(userAddressId: number): Promise<TaxCert[]> {
-    const taxCerts = await this.prisma.taxCert.findMany({
+  async findByUserAddressId(userAddressId: number): Promise<TaxCertCopy | null> {
+    const taxCert = await prisma.taxCert.findFirst({
       where: { userAddressId },
     });
 
-    return taxCerts.map(taxCert => ({
+    if (!taxCert) return null;
+
+    return {
       id: taxCert.id,
       userAddressId: taxCert.userAddressId,
       taxCertData: taxCert.taxCertData,
       updatedAt: taxCert.updatedAt,
-    }));
+    };
   }
 
-  async upsertByUserAddressId(userAddressId: number, data: { taxCertData: string }): Promise<TaxCert> {
-    const taxCert = await this.prisma.taxCert.upsert({
+  async upsertByUserAddressId(userAddressId: number, data: { taxCertData: string }): Promise<TaxCertCopy> {
+    const taxCert = await prisma.taxCert.upsert({
       where: { userAddressId },
       update: {
         taxCertData: data.taxCertData,

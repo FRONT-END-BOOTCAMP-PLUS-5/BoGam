@@ -1,29 +1,25 @@
-import { PrismaClient, Prisma } from '@prisma/generated';
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
 import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
+import { prisma } from '@utils/prisma';
 
 export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
-  private prisma: PrismaClient;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
-
-  async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy[]> {
-    const realEstates = await this.prisma.realEstate.findMany({
+  async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy | null> {
+    const realEstate = await prisma.realEstate.findFirst({
       where: { userAddressId },
     });
 
-    return realEstates.map(realEstate => ({
+    if (!realEstate) return null;
+
+    return {
       id: realEstate.id,
       userAddressId: realEstate.userAddressId,
       realEstateData: realEstate.realEstateData,
       updatedAt: realEstate.updatedAt,
-    }));
+    };
   }
 
   async upsertByUserAddressId(userAddressId: number, data: { realEstateData: string }): Promise<RealEstateCopy> {
-    const realEstate = await this.prisma.realEstate.upsert({
+    const realEstate = await prisma.realEstate.upsert({
       where: { userAddressId },
       update: {
         realEstateData: data.realEstateData,
