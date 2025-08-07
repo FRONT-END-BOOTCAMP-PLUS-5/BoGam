@@ -9,24 +9,24 @@ datasource db {
 }
 
 model User {
-  id               String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name             String
-  nickname         String          @unique(map: "users_unique_nickname")
-  username         String          @unique(map: "users_unique_username")
-  password         String
-  pinNumber        String          @map("pin_number")
-  phoneNumber      String          @unique(map: "users_unique_phone_number") @map("phone_number")
-  userAddresses    UserAddress[]
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  nickname      String        @unique(map: "users_unique_nickname")
+  username      String        @unique(map: "users_unique_username")
+  password      String
+  pinNumber     String        @map("pin_number")
+  phoneNumber   String        @unique(map: "users_unique_phone_number") @map("phone_number")
+  userAddresses UserAddress[]
 
   @@map("users")
 }
 
 model TaxCert {
-  id               Int         @id @default(autoincrement())
-  userAddressId    Int         @unique @map("user_address_id")
-  taxCertData      String      @map("tax_cert_data") @db.Text
-  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  userAddress      UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  id            Int         @id @default(autoincrement())
+  userAddressId Int         @unique @map("user_address_id")
+  taxCertData   String      @map("tax_cert_data")
+  updatedAt     DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("tax_certs")
 }
@@ -45,27 +45,27 @@ model Address {
 }
 
 model UserAddress {
-  id               Int              @id @default(autoincrement())
-  userId           String           @map("user_id") @db.Uuid
-  addressId        Int              @map("address_id")
-  isPrimary        Boolean          @default(false) @map("is_primary")
-  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  nickname         String?
-  realEstates      RealEstate[]
-  stepResults      StepResult[]
-  taxCerts         TaxCert[]
-  address          Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          Int          @id @default(autoincrement())
+  userId      String       @map("user_id") @db.Uuid
+  addressId   Int          @map("address_id")
+  isPrimary   Boolean      @default(false) @map("is_primary")
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  nickname    String?
+  realEstates RealEstate?
+  stepResults StepResult[]
+  taxCerts    TaxCert?
+  address     Address      @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_addresses")
 }
 
 model RealEstate {
-  id               Int         @id @default(autoincrement())
-  userAddressId    Int         @unique @map("user_address_id")
-  realEstateData   String      @map("real_estate_data") @db.Text
-  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  userAddress      UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+  id             Int         @id @default(autoincrement())
+  userAddressId  Int         @unique @map("user_address_id")
+  realEstateData String      @map("real_estate_data")
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAddress    UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("real_estates")
 }
@@ -90,5 +90,6 @@ model StepResult {
   step          Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
+  @@unique([userAddressId, stepId], map: "step_results_user_address_step_unique")
   @@map("step_results")
 }
