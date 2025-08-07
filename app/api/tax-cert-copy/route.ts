@@ -1,23 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { TaxCertCopyUseCase } from '@be/applications/taxCertCopy/usecase/TaxCertCopyUseCase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
+import { getUserAddressIdByNickname } from '@utils/userAddress';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userAddressId = searchParams.get('userAddressId');
+    const userAddressNickname = searchParams.get('userAddressNickname');
 
-    if (!userAddressId) {
+    if (!userAddressNickname) {
       return NextResponse.json(
-        { success: false, message: '사용자 주소 ID는 필수입니다.' },
+        { success: false, message: '사용자 주소 닉네임은 필수입니다.' },
         { status: 400 }
       );
     }
 
-    const userAddressIdNum = parseInt(userAddressId);
-    if (isNaN(userAddressIdNum)) {
+    // userAddress 닉네임으로부터 ID 가져오기
+    const userAddressId = await getUserAddressIdByNickname(userAddressNickname);
+    if (!userAddressId) {
       return NextResponse.json(
-        { success: false, message: '사용자 주소 ID는 숫자여야 합니다.' },
+        { 
+          success: false, 
+          message: '유효하지 않은 사용자 주소 닉네임입니다.',
+          error: 'INVALID_USER_ADDRESS_NICKNAME'
+        },
         { status: 400 }
       );
     }
@@ -25,7 +31,7 @@ export async function GET(request: NextRequest) {
     const repository = new TaxCertCopyRepositoryImpl();
     const useCase = new TaxCertCopyUseCase(repository);
 
-    const taxCert = await useCase.getTaxCertByUserAddressId(userAddressIdNum);
+    const taxCert = await useCase.getTaxCertByUserAddressId(userAddressId);
 
     if (!taxCert) {
       return NextResponse.json({

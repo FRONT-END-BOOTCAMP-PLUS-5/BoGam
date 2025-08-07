@@ -4,6 +4,7 @@ import { TaxCertRepositoryImpl } from '@be/infrastructure/repository/TaxCertRepo
 import { TaxCertCopyUseCase } from '@be/applications/taxCertCopy/usecase/TaxCertCopyUseCase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 import { encryptPassword } from '@libs/codefEncryption';
+import { getUserAddressIdByNickname } from '@utils/userAddress';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,8 +29,8 @@ export async function POST(request: NextRequest) {
     if (!body.submitTargets) {
       errors.push('제출처는 필수입니다.');
     }
-    if (!body.userAddressId || typeof body.userAddressId !== 'number') {
-      errors.push('사용자 주소 ID는 필수입니다.');
+    if (!body.userAddressNickname) {
+      errors.push('사용자 주소 닉네임은 필수입니다.');
     }
 
     // 로그인 타입별 필수 필드 검증
@@ -72,6 +73,19 @@ export async function POST(request: NextRequest) {
           success: false, 
           message: '입력 데이터 검증 실패',
           errors 
+        },
+        { status: 400 }
+      );
+    }
+
+    // userAddress 닉네임으로부터 ID 가져오기
+    const userAddressId = await getUserAddressIdByNickname(body.userAddressNickname);
+    if (!userAddressId) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: '유효하지 않은 사용자 주소 닉네임입니다.',
+          error: 'INVALID_USER_ADDRESS_NICKNAME'
         },
         { status: 400 }
       );
@@ -124,13 +138,14 @@ export async function POST(request: NextRequest) {
         }
 
         const isSuccess = await dbUseCase.upsertTaxCert({
-          userAddressId: body.userAddressId,
+          userAddressId: userAddressId,
           taxCertJson: JSON.parse(JSON.stringify(result.data))
         });
 
         if (isSuccess) {
           console.log('✅ 납세증명서 DB upsert 완료:', {
-            userAddressId: body.userAddressId
+            userAddressId: userAddressId,
+            userAddressNickname: body.userAddressNickname
           });
 
           return NextResponse.json({

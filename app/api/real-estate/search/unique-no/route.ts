@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '@be/applications/realEstate/usecases/RealEstateDataUseCase';
+import { RealEstateUseCase } from '@be/applications/realEstate/usecases/RealEstateUseCase';
 import { encryptPassword } from '@libs/codefEncryption';
 import { SummaryInquiryRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
 import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 
-const useCase = new GetRealEstateDataUseCase();
+const useCase = new RealEstateUseCase();
 
 export async function POST(request: NextRequest) {
   try {
@@ -104,37 +104,36 @@ export async function POST(request: NextRequest) {
 
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장
-      let savedRealEstateCopy = null;
-      let isUpdated = false;
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new RealEstateCopyUseCase(dbRepository);
         
-        // 기존 데이터 확인
-        const existing = await dbUseCase.findRealEstateCopyByUserAddressId(body.userAddressId);
-        isUpdated = !!existing;
-        
-        savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
+        const isSuccess = await dbUseCase.upsertRealEstateCopy({
           userAddressId: body.userAddressId,
           realEstateJson: JSON.parse(JSON.stringify(response))
         });
 
-        console.log(`✅ 등기부등본 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
-          realEstateCopyId: savedRealEstateCopy.id,
-          userAddressId: savedRealEstateCopy.userAddressId
-        });
+        if (isSuccess) {
+          console.log('✅ 등기부등본 DB upsert 완료:', {
+            userAddressId: body.userAddressId
+          });
 
-        // 성공 응답 (DB 저장 포함)
-        return NextResponse.json({
-          success: true,
-          message: `부동산등기부등본 조회가 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
-          data: response,
-          savedRealEstateCopy: {
-            id: savedRealEstateCopy.id,
-            userAddressId: savedRealEstateCopy.userAddressId,
-            isUpdated: isUpdated
-          }
-        }, { status: 200 });
+          // 성공 응답 (DB 저장 포함)
+          return NextResponse.json({
+            success: true,
+            message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
+            data: response
+          }, { status: 200 });
+        } else {
+          console.error('❌ 등기부등본 DB upsert 실패');
+          
+          return NextResponse.json({
+            success: true,
+            message: '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
+            data: response,
+            warning: 'DB 저장 실패'
+          }, { status: 200 });
+        }
       } catch (dbError) {
         console.error('❌ 등기부등본 DB 저장 실패:', dbError);
         
