@@ -1,5 +1,6 @@
 import { Providers } from './providers';
 import type { Metadata, Viewport } from 'next';
+import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -84,6 +85,14 @@ export default function RootLayout({
         <link rel='shortcut icon' href='/favicon.ico' />
       </head>
       <body className='font-sans'>
+        <Script 
+          src="https://code.jquery.com/jquery-2.2.4.min.js" 
+          strategy="beforeInteractive"
+        />
+        <Script 
+          src="/turn.js" 
+          strategy="beforeInteractive"
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
