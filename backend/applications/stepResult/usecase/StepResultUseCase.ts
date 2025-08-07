@@ -1,6 +1,6 @@
 import { StepResultRepository } from '@be/domain/repository/StepResultRepository';
 import { StepResult } from '@be/domain/entities/StepResult';
-import { CreateStepResultDto, UpdateStepResultDto, StepResultResponseDto, GetStepResultQueryDto, StepResultSummaryDto } from '@be/applications/stepResult/dtos/StepResultDto';
+import { CreateStepResultDto, StepResultResponseDto, GetStepResultQueryDto, StepResultSummaryDto } from '@be/applications/stepResult/dtos/StepResultDto';
 
 export class StepResultUseCase {
   constructor(private stepResultRepository: StepResultRepository) {}
@@ -88,7 +88,7 @@ export class StepResultUseCase {
   }
 
   private calculateSummary(stepResults: StepResult[], mainNum: number): StepResultSummaryDto {
-    const summary = stepResults.reduce((acc, result) => ({
+    const summary = stepResults.reduce((acc: StepResultSummaryDto, result: StepResult) => ({
       totalMismatch: acc.totalMismatch + (result.mismatch || 0),
       totalMatch: acc.totalMatch + (result.match || 0),
       totalUnchecked: acc.totalUnchecked + (result.unchecked || 0),
@@ -105,58 +105,34 @@ export class StepResultUseCase {
     return summary;
   }
 
-  async createStepResult(dto: CreateStepResultDto): Promise<StepResultResponseDto> {
-    try {
-      const stepResult = new StepResult(
-        undefined,
-        dto.userAddressId,
-        dto.stepId,
-        dto.mismatch,
-        dto.match,
-        dto.unchecked,
-        new Date()
-      );
-
-      const createdStepResult = await this.stepResultRepository.save(stepResult);
-
-      return {
-        success: true,
-        data: createdStepResult,
-        message: '스탭 결과 생성 성공'
-      };
-    } catch (error) {
-      console.error('❌ 스탭 결과 생성 오류:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '스탭 결과 생성 중 오류가 발생했습니다.'
-      };
-    }
-  }
-
-  async updateStepResult(id: number, dto: UpdateStepResultDto): Promise<StepResultResponseDto> {
-    try {
-      const updatedStepResult = await this.stepResultRepository.update(id, dto);
-
-      return {
-        success: true,
-        data: updatedStepResult,
-        message: '스탭 결과 수정 성공'
-      };
-    } catch (error) {
-      console.error('❌ 스탭 결과 수정 오류:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '스탭 결과 수정 중 오류가 발생했습니다.'
-      };
-    }
-  }
-
   async upsertStepResult(dto: CreateStepResultDto): Promise<StepResultResponseDto> {
     try {
+      let stepId = dto.stepId;
+
+      // mainNum과 subNum이 제공된 경우 stepId 찾기
+      if (dto.mainNum && dto.subNum && !stepId) {
+        const foundStepId = await this.stepResultRepository.findStepIdByMainSub(dto.mainNum, dto.subNum);
+        if (!foundStepId) {
+          return {
+            success: false,
+            error: '해당 mainNum과 subNum에 맞는 스탭을 찾을 수 없습니다.'
+          };
+        }
+        stepId = foundStepId;
+      }
+
+      // stepId가 없으면 오류
+      if (!stepId) {
+        return {
+          success: false,
+          error: 'stepId 또는 mainNum+subNum이 필요합니다.'
+        };
+      }
+
       const stepResult = new StepResult(
         undefined,
         dto.userAddressId,
-        dto.stepId,
+        stepId,
         dto.mismatch,
         dto.match,
         dto.unchecked,
@@ -175,23 +151,6 @@ export class StepResultUseCase {
       return {
         success: false,
         error: error instanceof Error ? error.message : '스탭 결과 생성/수정 중 오류가 발생했습니다.'
-      };
-    }
-  }
-
-  async deleteStepResult(id: number): Promise<StepResultResponseDto> {
-    try {
-      await this.stepResultRepository.delete(id);
-
-      return {
-        success: true,
-        message: '스탭 결과 삭제 성공'
-      };
-    } catch (error) {
-      console.error('❌ 스탭 결과 삭제 오류:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : '스탭 결과 삭제 중 오류가 발생했습니다.'
       };
     }
   }

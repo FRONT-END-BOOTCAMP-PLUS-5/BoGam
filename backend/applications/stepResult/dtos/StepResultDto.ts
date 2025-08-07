@@ -2,13 +2,9 @@ import { StepResult } from '@be/domain/entities/StepResult';
 
 export interface CreateStepResultDto {
   userAddressId: number;
-  stepId: number;
-  mismatch?: number;
-  match?: number;
-  unchecked?: number;
-}
-
-export interface UpdateStepResultDto {
+  stepId?: number;
+  mainNum?: number;
+  subNum?: number;
   mismatch?: number;
   match?: number;
   unchecked?: number;
