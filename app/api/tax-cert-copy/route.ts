@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaxCertUseCase } from '@be/applications/taxCert/usecases/TaxCertUseCase';
+import { TaxCertDbUseCase } from '@be/applications/taxCert/usecases/TaxCertDbUseCase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 
 export async function GET(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const repository = new TaxCertCopyRepositoryImpl();
-    const useCase = new TaxCertUseCase(repository);
+    const useCase = new TaxCertDbUseCase(repository);
 
     const taxCerts = await useCase.getTaxCertsByUserAddressId(userAddressIdNum);
     

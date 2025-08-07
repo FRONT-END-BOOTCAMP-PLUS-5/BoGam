@@ -1,7 +1,6 @@
-import { TaxCert, CreateTaxCertDto, UpdateTaxCertDto } from '../entities/TaxCert';
+import { TaxCert } from '../entities/TaxCert';
 
 export interface TaxCertCopyRepository {
-  create(data: CreateTaxCertDto): Promise<TaxCert>;
   findByUserAddressId(userAddressId: number): Promise<TaxCert[]>;
-  updateByUserAddressId(userAddressId: number, data: UpdateTaxCertDto): Promise<TaxCert>;
+  upsertByUserAddressId(userAddressId: number, data: { taxCertData: string }): Promise<TaxCert>;
 } 

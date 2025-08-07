@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '@be/applications/realEstate/usecases/RealEstateDataUseCase';
+import { RealEstateCodefUseCase } from '@be/applications/realEstate/usecases/RealEstateDataUseCase';
 import { encryptPassword } from '@libs/codefEncryption';
 import { IssueResultRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
-import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
+import { RealEstateDbUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 
-const useCase = new GetRealEstateDataUseCase();
+const useCase = new RealEstateCodefUseCase();
 
 export async function POST(request: NextRequest) {
   try {
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       let savedRealEstateCopy = null;
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
-        const dbUseCase = new RealEstateCopyUseCase(dbRepository);
+        const dbUseCase = new RealEstateDbUseCase(dbRepository);
         
         savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
           userAddressId: body.userAddressId,

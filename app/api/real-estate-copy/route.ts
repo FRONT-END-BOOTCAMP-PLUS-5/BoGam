@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
+import { RealEstateDbUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 
 export async function GET(request: NextRequest) {
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const repository = new RealEstateCopyRepositoryImpl();
-    const useCase = new RealEstateCopyUseCase(repository);
+    const useCase = new RealEstateDbUseCase(repository);
 
     const realEstateCopies = await useCase.getRealEstateCopiesByUserAddressId(userAddressIdNum);
     

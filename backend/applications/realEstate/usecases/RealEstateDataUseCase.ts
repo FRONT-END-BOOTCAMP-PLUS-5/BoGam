@@ -12,11 +12,11 @@ import {
 } from '@be/applications/realEstate/dtos/RealEstateResponse';
 
 /**
- * 부동산등기부등본 조회 UseCase
+ * 부동산등기부등본 CODEF API 요청 UseCase
  * 클린 아키텍처의 Application 레이어
- * 비즈니스 로직을 담당하며 Infrastructure를 통해 외부 API 호출
+ * CODEF API 호출 비즈니스 로직을 담당하며 Infrastructure를 통해 외부 API 호출
  */
-export class GetRealEstateDataUseCase {
+export class RealEstateCodefUseCase {
   private readonly infrastructure: GetRealEstateDataInfrastructure;
   private readonly codefAuth: CodefAuth;
 
@@ -86,7 +86,6 @@ export class GetRealEstateDataUseCase {
   }
 
   /**
-
    * 2-way 인증 정보 추출
    * @param response API 응답
    * @returns 2-way 인증 정보

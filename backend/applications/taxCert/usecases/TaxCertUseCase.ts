@@ -2,7 +2,7 @@ import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyReposito
 import { TaxCert, CreateTaxCertDto, UpdateTaxCertDto, TaxCertJson } from '@be/domain/entities/TaxCert';
 import { encryptJson, decryptJson } from '../../../../utils/encryption';
 
-export class TaxCertUseCase {
+export class TaxCertDbUseCase {
   constructor(private taxCertCopyRepository: TaxCertCopyRepository) {}
 
   async getTaxCertsByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; }[]> {

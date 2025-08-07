@@ -1,28 +1,12 @@
 import { PrismaClient, Prisma } from '@prisma/generated';
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
-import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
 
 export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
   private prisma: PrismaClient;
 
   constructor() {
     this.prisma = new PrismaClient();
-  }
-
-  async create(data: CreateRealEstateCopyDto): Promise<RealEstateCopy> {
-    const realEstate = await this.prisma.realEstate.create({
-      data: {
-        userAddressId: data.userAddressId,
-        realEstateData: data.realEstateData,
-      },
-    });
-
-    return {
-      id: realEstate.id,
-      userAddressId: realEstate.userAddressId,
-      realEstateData: realEstate.realEstateData,
-      updatedAt: realEstate.updatedAt,
-    };
   }
 
   async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy[]> {
@@ -38,28 +22,23 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     }));
   }
 
-  async updateByUserAddressId(userAddressId: number, data: UpdateRealEstateCopyDto): Promise<RealEstateCopy> {
-    const realEstate = await this.prisma.realEstate.updateMany({
+  async upsertByUserAddressId(userAddressId: number, data: { realEstateData: string }): Promise<RealEstateCopy> {
+    const realEstate = await this.prisma.realEstate.upsert({
       where: { userAddressId },
-      data: {
+      update: {
+        realEstateData: data.realEstateData,
+      },
+      create: {
+        userAddressId,
         realEstateData: data.realEstateData,
       },
     });
 
-    // 업데이트된 레코드를 다시 조회
-    const updatedRealEstate = await this.prisma.realEstate.findFirst({
-      where: { userAddressId },
-    });
-
-    if (!updatedRealEstate) {
-      throw new Error('RealEstateCopy not found for the given userAddressId');
-    }
-
     return {
-      id: updatedRealEstate.id,
-      userAddressId: updatedRealEstate.userAddressId,
-      realEstateData: updatedRealEstate.realEstateData,
-      updatedAt: updatedRealEstate.updatedAt,
+      id: realEstate.id,
+      userAddressId: realEstate.userAddressId,
+      realEstateData: realEstate.realEstateData,
+      updatedAt: realEstate.updatedAt,
     };
   }
 }

@@ -1,7 +1,6 @@
-import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto } from '../entities/RealEstateCopy';
+import { RealEstateCopy } from '../entities/RealEstateCopy';
 
 export interface RealEstateCopyRepository {
-  create(data: CreateRealEstateCopyDto): Promise<RealEstateCopy>;
   findByUserAddressId(userAddressId: number): Promise<RealEstateCopy[]>;
-  updateByUserAddressId(userAddressId: number, data: UpdateRealEstateCopyDto): Promise<RealEstateCopy>;
+  upsertByUserAddressId(userAddressId: number, data: { realEstateData: string }): Promise<RealEstateCopy>;
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { TaxCertUseCase } from '@be/applications/taxCert/usecase/TaxCertUseCase';
+import { TaxCertCodefUseCase } from '@be/applications/taxCert/usecase/TaxCertCodefUseCase';
 import { TaxCertRepositoryImpl } from '@be/infrastructure/repository/TaxCertRepositoryImpl';
-import { TaxCertUseCase as TaxCertDbUseCase } from '@be/applications/taxCert/usecases/TaxCertUseCase';
+import { TaxCertDbUseCase } from '@be/applications/taxCert/usecases/TaxCertDbUseCase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 import { encryptPassword } from '@libs/codefEncryption';
 
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     const repository = new TaxCertRepositoryImpl();
-    const useCase = new TaxCertUseCase(repository);
+    const useCase = new TaxCertCodefUseCase(repository);
     
     const result = await useCase.requestTaxCert(encryptedBody);
 
