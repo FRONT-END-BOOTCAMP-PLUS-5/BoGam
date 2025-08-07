@@ -83,8 +83,10 @@ export async function POST(request: NextRequest) {
     if (!body.userAddressId) {
       errors.push('userAddressId는 필수입니다.');
     }
-    if (!body.stepId) {
-      errors.push('stepId는 필수입니다.');
+    
+    // stepId 또는 mainNum+subNum 중 하나는 필요
+    if (!body.stepId && (!body.mainNum || !body.subNum)) {
+      errors.push('stepId 또는 mainNum+subNum이 필요합니다.');
     }
     
     if (errors.length > 0) {
