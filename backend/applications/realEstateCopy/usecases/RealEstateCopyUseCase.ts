@@ -1,6 +1,7 @@
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
 import { RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
 import { encryptJson, decryptJson } from '../../../../utils/encryption';
+import { RealEstateCopyExistsResponseDto, RealEstateCopyDetailResponseDto } from '../dtos/RealEstateCopyDto';
 
 /**
  * 등기부등본 DB CRUD UseCase
@@ -10,7 +11,7 @@ import { encryptJson, decryptJson } from '../../../../utils/encryption';
 export class RealEstateCopyUseCase {
   constructor(private realEstateCopyRepository: RealEstateCopyRepository) {}
 
-  async getRealEstateCopyByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; } | null> {
+  async getRealEstateCopyByUserAddressId(userAddressId: number): Promise<RealEstateCopyDetailResponseDto['data'] | null> {
     const realEstate = await this.realEstateCopyRepository.findByUserAddressId(userAddressId);
     
     if (!realEstate) return null;
@@ -20,7 +21,7 @@ export class RealEstateCopyUseCase {
       id: realEstate.id,
       userAddressId: realEstate.userAddressId,
       realEstateJson: decryptJson(realEstate.realEstateData) as RealEstateCopyJson,
-      updatedAt: realEstate.updatedAt
+      updatedAt: realEstate.updatedAt!
     };
   }
 
@@ -38,6 +39,15 @@ export class RealEstateCopyUseCase {
     } catch (error) {
       console.error('❌ 등기부등본 upsert 실패:', error);
       return false;
+    }
+  }
+
+  async existsByUserAddressId(userAddressId: number): Promise<Pick<RealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+    try {
+      return await this.realEstateCopyRepository.existsByUserAddressId(userAddressId);
+    } catch (error) {
+      console.error('❌ 등기부등본 복사본 존재 여부 확인 오류:', error);
+      return { exists: false };
     }
   }
 } 

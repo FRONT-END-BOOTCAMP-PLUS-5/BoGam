@@ -1,6 +1,7 @@
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
 import { TaxCertJson } from '@be/domain/entities/TaxCert';
 import { encryptJson, decryptJson } from '../../../../utils/encryption';
+import { TaxCertCopyExistsResponseDto, TaxCertCopyDetailResponseDto } from '../dtos/TaxCertCopyDto';
 
 /**
  * 납세확인서 DB CRUD UseCase
@@ -10,7 +11,7 @@ import { encryptJson, decryptJson } from '../../../../utils/encryption';
 export class TaxCertCopyUseCase {
   constructor(private taxCertCopyRepository: TaxCertCopyRepository) {}
 
-  async getTaxCertByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; taxCertJson: TaxCertJson; updatedAt?: Date; } | null> {
+  async getTaxCertByUserAddressId(userAddressId: number): Promise<TaxCertCopyDetailResponseDto['data'] | null> {
     const taxCert = await this.taxCertCopyRepository.findByUserAddressId(userAddressId);
     
     if (!taxCert) return null;
@@ -20,7 +21,7 @@ export class TaxCertCopyUseCase {
       id: taxCert.id,
       userAddressId: taxCert.userAddressId,
       taxCertJson: decryptJson(taxCert.taxCertData) as TaxCertJson,
-      updatedAt: taxCert.updatedAt
+      updatedAt: taxCert.updatedAt!
     };
   }
 
@@ -38,6 +39,15 @@ export class TaxCertCopyUseCase {
     } catch (error) {
       console.error('❌ 납세증명서 upsert 실패:', error);
       return false;
+    }
+  }
+
+  async existsByUserAddressId(userAddressId: number): Promise<Pick<TaxCertCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+    try {
+      return await this.taxCertCopyRepository.existsByUserAddressId(userAddressId);
+    } catch (error) {
+      console.error('❌ 납세확인서 복사본 존재 여부 확인 오류:', error);
+      return { exists: false };
     }
   }
 } 
