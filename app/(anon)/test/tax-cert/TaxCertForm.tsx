@@ -211,21 +211,17 @@ export default function TaxCertForm() {
   const checkExistingData = async (userAddressId: number): Promise<boolean> => {
     try {
       setIsCheckingExisting(true);
-      const response = await axios.post('/api/check-existing-data', {
-        userAddressId,
-        type: 'tax-cert'
-      });
+      const response = await axios.get(`/api/tax-cert/exists?nickname=${userAddressId}`);
 
-      const data = response.data as { success: boolean; hasExistingData?: boolean; existingData?: any };
-      if (data.success && data.hasExistingData) {
-                   const existingData = data.existingData;
-           const updatedAt = existingData.updatedAt ? new Date(existingData.updatedAt).toLocaleString() : '알 수 없음';
-           
-           return confirm(
-             `이미 저장된 납세증명서가 있습니다.\n` +
-             `마지막 업데이트: ${updatedAt}\n\n` +
-             `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
-           );
+      const data = response.data as { exists: boolean; updatedAt?: string };
+      if (data.exists) {
+        const updatedAt = data.updatedAt ? new Date(data.updatedAt).toLocaleString() : '알 수 없음';
+        
+        return confirm(
+          `이미 저장된 납세증명서가 있습니다.\n` +
+          `마지막 업데이트: ${updatedAt}\n\n` +
+          `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
+        );
       }
       
       return true; // 기존 데이터가 없으면 진행

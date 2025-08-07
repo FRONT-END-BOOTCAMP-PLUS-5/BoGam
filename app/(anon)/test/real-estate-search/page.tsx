@@ -81,15 +81,11 @@ export default function RealEstateSearchTestPage() {
   const checkExistingData = async (userAddressId: number): Promise<boolean> => {
     try {
       setIsCheckingExisting(true);
-      const response = await axios.post('/api/check-existing-data', {
-        userAddressId,
-        type: 'real-estate'
-      });
+      const response = await axios.get(`/api/real-estate/exists?nickname=${userAddressId}`);
 
-      const data = response.data as { success: boolean; hasExistingData?: boolean; existingData?: any };
-      if (data.success && data.hasExistingData) {
-        const existingData = data.existingData;
-        const updatedAt = existingData.updatedAt ? new Date(existingData.updatedAt).toLocaleString() : '알 수 없음';
+      const data = response.data as { exists: boolean; updatedAt?: string };
+      if (data.exists) {
+        const updatedAt = data.updatedAt ? new Date(data.updatedAt).toLocaleString() : '알 수 없음';
         
         return confirm(
           `이미 저장된 등기부등본이 있습니다.\n` +

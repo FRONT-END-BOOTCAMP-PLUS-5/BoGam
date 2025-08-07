@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import ApiResultDisplay from '@/(anon)/_components/common/ApiResultDisplay';
+import ExistenceWarning from '@/(anon)/_components/common/ExistenceWarning';
 import styles from './page.module.css';
 
 interface RealEstateCopy {
@@ -12,11 +13,36 @@ interface RealEstateCopy {
   updatedAt?: string;
 }
 
+interface ExistenceCheck {
+  exists: boolean;
+  updatedAt?: string;
+}
+
 export default function RealEstateCopyTestPage() {
   const [userAddressId, setUserAddressId] = useState<string>('1');
   const [realEstateCopy, setRealEstateCopy] = useState<RealEstateCopy | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showExistenceWarning, setShowExistenceWarning] = useState(false);
+  const [existenceData, setExistenceData] = useState<ExistenceCheck | null>(null);
+
+  // 존재 여부 확인
+  const checkExistence = async (nickname: string) => {
+    try {
+      const response = await axios.get(`/api/real-estate/exists?nickname=${nickname}`);
+      const data = response.data as { exists: boolean; updatedAt?: string };
+      setExistenceData(data);
+      
+      if (data.exists) {
+        setShowExistenceWarning(true);
+        return true; // 존재함
+      }
+      return false; // 존재하지 않음
+    } catch (error) {
+      console.error('존재 여부 확인 실패:', error);
+      return false;
+    }
+  };
 
   // 등기부등본 조회
   const handleGetRealEstateCopy = async () => {
@@ -25,6 +51,45 @@ export default function RealEstateCopyTestPage() {
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // 먼저 존재 여부 확인
+      const exists = await checkExistence(userAddressId);
+      
+      if (exists) {
+        // 존재하면 경고창이 표시되므로 여기서는 조회하지 않음
+        setIsLoading(false);
+        return;
+      }
+
+      // 존재하지 않으면 조회 진행
+      const response = await axios.get(`/api/real-estate-copy?userAddressId=${userAddressId}`);
+      
+      const data = response.data as { success: boolean; data?: RealEstateCopy; message?: string };
+      if (data.success && data.data) {
+        setRealEstateCopy(data.data);
+        setError(null);
+      } else {
+        setRealEstateCopy(null);
+        setError(data.message || '조회에 실패했습니다.');
+      }
+    } catch (err) {
+      if (err && typeof err === 'object' && 'response' in err && (err as any).response?.status === 404) {
+        setRealEstateCopy(null);
+        setError('해당 사용자 주소의 등기부등본을 찾을 수 없습니다.');
+      } else {
+        setError(err instanceof Error ? err.message : '조회 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 경고창 닫기 후 조회 진행
+  const handleContinueAfterWarning = async () => {
+    setShowExistenceWarning(false);
     setIsLoading(true);
     setError(null);
 
@@ -190,6 +255,16 @@ export default function RealEstateCopyTestPage() {
         <div className={styles.noData}>
           조회된 등기부등본이 없습니다.
         </div>
+      )}
+
+      {/* 존재 여부 확인 경고창 */}
+      {showExistenceWarning && existenceData && (
+        <ExistenceWarning
+          exists={existenceData.exists}
+          updatedAt={existenceData.updatedAt}
+          type="real-estate"
+          onClose={handleContinueAfterWarning}
+        />
       )}
     </div>
   );

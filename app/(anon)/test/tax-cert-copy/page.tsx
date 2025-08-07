@@ -3,6 +3,7 @@
 import React, { useState, Fragment } from 'react';
 import axios from 'axios';
 import ApiResultDisplay from '@/(anon)/_components/common/ApiResultDisplay';
+import ExistenceWarning from '@/(anon)/_components/common/ExistenceWarning';
 import styles from './page.module.css';
 
 interface TaxCert {
@@ -12,11 +13,36 @@ interface TaxCert {
   updatedAt?: string;
 }
 
+interface ExistenceCheck {
+  exists: boolean;
+  updatedAt?: string;
+}
+
 export default function TaxCertCopyTestPage() {
   const [userAddressId, setUserAddressId] = useState<string>('1');
   const [taxCert, setTaxCert] = useState<TaxCert | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showExistenceWarning, setShowExistenceWarning] = useState(false);
+  const [existenceData, setExistenceData] = useState<ExistenceCheck | null>(null);
+
+  // 존재 여부 확인
+  const checkExistence = async (nickname: string) => {
+    try {
+      const response = await axios.get(`/api/tax-cert/exists?nickname=${nickname}`);
+      const data = response.data as { exists: boolean; updatedAt?: string };
+      setExistenceData(data);
+      
+      if (data.exists) {
+        setShowExistenceWarning(true);
+        return true; // 존재함
+      }
+      return false; // 존재하지 않음
+    } catch (error) {
+      console.error('존재 여부 확인 실패:', error);
+      return false;
+    }
+  };
 
   // 납세증명서 조회
   const handleGetTaxCert = async () => {
@@ -25,6 +51,45 @@ export default function TaxCertCopyTestPage() {
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // 먼저 존재 여부 확인
+      const exists = await checkExistence(userAddressId);
+      
+      if (exists) {
+        // 존재하면 경고창이 표시되므로 여기서는 조회하지 않음
+        setIsLoading(false);
+        return;
+      }
+
+      // 존재하지 않으면 조회 진행
+      const response = await axios.get(`/api/tax-cert-copy?userAddressId=${userAddressId}`);
+      
+      const data = response.data as { success: boolean; data?: TaxCert; message?: string };
+      if (data.success && data.data) {
+        setTaxCert(data.data);
+        setError(null);
+      } else {
+        setTaxCert(null);
+        setError(data.message || '조회에 실패했습니다.');
+      }
+    } catch (err) {
+      if (err && typeof err === 'object' && 'response' in err && (err as any).response?.status === 404) {
+        setTaxCert(null);
+        setError('해당 사용자 주소의 납세증명서를 찾을 수 없습니다.');
+      } else {
+        setError(err instanceof Error ? err.message : '조회 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 경고창 닫기 후 조회 진행
+  const handleContinueAfterWarning = async () => {
+    setShowExistenceWarning(false);
     setIsLoading(true);
     setError(null);
 
@@ -174,6 +239,16 @@ export default function TaxCertCopyTestPage() {
         <div className={styles.noData}>
           조회된 납세증명서가 없습니다.
         </div>
+      )}
+
+      {/* 존재 여부 확인 경고창 */}
+      {showExistenceWarning && existenceData && (
+        <ExistenceWarning
+          exists={existenceData.exists}
+          updatedAt={existenceData.updatedAt}
+          type="tax-cert"
+          onClose={handleContinueAfterWarning}
+        />
       )}
     </div>
   );
