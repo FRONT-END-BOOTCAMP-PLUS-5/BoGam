@@ -15,11 +15,8 @@ interface TaxCert {
 export default function TaxCertCopyTestPage() {
   const [userAddressId, setUserAddressId] = useState<string>('1');
   const [taxCert, setTaxCert] = useState<TaxCert | null>(null);
-  const [selectedCert, setSelectedCert] = useState<TaxCert | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editData, setEditData] = useState<string>('');
-  const [showEditModal, setShowEditModal] = useState(false);
 
   // 납세증명서 조회
   const handleGetTaxCert = async () => {
@@ -52,78 +49,6 @@ export default function TaxCertCopyTestPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // 납세증명서 수정
-  const handleUpdateTaxCert = async () => {
-    if (!selectedCert || !editData) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      let parsedData;
-      try {
-        parsedData = JSON.parse(editData);
-      } catch {
-        setError('올바른 JSON 형식이 아닙니다.');
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await axios.put('/api/tax-cert-copy', {
-        userAddressId: selectedCert.userAddressId,
-        taxCertJson: parsedData
-      });
-
-      const data = response.data as { success: boolean; message?: string };
-      if (data.success) {
-        setShowEditModal(false);
-        setEditData('');
-        setSelectedCert(null);
-        // 데이터 새로고침
-        await handleGetTaxCert();
-      } else {
-        setError(data.message || '수정에 실패했습니다.');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '수정 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 납세증명서 삭제
-  const handleDeleteTaxCert = async () => {
-    if (!userAddressId) return;
-
-    if (!confirm('정말로 모든 납세증명서를 삭제하시겠습니까?')) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.delete(`/api/tax-cert-copy?userAddressId=${userAddressId}`);
-
-      const data = response.data as { success: boolean; message?: string };
-      if (data.success) {
-        setTaxCert(null);
-        setSelectedCert(null);
-      } else {
-        setError(data.message || '삭제에 실패했습니다.');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 수정 모달 열기
-  const openEditModal = (cert: TaxCert) => {
-    setSelectedCert(cert);
-    setEditData(JSON.stringify(cert.taxCertJson, null, 2));
-    setShowEditModal(true);
   };
 
   // 납세증명서 정보 추출
@@ -167,14 +92,6 @@ export default function TaxCertCopyTestPage() {
           >
             {isLoading ? '조회 중...' : '조회'}
           </button>
-          
-          <button 
-            onClick={handleDeleteTaxCert}
-            disabled={isLoading || !taxCert}
-            className={styles.dangerButton}
-          >
-            삭제
-          </button>
         </div>
       </div>
 
@@ -191,14 +108,6 @@ export default function TaxCertCopyTestPage() {
           <div className={styles.certItem}>
             <div className={styles.certHeader}>
               <h3>납세증명서 ID: {taxCert.id}</h3>
-              <div className={styles.certActions}>
-                <button 
-                  onClick={() => openEditModal(taxCert)}
-                  className={styles.editButton}
-                >
-                  수정
-                </button>
-              </div>
             </div>
             
             <div className={styles.certInfo}>
@@ -264,58 +173,6 @@ export default function TaxCertCopyTestPage() {
       {!taxCert && !isLoading && !error && (
         <div className={styles.noData}>
           조회된 납세증명서가 없습니다.
-        </div>
-      )}
-
-      {/* 수정 모달 */}
-      {showEditModal && selectedCert && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3>납세증명서 수정</h3>
-              <button 
-                onClick={() => {
-                  setShowEditModal(false);
-                  setEditData('');
-                  setSelectedCert(null);
-                }}
-                className={styles.closeButton}
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className={styles.modalBody}>
-              <label htmlFor="editData">JSON 데이터:</label>
-              <textarea
-                id="editData"
-                value={editData}
-                onChange={(e) => setEditData(e.target.value)}
-                className={styles.textarea}
-                rows={20}
-              />
-            </div>
-            
-            <div className={styles.modalFooter}>
-              <button 
-                onClick={handleUpdateTaxCert}
-                disabled={isLoading}
-                className={styles.primaryButton}
-              >
-                {isLoading ? '수정 중...' : '수정'}
-              </button>
-              <button 
-                onClick={() => {
-                  setShowEditModal(false);
-                  setEditData('');
-                  setSelectedCert(null);
-                }}
-                className={styles.secondaryButton}
-              >
-                취소
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>

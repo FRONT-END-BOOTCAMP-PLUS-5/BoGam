@@ -15,11 +15,8 @@ interface RealEstateCopy {
 export default function RealEstateCopyTestPage() {
   const [userAddressId, setUserAddressId] = useState<string>('1');
   const [realEstateCopy, setRealEstateCopy] = useState<RealEstateCopy | null>(null);
-  const [selectedCopy, setSelectedCopy] = useState<RealEstateCopy | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editData, setEditData] = useState<string>('');
-  const [showEditModal, setShowEditModal] = useState(false);
 
   // 등기부등본 조회
   const handleGetRealEstateCopy = async () => {
@@ -52,78 +49,6 @@ export default function RealEstateCopyTestPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // 등기부등본 수정
-  const handleUpdateRealEstateCopy = async () => {
-    if (!selectedCopy || !editData) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      let parsedData;
-      try {
-        parsedData = JSON.parse(editData);
-      } catch {
-        setError('올바른 JSON 형식이 아닙니다.');
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await axios.put('/api/real-estate-copy', {
-        userAddressId: selectedCopy.userAddressId,
-        realEstateJson: parsedData
-      });
-
-      const data = response.data as { success: boolean; message?: string };
-      if (data.success) {
-        setShowEditModal(false);
-        setEditData('');
-        setSelectedCopy(null);
-        // 데이터 새로고침
-        await handleGetRealEstateCopy();
-      } else {
-        setError(data.message || '수정에 실패했습니다.');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '수정 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 등기부등본 삭제
-  const handleDeleteRealEstateCopy = async () => {
-    if (!userAddressId) return;
-
-    if (!confirm('정말로 등기부등본을 삭제하시겠습니까?')) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios.delete(`/api/real-estate-copy?userAddressId=${userAddressId}`);
-
-      const data = response.data as { success: boolean; message?: string };
-      if (data.success) {
-        setRealEstateCopy(null);
-        setSelectedCopy(null);
-      } else {
-        setError(data.message || '삭제에 실패했습니다.');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 수정 모달 열기
-  const openEditModal = (copy: RealEstateCopy) => {
-    setSelectedCopy(copy);
-    setEditData(JSON.stringify(copy.realEstateJson, null, 2));
-    setShowEditModal(true);
   };
 
   // 등기부등본 정보 추출
@@ -173,14 +98,6 @@ export default function RealEstateCopyTestPage() {
           >
             {isLoading ? '조회 중...' : '조회'}
           </button>
-          
-          <button 
-            onClick={handleDeleteRealEstateCopy}
-            disabled={isLoading || !realEstateCopy}
-            className={styles.dangerButton}
-          >
-            삭제
-          </button>
         </div>
       </div>
 
@@ -197,14 +114,6 @@ export default function RealEstateCopyTestPage() {
           <div className={styles.copyItem}>
             <div className={styles.copyHeader}>
               <h3>등기부등본 ID: {realEstateCopy.id}</h3>
-              <div className={styles.copyActions}>
-                <button 
-                  onClick={() => openEditModal(realEstateCopy)}
-                  className={styles.editButton}
-                >
-                  수정
-                </button>
-              </div>
             </div>
             
             <div className={styles.copyInfo}>
@@ -280,58 +189,6 @@ export default function RealEstateCopyTestPage() {
       {!realEstateCopy && !isLoading && !error && (
         <div className={styles.noData}>
           조회된 등기부등본이 없습니다.
-        </div>
-      )}
-
-      {/* 수정 모달 */}
-      {showEditModal && selectedCopy && (
-        <div className={styles.modal}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalHeader}>
-              <h3>등기부등본 수정</h3>
-              <button 
-                onClick={() => {
-                  setShowEditModal(false);
-                  setEditData('');
-                  setSelectedCopy(null);
-                }}
-                className={styles.closeButton}
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className={styles.modalBody}>
-              <label htmlFor="editData">JSON 데이터:</label>
-              <textarea
-                id="editData"
-                value={editData}
-                onChange={(e) => setEditData(e.target.value)}
-                className={styles.textarea}
-                rows={20}
-              />
-            </div>
-            
-            <div className={styles.modalFooter}>
-              <button 
-                onClick={handleUpdateRealEstateCopy}
-                disabled={isLoading}
-                className={styles.primaryButton}
-              >
-                {isLoading ? '수정 중...' : '수정'}
-              </button>
-              <button 
-                onClick={() => {
-                  setShowEditModal(false);
-                  setEditData('');
-                  setSelectedCopy(null);
-                }}
-                className={styles.secondaryButton}
-              >
-                취소
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>
