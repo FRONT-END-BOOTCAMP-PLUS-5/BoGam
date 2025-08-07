@@ -19,7 +19,7 @@ interface ExistenceCheck {
 }
 
 export default function RealEstateCopyTestPage() {
-  const [userAddressId, setUserAddressId] = useState<string>('1');
+  const [userAddressNickname, setUserAddressNickname] = useState<string>('채원강남집');
   const [realEstateCopy, setRealEstateCopy] = useState<RealEstateCopy | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,9 +27,9 @@ export default function RealEstateCopyTestPage() {
   const [existenceData, setExistenceData] = useState<ExistenceCheck | null>(null);
 
   // 존재 여부 확인
-  const checkExistence = async (nickname: string) => {
+  const checkExistence = async (userAddressNickname: string) => {
     try {
-      const response = await axios.get(`/api/real-estate/exists?nickname=${nickname}`);
+      const response = await axios.get(`/api/real-estate/exists?nickname=${userAddressNickname}`);
       const data = response.data as { exists: boolean; updatedAt?: string };
       setExistenceData(data);
       
@@ -46,8 +46,8 @@ export default function RealEstateCopyTestPage() {
 
   // 등기부등본 조회
   const handleGetRealEstateCopy = async () => {
-    if (!userAddressId) {
-      setError('사용자 주소 ID를 입력해주세요.');
+    if (!userAddressNickname) {
+      setError('사용자 주소 닉네임을 입력해주세요.');
       return;
     }
 
@@ -56,7 +56,7 @@ export default function RealEstateCopyTestPage() {
 
     try {
       // 먼저 존재 여부 확인
-      const exists = await checkExistence(userAddressId);
+      const exists = await checkExistence(userAddressNickname);
       
       if (exists) {
         // 존재하면 경고창이 표시되므로 여기서는 조회하지 않음
@@ -65,7 +65,7 @@ export default function RealEstateCopyTestPage() {
       }
 
       // 존재하지 않으면 조회 진행
-      const response = await axios.get(`/api/real-estate-copy?userAddressId=${userAddressId}`);
+      const response = await axios.get(`/api/real-estate-copy?userAddressNickname=${userAddressNickname}`);
       
       const data = response.data as { success: boolean; data?: RealEstateCopy; message?: string };
       if (data.success && data.data) {
@@ -94,7 +94,7 @@ export default function RealEstateCopyTestPage() {
     setError(null);
 
     try {
-      const response = await axios.get(`/api/real-estate-copy?userAddressId=${userAddressId}`);
+      const response = await axios.get(`/api/real-estate-copy?userAddressNickname=${userAddressNickname}`);
       
       const data = response.data as { success: boolean; data?: RealEstateCopy; message?: string };
       if (data.success && data.data) {
@@ -145,12 +145,12 @@ export default function RealEstateCopyTestPage() {
       
       <div className={styles.controls}>
         <div className={styles.inputGroup}>
-          <label htmlFor="userAddressId">사용자 주소 ID:</label>
+          <label htmlFor="userAddressNickname">사용자 주소 닉네임:</label>
           <input
-            id="userAddressId"
-            type="number"
-            value={userAddressId}
-            onChange={(e) => setUserAddressId(e.target.value)}
+            id="userAddressNickname"
+            type="text"
+            value={userAddressNickname}
+            onChange={(e) => setUserAddressNickname(e.target.value)}
             className={styles.input}
           />
         </div>

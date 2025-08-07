@@ -4,6 +4,7 @@ import { encryptPassword } from '@libs/codefEncryption';
 import { IssueResultRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
 import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
+import { getUserAddressIdByNickname } from '@utils/userAddress';
 
 const useCase = new RealEstateUseCase();
 
@@ -47,9 +48,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!body.userAddressId || typeof body.userAddressId !== 'number') {
+    if (!body.userAddressNickname) {
       return NextResponse.json(
-        { success: false, message: '사용자 주소 ID는 필수입니다.' },
+        { success: false, message: '사용자 주소 닉네임은 필수입니다.' },
+        { status: 400 }
+      );
+    }
+
+    // userAddressNickname으로부터 userAddressId 가져오기
+    const userAddressId = await getUserAddressIdByNickname(body.userAddressNickname);
+    if (!userAddressId) {
+      return NextResponse.json(
+        { success: false, message: '유효하지 않은 사용자 주소 닉네임입니다.' },
         { status: 400 }
       );
     }
@@ -69,7 +79,7 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '3' as const,
-      userAddressId: body.userAddressId,
+      userAddressId: userAddressId,
       issueType: body.issueType || '1',
       ePrepayNo: body.ePrepayNo || '',
       ePrepayPass: body.ePrepayPass || '',

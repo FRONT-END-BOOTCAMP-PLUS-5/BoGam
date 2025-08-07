@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       updatedAt: result.updatedAt
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { status: 200 });
 
   } catch (error) {
     console.error('❌ 납세확인서 복사본 존재 여부 확인 API 오류:', error);

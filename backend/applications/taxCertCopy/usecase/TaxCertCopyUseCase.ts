@@ -1,6 +1,6 @@
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
 import { TaxCertJson } from '@be/domain/entities/TaxCert';
-import { encryptJson, decryptJson } from '../../../../utils/encryption';
+import { encryptJson, decryptJson } from '@utils/encryption';
 import { TaxCertCopyExistsResponseDto, TaxCertCopyDetailResponseDto } from '../dtos/TaxCertCopyDto';
 
 /**

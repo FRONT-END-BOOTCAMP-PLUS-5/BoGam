@@ -34,8 +34,8 @@ interface FormData {
   ePrepayNo: string;
   ePrepayPass: string;
   
-  // 기타
-  userAddressId: number;
+  // 사용자 주소 닉네임
+  userAddressNickname: string;
 }
 
 export default function RealEstateSearchTestPage() {
@@ -69,7 +69,8 @@ export default function RealEstateSearchTestPage() {
     ePrepayNo: '',
     ePrepayPass: '',
     
-    userAddressId: 1
+    // 사용자 주소 닉네임
+    userAddressNickname: '채원강남집'
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -78,10 +79,10 @@ export default function RealEstateSearchTestPage() {
   const [result, setResult] = useState<any>(null);
 
   // 기존 데이터 확인
-  const checkExistingData = async (userAddressId: number): Promise<boolean> => {
+  const checkExistingData = async (): Promise<boolean> => {
     try {
       setIsCheckingExisting(true);
-      const response = await axios.get(`/api/real-estate/exists?nickname=${userAddressId}`);
+      const response = await axios.get(`/api/real-estate/exists?nickname=채원강남집`);
 
       const data = response.data as { exists: boolean; updatedAt?: string };
       if (data.exists) {
@@ -163,7 +164,7 @@ export default function RealEstateSearchTestPage() {
 
     try {
       // 기존 데이터 확인 및 사용자 확인
-      const shouldProceed = await checkExistingData(formData.userAddressId);
+      const shouldProceed = await checkExistingData();
       if (!shouldProceed) {
         setIsLoading(false);
         return;

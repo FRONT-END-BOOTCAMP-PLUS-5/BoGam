@@ -40,9 +40,7 @@ export default function TaxCertForm() {
     originDataYN1: "0",
   });
 
-  const [, setTwoWayData] = useState<TaxCertTwoWayRequest | null>(
-    null
-  );
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingExisting, setIsCheckingExisting] = useState(false);
@@ -154,11 +152,8 @@ export default function TaxCertForm() {
       setIsLoading(true);
       setError(null);
 
-      // 폼 데이터 준비 (암호화는 서버에서 처리)
-      const preparedFormData = prepareFormData(formData);
-      
       // 기존 데이터 확인 및 사용자 확인
-      const shouldProceed = await checkExistingData(preparedFormData.userAddressId);
+      const shouldProceed = await checkExistingData();
       if (!shouldProceed) {
         setIsLoading(false);
         return; // 사용자가 취소한 경우
@@ -167,9 +162,14 @@ export default function TaxCertForm() {
       updateStep(2);
 
       console.log("📋 폼 데이터:", formData);
-      console.log('📋 전송할 폼 데이터:', preparedFormData);
 
-      const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, preparedFormData, {
+      // userAddressNickname 필드 추가
+      const requestData = {
+        ...formData,
+        userAddressNickname: '채원강남집'
+      };
+
+      const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, requestData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -199,19 +199,11 @@ export default function TaxCertForm() {
     }
   };
 
-  // 암호화는 서버에서 처리하므로 클라이언트에서는 평문 그대로 전송
-  const prepareFormData = (formData: TaxCertRequest): TaxCertRequest & { userAddressId: number } => {
-    return { 
-      ...formData,
-      userAddressId: 1 // 임시 테스트 값 - 실제로는 사용자 선택이나 세션에서 가져와야 함
-    };
-  };
-
   // 기존 데이터 확인
-  const checkExistingData = async (userAddressId: number): Promise<boolean> => {
+  const checkExistingData = async (): Promise<boolean> => {
     try {
       setIsCheckingExisting(true);
-      const response = await axios.get(`/api/tax-cert/exists?nickname=${userAddressId}`);
+      const response = await axios.get(`/api/tax-cert/exists?nickname=채원강남집`);
 
       const data = response.data as { exists: boolean; updatedAt?: string };
       if (data.exists) {
@@ -266,44 +258,43 @@ export default function TaxCertForm() {
       
       console.log('🔐 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
       
-      const twoWayRequest: TaxCertTwoWayRequest & { userAddressId: number } = {
-        organization: formData.organization,
-        loginType: formData.loginType,
-        isIdentityViewYN: formData.isIdentityViewYN,
-        isAddrViewYn: formData.isAddrViewYn,
-        proofType: formData.proofType,
-        submitTargets: formData.submitTargets,
-        applicationType: formData.applicationType,
-        clientTypeLevel: formData.clientTypeLevel,
-        id: formData.id,
-        userName: formData.userName,
-        loginIdentity: formData.loginIdentity,
-        loginBirthDate: formData.loginBirthDate,
-        phoneNo: formData.phoneNo,
-        loginTypeLevel: formData.loginTypeLevel,
-        telecom: formData.telecom,
-        certType: formData.certType,
-        certFile: formData.certFile,
-        keyFile: formData.keyFile,
-        certPassword: formData.certPassword,
-        userId: formData.userId,
-        userPassword: formData.userPassword,
-        manageNo: formData.manageNo,
-        managePassword: formData.managePassword,
-        identity: formData.identity,
-        birthDate: formData.birthDate,
-        originDataYN: formData.originDataYN,
-        originDataYN1: formData.originDataYN1,
-        identityEncYn: formData.identityEncYn,
-        is2Way: true,
-        twoWayInfo,
-        simpleAuth,
-        simpleKeyToken,
-        rValue,
-        certificate,
-        userAddressId: 1, // 임시 테스트 값 - 실제로는 사용자 선택이나 세션에서 가져와야 함
-        ...(extraInfo && { extraInfo }),
-      };
+             const twoWayRequest: TaxCertTwoWayRequest = {
+         organization: formData.organization,
+         loginType: formData.loginType,
+         isIdentityViewYN: formData.isIdentityViewYN,
+         isAddrViewYn: formData.isAddrViewYn,
+         proofType: formData.proofType,
+         submitTargets: formData.submitTargets,
+         applicationType: formData.applicationType,
+         clientTypeLevel: formData.clientTypeLevel,
+         id: formData.id,
+         userName: formData.userName,
+         loginIdentity: formData.loginIdentity,
+         loginBirthDate: formData.loginBirthDate,
+         phoneNo: formData.phoneNo,
+         loginTypeLevel: formData.loginTypeLevel,
+         telecom: formData.telecom,
+         certType: formData.certType,
+         certFile: formData.certFile,
+         keyFile: formData.keyFile,
+         certPassword: formData.certPassword,
+         userId: formData.userId,
+         userPassword: formData.userPassword,
+         manageNo: formData.manageNo,
+         managePassword: formData.managePassword,
+         identity: formData.identity,
+         birthDate: formData.birthDate,
+         originDataYN: formData.originDataYN,
+         originDataYN1: formData.originDataYN1,
+         is2Way: true,
+         twoWayInfo,
+         simpleAuth,
+         simpleKeyToken,
+         rValue,
+         certificate,
+         userAddressNickname: '채원강남집',
+         ...(extraInfo && { extraInfo }),
+       };
 
       console.log(
         "🔐 2차 요청 데이터:",
@@ -369,49 +360,7 @@ export default function TaxCertForm() {
       
       console.log('🔐 1차 응답 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
 
-      // 추가인증 UI 표시를 위해 twoWayData 설정
-      const twoWayRequest: TaxCertTwoWayRequest = {
-        organization: formData.organization,
-        loginType: formData.loginType,
-        isIdentityViewYN: formData.isIdentityViewYN,
-        isAddrViewYn: formData.isAddrViewYn,
-        proofType: formData.proofType,
-        submitTargets: formData.submitTargets,
-        applicationType: formData.applicationType,
-        clientTypeLevel: formData.clientTypeLevel,
-        id: formData.id,
-        userName: formData.userName,
-        loginIdentity: formData.loginIdentity,
-        loginBirthDate: formData.loginBirthDate,
-        phoneNo: formData.phoneNo,
-        loginTypeLevel: formData.loginTypeLevel,
-        telecom: formData.telecom,
-        certType: formData.certType,
-        certFile: formData.certFile,
-        keyFile: formData.keyFile,
-        certPassword: formData.certPassword,
-        userId: formData.userId,
-        userPassword: formData.userPassword,
-        manageNo: formData.manageNo,
-        managePassword: formData.managePassword,
-        identity: formData.identity,
-        birthDate: formData.birthDate,
-        originDataYN: formData.originDataYN,
-        originDataYN1: formData.originDataYN1,
-        identityEncYn: formData.identityEncYn,
-        is2Way: true,
-        twoWayInfo: {
-          jobIndex: actualData?.jobIndex || 0,
-          threadIndex: actualData?.threadIndex || 0,
-          jti: actualData?.jti || '',
-          twoWayTimestamp: actualData?.twoWayTimestamp || Date.now()
-        },
-        simpleAuth: "true", // TaxCertTwoWayRequest 타입에 맞게 필수 필드 추가 (string 타입으로 수정)
-        simpleKeyToken,
-        rValue,
-        certificate,
-      };
-      setTwoWayData(twoWayRequest);
+      
 
       // 간편인증 모달 표시
       setShowSimpleAuthModal(true);
