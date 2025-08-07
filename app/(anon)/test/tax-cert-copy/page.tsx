@@ -3,7 +3,6 @@
 import React, { useState, Fragment } from 'react';
 import axios from 'axios';
 import ApiResultDisplay from '@/(anon)/_components/common/ApiResultDisplay';
-import ExistenceWarning from '@/(anon)/_components/common/ExistenceWarning';
 import styles from './page.module.css';
 
 interface TaxCert {
@@ -13,36 +12,11 @@ interface TaxCert {
   updatedAt?: string;
 }
 
-interface ExistenceCheck {
-  exists: boolean;
-  updatedAt?: string;
-}
-
 export default function TaxCertCopyTestPage() {
   const [userAddressNickname, setUserAddressNickname] = useState<string>('채원강남집');
   const [taxCert, setTaxCert] = useState<TaxCert | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showExistenceWarning, setShowExistenceWarning] = useState(false);
-  const [existenceData, setExistenceData] = useState<ExistenceCheck | null>(null);
-
-  // 존재 여부 확인
-  const checkExistence = async (userAddressNickname: string) => {
-    try {
-      const response = await axios.get(`/api/tax-cert/exists?nickname=${userAddressNickname}`);
-      const data = response.data as { exists: boolean; updatedAt?: string };
-      setExistenceData(data);
-      
-      if (data.exists) {
-        setShowExistenceWarning(true);
-        return true; // 존재함
-      }
-      return false; // 존재하지 않음
-    } catch (error) {
-      console.error('존재 여부 확인 실패:', error);
-      return false;
-    }
-  };
 
   // 납세증명서 조회
   const handleGetTaxCert = async () => {
@@ -55,45 +29,7 @@ export default function TaxCertCopyTestPage() {
     setError(null);
 
     try {
-      // 먼저 존재 여부 확인
-      const exists = await checkExistence(userAddressNickname);
-      
-      if (exists) {
-        // 존재하면 경고창이 표시되므로 여기서는 조회하지 않음
-        setIsLoading(false);
-        return;
-      }
-
-      // 존재하지 않으면 조회 진행
-      const response = await axios.get(`/api/tax-cert-copy?userAddressNickname=${userAddressNickname}`);
-      
-      const data = response.data as { success: boolean; data?: TaxCert; message?: string };
-      if (data.success && data.data) {
-        setTaxCert(data.data);
-        setError(null);
-      } else {
-        setTaxCert(null);
-        setError(data.message || '조회에 실패했습니다.');
-      }
-    } catch (err) {
-      if (err && typeof err === 'object' && 'response' in err && (err as any).response?.status === 404) {
-        setTaxCert(null);
-        setError('해당 사용자 주소의 납세증명서를 찾을 수 없습니다.');
-      } else {
-        setError(err instanceof Error ? err.message : '조회 중 오류가 발생했습니다.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 경고창 닫기 후 조회 진행
-  const handleContinueAfterWarning = async () => {
-    setShowExistenceWarning(false);
-    setIsLoading(true);
-    setError(null);
-
-    try {
+      // 단순히 DB 조회만 수행
       const response = await axios.get(`/api/tax-cert-copy?userAddressNickname=${userAddressNickname}`);
       
       const data = response.data as { success: boolean; data?: TaxCert; message?: string };
@@ -137,17 +73,17 @@ export default function TaxCertCopyTestPage() {
     <div className={styles.container}>
       <h1 className={styles.title}>납세증명서 조회 테스트</h1>
       
-             <div className={styles.controls}>
-         <div className={styles.inputGroup}>
-           <label htmlFor="userAddressNickname">사용자 주소 닉네임:</label>
-           <input
-             id="userAddressNickname"
-             type="text"
-             value={userAddressNickname}
-             onChange={(e) => setUserAddressNickname(e.target.value)}
-             className={styles.input}
-           />
-         </div>
+      <div className={styles.controls}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="userAddressNickname">사용자 주소 닉네임:</label>
+          <input
+            id="userAddressNickname"
+            type="text"
+            value={userAddressNickname}
+            onChange={(e) => setUserAddressNickname(e.target.value)}
+            className={styles.input}
+          />
+        </div>
         
         <div className={styles.buttonGroup}>
           <button 
@@ -181,74 +117,57 @@ export default function TaxCertCopyTestPage() {
                   <strong>사용자 주소 ID:</strong>
                   <span>{taxCert.userAddressId}</span>
                 </div>
-{(() => {
-                  const certInfo = extractTaxCertInfo(taxCert.taxCertJson);
-                  return (
-                    <Fragment key="certInfo">
-                      <div className={styles.infoItem}>
-                        <strong>결과 코드:</strong>
-                        <span className={certInfo.resultCode === 'CF-00000' ? styles.successCode : styles.errorCode}>
-                          {String(certInfo.resultCode || '-')}
-                        </span>
-                      </div>
-                      <div className={styles.infoItem}>
-                        <strong>결과 메시지:</strong>
-                        <span>{String(certInfo.resultMessage || '-')}</span>
-                      </div>
-                      <div className={styles.infoItem}>
-                        <strong>발급번호:</strong>
-                        <span>{String(certInfo.issueNo || '-')}</span>
-                      </div>
-                      <div className={styles.infoItem}>
-                        <strong>성명:</strong>
-                        <span>{String(certInfo.userName || '-')}</span>
-                      </div>
-                      <div className={styles.infoItem}>
-                        <strong>주소:</strong>
-                        <span>{String(certInfo.userAddr || '-')}</span>
-                      </div>
-                      <div className={styles.infoItem}>
-                        <strong>납세상태:</strong>
-                        <span>{String(certInfo.paymentTaxStatus || '-')}</span>
-                      </div>
-                      <div className={styles.infoItem}>
-                        <strong>발급일자:</strong>
-                        <span>{String(certInfo.issueDate || '-')}</span>
-                      </div>
-                    </Fragment>
-                  );
-                })()}
-                {taxCert.updatedAt && (
-                  <div className={styles.infoItem}>
-                    <strong>마지막 업데이트:</strong>
-                    <span>{new Date(taxCert.updatedAt).toLocaleString()}</span>
-                  </div>
-                )}
+                <div className={styles.infoItem}>
+                  <strong>업데이트 시간:</strong>
+                  <span>{taxCert.updatedAt ? new Date(taxCert.updatedAt).toLocaleString() : 'N/A'}</span>
+                </div>
               </div>
+              
+              {(() => {
+                const certInfo = extractTaxCertInfo(taxCert.taxCertJson);
+                return (
+                  <Fragment key="certInfo">
+                                         <div className={styles.infoItem}>
+                       <strong>결과 코드:</strong>
+                       <span>{String(certInfo.resultCode)}</span>
+                     </div>
+                     <div className={styles.infoItem}>
+                       <strong>결과 메시지:</strong>
+                       <span>{String(certInfo.resultMessage)}</span>
+                     </div>
+                     <div className={styles.infoItem}>
+                       <strong>발급번호:</strong>
+                       <span>{String(certInfo.issueNo)}</span>
+                     </div>
+                     <div className={styles.infoItem}>
+                       <strong>사용자명:</strong>
+                       <span>{String(certInfo.userName)}</span>
+                     </div>
+                     <div className={styles.infoItem}>
+                       <strong>사용자 주소:</strong>
+                       <span>{String(certInfo.userAddr)}</span>
+                     </div>
+                     <div className={styles.infoItem}>
+                       <strong>납세상태:</strong>
+                       <span>{String(certInfo.paymentTaxStatus)}</span>
+                     </div>
+                     <div className={styles.infoItem}>
+                       <strong>발급일:</strong>
+                       <span>{String(certInfo.issueDate)}</span>
+                     </div>
+                  </Fragment>
+                );
+              })()}
             </div>
-
-            <div className={styles.jsonData}>
-              <h4>전체 데이터:</h4>
-              <ApiResultDisplay response={taxCert.taxCertJson as any} />
+            
+            <div className={styles.rawData}>
+              <h4>원본 데이터</h4>
+              <pre className={styles.jsonData}>
+                {JSON.stringify(taxCert.taxCertJson, null, 2)}
+              </pre>
             </div>
           </div>
         </div>
-      )}
-
-      {!taxCert && !isLoading && !error && (
-        <div className={styles.noData}>
-          조회된 납세증명서가 없습니다.
-        </div>
-      )}
-
-      {/* 존재 여부 확인 경고창 */}
-      {showExistenceWarning && existenceData && (
-        <ExistenceWarning
-          exists={existenceData.exists}
-          updatedAt={existenceData.updatedAt}
-          type="tax-cert"
-          onClose={handleContinueAfterWarning}
-        />
       )}
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import styles from './page.module.css';
+import ExistenceWarning from '@/(anon)/_components/common/ExistenceWarning';
 
 interface FormData {
   // 공통 필수 필드
@@ -77,6 +78,11 @@ export default function RealEstateSearchTestPage() {
   const [isCheckingExisting, setIsCheckingExisting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [showExistenceWarning, setShowExistenceWarning] = useState(false);
+  const [existenceWarningData, setExistenceWarningData] = useState<{
+    exists: boolean;
+    updatedAt?: string;
+  } | null>(null);
 
   // 기존 데이터 확인
   const checkExistingData = async (): Promise<boolean> => {
@@ -86,13 +92,9 @@ export default function RealEstateSearchTestPage() {
 
       const data = response.data as { exists: boolean; updatedAt?: string };
       if (data.exists) {
-        const updatedAt = data.updatedAt ? new Date(data.updatedAt).toLocaleString() : '알 수 없음';
-        
-        return confirm(
-          `이미 저장된 등기부등본이 있습니다.\n` +
-          `마지막 업데이트: ${updatedAt}\n\n` +
-          `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
-        );
+        setExistenceWarningData(data);
+        setShowExistenceWarning(true);
+        return false; // 모달에서 사용자가 확인할 때까지 대기
       }
       
       return true;
@@ -152,7 +154,7 @@ export default function RealEstateSearchTestPage() {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, skipExistingCheck = false) => {
     e.preventDefault();
     setError(null);
 
@@ -163,11 +165,13 @@ export default function RealEstateSearchTestPage() {
     setIsLoading(true);
 
     try {
-      // 기존 데이터 확인 및 사용자 확인
-      const shouldProceed = await checkExistingData();
-      if (!shouldProceed) {
-        setIsLoading(false);
-        return;
+      // 기존 데이터 확인 및 사용자 확인 (skipExistingCheck가 true면 건너뛰기)
+      if (!skipExistingCheck) {
+        const shouldProceed = await checkExistingData();
+        if (!shouldProceed) {
+          setIsLoading(false);
+          return;
+        }
       }
 
       console.log('=== 등기부등본 조회 요청 ===');
@@ -194,6 +198,20 @@ export default function RealEstateSearchTestPage() {
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // 존재 경고 모달 핸들러
+  const handleExistenceWarningConfirm = () => {
+    setShowExistenceWarning(false);
+    setExistenceWarningData(null);
+    // 실제 제출 로직 실행 (기존 데이터 확인 건너뛰기)
+    handleSubmit({} as React.FormEvent, true);
+  };
+
+  const handleExistenceWarningClose = () => {
+    setShowExistenceWarning(false);
+    setExistenceWarningData(null);
+    setIsLoading(false);
   };
 
   return (
@@ -469,6 +487,17 @@ export default function RealEstateSearchTestPage() {
           <pre className={styles.resultData}>{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
+
+      {/* 존재 경고 모달 */}
+      <ExistenceWarning
+        isOpen={showExistenceWarning}
+        onClose={handleExistenceWarningClose}
+        onConfirm={handleExistenceWarningConfirm}
+        title="기존 데이터 발견"
+        message="이미 저장된 등기부등본이 있습니다. 기존 데이터를 새로운 데이터로 업데이트하시겠습니까?"
+        updatedAt={existenceWarningData?.updatedAt ? new Date(existenceWarningData.updatedAt).toLocaleString() : undefined}
+        isLoading={isLoading}
+      />
 
     </div>
   );

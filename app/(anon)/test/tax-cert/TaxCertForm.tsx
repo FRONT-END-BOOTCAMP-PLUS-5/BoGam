@@ -9,6 +9,7 @@ import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
 import styles from '@/(anon)/test/tax-cert/TaxCertForm.module.css';
 import commonStyles from '@/(anon)/test/tax-cert/_components/Common.module.css';
+import ExistenceWarning from '@/(anon)/_components/common/ExistenceWarning';
 
 // 분리된 컴포넌트들 import
 import StepGuide from '@/(anon)/test/tax-cert/_components/StepGuide';
@@ -47,6 +48,11 @@ export default function TaxCertForm() {
   const [response, setResponse] = useState<CodefResponse | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
+  const [showExistenceWarning, setShowExistenceWarning] = useState(false);
+  const [existenceWarningData, setExistenceWarningData] = useState<{
+    exists: boolean;
+    updatedAt?: string;
+  } | null>(null);
 
   // loginTypeLevel에 따른 telecom 필드 자동 관리
   useEffect(() => {
@@ -136,7 +142,7 @@ export default function TaxCertForm() {
     };
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, skipExistingCheck = false) => {
     e.preventDefault();
 
     console.log("🚀 폼 제출 시작");
@@ -152,11 +158,13 @@ export default function TaxCertForm() {
       setIsLoading(true);
       setError(null);
 
-      // 기존 데이터 확인 및 사용자 확인
-      const shouldProceed = await checkExistingData();
-      if (!shouldProceed) {
-        setIsLoading(false);
-        return; // 사용자가 취소한 경우
+      // 기존 데이터 확인 및 사용자 확인 (skipExistingCheck가 true면 건너뛰기)
+      if (!skipExistingCheck) {
+        const shouldProceed = await checkExistingData();
+        if (!shouldProceed) {
+          setIsLoading(false);
+          return; // 사용자가 취소한 경우
+        }
       }
 
       updateStep(2);
@@ -207,13 +215,9 @@ export default function TaxCertForm() {
 
       const data = response.data as { exists: boolean; updatedAt?: string };
       if (data.exists) {
-        const updatedAt = data.updatedAt ? new Date(data.updatedAt).toLocaleString() : '알 수 없음';
-        
-        return confirm(
-          `이미 저장된 납세증명서가 있습니다.\n` +
-          `마지막 업데이트: ${updatedAt}\n\n` +
-          `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
-        );
+        setExistenceWarningData(data);
+        setShowExistenceWarning(true);
+        return false; // 모달에서 사용자가 확인할 때까지 대기
       }
       
       return true; // 기존 데이터가 없으면 진행
@@ -438,6 +442,20 @@ export default function TaxCertForm() {
     handleTwoWaySubmit("0");
   };
 
+  // 존재 경고 모달 핸들러
+  const handleExistenceWarningConfirm = () => {
+    setShowExistenceWarning(false);
+    setExistenceWarningData(null);
+    // 실제 제출 로직 실행 (기존 데이터 확인 건너뛰기)
+    handleSubmit({} as React.FormEvent, true);
+  };
+
+  const handleExistenceWarningClose = () => {
+    setShowExistenceWarning(false);
+    setExistenceWarningData(null);
+    setIsLoading(false);
+  };
+
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>납세증명서 발급</h2>
@@ -629,6 +647,17 @@ export default function TaxCertForm() {
         onClose={() => setShowSimpleAuthModal(false)}
         onApprove={handleSimpleAuthApprove}
         onCancel={handleSimpleAuthCancel}
+        isLoading={isLoading}
+      />
+
+      {/* 존재 경고 모달 */}
+      <ExistenceWarning
+        isOpen={showExistenceWarning}
+        onClose={handleExistenceWarningClose}
+        onConfirm={handleExistenceWarningConfirm}
+        title="기존 데이터 발견"
+        message="이미 저장된 납세증명서가 있습니다. 기존 데이터를 새로운 데이터로 업데이트하시겠습니까?"
+        updatedAt={existenceWarningData?.updatedAt ? new Date(existenceWarningData.updatedAt).toLocaleString() : undefined}
         isLoading={isLoading}
       />
 
