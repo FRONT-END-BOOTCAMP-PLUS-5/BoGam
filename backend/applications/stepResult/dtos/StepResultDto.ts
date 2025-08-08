@@ -5,7 +5,7 @@ export interface CreateStepResultDto {
   stepId?: number;
   mainNum?: number;
   subNum?: number;
-  details: Record<string, unknown>;
+  details: unknown;
 }
 
 export interface StepResultResponseDto {
