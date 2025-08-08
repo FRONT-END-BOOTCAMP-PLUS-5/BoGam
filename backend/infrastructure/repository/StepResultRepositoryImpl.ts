@@ -35,7 +35,8 @@ export class StepResultRepositoryImpl implements StepResultRepository {
 
       return stepResults.map((result) => new StepResult(
         result.id, result.userAddressId, result.stepId,
-        result.mismatch, result.match, result.unchecked, result.createdAt,
+        result.mismatch, result.match, result.unchecked,
+        result.details, result.createdAt,
         result.step?.mainNum, result.step?.subNum
       ));
     } catch (error) {
@@ -56,22 +57,30 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         create: {
           userAddressId: stepResult.userAddressId!,
           stepId: stepResult.stepId!,
-          mismatch: stepResult.mismatch,
-          match: stepResult.match,
-          unchecked: stepResult.unchecked
+          details: stepResult.details as never
         },
         update: {
-          mismatch: stepResult.mismatch,
-          match: stepResult.match,
-          unchecked: stepResult.unchecked
+          details: stepResult.details as never
         },
         include: { step: true }
       });
 
+      const result = upsertedStepResult as unknown as { 
+        id: number; 
+        userAddressId: number; 
+        stepId: number;
+        mismatch: number | null;
+        match: number | null;
+        unchecked: number | null;
+        details: unknown;
+        createdAt: Date;
+        step?: { mainNum: number; subNum: number };
+      };
       return new StepResult(
-        upsertedStepResult.id, upsertedStepResult.userAddressId, upsertedStepResult.stepId,
-        upsertedStepResult.mismatch, upsertedStepResult.match, upsertedStepResult.unchecked, upsertedStepResult.createdAt,
-        upsertedStepResult.step?.mainNum, upsertedStepResult.step?.subNum
+        result.id, result.userAddressId, result.stepId,
+        result.mismatch, result.match, result.unchecked,
+        result.details, result.createdAt,
+        result.step?.mainNum, result.step?.subNum
       );
     } catch (error) {
       console.error('❌ StepResult upsert 오류:', error);
