@@ -5,12 +5,13 @@ import { RealEstateUseCase } from '@be/applications/realEstate/usecases/RealEsta
 import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
+import { getUserAddressIdByNickname } from '@utils/userAddress';
 
 const useCase = new RealEstateUseCase();
 
 export async function POST(request: NextRequest) {
   try {
-    const body: DetailInquiryRequest & { userAddressId: number } & {
+    const body: DetailInquiryRequest & { userAddressNickname: string } & {
       // 2-way 인증 관련 필드
       uniqueNo?: string;
       jobIndex?: number;
@@ -106,7 +107,7 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '1' as const,
-      userAddressId: body.userAddressId,
+      userAddressNickname: body.userAddressNickname,
       issueType: body.issueType || '1',
 
       //------------------공통 옵션 파라미터-------------------
@@ -156,8 +157,6 @@ export async function POST(request: NextRequest) {
       response = await useCase.getRealEstateRegistry(apiRequest);
     }
 
-    console.log('response', apiRequest);
-
     // 응답 검증은 주석 처리 (개발 중)
     // const validationResult = useCase.validateResponse(response);
     // if (!validationResult.isValid) {
@@ -185,14 +184,25 @@ export async function POST(request: NextRequest) {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new RealEstateCopyUseCase(dbRepository);
 
+        const userAddressId = await getUserAddressIdByNickname(
+          body.userAddressNickname
+        );
+
+        if (!userAddressId) {
+          return NextResponse.json({
+            success: false,
+            message: '사용자 주소 ID를 찾을 수 없습니다.',
+          });
+        }
+
         const isSuccess = await dbUseCase.upsertRealEstateCopy({
-          userAddressId: body.userAddressId,
+          userAddressId: userAddressId,
           realEstateJson: JSON.parse(JSON.stringify(response)),
         });
 
         if (isSuccess) {
           console.log('✅ 등기부등본 DB upsert 완료:', {
-            userAddressId: body.userAddressId,
+            userAddressNickname: body.userAddressNickname,
           });
 
           // 성공 응답 (DB 저장 포함)
