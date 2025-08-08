@@ -6,7 +6,7 @@ export class StepResult {
     public mismatch?: number | null,
     public match?: number | null,
     public unchecked?: number | null,
-    public details?: unknown,
+    public details?: Record<string, unknown>,
     public createdAt?: Date,
     public mainNum?: number,
     public subNum?: number
