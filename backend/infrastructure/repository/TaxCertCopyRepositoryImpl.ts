@@ -1,18 +1,32 @@
-import { PrismaClient, Prisma } from '@prisma/generated';
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
-import { TaxCert, CreateTaxCertDto, UpdateTaxCertDto } from '@be/domain/entities/TaxCert';
+import { TaxCertCopy } from '@be/domain/entities/TaxCertCopy';
+import { prisma } from '@utils/prisma';
+import { TaxCertCopyExistsResponseDto } from '@be/applications/taxCertCopy/dtos/TaxCertCopyDto';
 
 export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
-  private prisma: PrismaClient;
+  async findByUserAddressId(userAddressId: number): Promise<TaxCertCopy | null> {
+    const taxCert = await prisma.taxCert.findFirst({
+      where: { userAddressId },
+    });
 
-  constructor() {
-    this.prisma = new PrismaClient();
+    if (!taxCert) return null;
+
+    return {
+      id: taxCert.id,
+      userAddressId: taxCert.userAddressId,
+      taxCertData: taxCert.taxCertData,
+      updatedAt: taxCert.updatedAt,
+    };
   }
 
-  async create(data: CreateTaxCertDto): Promise<TaxCert> {
-    const taxCert = await this.prisma.taxCert.create({
-      data: {
-        userAddressId: data.userAddressId,
+  async upsertByUserAddressId(userAddressId: number, data: { taxCertData: string }): Promise<TaxCertCopy> {
+    const taxCert = await prisma.taxCert.upsert({
+      where: { userAddressId },
+      update: {
+        taxCertData: data.taxCertData,
+      },
+      create: {
+        userAddressId,
         taxCertData: data.taxCertData,
       },
     });
@@ -25,47 +39,20 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     };
   }
 
-  async findByUserAddressId(userAddressId: number): Promise<TaxCert[]> {
-    const taxCerts = await this.prisma.taxCert.findMany({
-      where: { userAddressId },
-    });
-
-    return taxCerts.map(taxCert => ({
-      id: taxCert.id,
-      userAddressId: taxCert.userAddressId,
-      taxCertData: taxCert.taxCertData,
-      updatedAt: taxCert.updatedAt,
-    }));
-  }
-
-  async updateByUserAddressId(userAddressId: number, data: UpdateTaxCertDto): Promise<TaxCert> {
-    const taxCert = await this.prisma.taxCert.updateMany({
-      where: { userAddressId },
-      data: {
-        taxCertData: data.taxCertData,
-      },
-    });
-
-    // 업데이트된 레코드를 다시 조회
-    const updatedTaxCert = await this.prisma.taxCert.findFirst({
-      where: { userAddressId },
-    });
-
-    if (!updatedTaxCert) {
-      throw new Error('TaxCert not found for the given userAddressId');
+  async existsByUserAddressId(userAddressId: number): Promise<Pick<TaxCertCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+    try {
+      const taxCert = await prisma.taxCert.findFirst({
+        where: { userAddressId },
+        select: { id: true, updatedAt: true }
+      });
+      
+      return {
+        exists: !!taxCert,
+        updatedAt: taxCert?.updatedAt
+      };
+    } catch (error) {
+      console.error('❌ 납세확인서 복사본 존재 여부 확인 DB 오류:', error);
+      return { exists: false };
     }
-
-    return {
-      id: updatedTaxCert.id,
-      userAddressId: updatedTaxCert.userAddressId,
-      taxCertData: updatedTaxCert.taxCertData,
-      updatedAt: updatedTaxCert.updatedAt,
-    };
-  }
-
-  async deleteByUserAddressId(userAddressId: number): Promise<void> {
-    await this.prisma.taxCert.deleteMany({
-      where: { userAddressId },
-    });
   }
 } 

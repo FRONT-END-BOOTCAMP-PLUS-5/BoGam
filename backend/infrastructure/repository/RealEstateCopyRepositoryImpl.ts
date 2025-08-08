@@ -1,18 +1,32 @@
-import { PrismaClient, Prisma } from '@prisma/generated';
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
-import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
+import { prisma } from '@utils/prisma';
+import { RealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopy/dtos/RealEstateCopyDto';
 
 export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
-  private prisma: PrismaClient;
+  async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy | null> {
+    const realEstate = await prisma.realEstate.findFirst({
+      where: { userAddressId },
+    });
 
-  constructor() {
-    this.prisma = new PrismaClient();
+    if (!realEstate) return null;
+
+    return {
+      id: realEstate.id,
+      userAddressId: realEstate.userAddressId,
+      realEstateData: realEstate.realEstateData,
+      updatedAt: realEstate.updatedAt,
+    };
   }
 
-  async create(data: CreateRealEstateCopyDto): Promise<RealEstateCopy> {
-    const realEstate = await this.prisma.realEstate.create({
-      data: {
-        userAddressId: data.userAddressId,
+  async upsertByUserAddressId(userAddressId: number, data: { realEstateData: string }): Promise<RealEstateCopy> {
+    const realEstate = await prisma.realEstate.upsert({
+      where: { userAddressId },
+      update: {
+        realEstateData: data.realEstateData,
+      },
+      create: {
+        userAddressId,
         realEstateData: data.realEstateData,
       },
     });
@@ -25,47 +39,20 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     };
   }
 
-  async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy[]> {
-    const realEstates = await this.prisma.realEstate.findMany({
-      where: { userAddressId },
-    });
-
-    return realEstates.map(realEstate => ({
-      id: realEstate.id,
-      userAddressId: realEstate.userAddressId,
-      realEstateData: realEstate.realEstateData,
-      updatedAt: realEstate.updatedAt,
-    }));
-  }
-
-  async updateByUserAddressId(userAddressId: number, data: UpdateRealEstateCopyDto): Promise<RealEstateCopy> {
-    const realEstate = await this.prisma.realEstate.updateMany({
-      where: { userAddressId },
-      data: {
-        realEstateData: data.realEstateData,
-      },
-    });
-
-    // 업데이트된 레코드를 다시 조회
-    const updatedRealEstate = await this.prisma.realEstate.findFirst({
-      where: { userAddressId },
-    });
-
-    if (!updatedRealEstate) {
-      throw new Error('RealEstateCopy not found for the given userAddressId');
+  async existsByUserAddressId(userAddressId: number): Promise<Pick<RealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+    try {
+      const realEstate = await prisma.realEstate.findFirst({
+        where: { userAddressId },
+        select: { id: true, updatedAt: true }
+      });
+      
+      return {
+        exists: !!realEstate,
+        updatedAt: realEstate?.updatedAt
+      };
+    } catch (error) {
+      console.error('❌ 등기부등본 복사본 존재 여부 확인 DB 오류:', error);
+      return { exists: false };
     }
-
-    return {
-      id: updatedRealEstate.id,
-      userAddressId: updatedRealEstate.userAddressId,
-      realEstateData: updatedRealEstate.realEstateData,
-      updatedAt: updatedRealEstate.updatedAt,
-    };
-  }
-
-  async deleteByUserAddressId(userAddressId: number): Promise<void> {
-    await this.prisma.realEstate.deleteMany({
-      where: { userAddressId },
-    });
   }
 }

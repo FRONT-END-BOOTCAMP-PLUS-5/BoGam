@@ -9,6 +9,7 @@ import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
 import styles from '@/(anon)/test/tax-cert/TaxCertForm.module.css';
 import commonStyles from '@/(anon)/test/tax-cert/_components/Common.module.css';
+import ExistenceWarning from '@/(anon)/_components/common/ExistenceWarning';
 
 // 분리된 컴포넌트들 import
 import StepGuide from '@/(anon)/test/tax-cert/_components/StepGuide';
@@ -40,15 +41,18 @@ export default function TaxCertForm() {
     originDataYN1: "0",
   });
 
-  const [, setTwoWayData] = useState<TaxCertTwoWayRequest | null>(
-    null
-  );
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingExisting, setIsCheckingExisting] = useState(false);
   const [response, setResponse] = useState<CodefResponse | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
+  const [showExistenceWarning, setShowExistenceWarning] = useState(false);
+  const [existenceWarningData, setExistenceWarningData] = useState<{
+    exists: boolean;
+    updatedAt?: string;
+  } | null>(null);
 
   // loginTypeLevel에 따른 telecom 필드 자동 관리
   useEffect(() => {
@@ -138,7 +142,7 @@ export default function TaxCertForm() {
     };
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, skipExistingCheck = false) => {
     e.preventDefault();
 
     console.log("🚀 폼 제출 시작");
@@ -154,22 +158,26 @@ export default function TaxCertForm() {
       setIsLoading(true);
       setError(null);
 
-      // 폼 데이터 준비 (암호화는 서버에서 처리)
-      const preparedFormData = prepareFormData(formData);
-      
-      // 기존 데이터 확인 및 사용자 확인
-      const shouldProceed = await checkExistingData(preparedFormData.userAddressId);
-      if (!shouldProceed) {
-        setIsLoading(false);
-        return; // 사용자가 취소한 경우
+      // 기존 데이터 확인 및 사용자 확인 (skipExistingCheck가 true면 건너뛰기)
+      if (!skipExistingCheck) {
+        const shouldProceed = await checkExistingData();
+        if (!shouldProceed) {
+          setIsLoading(false);
+          return; // 사용자가 취소한 경우
+        }
       }
 
       updateStep(2);
 
       console.log("📋 폼 데이터:", formData);
-      console.log('📋 전송할 폼 데이터:', preparedFormData);
 
-      const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, preparedFormData, {
+      // userAddressNickname 필드 추가
+      const requestData = {
+        ...formData,
+        userAddressNickname: '채원강남집'
+      };
+
+      const apiResponse = await axios.post(API_ENDPOINTS.TAX_CERT, requestData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -199,33 +207,17 @@ export default function TaxCertForm() {
     }
   };
 
-  // 암호화는 서버에서 처리하므로 클라이언트에서는 평문 그대로 전송
-  const prepareFormData = (formData: TaxCertRequest): TaxCertRequest & { userAddressId: number } => {
-    return { 
-      ...formData,
-      userAddressId: 1 // 임시 테스트 값 - 실제로는 사용자 선택이나 세션에서 가져와야 함
-    };
-  };
-
   // 기존 데이터 확인
-  const checkExistingData = async (userAddressId: number): Promise<boolean> => {
+  const checkExistingData = async (): Promise<boolean> => {
     try {
       setIsCheckingExisting(true);
-      const response = await axios.post('/api/check-existing-data', {
-        userAddressId,
-        type: 'tax-cert'
-      });
+      const response = await axios.get(`/api/tax-cert/exists?nickname=채원강남집`);
 
-      const data = response.data as { success: boolean; hasExistingData?: boolean; existingData?: any };
-      if (data.success && data.hasExistingData) {
-                   const existingData = data.existingData;
-           const updatedAt = existingData.updatedAt ? new Date(existingData.updatedAt).toLocaleString() : '알 수 없음';
-           
-           return confirm(
-             `이미 저장된 납세증명서가 있습니다.\n` +
-             `마지막 업데이트: ${updatedAt}\n\n` +
-             `기존 데이터를 새로운 데이터로 업데이트하시겠습니까?`
-           );
+      const data = response.data as { exists: boolean; updatedAt?: string };
+      if (data.exists) {
+        setExistenceWarningData(data);
+        setShowExistenceWarning(true);
+        return false; // 모달에서 사용자가 확인할 때까지 대기
       }
       
       return true; // 기존 데이터가 없으면 진행
@@ -270,44 +262,43 @@ export default function TaxCertForm() {
       
       console.log('🔐 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
       
-      const twoWayRequest: TaxCertTwoWayRequest & { userAddressId: number } = {
-        organization: formData.organization,
-        loginType: formData.loginType,
-        isIdentityViewYN: formData.isIdentityViewYN,
-        isAddrViewYn: formData.isAddrViewYn,
-        proofType: formData.proofType,
-        submitTargets: formData.submitTargets,
-        applicationType: formData.applicationType,
-        clientTypeLevel: formData.clientTypeLevel,
-        id: formData.id,
-        userName: formData.userName,
-        loginIdentity: formData.loginIdentity,
-        loginBirthDate: formData.loginBirthDate,
-        phoneNo: formData.phoneNo,
-        loginTypeLevel: formData.loginTypeLevel,
-        telecom: formData.telecom,
-        certType: formData.certType,
-        certFile: formData.certFile,
-        keyFile: formData.keyFile,
-        certPassword: formData.certPassword,
-        userId: formData.userId,
-        userPassword: formData.userPassword,
-        manageNo: formData.manageNo,
-        managePassword: formData.managePassword,
-        identity: formData.identity,
-        birthDate: formData.birthDate,
-        originDataYN: formData.originDataYN,
-        originDataYN1: formData.originDataYN1,
-        identityEncYn: formData.identityEncYn,
-        is2Way: true,
-        twoWayInfo,
-        simpleAuth,
-        simpleKeyToken,
-        rValue,
-        certificate,
-        userAddressId: 1, // 임시 테스트 값 - 실제로는 사용자 선택이나 세션에서 가져와야 함
-        ...(extraInfo && { extraInfo }),
-      };
+             const twoWayRequest: TaxCertTwoWayRequest = {
+         organization: formData.organization,
+         loginType: formData.loginType,
+         isIdentityViewYN: formData.isIdentityViewYN,
+         isAddrViewYn: formData.isAddrViewYn,
+         proofType: formData.proofType,
+         submitTargets: formData.submitTargets,
+         applicationType: formData.applicationType,
+         clientTypeLevel: formData.clientTypeLevel,
+         id: formData.id,
+         userName: formData.userName,
+         loginIdentity: formData.loginIdentity,
+         loginBirthDate: formData.loginBirthDate,
+         phoneNo: formData.phoneNo,
+         loginTypeLevel: formData.loginTypeLevel,
+         telecom: formData.telecom,
+         certType: formData.certType,
+         certFile: formData.certFile,
+         keyFile: formData.keyFile,
+         certPassword: formData.certPassword,
+         userId: formData.userId,
+         userPassword: formData.userPassword,
+         manageNo: formData.manageNo,
+         managePassword: formData.managePassword,
+         identity: formData.identity,
+         birthDate: formData.birthDate,
+         originDataYN: formData.originDataYN,
+         originDataYN1: formData.originDataYN1,
+         is2Way: true,
+         twoWayInfo,
+         simpleAuth,
+         simpleKeyToken,
+         rValue,
+         certificate,
+         userAddressNickname: '채원강남집',
+         ...(extraInfo && { extraInfo }),
+       };
 
       console.log(
         "🔐 2차 요청 데이터:",
@@ -373,49 +364,7 @@ export default function TaxCertForm() {
       
       console.log('🔐 1차 응답 간편인증 토큰들:', { simpleKeyToken, rValue, certificate });
 
-      // 추가인증 UI 표시를 위해 twoWayData 설정
-      const twoWayRequest: TaxCertTwoWayRequest = {
-        organization: formData.organization,
-        loginType: formData.loginType,
-        isIdentityViewYN: formData.isIdentityViewYN,
-        isAddrViewYn: formData.isAddrViewYn,
-        proofType: formData.proofType,
-        submitTargets: formData.submitTargets,
-        applicationType: formData.applicationType,
-        clientTypeLevel: formData.clientTypeLevel,
-        id: formData.id,
-        userName: formData.userName,
-        loginIdentity: formData.loginIdentity,
-        loginBirthDate: formData.loginBirthDate,
-        phoneNo: formData.phoneNo,
-        loginTypeLevel: formData.loginTypeLevel,
-        telecom: formData.telecom,
-        certType: formData.certType,
-        certFile: formData.certFile,
-        keyFile: formData.keyFile,
-        certPassword: formData.certPassword,
-        userId: formData.userId,
-        userPassword: formData.userPassword,
-        manageNo: formData.manageNo,
-        managePassword: formData.managePassword,
-        identity: formData.identity,
-        birthDate: formData.birthDate,
-        originDataYN: formData.originDataYN,
-        originDataYN1: formData.originDataYN1,
-        identityEncYn: formData.identityEncYn,
-        is2Way: true,
-        twoWayInfo: {
-          jobIndex: actualData?.jobIndex || 0,
-          threadIndex: actualData?.threadIndex || 0,
-          jti: actualData?.jti || '',
-          twoWayTimestamp: actualData?.twoWayTimestamp || Date.now()
-        },
-        simpleAuth: "true", // TaxCertTwoWayRequest 타입에 맞게 필수 필드 추가 (string 타입으로 수정)
-        simpleKeyToken,
-        rValue,
-        certificate,
-      };
-      setTwoWayData(twoWayRequest);
+      
 
       // 간편인증 모달 표시
       setShowSimpleAuthModal(true);
@@ -491,6 +440,20 @@ export default function TaxCertForm() {
 
   const handleSimpleAuthCancel = () => {
     handleTwoWaySubmit("0");
+  };
+
+  // 존재 경고 모달 핸들러
+  const handleExistenceWarningConfirm = () => {
+    setShowExistenceWarning(false);
+    setExistenceWarningData(null);
+    // 실제 제출 로직 실행 (기존 데이터 확인 건너뛰기)
+    handleSubmit({} as React.FormEvent, true);
+  };
+
+  const handleExistenceWarningClose = () => {
+    setShowExistenceWarning(false);
+    setExistenceWarningData(null);
+    setIsLoading(false);
   };
 
   return (
@@ -684,6 +647,17 @@ export default function TaxCertForm() {
         onClose={() => setShowSimpleAuthModal(false)}
         onApprove={handleSimpleAuthApprove}
         onCancel={handleSimpleAuthCancel}
+        isLoading={isLoading}
+      />
+
+      {/* 존재 경고 모달 */}
+      <ExistenceWarning
+        isOpen={showExistenceWarning}
+        onClose={handleExistenceWarningClose}
+        onConfirm={handleExistenceWarningConfirm}
+        title="기존 데이터 발견"
+        message="이미 저장된 납세증명서가 있습니다. 기존 데이터를 새로운 데이터로 업데이트하시겠습니까?"
+        updatedAt={existenceWarningData?.updatedAt ? new Date(existenceWarningData.updatedAt).toLocaleString() : undefined}
         isLoading={isLoading}
       />
 
