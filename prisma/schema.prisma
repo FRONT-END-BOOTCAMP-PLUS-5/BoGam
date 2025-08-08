@@ -38,7 +38,7 @@ model Address {
   legalDistrictCode String        @map("legal_district_code")
   dong              String?
   ho                String?
-  lotAddress        String?       @map("lot_address")
+  lotAddress        String       @map("lot_address")
   roadAddress       String?       @map("road_address")
   userAddresses     UserAddress[]
 
