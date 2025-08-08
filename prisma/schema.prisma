@@ -50,7 +50,7 @@ model UserAddress {
   addressId   Int          @map("address_id")
   isPrimary   Boolean      @default(false) @map("is_primary")
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  nickname    String?
+  nickname    String?      @unique(map: "user_addresses_unique_nickname")
   realEstates RealEstate?
   stepResults StepResult[]
   taxCerts    TaxCert?
@@ -78,7 +78,6 @@ model Step {
 
   @@map("steps")
 }
-
 model StepResult {
   id            Int         @id @default(autoincrement())
   userAddressId Int         @map("user_address_id")
