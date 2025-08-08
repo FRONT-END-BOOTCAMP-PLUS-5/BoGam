@@ -1,0 +1,543 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: stretch;
+}
+
+.form {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section h2 {
+  color: #495057;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.field input[type='password'] {
+  font-family: monospace;
+  letter-spacing: 2px;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submitButton,
+.resetButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  flex: 1;
+}
+
+.submitButton {
+  background-color: #007bff;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.submitButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.resetButton {
+  background-color: #6c757d;
+  color: white;
+}
+
+.resetButton:hover {
+  background-color: #545b62;
+}
+
+.response {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.response h2 {
+  background: #f8f9fa;
+  margin: 0;
+  padding: 15px 20px;
+  border-bottom: 1px solid #dee2e6;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.result {
+  padding: 20px;
+}
+
+.result.success {
+  border-left: 4px solid #28a745;
+}
+
+.result.error {
+  border-left: 4px solid #dc3545;
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.status {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.resultCode {
+  background: #e9ecef;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #007bff;
+}
+
+.error {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  color: #721c24;
+}
+
+.warning {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  color: #856404;
+}
+
+.dbInfo {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 6px;
+  color: #0c5460;
+}
+
+.dbInfo ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+
+.dbInfo li {
+  margin-bottom: 3px;
+}
+
+.data {
+  margin-top: 15px;
+}
+
+.data pre {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 15px;
+  overflow-x: auto;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* 2-way 인증 관련 스타일 */
+.twoWaySection {
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+}
+
+.twoWaySection h3 {
+  color: #856404;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.sectionDescription {
+  color: #856404;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 3px solid #ffc107;
+}
+
+.addressList {
+  margin-bottom: 20px;
+}
+
+.addressItem {
+  padding: 12px;
+  margin-bottom: 10px;
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.addressItem:hover {
+  border-color: #007bff;
+  background: #f8f9fa;
+}
+
+.addressItem.selected {
+  border-color: #28a745;
+  background: #d4edda;
+  position: relative;
+}
+
+.selectedIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #28a745;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.addressText {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.uniqueNo {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-family: monospace;
+}
+
+.owner {
+  font-size: 0.9rem;
+  color: #495057;
+  margin-top: 5px;
+}
+
+.twoWayInfo {
+  margin-top: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.twoWayInfo h4 {
+  color: #495057;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.twoWayInfo h5 {
+  color: #495057;
+  margin: 15px 0 10px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.twoWayInfo p {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.twoWayInfo ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.twoWayInfo li {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.selectedAddressInfo {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #28a745;
+  margin-bottom: 15px;
+}
+
+.uniqueNoNote {
+  color: #6c757d;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-left: 8px;
+}
+
+.twoWayRequestInfo {
+  background: #e9ecef;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 15px;
+}
+
+.twoWayRequestInfo ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+
+.twoWayRequestInfo li {
+  margin-bottom: 3px;
+  font-size: 0.85rem;
+  font-family: monospace;
+}
+
+.twoWayButton {
+  margin-top: 15px;
+  padding: 12px 24px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.twoWayButton:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.twoWayButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .content {
+    gap: 20px;
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  .form {
+    padding: 20px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+
+  .resultHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .addressItem {
+    padding: 10px;
+  }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  .title {
+    color: #e0e0e0;
+  }
+
+  .form {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .section h2 {
+    color: #e0e0e0;
+  }
+
+  .field label {
+    color: #e0e0e0;
+  }
+
+  .field input,
+  .field select {
+    background: #404040;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .response {
+    background: #2d2d2d;
+    border-color: #404040;
+  }
+
+  .response h2 {
+    background: #404040;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .data pre {
+    background: #404040;
+    border-color: #555;
+  }
+
+  .twoWaySection {
+    background: #2d2d2d;
+    border-color: #555;
+  }
+
+  .twoWaySection h3 {
+    color: #ffc107;
+  }
+
+  .sectionDescription {
+    color: #ffc107;
+    background: rgba(64, 64, 64, 0.7);
+    border-left-color: #ffc107;
+  }
+
+  .addressItem {
+    background: #404040;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .addressItem:hover {
+    background: #505050;
+  }
+
+  .addressItem.selected {
+    background: #2d5a2d;
+    border-color: #28a745;
+  }
+
+  .selectedIndicator {
+    background: #28a745;
+    color: white;
+  }
+
+  .owner {
+    color: #e0e0e0;
+  }
+
+  .twoWayInfo {
+    background: #404040;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .twoWayInfo h4,
+  .twoWayInfo h5 {
+    color: #e0e0e0;
+  }
+
+  .selectedAddressInfo {
+    background: #2d2d2d;
+    border-left-color: #28a745;
+  }
+
+  .twoWayRequestInfo {
+    background: #2d2d2d;
+    border-color: #555;
+  }
+}

@@ -9,6 +9,7 @@ export interface AddUserAddressRepository {
     params: AddressLocationParams
   ): Promise<AddressInfo | null>;
   createAddress(params: AddressLocationParams): Promise<AddressInfo>;
+  createAddressIfNotExists(params: AddressLocationParams): Promise<AddressInfo>;
   findUserAddressByUserIdAndAddressId(
     userId: string,
     addressId: number
@@ -18,4 +19,9 @@ export interface AddUserAddressRepository {
     addressId: number,
     addressNickname?: string
   ): Promise<UserAddressInfo>;
+  createUserAddressIfNotExists(
+    userId: string,
+    addressId: number,
+    addressNickname?: string
+  ): Promise<{ userAddress: UserAddressInfo; isNew: boolean }>;
 }
