@@ -38,6 +38,8 @@ model Address {
   legalDistrictCode String        @map("legal_district_code")
   dong              String?
   ho                String?
+  lotNumber         String        @map("lot_number")
+  roadName          String?       @map("road_name")
   userAddresses     UserAddress[]
 
   @@unique([latitude, longitude, dong, ho], map: "addresses_coordinate_dong_ho")
@@ -85,6 +87,7 @@ model StepResult {
   mismatch      Int?
   match         Int?
   unchecked     Int?
+  details       Json        @map("details")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   step          Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
