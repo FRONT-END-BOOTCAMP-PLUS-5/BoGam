@@ -52,13 +52,14 @@ model UserAddress {
   addressId   Int          @map("address_id")
   isPrimary   Boolean      @default(false) @map("is_primary")
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  nickname    String?      @unique(map: "user_addresses_unique_nickname")
+  nickname    String
   realEstates RealEstate?
   stepResults StepResult[]
   taxCerts    TaxCert?
   address     Address      @relation(fields: [addressId], references: [id], onDelete: Cascade)
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, nickname], map: "user_addresses_user_nickname_unique")
   @@map("user_addresses")
 }
 
