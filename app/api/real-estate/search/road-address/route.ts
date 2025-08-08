@@ -10,7 +10,8 @@ const useCase = new RealEstateUseCase();
 
 export async function POST(request: NextRequest) {
   try {
-    const body: IssueResultRequest & { userAddressId: number } = await request.json();
+    const body: IssueResultRequest & { userAddressNickname: string } =
+      await request.json();
 
     // 요청 검증
     if (!body.password) {
@@ -56,7 +57,9 @@ export async function POST(request: NextRequest) {
     }
 
     // userAddressNickname으로부터 userAddressId 가져오기
-    const userAddressId = await getUserAddressIdByNickname(body.userAddressNickname);
+    const userAddressId = await getUserAddressIdByNickname(
+      body.userAddressNickname
+    );
     if (!userAddressId) {
       return NextResponse.json(
         { success: false, message: '유효하지 않은 사용자 주소 닉네임입니다.' },
@@ -79,7 +82,7 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '3' as const,
-      userAddressId: userAddressId,
+      userAddressNickname: body.userAddressNickname,
       issueType: body.issueType || '1',
       ePrepayNo: body.ePrepayNo || '',
       ePrepayPass: body.ePrepayPass || '',
@@ -106,55 +109,81 @@ export async function POST(request: NextRequest) {
 
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장
-      let savedRealEstateCopy = null;
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new RealEstateCopyUseCase(dbRepository);
-        
+
+        const userAddressId = await getUserAddressIdByNickname(
+          body.userAddressNickname
+        );
+
+        if (!userAddressId) {
+          return NextResponse.json({
+            success: false,
+            message: '사용자 주소 ID를 찾을 수 없습니다.',
+          });
+        }
+
         const isSuccess = await dbUseCase.upsertRealEstateCopy({
-          userAddressId: body.userAddressId,
-          realEstateJson: JSON.parse(JSON.stringify(response))
+          userAddressId,
+          realEstateJson: JSON.parse(JSON.stringify(response)),
         });
 
         if (isSuccess) {
           console.log('✅ 등기부등본 DB upsert 완료:', {
-            userAddressId: body.userAddressId
+            userAddressId,
           });
 
-          return NextResponse.json({
-            success: true,
-            message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
-            data: response
-          }, { status: 200 });
+          return NextResponse.json(
+            {
+              success: true,
+              message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
+              data: response,
+            },
+            { status: 200 }
+          );
         } else {
           console.error('❌ 등기부등본 DB upsert 실패');
-          
-          return NextResponse.json({
-            success: true,
-            message: '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
-            data: response,
-            warning: 'DB 저장 실패'
-          }, { status: 200 });
+
+          return NextResponse.json(
+            {
+              success: true,
+              message:
+                '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
+              data: response,
+              warning: 'DB 저장 실패',
+            },
+            { status: 200 }
+          );
         }
       } catch (dbError) {
         console.error('❌ 등기부등본 DB 저장 실패:', dbError);
-        
+
         // DB 저장 실패해도 API 응답은 성공으로 처리 (발급 자체는 성공했으므로)
-        return NextResponse.json({
-          success: true,
-          message: '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
-          data: response,
-          warning: 'DB 저장 실패'
-        }, { status: 200 });
+        return NextResponse.json(
+          {
+            success: true,
+            message:
+              '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
+            data: response,
+            warning: 'DB 저장 실패',
+          },
+          { status: 200 }
+        );
       }
     } else {
       // CF-00000이 아닌 모든 코드는 실패로 처리 (DB 저장하지 않음)
-      return NextResponse.json({
-        success: false,
-        message: `부동산등기부등본 조회 실패: ${response?.result?.message || '알 수 없는 오류'}`,
-        data: response,
-        resultCode: codefResultCode
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: `부동산등기부등본 조회 실패: ${
+            response?.result?.message || '알 수 없는 오류'
+          }`,
+          data: response,
+          resultCode: codefResultCode,
+        },
+        { status: 400 }
+      );
     }
   } catch (error) {
     console.error('❌ 부동산등기부등본 조회 API 오류:', error);
