@@ -6,7 +6,7 @@ import { TogglePrimaryAddressRepositoryImpl } from '@be/infrastructure/repositor
 import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
 import { TogglePrimaryAddressRequestDto } from '@be/applications/place/dtos/TogglePrimaryAddressDto';
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
