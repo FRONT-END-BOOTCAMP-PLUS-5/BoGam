@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetRealEstateTransactionUseCase } from '@be/applications/transaction/usecases/GetRealEstateTransactionUseCase';
+import { GetRealEstateTransactionRequest } from '@be/applications/transaction/dtos/GetRealEstateTransactionRequest';
 import { GetRealEstateTransactionResponse } from '@be/applications/transaction/dtos/GetRealEstateTransactionResponse';
 import { generateDealYearMonthRange, getCurrentYearMonth } from '@utils/dateUtils';
 
@@ -10,6 +11,7 @@ import { generateDealYearMonthRange, getCurrentYearMonth } from '@utils/dateUtil
  * 기능:
  * - DEAL_YMD를 입력하면 해당 월부터 현재까지의 모든 데이터를 수집
  * - 예: DEAL_YMD=202404 → 2024년 4월부터 현재(2025년 8월)까지의 모든 실거래가
+ * - 4개 주택 유형(아파트, 단독/다가구, 오피스텔, 연립다세대) 통합 조회
  */
 export async function GET(request: NextRequest) {
   try {
@@ -18,107 +20,93 @@ export async function GET(request: NextRequest) {
     const LAWD_CD = searchParams.get('LAWD_CD');
     const DEAL_YMD = searchParams.get('DEAL_YMD');
     const numOfRows = searchParams.get('numOfRows') || '1000';
-    const getAllData = searchParams.get('getAllData') === 'true'; // 전체 데이터 수집 여부
 
-    // 필수 파라미터 검증
-    if (!LAWD_CD) {
+    // 2. 필수 파라미터 검증
+    if (!LAWD_CD || !DEAL_YMD) {
       return NextResponse.json(
-        { success: false, message: 'LAWD_CD 파라미터가 필요합니다.' },
+        { 
+          success: false, 
+          message: 'LAWD_CD와 DEAL_YMD는 필수 파라미터입니다.' 
+        },
         { status: 400 }
       );
     }
 
-    if (!DEAL_YMD) {
+    // 3. DEAL_YMD 형식 검증 (YYYYMM)
+    if (!/^\d{6}$/.test(DEAL_YMD)) {
       return NextResponse.json(
-        { success: false, message: 'DEAL_YMD 파라미터가 필요합니다.' },
+        { 
+          success: false, 
+          message: 'DEAL_YMD는 YYYYMM 형식이어야 합니다. (예: 202404)' 
+        },
         { status: 400 }
       );
     }
 
-    // 2. UseCase 인스턴스 생성
+    console.log(`🚀 실거래가 통합 API 호출: ${LAWD_CD} 지역, ${DEAL_YMD}부터 현재까지`);
+
+    // 4. UseCase 인스턴스 생성
     const useCase = new GetRealEstateTransactionUseCase();
 
-    let response: {
-      apartment: GetRealEstateTransactionResponse;
-      detachedHouse: GetRealEstateTransactionResponse;
-      officetel: GetRealEstateTransactionResponse;
-      rowHouse: GetRealEstateTransactionResponse;
-    };
-
-    // 3. 계약년월 범위 계산
-    const dealYearMonths = generateDealYearMonthRange(DEAL_YMD);
-    const currentYearMonth = getCurrentYearMonth();
+    // 5. 각 주택 유형별로 범위 데이터 수집 (병렬 처리)
+    console.log(`📄 각 주택 유형별 범위 데이터 조회 중...`);
     
-    console.log(`🔄 ${LAWD_CD} 지역 ${DEAL_YMD}~${currentYearMonth} 실거래가 범위 조회 시작...`);
-    console.log(`📅 수집할 계약년월: ${dealYearMonths.length}개월`);
+    const [apartment, detachedHouse, officetel, rowHouse] = await Promise.all([
+      useCase.getAllApartmentTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) }),
+      useCase.getAllDetachedHouseTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) }),
+      useCase.getAllOfficetelTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) }),
+      useCase.getAllRowHouseTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) })
+    ]);
 
-    if (getAllData) {
-      // 전체 데이터 수집 모드 (범위 조회)
-      console.log(`📊 전체 데이터 수집 모드 - 각 주택 유형별 범위 데이터 수집 중...`);
-      //모든 page를 순회하면서 범위 기간 내 데이터 모두 수집
-      const [apartment, detachedHouse, officetel, rowHouse] = await Promise.all([
-        useCase.getAllApartmentTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: 1000 }),
-        useCase.getAllDetachedHouseTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: 1000 }),
-        useCase.getAllOfficetelTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: 1000 }),
-        useCase.getAllRowHouseTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: 1000 })
-      ]);
+    // 6. 모든 데이터 통합
+    const allItems = [
+      ...(apartment.body.items.item || []),
+      ...(detachedHouse.body.items.item || []),
+      ...(officetel.body.items.item || []),
+      ...(rowHouse.body.items.item || [])
+    ];
 
-      response = { apartment, detachedHouse, officetel, rowHouse };
-    } else {
-      // 일반 모드 (범위 조회, 첫 페이지만)
-      console.log(`📄 일반 모드 - 각 주택 유형별 범위 데이터 조회 중...`);
-      
-      // 각 주택 유형별로 범위 데이터 수집
-      const [apartment, detachedHouse, officetel, rowHouse] = await Promise.all([
-        useCase.getAllApartmentTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) }),
-        useCase.getAllDetachedHouseTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) }),
-        useCase.getAllOfficetelTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) }),
-        useCase.getAllRowHouseTransactionsByDateRange(LAWD_CD, DEAL_YMD, { batchSize: parseInt(numOfRows) })
-      ]);
-
-      response = { apartment, detachedHouse, officetel, rowHouse };
-    }
-
-    // 4. 응답 데이터에 요약 정보 추가
+    // 7. 요약 정보 생성
+    const currentYearMonth = getCurrentYearMonth();
+    const dealYearMonths = generateDealYearMonthRange(DEAL_YMD);
+    
     const summary = {
       dateRange: {
         startDate: DEAL_YMD,
         endDate: currentYearMonth,
         totalMonths: dealYearMonths.length
       },
-      totalCount: 
-        parseInt(response.apartment.body.totalCount) +
-        parseInt(response.detachedHouse.body.totalCount) +
-        parseInt(response.officetel.body.totalCount) +
-        parseInt(response.rowHouse.body.totalCount),
-      apartmentCount: parseInt(response.apartment.body.totalCount),
-      detachedHouseCount: parseInt(response.detachedHouse.body.totalCount),
-      officetelCount: parseInt(response.officetel.body.totalCount),
-      rowHouseCount: parseInt(response.rowHouse.body.totalCount),
-      collectedCount: 
-        (response.apartment.body.items.item?.length || 0) +
-        (response.detachedHouse.body.items.item?.length || 0) +
-        (response.officetel.body.items.item?.length || 0) +
-        (response.rowHouse.body.items.item?.length || 0)
+      totalCount: allItems.length,
+      apartmentCount: apartment.body.items.item?.length || 0,
+      detachedHouseCount: detachedHouse.body.items.item?.length || 0,
+      officetelCount: officetel.body.items.item?.length || 0,
+      rowHouseCount: rowHouse.body.items.item?.length || 0,
+      collectedCount: allItems.length
     };
 
-    // 응답 데이터를 JSON 형식으로 반환
-    return NextResponse.json({
+    // 8. 응답 반환
+    const response = {
       success: true,
-      data: response,
-      summary,
-      status: 200,
-    });
-  } catch (error) {
-    console.error('통합 실거래가 조회 API 에러:', error);
+      data: {
+        items: { item: allItems },
+        numOfRows: allItems.length.toString(),
+        pageNo: "1",
+        totalCount: allItems.length.toString()
+      },
+      summary
+    };
 
+    console.log(`✅ 실거래가 통합 조회 완료: 총 ${allItems.length}건`);
+    console.log(`📊 요약: 아파트 ${summary.apartmentCount}건, 단독/다가구 ${summary.detachedHouseCount}건, 오피스텔 ${summary.officetelCount}건, 연립다세대 ${summary.rowHouseCount}건`);
+
+    return NextResponse.json(response);
+
+  } catch (error) {
+    console.error('❌ 실거래가 통합 API 오류:', error);
     return NextResponse.json(
-      {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : '서버 내부 오류가 발생했습니다.',
+      { 
+        success: false, 
+        message: error instanceof Error ? error.message : '실거래가 조회 중 오류가 발생했습니다.' 
       },
       { status: 500 }
     );
