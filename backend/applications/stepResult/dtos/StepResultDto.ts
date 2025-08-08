@@ -5,9 +5,7 @@ export interface CreateStepResultDto {
   stepId?: number;
   mainNum?: number;
   subNum?: number;
-  mismatch?: number;
-  match?: number;
-  unchecked?: number;
+  details: unknown;
 }
 
 export interface StepResultResponseDto {

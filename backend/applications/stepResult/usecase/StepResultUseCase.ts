@@ -67,8 +67,8 @@ export class StepResultUseCase {
       totalMismatch: acc.totalMismatch + (result.mismatch || 0),
       totalMatch: acc.totalMatch + (result.match || 0),
       totalUnchecked: acc.totalUnchecked + (result.unchecked || 0),
-      stepCount: acc.stepCount + 1,
-      mainNum: mainNum
+        stepCount: acc.stepCount + 1,
+        mainNum: mainNum
     }), {
       totalMismatch: 0,
       totalMatch: 0,
@@ -108,9 +108,10 @@ export class StepResultUseCase {
         undefined,
         dto.userAddressId,
         stepId,
-        dto.mismatch,
-        dto.match,
-        dto.unchecked,
+        undefined, // mismatch - DB 트리거가 계산
+        undefined, // match - DB 트리거가 계산
+        undefined, // unchecked - DB 트리거가 계산
+        dto.details,
         new Date()
       );
 
