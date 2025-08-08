@@ -35,7 +35,8 @@ export class StepResultRepositoryImpl implements StepResultRepository {
 
       return stepResults.map((result) => new StepResult(
         result.id, result.userAddressId, result.stepId,
-        result.mismatch, result.match, result.unchecked, result.createdAt,
+        result.mismatch, result.match, result.unchecked,
+        result.details, result.createdAt,
         result.step?.mainNum, result.step?.subNum
       ));
     } catch (error) {
@@ -56,21 +57,18 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         create: {
           userAddressId: stepResult.userAddressId!,
           stepId: stepResult.stepId!,
-          mismatch: stepResult.mismatch,
-          match: stepResult.match,
-          unchecked: stepResult.unchecked
+          details: stepResult.details as unknown
         },
         update: {
-          mismatch: stepResult.mismatch,
-          match: stepResult.match,
-          unchecked: stepResult.unchecked
+          details: stepResult.details as unknown
         },
         include: { step: true }
       });
 
       return new StepResult(
         upsertedStepResult.id, upsertedStepResult.userAddressId, upsertedStepResult.stepId,
-        upsertedStepResult.mismatch, upsertedStepResult.match, upsertedStepResult.unchecked, upsertedStepResult.createdAt,
+        upsertedStepResult.mismatch, upsertedStepResult.match, upsertedStepResult.unchecked,
+        upsertedStepResult.details, upsertedStepResult.createdAt,
         upsertedStepResult.step?.mainNum, upsertedStepResult.step?.subNum
       );
     } catch (error) {
