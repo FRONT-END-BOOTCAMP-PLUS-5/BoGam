@@ -13,6 +13,7 @@ export interface BaseRealEstateRequest {
   password: string; // 비밀번호 => RSA 암호화 필요, 4자리 숫자로 사용자 임의 설정(재열람 시 사용)
   inquiryType: string; // 조회 구분
   userAddressId: number; // 사용자 주소 ID (DB 저장용)
+  userAddressNickname?: string; // 사용자 주소 닉네임
   joinMortgageJeonseYN?: string; // 공동담보/전세 목록 포함 여부[0: 미포함, 1: 포함, default='0']
   tradingYN?: string; // 매매목록 포함 여부[0: 미포함, 1: 포함, default='0']
   listNumber?: string; // 목록 번호[default: 목록전체, 다건 선택 시 '|'로 구분 ex. '2007123|2017134']

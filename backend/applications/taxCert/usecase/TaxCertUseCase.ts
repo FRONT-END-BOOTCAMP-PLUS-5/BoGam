@@ -1,10 +1,8 @@
 import { TaxCertRepository } from '@be/domain/repository/TaxCertRepository';
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, TaxCertRequestDto, TaxCertResponseDto, TaxCertValidationDto } from '@be/applications/taxCert/dtos/TaxCertDto';
+import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse, TaxCertRequestDto, TaxCertResponseDto } from '@be/applications/taxCert/dtos/TaxCertDto';
 
 export class TaxCertUseCase {
   constructor(private taxCertRepository: TaxCertRepository) {}
-
-
 
   async requestTaxCert(request: TaxCertRequestDto): Promise<TaxCertResponseDto> {
     const startTime = Date.now();
@@ -33,7 +31,7 @@ export class TaxCertUseCase {
     } catch (error) {
       const duration = Date.now() - startTime;
       
-      console.error('❌ 납세증명서 요청 오류:', {
+      console.error('❌ 납세증명서 CODEF API 요청 오류:', {
         duration: `${duration}ms`,
         error: error instanceof Error ? error.message : '알 수 없는 오류',
         stack: error instanceof Error ? error.stack : undefined,
@@ -41,7 +39,7 @@ export class TaxCertUseCase {
       
       return {
         success: false,
-        error: error instanceof Error ? error.message : '납세증명서 API 호출 중 오류가 발생했습니다.',
+        error: error instanceof Error ? error.message : '납세증명서 CODEF API 호출 중 오류가 발생했습니다.',
         duration
       };
     }
