@@ -38,6 +38,8 @@ model Address {
   legalDistrictCode String        @map("legal_district_code")
   dong              String?
   ho                String?
+  lotAddress        String       @map("lot_address")
+  roadAddress       String?       @map("road_address")
   userAddresses     UserAddress[]
 
   @@unique([latitude, longitude, dong, ho], map: "addresses_coordinate_dong_ho")
@@ -50,13 +52,14 @@ model UserAddress {
   addressId   Int          @map("address_id")
   isPrimary   Boolean      @default(false) @map("is_primary")
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
-  nickname    String?      @unique(map: "user_addresses_unique_nickname")
+  nickname    String
   realEstates RealEstate?
   stepResults StepResult[]
   taxCerts    TaxCert?
   address     Address      @relation(fields: [addressId], references: [id], onDelete: Cascade)
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, nickname], map: "user_addresses_user_nickname_unique")
   @@map("user_addresses")
 }
 
@@ -85,6 +88,7 @@ model StepResult {
   mismatch      Int?
   match         Int?
   unchecked     Int?
+  details       Json        @map("details")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   step          Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
