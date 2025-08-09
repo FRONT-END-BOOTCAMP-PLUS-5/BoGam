@@ -1,0 +1,11 @@
+Model Information:
+* title:	Note book
+* source:	https://sketchfab.com/3d-models/note-book-83c74e7caab14bd696320f87b8507fd1
+* author:	Skreater (https://sketchfab.com/Skreater)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Note book" (https://sketchfab.com/3d-models/note-book-83c74e7caab14bd696320f87b8507fd1) by Skreater (https://sketchfab.com/Skreater) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
