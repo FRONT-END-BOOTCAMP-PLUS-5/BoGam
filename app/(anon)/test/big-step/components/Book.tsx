@@ -105,6 +105,7 @@ export const createBook = (props: BookProps = {}): Promise<{ group: THREE.Group;
             const action = mixer!.clipAction(clip);
             action.loop = THREE.LoopOnce; // 한 번만 재생
             action.clampWhenFinished = true; // 애니메이션 끝나면 마지막 프레임 유지
+            action.enabled = true;
           });
         }
         
@@ -116,7 +117,7 @@ export const createBook = (props: BookProps = {}): Promise<{ group: THREE.Group;
         resolve({ group: bookGroup, mixer });
       },
       (progress: ProgressEvent) => {
-        console.log('Loading book model...', (progress.loaded / progress.total * 100) + '%');
+        // 로딩 진행률 로그 제거
       },
       (error: unknown) => {
         console.error('Error loading book model:', error);
