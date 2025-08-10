@@ -42,6 +42,11 @@ export default function Home() {
             <h2>📁 문서 조회 테스트 모음</h2>
             <p>등기부등본과 납세확인서 조회 테스트를 한 곳에서 관리합니다.</p>
           </Link>
+
+          <Link href='/test/big-step' className={styles.card}>
+            <h2>📚 3D 책 애니메이션 테스트</h2>
+            <p>Three.js를 사용한 3D 책 애니메이션 및 상호작용을 테스트합니다.</p>
+          </Link>
         </div>
       </main>
       <PWAInstallPrompt />

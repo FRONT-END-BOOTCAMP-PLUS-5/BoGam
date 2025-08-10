@@ -16,12 +16,27 @@ export default function Scene3D({ className }: Scene3DProps) {
   const mouseRef = useRef<THREE.Vector2 | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+  
+  // 렌더러와 씬 참조를 위한 ref 추가
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (!mountRef.current) return;
+    if (!mountRef.current || isInitializedRef.current) return;
+    
+    isInitializedRef.current = true;
+
+    // WebGL 지원 확인
+    if (!window.WebGLRenderingContext) {
+      console.error('WebGL is not supported in this browser');
+      return;
+    }
 
     // Scene 설정
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     scene.background = new THREE.Color(0xf5f5f5); // 연한 회색 배경
 
     // Camera 설정
@@ -31,12 +46,22 @@ export default function Scene3D({ className }: Scene3DProps) {
       0.1,
       1000
     );
+    cameraRef.current = camera;
     camera.position.set(0, 6.2, 7);
     camera.lookAt(0, 6.2, -10);
     camera.updateProjectionMatrix();
 
     // Renderer 설정
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      powerPreference: "high-performance",
+      failIfMajorPerformanceCaveat: false,
+      preserveDrawingBuffer: false,
+      stencil: false,
+      depth: true,
+      alpha: false
+    });
+    rendererRef.current = renderer;
     renderer.setSize(300, 400);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -44,6 +69,18 @@ export default function Scene3D({ className }: Scene3DProps) {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    
+    // WebGL 컨텍스트 설정 및 에러 처리
+    try {
+      const gl = renderer.getContext();
+      gl.getExtension('WEBGL_debug_renderer_info');
+      
+      // 텍스처 관련 설정
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    } catch (error) {
+      console.warn('WebGL context setup warning:', error);
+    }
     
     // 로딩 중에는 DOM에 추가하지 않음
     // mountRef.current.appendChild(renderer.domElement);
@@ -93,7 +130,9 @@ export default function Scene3D({ className }: Scene3DProps) {
         // 모든 오브젝트가 로딩 완료
         setIsLoading(false);
         // 이제 DOM에 렌더러 추가
-        mountRef.current?.appendChild(renderer.domElement);
+        if (rendererRef.current && mountRef.current) {
+          mountRef.current.appendChild(rendererRef.current.domElement);
+        }
         
         // Raycaster 초기화
         raycasterRef.current = new THREE.Raycaster();
@@ -101,7 +140,7 @@ export default function Scene3D({ className }: Scene3DProps) {
 
         // 마우스 클릭 이벤트 핸들러
         const handleMouseClick = (event: MouseEvent) => {
-          if (!raycasterRef.current || !mouseRef.current || !camera) {
+          if (!raycasterRef.current || !mouseRef.current || !cameraRef.current) {
             return;
           }
 
@@ -110,7 +149,7 @@ export default function Scene3D({ className }: Scene3DProps) {
           mouseRef.current.x = (event.offsetX / 300) * 2 - 1;
           mouseRef.current.y = -(event.offsetY / 400) * 2 + 1;
 
-          raycasterRef.current.setFromCamera(mouseRef.current, camera);
+          raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
 
           for (const bookId in bookControllersRef.current) {
             const bookController = bookControllersRef.current[bookId];
@@ -125,12 +164,16 @@ export default function Scene3D({ className }: Scene3DProps) {
           }
         };
 
-        renderer.domElement.addEventListener('click', handleMouseClick);
+        if (rendererRef.current) {
+          rendererRef.current.domElement.addEventListener('click', handleMouseClick);
+        }
 
         // 애니메이션 루프 시작
         const clock = new THREE.Clock();
+        let animationId: number;
+        
         const animateLoop = () => {
-          requestAnimationFrame(animateLoop);
+          animationId = requestAnimationFrame(animateLoop);
           
           const deltaTime = clock.getDelta();
           
@@ -139,14 +182,21 @@ export default function Scene3D({ className }: Scene3DProps) {
             bookController.update(deltaTime);
           }
           
-          renderer.render(scene, camera);
+          if (rendererRef.current && sceneRef.current && cameraRef.current) {
+            rendererRef.current.render(sceneRef.current, cameraRef.current);
+          }
         };
 
         animateLoop();
 
         // 클린업 함수에 이벤트 리스너 제거 추가
         return () => {
-          renderer.domElement.removeEventListener('click', handleMouseClick);
+          if (rendererRef.current) {
+            rendererRef.current.domElement.removeEventListener('click', handleMouseClick);
+          }
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
         };
       }
     };
@@ -176,27 +226,33 @@ export default function Scene3D({ className }: Scene3DProps) {
           { id: 'book3', position: new THREE.Vector3(-1, 5.9, -5) },
           { id: 'book4', position: new THREE.Vector3(1, 5.9, -5) },
           { id: 'book5', position: new THREE.Vector3(-1, 1.82, -5) },
-          { id: 'book6', position: new THREE.Vector3(1, 1.82, -5) },   
+          { id: 'book6', position: new THREE.Vector3(1, 1.82, -5) },
         ];
 
-        await Promise.all(
-          bookPositions.map(async (bookConfig) => {
-            const { group: book, mixer } = await createBook({
-              position: bookConfig.position,
-              rotation: new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2),
-              scale: new THREE.Vector3(1, 1, 1),
-              id: bookConfig.id
-            });
-
-            book.position.copy(bookConfig.position);
-
-            const bookController = new BookController(bookConfig.id, book, mixer);
-            bookControllersRef.current[bookConfig.id] = bookController;
-
-            scene.add(book);
-            updateLoadingProgress();
-          })
-        );
+                 await Promise.all(
+           bookPositions.map(async (bookConfig) => {
+             try {
+               const { group: book, mixer } = await createBook({
+                 position: bookConfig.position,
+                 rotation: new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2),
+                 scale: new THREE.Vector3(1, 1, 1),
+                 id: bookConfig.id
+               });
+               book.position.copy(bookConfig.position);
+               
+               // 각 책마다 다른 링크 URL 설정
+               const linkUrl = `/step${bookConfig.id.replace('book', '')}`;
+               const bookController = new BookController(bookConfig.id, book, mixer, linkUrl);
+               
+               bookControllersRef.current[bookConfig.id] = bookController;
+               scene.add(book);
+               updateLoadingProgress();
+             } catch (error) {
+               console.error(`Error loading book ${bookConfig.id}:`, error);
+               updateLoadingProgress(); // 개별 책 로딩 실패 시에도 진행률 업데이트
+             }
+           })
+         );
       } catch (error) {
         console.error('Error loading books:', error);
         // 에러가 발생한 경우에도 진행률 업데이트
@@ -216,10 +272,33 @@ export default function Scene3D({ className }: Scene3DProps) {
 
     // 클린업
     return () => {
-      if (mountRef.current && renderer.domElement.parentNode === mountRef.current) {
-        mountRef.current.removeChild(renderer.domElement);
+      // 애니메이션 루프 정리
+      if (rendererRef.current) {
+        // DOM에서 렌더러 제거
+        if (mountRef.current && rendererRef.current.domElement.parentNode === mountRef.current) {
+          mountRef.current.removeChild(rendererRef.current.domElement);
+        }
+        
+        // 렌더러 정리
+        rendererRef.current.dispose();
+        rendererRef.current = null;
       }
-      renderer.dispose();
+      
+      // 씬과 카메라 정리
+      if (sceneRef.current) {
+        sceneRef.current.clear();
+        sceneRef.current = null;
+      }
+      
+      if (cameraRef.current) {
+        cameraRef.current = null;
+      }
+      
+      // 컨트롤러 정리
+      bookControllersRef.current = {};
+      
+      // 초기화 플래그 리셋
+      isInitializedRef.current = false;
     };
   }, []);
 
