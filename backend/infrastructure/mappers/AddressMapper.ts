@@ -14,6 +14,7 @@ export function mapAddressToAddressInfo(address: {
   legalDistrictCode: string | null;
   dong: string | null;
   ho: string | null;
+  lotAddress: string | null;
 }): AddressInfo {
   return {
     id: address.id,
@@ -22,6 +23,7 @@ export function mapAddressToAddressInfo(address: {
     legalDistrictCode: address.legalDistrictCode || undefined,
     dong: address.dong || undefined,
     ho: address.ho || undefined,
+    lotAddress: address.lotAddress || undefined,
   };
 }
 
@@ -66,5 +68,6 @@ export function createAddressData(params: AddressLocationParams) {
     legalDistrictCode: params.legalDistrictCode || '',
     dong: params.dong,
     ho: params.ho,
+    lotAddress: params.lotAddress,
   };
 }
