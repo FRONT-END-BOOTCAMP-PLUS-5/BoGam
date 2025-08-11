@@ -25,7 +25,7 @@ export default function Home() {
 
           <Link href='/test/transaction' className={styles.card}>
             <h2>📊 거래내역 테스트</h2>
-            <p>부동산 거래내역 조회 기능을 테스트합니다.</p>
+            <p>부동산 거래내역 조회 기능을 테스트합니다. (실거래가)</p>
           </Link>
 
           <Link href='/test/tax-cert' className={styles.card}>
