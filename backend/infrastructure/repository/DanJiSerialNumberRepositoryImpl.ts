@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { DanJiSerialNumberRepository } from '@be/domain/repository/DanJiSerialNumberRepository';
-import { DanJiSerialNumber } from '@be/domain/entities/DanJiSerialNumber';
 import { DanJiSerialNumberRequest } from '@be/applications/danJiSerialNumber/dtos/DanJiSerialNumberRequest';
 import { GetDanJiSerialNumberResponse } from '@be/applications/danJiSerialNumber/dtos/DanJiSerialNumberResponse';
 import { processResponse } from '@libs/responseUtils';
@@ -21,15 +19,6 @@ export class DanJiSerialNumberRepositoryImpl
   private readonly timeout: number = 100000; // 100초
 
   constructor() {
-    // CODEF 설정 로드
-    const config = loadCodefConfig();
-    const validation = validateCodefConfig(config);
-
-    if (!validation.isValid) {
-      console.warn('⚠️ CODEF 설정 검증 실패:', validation.errors);
-      console.warn('⚠️ 기본 설정으로 진행합니다.');
-    }
-
     // CODEF 인증 인스턴스 생성
     this.codefAuth = createCodefAuth();
 
@@ -50,7 +39,7 @@ export class DanJiSerialNumberRepositoryImpl
 
       // API 요청 실행
       const response = await axios.post(
-        CODEF_API_CONFIG.DANJI_SERIAL_NUMBER_FULL_URL,
+        CODEF_API_CONFIG.DANJI_FULL_URL,
         request,
         {
           headers: {
