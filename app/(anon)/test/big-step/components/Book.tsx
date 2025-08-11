@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AnimationMixer, AnimationClip, AnimationAction } from 'three';
+import { getKTX2Loader, getDRACOLoader } from '@utils/ktx2loader';
 
 /**
  * Book 3D 모델 정보
@@ -373,18 +372,11 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
   console.log(`[Book] 로딩 시작: ${new Date(startTime).toLocaleTimeString()}`);
 
   return new Promise((resolve, reject) => {
-    // DRACO 로더 생성 및 설정
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
+    // 싱글톤 로더 인스턴스 가져오기
+    const dracoLoader = getDRACOLoader();
+    const ktx2Loader = getKTX2Loader(renderer);
     
-    // KTX2 로더 생성 및 설정
-    const ktx2Loader = new KTX2Loader();
-    ktx2Loader.setTranscoderPath('/basis/');
-    ktx2Loader.setCrossOrigin('anonymous');
-    
-    // renderer가 제공된 경우 KTX2 지원 감지
     if (renderer) {
-      ktx2Loader.detectSupport(renderer);
       console.log('[Book] KTX2 지원 감지 완료');
     } else {
       console.warn('[Book] renderer가 제공되지 않아 KTX2 지원 감지를 건너뜁니다');
