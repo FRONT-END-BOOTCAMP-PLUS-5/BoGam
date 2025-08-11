@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRealEstateDataUseCase } from '@be/applications/realEstate/usecases/RealEstateDataUseCase';
+import { RealEstateUseCase } from '@be/applications/realEstate/usecases/RealEstateUseCase';
 import { encryptPassword } from '@libs/codefEncryption';
 import { SummaryInquiryRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
 import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
+import { getUserAddressIdByNickname } from '@utils/userAddress';
 
-const useCase = new GetRealEstateDataUseCase();
+const useCase = new RealEstateUseCase();
 
 export async function POST(request: NextRequest) {
   try {
-    const body: SummaryInquiryRequest & { userAddressId: number } = await request.json();
+    const body: SummaryInquiryRequest & { userAddressNickname: string } =
+      await request.json();
 
     // 필수 필드 검증
     if (!body.password) {
@@ -50,13 +52,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!body.userAddressId || typeof body.userAddressId !== 'number') {
-      return NextResponse.json(
-        { success: false, message: '사용자 주소 ID는 필수입니다.' },
-        { status: 400 }
-      );
-    }
-
     // API 요청 데이터 구성 (body에서 직접 추출하여 기본값 적용)
     const apiRequest: SummaryInquiryRequest = {
       uniqueNo: body.uniqueNo,
@@ -66,7 +61,7 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '0' as const,
-      userAddressId: body.userAddressId,
+      userAddressNickname: body.userAddressNickname,
       issueType: body.issueType || '1',
       ePrepayNo: body.ePrepayNo || undefined,
       ePrepayPass: body.ePrepayPass || undefined,
@@ -104,56 +99,82 @@ export async function POST(request: NextRequest) {
 
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장
-      let savedRealEstateCopy = null;
-      let isUpdated = false;
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new RealEstateCopyUseCase(dbRepository);
-        
-        // 기존 데이터 확인
-        const existing = await dbUseCase.findRealEstateCopyByUserAddressId(body.userAddressId);
-        isUpdated = !!existing;
-        
-        savedRealEstateCopy = await dbUseCase.upsertRealEstateCopy({
-          userAddressId: body.userAddressId,
-          realEstateJson: JSON.parse(JSON.stringify(response))
+
+        const userAddressId = await getUserAddressIdByNickname(
+          body.userAddressNickname
+        );
+
+        if (!userAddressId) {
+          return NextResponse.json({
+            success: false,
+            message: '사용자 주소 ID를 찾을 수 없습니다.',
+          });
+        }
+
+        const isSuccess = await dbUseCase.upsertRealEstateCopy({
+          userAddressId,
+          realEstateJson: JSON.parse(JSON.stringify(response)),
         });
 
-        console.log(`✅ 등기부등본 DB ${isUpdated ? '업데이트' : '저장'} 완료:`, {
-          realEstateCopyId: savedRealEstateCopy.id,
-          userAddressId: savedRealEstateCopy.userAddressId
-        });
+        if (isSuccess) {
+          console.log('✅ 등기부등본 DB upsert 완료:', {
+            userAddressId,
+          });
 
-        // 성공 응답 (DB 저장 포함)
-        return NextResponse.json({
-          success: true,
-          message: `부동산등기부등본 조회가 성공적으로 완료되었습니다.${isUpdated ? ' (기존 데이터 업데이트됨)' : ''}`,
-          data: response,
-          savedRealEstateCopy: {
-            id: savedRealEstateCopy.id,
-            userAddressId: savedRealEstateCopy.userAddressId,
-            isUpdated: isUpdated
-          }
-        }, { status: 200 });
+          // 성공 응답 (DB 저장 포함)
+          return NextResponse.json(
+            {
+              success: true,
+              message: '부동산등기부등본 조회가 성공적으로 완료되었습니다.',
+              data: response,
+            },
+            { status: 200 }
+          );
+        } else {
+          console.error('❌ 등기부등본 DB upsert 실패');
+
+          return NextResponse.json(
+            {
+              success: true,
+              message:
+                '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
+              data: response,
+              warning: 'DB 저장 실패',
+            },
+            { status: 200 }
+          );
+        }
       } catch (dbError) {
         console.error('❌ 등기부등본 DB 저장 실패:', dbError);
-        
+
         // DB 저장 실패해도 API 응답은 성공으로 처리 (발급 자체는 성공했으므로)
-        return NextResponse.json({
-          success: true,
-          message: '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
-          data: response,
-          warning: 'DB 저장 실패'
-        }, { status: 200 });
+        return NextResponse.json(
+          {
+            success: true,
+            message:
+              '부동산등기부등본 조회가 완료되었지만 저장 중 문제가 발생했습니다.',
+            data: response,
+            warning: 'DB 저장 실패',
+          },
+          { status: 200 }
+        );
       }
     } else {
       // CF-00000이 아닌 모든 코드는 실패로 처리 (DB 저장하지 않음)
-      return NextResponse.json({
-        success: false,
-        message: `부동산등기부등본 조회 실패: ${response?.result?.message || '알 수 없는 오류'}`,
-        data: response,
-        resultCode: codefResultCode
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          success: false,
+          message: `부동산등기부등본 조회 실패: ${
+            response?.result?.message || '알 수 없는 오류'
+          }`,
+          data: response,
+          resultCode: codefResultCode,
+        },
+        { status: 400 }
+      );
     }
   } catch (error) {
     console.error('❌ 부동산등기부등본 조회 API 오류:', error);

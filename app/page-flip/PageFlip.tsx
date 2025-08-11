@@ -50,13 +50,13 @@ const PageFlip = () => {
       />
 
       <div id="book">
-        <div style={{ backgroundColor: 'red', width: '100%', height: '100%' }}>H</div>
-        <div style={{ backgroundColor: 'yellow', width: '100%', height: '100%' }}>e</div>
-        <div style={{ backgroundColor: 'green', width: '100%', height: '100%' }}>l</div>
-        <div style={{ backgroundColor: 'blue', width: '100%', height: '100%' }}>l</div>
-        <div style={{ backgroundColor: 'purple', width: '100%', height: '100%' }}>o</div>
-        <div style={{ backgroundColor: 'pink', width: '100%', height: '100%' }}>!</div>
-        <div style={{ backgroundColor: 'green', width: '100%', height: '100%' }}>!</div>
+        <div style={{ backgroundColor: 'red', width: '100%', height: '100%' }}> 첫 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'yellow', width: '100%', height: '100%' }}> 두 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'green', width: '100%', height: '100%' }}> 세 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'blue', width: '100%', height: '100%' }}> 네 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'purple', width: '100%', height: '100%' }}> 다섯 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'pink', width: '100%', height: '100%' }}> 여섯 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'green', width: '100%', height: '100%' }}> 일곱 번째 페이지입니다. </div>
       </div>
     </div>
   );

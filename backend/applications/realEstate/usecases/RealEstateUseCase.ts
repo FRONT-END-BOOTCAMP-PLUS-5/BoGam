@@ -12,11 +12,11 @@ import {
 } from '@be/applications/realEstate/dtos/RealEstateResponse';
 
 /**
- * 부동산등기부등본 조회 UseCase
+ * 부동산등기부등본 CODEF API 요청 UseCase
  * 클린 아키텍처의 Application 레이어
- * 비즈니스 로직을 담당하며 Infrastructure를 통해 외부 API 호출
+ * CODEF API 호출 비즈니스 로직을 담당하며 Infrastructure를 통해 외부 API 호출
  */
-export class GetRealEstateDataUseCase {
+export class RealEstateUseCase {
   private readonly infrastructure: GetRealEstateDataInfrastructure;
   private readonly codefAuth: CodefAuth;
 
@@ -53,20 +53,13 @@ export class GetRealEstateDataUseCase {
 
   /**
    * 2-way 인증 처리
-   * @param uniqueNo 부동산 고유번호
-   * @param twoWayInfo 추가인증 정보
+   * @param twoWayRequest 2-way 인증 요청 데이터 (원본 요청 + 2-way 인증 정보)
    * @returns 응답 데이터
    */
   async handleTwoWayAuth(
-    uniqueNo: string,
-    twoWayInfo: {
-      jobIndex: number;
-      threadIndex: number;
-      jti: string;
-      twoWayTimestamp: number;
-    }
+    twoWayRequest: Record<string, unknown>
   ): Promise<GetRealEstateResponse> {
-    return this.infrastructure.handleTwoWayAuth(uniqueNo, twoWayInfo);
+    return this.infrastructure.handleTwoWayAuth(twoWayRequest);
   }
 
   // ===== 응답 검증 및 처리 =====
@@ -86,7 +79,6 @@ export class GetRealEstateDataUseCase {
   }
 
   /**
-
    * 2-way 인증 정보 추출
    * @param response API 응답
    * @returns 2-way 인증 정보
@@ -102,8 +94,11 @@ export class GetRealEstateDataUseCase {
     };
   } | null {
     const data = response.data;
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
+    // CODEF API 응답 구조에 따라 2-way 인증 정보 추출
     if (
       typeof data.jobIndex === 'number' &&
       typeof data.threadIndex === 'number' &&
@@ -122,4 +117,4 @@ export class GetRealEstateDataUseCase {
 
     return null;
   }
-}
+} 

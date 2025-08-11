@@ -28,6 +28,7 @@ export interface TaxCertRequest {
   originDataYN?: string; // 원문 DATA 포함 여부 ("1":포함, "0":미포함)
   originDataYN1?: string; // PDF 파일 Base64 데이터 포함 여부 ("1":포함, "0":미포함)
   identityEncYn?: string; // 주민등록번호 뒷자리 암호화 여부 ("Y":암호화, "N":비암호화)
+  userAddressNickname?: string; // 사용자 주소 닉네임
 }
 
 export interface TaxCertTwoWayRequest extends Omit<TaxCertRequest, 'signedData'> {

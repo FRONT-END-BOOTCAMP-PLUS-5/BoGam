@@ -1,83 +1,53 @@
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
-import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto, RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
 import { encryptJson, decryptJson } from '../../../../utils/encryption';
+import { RealEstateCopyExistsResponseDto, RealEstateCopyDetailResponseDto } from '../dtos/RealEstateCopyDto';
 
+/**
+ * 등기부등본 DB CRUD UseCase
+ * 클린 아키텍처의 Application 레이어
+ * DB 조작 비즈니스 로직을 담당하며 Repository를 통해 데이터 접근
+ */
 export class RealEstateCopyUseCase {
   constructor(private realEstateCopyRepository: RealEstateCopyRepository) {}
 
-  async getRealEstateCopiesByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; }[]> {
-    const realEstateCopies = await this.realEstateCopyRepository.findByUserAddressId(userAddressId);
+  async getRealEstateCopyByUserAddressId(userAddressId: number): Promise<RealEstateCopyDetailResponseDto['data'] | null> {
+    const realEstate = await this.realEstateCopyRepository.findByUserAddressId(userAddressId);
+    
+    if (!realEstate) return null;
     
     // 복호화 처리
-    return realEstateCopies.map(copy => ({
-      id: copy.id,
-      userAddressId: copy.userAddressId,
-      realEstateJson: decryptJson(copy.realEstateData) as RealEstateCopyJson,
-      updatedAt: copy.updatedAt
-    }));
-  }
-
-  async updateRealEstateCopy(userAddressId: number, data: { realEstateJson: RealEstateCopyJson }): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; }> {
-    // JSON을 암호화된 문자열로 변환
-    const encryptedData: UpdateRealEstateCopyDto = {
-      realEstateData: encryptJson(data.realEstateJson)
-    };
-    
-    const result = await this.realEstateCopyRepository.updateByUserAddressId(userAddressId, encryptedData);
-    
-    // 응답 시에는 복호화된 데이터 반환
     return {
-      id: result.id,
-      userAddressId: result.userAddressId,
-      realEstateJson: decryptJson(result.realEstateData) as RealEstateCopyJson,
-      updatedAt: result.updatedAt
+      id: realEstate.id,
+      userAddressId: realEstate.userAddressId,
+      realEstateJson: decryptJson(realEstate.realEstateData) as RealEstateCopyJson,
+      updatedAt: realEstate.updatedAt!
     };
   }
 
-  async deleteRealEstateCopy(userAddressId: number): Promise<void> {
-    await this.realEstateCopyRepository.deleteByUserAddressId(userAddressId);
-  }
-
-  async findRealEstateCopyByUserAddressId(userAddressId: number): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; } | null> {
-    const realEstateCopies = await this.realEstateCopyRepository.findByUserAddressId(userAddressId);
-    if (realEstateCopies.length === 0) return null;
-    
-    const copy = realEstateCopies[0];
-    return {
-      id: copy.id,
-      userAddressId: copy.userAddressId,
-      realEstateJson: decryptJson(copy.realEstateData) as RealEstateCopyJson,
-      updatedAt: copy.updatedAt
-    };
-  }
-
-  async upsertRealEstateCopy(data: { userAddressId: number; realEstateJson: RealEstateCopyJson }): Promise<{ id: number; userAddressId: number; realEstateJson: RealEstateCopyJson; updatedAt?: Date; }> {
-    // JSON을 암호화된 문자열로 변환
-    const encryptedData: CreateRealEstateCopyDto = {
-      userAddressId: data.userAddressId,
-      realEstateData: encryptJson(data.realEstateJson)
-    };
-    
-    const existingEncrypted = await this.realEstateCopyRepository.findByUserAddressId(data.userAddressId);
-    const existing = existingEncrypted.length > 0 ? existingEncrypted[0] : null;
-    
-    let result: RealEstateCopy;
-    if (existing) {
-      // 기존 데이터가 있으면 업데이트
-      result = await this.realEstateCopyRepository.updateByUserAddressId(data.userAddressId, {
-        realEstateData: encryptedData.realEstateData
+  async upsertRealEstateCopy(data: { userAddressId: number; realEstateJson: RealEstateCopyJson }): Promise<boolean> {
+    try {
+      // JSON을 암호화된 문자열로 변환
+      const encryptedData = encryptJson(data.realEstateJson);
+      
+      // Prisma upsert 사용
+      await this.realEstateCopyRepository.upsertByUserAddressId(data.userAddressId, {
+        realEstateData: encryptedData
       });
-    } else {
-      // 기존 데이터가 없으면 새로 생성
-      result = await this.realEstateCopyRepository.create(encryptedData);
+      
+      return true;
+    } catch (error) {
+      console.error('❌ 등기부등본 upsert 실패:', error);
+      return false;
     }
-    
-    // 응답 시에는 복호화된 데이터 반환
-    return {
-      id: result.id,
-      userAddressId: result.userAddressId,
-      realEstateJson: decryptJson(result.realEstateData) as RealEstateCopyJson,
-      updatedAt: result.updatedAt
-    };
   }
-}
+
+  async existsByUserAddressId(userAddressId: number): Promise<Pick<RealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+    try {
+      return await this.realEstateCopyRepository.existsByUserAddressId(userAddressId);
+    } catch (error) {
+      console.error('❌ 등기부등본 복사본 존재 여부 확인 오류:', error);
+      return { exists: false };
+    }
+  }
+} 

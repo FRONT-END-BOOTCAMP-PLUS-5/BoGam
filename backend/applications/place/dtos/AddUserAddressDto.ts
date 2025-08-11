@@ -5,6 +5,7 @@ export interface AddUserAddressRequestDto {
   legalDistrictCode: string;
   dong: string;
   ho: string;
+  lotAddress: string;
 }
 
 export interface AddUserAddressResponseDto {

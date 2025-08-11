@@ -1,8 +1,8 @@
-import { TaxCert, CreateTaxCertDto, UpdateTaxCertDto } from '../entities/TaxCert';
+import { TaxCertCopy } from '@be/domain/entities/TaxCertCopy';
+import { TaxCertCopyExistsResponseDto } from '@be/applications/taxCertCopy/dtos/TaxCertCopyDto';
 
 export interface TaxCertCopyRepository {
-  create(data: CreateTaxCertDto): Promise<TaxCert>;
-  findByUserAddressId(userAddressId: number): Promise<TaxCert[]>;
-  updateByUserAddressId(userAddressId: number, data: UpdateTaxCertDto): Promise<TaxCert>;
-  deleteByUserAddressId(userAddressId: number): Promise<void>;
+  findByUserAddressId(userAddressId: number): Promise<TaxCertCopy | null>;
+  upsertByUserAddressId(userAddressId: number, data: { taxCertData: string }): Promise<TaxCertCopy>;
+  existsByUserAddressId(userAddressId: number): Promise<Pick<TaxCertCopyExistsResponseDto, 'exists' | 'updatedAt'>>;
 } 

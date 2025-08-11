@@ -9,7 +9,6 @@ import { AddUserAddressRequestDto } from '@be/applications/place/dtos/AddUserAdd
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    console.log('session', session);
 
     if (!session?.user?.nickname) {
       return NextResponse.json(
