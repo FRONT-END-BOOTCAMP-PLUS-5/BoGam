@@ -1,13 +1,8 @@
-import { TransactionDetailSingleEntity } from '@be/domain/entities/TransactionDetailSingle';
-import { TransactionDetailSingleRequest } from '@be/applications/transactionDetailSingle/dtos/TransactionDetailSingleRequest';
-
-export interface TransactionDetailSingleResult {
-  result: { code: string; message: string; extraMessage?: string };
-  data?: TransactionDetailSingleEntity | TransactionDetailSingleEntity[];
-}
+import { GetTransactionDetailRequestDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailRequestDto';
+import { GetTransactionDetailResponseDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailResponseDto';
 
 export interface TransactionDetailSingleRepository {
   getTransactionDetailSingleList(
-    request: TransactionDetailSingleRequest
-  ): Promise<TransactionDetailSingleResult>;
+    request: GetTransactionDetailRequestDto
+  ): Promise<GetTransactionDetailResponseDto>;
 }

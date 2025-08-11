@@ -2,7 +2,7 @@ import { DanJiRepository } from '@be/infrastructure/repository/DanJiRepository';
 import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanJiListRequestDto';
 import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanJiListResponseDto';
 
-export class GetDanJiListusecase {
+export class GetDanJiListUsecase {
   private readonly repository: DanJiRepository;
 
   constructor(repository: DanJiRepository) {

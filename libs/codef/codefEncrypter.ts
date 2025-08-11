@@ -1,7 +1,4 @@
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codef/codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 
 export async function encryptWithRSA(
   text: string,
@@ -45,7 +42,7 @@ export class CodefEncryption {
     try {
       return await encryptWithRSA(password, this.publicKey);
     } catch (error) {
-      console.warn('⚠️ RSA 암호화 실패, Base64 fallback 사용');
+      console.warn('⚠️ RSA 암호화 실패, Base64 fallback 사용:', error);
       return Buffer.from(password).toString('base64');
     }
   }

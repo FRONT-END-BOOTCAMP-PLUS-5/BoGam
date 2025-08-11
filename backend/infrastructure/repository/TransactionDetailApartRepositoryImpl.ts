@@ -2,8 +2,8 @@ import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { TransactionDetailApartRepository } from '@be/domain/repository/TransactionDetailApartRepository';
-import { TransactionDetailApartRequest } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartRequest';
-import { GetTransactionDetailApartResponse } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartResponse';
+import { GetTransactionDetailRequestDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailRequestDto';
+import { GetTransactionDetailResponseDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailResponseDto';
 import { processResponse } from '@libs/responseUtils';
 import { sanitizeTransactionDetailApartResponse } from '@be/infrastructure/mappers/TransactionDetailApartMapper';
 
@@ -18,8 +18,8 @@ export class TransactionDetailApartRepositoryImpl
   }
 
   async getTransactionDetailApartList(
-    request: TransactionDetailApartRequest
-  ): Promise<GetTransactionDetailApartResponse> {
+    request: GetTransactionDetailRequestDto
+  ): Promise<GetTransactionDetailResponseDto> {
     try {
       const accessToken = await this.codefAuth.getAccessToken();
       const response = await axios.post(
@@ -35,8 +35,8 @@ export class TransactionDetailApartRepositoryImpl
         }
       );
 
-      const data: GetTransactionDetailApartResponse =
-        processResponse<GetTransactionDetailApartResponse>(response.data);
+      const data: GetTransactionDetailResponseDto =
+        processResponse<GetTransactionDetailResponseDto>(response.data);
 
       // 필요한 필드만 남기기
       const sanitized = sanitizeTransactionDetailApartResponse(data);

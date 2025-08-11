@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codef/codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { TransactionDetailSingleRepository } from '@be/domain/repository/TransactionDetailSingleRepository';
-import { TransactionDetailSingleRequest } from '@be/applications/transactionDetailSingle/dtos/TransactionDetailSingleRequest';
-import { GetTransactionDetailSingleResponse } from '@be/applications/transactionDetailSingle/dtos/TransactionDetailSingleResponse';
+import { GetTransactionDetailRequestDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailRequestDto';
+import { GetTransactionDetailResponseDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailResponseDto';
 import { processResponse } from '@libs/responseUtils';
 import { sanitizeTransactionDetailSingleResponse } from '@be/infrastructure/mappers/TransactionDetailSingleMapper';
 
@@ -27,8 +24,8 @@ export class TransactionDetailSingleRepositoryImpl
   }
 
   async getTransactionDetailSingleList(
-    request: TransactionDetailSingleRequest
-  ): Promise<GetTransactionDetailSingleResponse> {
+    request: GetTransactionDetailRequestDto
+  ): Promise<GetTransactionDetailResponseDto> {
     const accessToken = await this.codefAuth.getAccessToken();
     const res = await axios.post(
       CODEF_API_CONFIG.ACTUAL_TRANSACTION_HOUSE_FULL_URL,
@@ -42,7 +39,7 @@ export class TransactionDetailSingleRepositoryImpl
         timeout: this.timeout,
       }
     );
-    const data = processResponse<GetTransactionDetailSingleResponse>(res.data);
+    const data = processResponse<GetTransactionDetailResponseDto>(res.data);
     return sanitizeTransactionDetailSingleResponse(data);
   }
 }

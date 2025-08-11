@@ -2,7 +2,7 @@ import { RebHousingPriceRepository } from '@be/infrastructure/repository/RebHous
 import { GetRebHousingPriceListRequestDto } from '@be/applications/rebHousingPrices/dtos/GetRebHousingPriceListRequestDto';
 import { GetRebHousingPriceListResponseDto } from '@be/applications/rebHousingPrices/dtos/GetRebHousingPriceListResponseDto';
 
-export class GetRebHousingPriceListusecase {
+export class GetRebHousingPriceListUsecase {
   private readonly repository: RebHousingPriceRepository;
 
   constructor(repository: RebHousingPriceRepository) {

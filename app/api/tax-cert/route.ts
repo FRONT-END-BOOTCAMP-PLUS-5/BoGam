@@ -3,7 +3,7 @@ import { GetTaxCertUsecase } from '@be/applications/taxCert/usecases/GetTaxCertU
 import { TaxCertRepositoryImpl } from '@be/infrastructure/repository/TaxCertRepositoryImpl';
 import { CreateTaxCertCopyUsecase } from '@be/applications/taxCertCopies/usecases/CreateTaxCertCopyUsecase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
-import { encryptPassword } from '@libs/codef/codefEncryption';
+import { encryptPassword } from '@libs/codef/codefEncrypter';
 import { getUserAddressIdByNickname } from '@utils/userAddress';
 
 export async function POST(request: NextRequest) {

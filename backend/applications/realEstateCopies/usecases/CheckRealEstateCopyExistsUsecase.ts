@@ -6,7 +6,7 @@ import { CheckRealEstateCopyExistsResponseDto } from '../dtos/CheckRealEstateCop
  * 등기부등본 복사본 존재 확인 Usecase
  * 클린 아키텍처의 Application 레이어
  */
-export class CheckRealEstateCopyExistsusecase {
+export class CheckRealEstateCopyExistsUsecase {
   constructor(private realEstateCopyRepository: RealEstateCopyRepository) {}
 
   async checkExists(

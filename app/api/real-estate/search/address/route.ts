@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { encryptPassword } from '@libs/codef/codefEncryption';
+import { encryptPassword } from '@libs/codef/codefEncrypter';
 import { DetailInquiryRequest } from '@be/applications/realEstate/dtos/GetRealEstatesRequestDto';
 import { GetRealEstatesUsecase } from '@be/applications/realEstate/usecases/GetRealEstatesUsecase';
 import { CreateRealEstateCopyUsecase } from '@be/applications/realEstateCopies/usecases/CreateRealEstateCopyUsecase';

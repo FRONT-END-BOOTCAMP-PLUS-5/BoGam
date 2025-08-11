@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codef/codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 import { GetRealEstatesRequestDto } from '@be/applications/realEstates/dtos/GetRealEstatesRequestDto';
 import { GetRealEstatesResponseDto } from '@be/applications/realEstates/dtos/GetRealEstatesResponseDto';
 import { processResponse } from '@libs/responseUtils';

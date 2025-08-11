@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRebHousingPriceListusecase } from '@be/applications/rebHousingPrices/usecases/GetRebHousingPriceListusecase';
+import { GetRebHousingPriceListUsecase } from '@be/applications/rebHousingPrices/usecases/GetRebHousingPriceListUsecase';
 import { RebHousingPriceRepository } from '@be/infrastructure/repository/RebHousingPriceRepository';
 import { GetRebHousingPriceListRequestDto } from '@be/applications/rebHousingPrices/dtos/GetRebHousingPriceListRequestDto';
 
 const repository = new RebHousingPriceRepository();
-const usecase = new GetRebHousingPriceListusecase(repository);
+const usecase = new GetRebHousingPriceListUsecase(repository);
 
 export async function POST(request: NextRequest) {
   try {

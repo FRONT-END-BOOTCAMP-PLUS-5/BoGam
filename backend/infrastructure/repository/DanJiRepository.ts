@@ -1,10 +1,7 @@
 import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanJiListRequestDto';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codef/codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 import axios from 'axios';
 import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanJiListResponseDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';

@@ -1,11 +1,7 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import {
-  loadCodefConfig,
-  validateCodefConfig,
-} from '@libs/codef/codefEnvironment';
-import { GetRealEstatesResponseDto } from '@be/applications/realEstates/dtos/GetRealEstatesResponseDto';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { GetSiseInfoRequestDto } from '@be/applications/sises/dtos/GetSiseInfoRequestDto';
 import { GetSiseInfoResponseDto } from '@be/applications/sises/dtos/GetSiseInfoResponseDto';

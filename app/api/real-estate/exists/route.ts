@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CheckRealEstateCopyExistsusecase } from '@be/applications/realEstateCopies/usecases/CheckRealEstateCopyExistsusecase';
+import { CheckRealEstateCopyExistsUsecase } from '@be/applications/realEstateCopies/usecases/CheckRealEstateCopyExistsUsecase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { getUserAddressIdByNickname } from '@utils/userAddress';
 
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     }
 
     const repository = new RealEstateCopyRepositoryImpl();
-    const usecase = new CheckRealEstateCopyExistsusecase(repository);
+    const usecase = new CheckRealEstateCopyExistsUsecase(repository);
 
     const response = await usecase.checkExists({ userAddressId });
 

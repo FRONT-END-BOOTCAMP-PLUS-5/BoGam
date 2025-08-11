@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetTaxCertCopyusecase } from '@be/applications/taxCertCopies/usecases/GetTaxCertCopyusecase';
-import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
+import { GetRealEstateCopyusecase } from '@be/applications/realEstateCopies/usecases/GetRealEstateCopyUsecase';
+import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { getUserAddressIdByNickname } from '@utils/userAddress';
 
 export async function GET(request: NextRequest) {
@@ -28,10 +28,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const repository = new TaxCertCopyRepositoryImpl();
-    const usecase = new GetTaxCertCopyusecase(repository);
+    const repository = new RealEstateCopyRepositoryImpl();
+    const usecase = new GetRealEstateCopyusecase(repository);
 
-    const response = await usecase.getTaxCertCopy({ userAddressId });
+    const response = await usecase.getRealEstateCopy({ userAddressId });
 
     if (!response.success) {
       return NextResponse.json(response, { status: 404 });
@@ -39,11 +39,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error('❌ 납세증명서 조회 API 오류:', error);
+    console.error('❌ 등기부등본 조회 API 오류:', error);
     return NextResponse.json(
       {
         success: false,
-        message: '납세증명서 조회 중 오류가 발생했습니다.',
+        message: '등기부등본 조회 중 오류가 발생했습니다.',
         error: error instanceof Error ? error.message : '알 수 없는 오류',
       },
       { status: 500 }

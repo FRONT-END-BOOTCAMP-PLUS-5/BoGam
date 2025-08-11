@@ -8,7 +8,7 @@ import { GetTaxCertCopyResponseDto } from '../dtos/GetTaxCertCopyResponseDto';
  * 납세확인서 복사본 조회 Usecase
  * 클린 아키텍처의 Application 레이어
  */
-export class GetTaxCertCopyusecase {
+export class GetTaxCertCopyUsecase {
   constructor(private taxCertCopyRepository: TaxCertCopyRepository) {}
 
   async getTaxCertCopy(
