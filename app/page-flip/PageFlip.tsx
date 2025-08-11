@@ -2,6 +2,7 @@
 
 import Script from 'next/script';
 import { useEffect } from 'react';
+import styles from './PageFlip.module.css';
 
 declare global {
   interface Window {
@@ -9,7 +10,6 @@ declare global {
     jQuery: any;
   }
 }
-
 
 const PageFlip = () => {
   useEffect(() => {
@@ -41,17 +41,20 @@ const PageFlip = () => {
 
   return (
     <div>
-      <Script 
+      <Script
         src="/js/jquery-3.4.1.min.js"
         strategy="beforeInteractive"
       />
-      <Script 
+      <Script
         src="/js/turn.min.js"
         strategy="afterInteractive"
       />
 
       <div id="book">
-        <div style={{ backgroundColor: 'red', width: '100%', height: '100%' }}> 첫 번째 페이지입니다. </div>
+        <div style={{ backgroundColor: 'red', width: '100%', height: '100%' }}>
+          <h1>첫 번째 페이지입니다.</h1>
+          <div className={styles.triangle}></div>
+        </div>
         <div style={{ backgroundColor: 'yellow', width: '100%', height: '100%' }}> 두 번째 페이지입니다. </div>
         <div style={{ backgroundColor: 'green', width: '100%', height: '100%' }}> 세 번째 페이지입니다. </div>
         <div style={{ backgroundColor: 'blue', width: '100%', height: '100%' }}> 네 번째 페이지입니다. </div>
