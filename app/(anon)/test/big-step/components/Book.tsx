@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AnimationMixer, AnimationClip, AnimationAction } from 'three';
 
@@ -20,13 +21,14 @@ interface BookProps {
   rotation?: THREE.Euler; // 책의 회전
   scale?: THREE.Vector3; // 책의 스케일
   id: string; // 책의 고유 ID
+  renderer?: THREE.WebGLRenderer; // WebGL 렌더러 (KTX2 지원 감지용)
 }
 
 // 책의 상태를 관리하는 클래스
 export class BookController {
   private id: string;
-  private group: THREE.Group;
-  private mixer?: AnimationMixer;
+  public group: THREE.Group;
+  public mixer?: AnimationMixer;
   private action?: AnimationAction;
   private state: 'closed' | 'open' = 'closed';
   private isAnimating: boolean = false;
@@ -48,7 +50,7 @@ export class BookController {
   private moveDuration: number = 0.4; // 이동에 걸리는 시간 (초)
   
   // 링크 URL 저장
-  private linkUrl: string;
+  public linkUrl: string;
   
   // 모든 BookController 인스턴스를 추적하기 위한 정적 배열
   private static allControllers: BookController[] = [];
@@ -363,23 +365,42 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
   const {
     position = new THREE.Vector3(0, 0, 0),
     rotation = new THREE.Euler(0, 0, 0),
-    scale = new THREE.Vector3(1, 1, 1)
+    scale = new THREE.Vector3(1, 1, 1),
+    renderer
   } = props;
+
+  const startTime = Date.now();
+  console.log(`[Book] 로딩 시작: ${new Date(startTime).toLocaleTimeString()}`);
 
   return new Promise((resolve, reject) => {
     // DRACO 로더 생성 및 설정
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('/draco/');
     
-    // GLTF 로더 생성 및 DRACO 로더 연결
+    // KTX2 로더 생성 및 설정
+    const ktx2Loader = new KTX2Loader();
+    ktx2Loader.setTranscoderPath('/basis/');
+    ktx2Loader.setCrossOrigin('anonymous');
+    
+    // renderer가 제공된 경우 KTX2 지원 감지
+    if (renderer) {
+      ktx2Loader.detectSupport(renderer);
+      console.log('[Book] KTX2 지원 감지 완료');
+    } else {
+      console.warn('[Book] renderer가 제공되지 않아 KTX2 지원 감지를 건너뜁니다');
+    }
+    
+    // GLTF 로더 생성 및 DRACO, KTX2 로더 연결
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
+    loader.setKTX2Loader(ktx2Loader);
     
     // 로더 설정
     loader.setCrossOrigin('anonymous');
     
+    console.log('[Book] 모델 로딩 시작:', '/models/Book/scene-draco-ktx.glb');
     loader.load(
-      '/models/book/scene_compressed.glb',
+      '/models/Book/scene-draco-ktx.glb',
       (gltf: GLTF) => {
         try {
           const bookGroup = new THREE.Group();
@@ -432,6 +453,9 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
           bookGroup.rotation.copy(rotation);
           bookGroup.add(bookModel);
           
+          const endTime = Date.now();
+          const totalTime = endTime - startTime;
+          console.log(`[Book] 로딩 완료: ${totalTime}ms`);
           resolve({ group: bookGroup, mixer });
         } catch (error) {
           console.error('Error processing book model:', error);

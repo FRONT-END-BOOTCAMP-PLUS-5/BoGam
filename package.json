@@ -15,6 +15,8 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@gltf-transform/core": "^4.2.1",
+    "@gltf-transform/extensions": "^4.2.1",
     "@prisma/client": "^6.13.0",
     "@types/node-rsa": "^1.1.4",
     "@types/three": "^0.179.0",
