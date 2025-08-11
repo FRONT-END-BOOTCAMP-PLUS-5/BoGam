@@ -1,5 +1,8 @@
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AnimationMixer, AnimationClip, AnimationAction } from 'three';
 
 /**
@@ -364,13 +367,19 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
   } = props;
 
   return new Promise((resolve, reject) => {
+    // DRACO 로더 생성 및 설정
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
+    
+    // GLTF 로더 생성 및 DRACO 로더 연결
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
     
     // 로더 설정
     loader.setCrossOrigin('anonymous');
     
     loader.load(
-      '/models/book/scene.gltf',
+      '/models/book/scene_compressed.glb',
       (gltf: GLTF) => {
         try {
           const bookGroup = new THREE.Group();
