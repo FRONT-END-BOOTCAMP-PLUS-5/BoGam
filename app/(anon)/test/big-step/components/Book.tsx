@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { AnimationMixer, AnimationClip, AnimationAction } from 'three';
+import { AnimationMixer, AnimationClip, AnimationAction, TextureLoader } from 'three';
 import { getKTX2Loader, getDRACOLoader } from '@utils/ktx2loader';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 /**
  * Book 3D 모델 정보
@@ -21,6 +22,7 @@ interface BookProps {
   scale?: THREE.Vector3; // 책의 스케일
   id: string; // 책의 고유 ID
   renderer?: THREE.WebGLRenderer; // WebGL 렌더러 (KTX2 지원 감지용)
+  bookId?: string; // 책 번호 (book1, book2, ...)
 }
 
 // 책의 상태를 관리하는 클래스
@@ -365,7 +367,8 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
     position = new THREE.Vector3(0, 0, 0),
     rotation = new THREE.Euler(0, 0, 0),
     scale = new THREE.Vector3(1, 1, 1),
-    renderer
+    renderer,
+    bookId
   } = props;
 
   const startTime = Date.now();
@@ -386,6 +389,7 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
     loader.setKTX2Loader(ktx2Loader);
+    loader.setMeshoptDecoder(MeshoptDecoder);
     
     // 로더 설정
     loader.setCrossOrigin('anonymous');
@@ -419,6 +423,48 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
               }
             }
           });
+
+          // 각 책마다 다른 텍스처 적용
+          if (bookId) {
+            console.log(`[Book] ${bookId}에 맞는 텍스처 적용 중...`);
+            
+            // TextureLoader 인스턴스 생성
+            const textureLoader = new THREE.TextureLoader();
+            
+            // 책 번호에 따른 베이스컬러 텍스처 경로
+            const baseColorTexturePath = `/models/book/textures/${bookId}_baseColor.png`;
+            
+            try {
+              // 베이스컬러 텍스처 로드
+              const baseColorTexture = textureLoader.load(baseColorTexturePath);
+              
+              // 텍스처 설정
+              baseColorTexture.colorSpace = THREE.SRGBColorSpace;
+              baseColorTexture.flipY = false;
+              baseColorTexture.generateMipmaps = true;
+              
+              // 모델의 재질에 텍스처 적용
+              bookModel.traverse((child: THREE.Object3D) => {
+                if (child instanceof THREE.Mesh && child.material) {
+                  if (Array.isArray(child.material)) {
+                    child.material.forEach((material: THREE.Material) => {
+                      if (material instanceof THREE.MeshStandardMaterial) {
+                        material.map = baseColorTexture;
+                        material.needsUpdate = true;
+                      }
+                    });
+                  } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                    child.material.map = baseColorTexture;
+                    child.material.needsUpdate = true;
+                  }
+                }
+              });
+              
+              console.log(`[Book] ${bookId}에 베이스컬러 텍스처 적용 완료: ${baseColorTexturePath}`);
+            } catch (error) {
+              console.error(`[Book] ${bookId} 텍스처 로딩 실패:`, error);
+            }
+          }
           
           // 애니메이션 설정
           let mixer: AnimationMixer | undefined;

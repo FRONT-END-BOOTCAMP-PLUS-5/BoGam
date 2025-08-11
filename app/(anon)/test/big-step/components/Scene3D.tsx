@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createBook, BookController } from './Book';
 import { createBookshelf } from './Bookshelf';
 
@@ -24,6 +25,7 @@ export default function Scene3D({ className }: Scene3DProps) {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
@@ -72,6 +74,17 @@ export default function Scene3D({ className }: Scene3DProps) {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    // OrbitControls 설정
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controlsRef.current = controls;
+    controls.enableDamping = true; // 부드러운 움직임
+    controls.dampingFactor = 0.05;
+    controls.screenSpacePanning = false;
+    controls.minDistance = 3; // 최소 줌 거리
+    controls.maxDistance = 20; // 최대 줌 거리
+    controls.maxPolarAngle = Math.PI / 2; // 수직 회전 제한 (바닥 아래로 못 가게)
+    controls.target.set(0, 6.2, -10); // 회전 중심점 설정
     
     // WebGL 컨텍스트 설정 및 에러 처리
     try {
@@ -125,9 +138,9 @@ export default function Scene3D({ className }: Scene3DProps) {
     const startTime = Date.now();
     setLoadingStartTime(startTime);
     
-    // 로딩 진행률 추적
-    let loadedObjects = 0;
-    const totalObjects = 7; // 책꽂이 1개 + 책 6개
+         // 로딩 진행률 추적
+     let loadedObjects = 0;
+     const totalObjects = 8; // 책꽂이 1개 + 책 7개
 
     const updateLoadingProgress = () => {
       loadedObjects++;
@@ -183,20 +196,25 @@ export default function Scene3D({ className }: Scene3DProps) {
         const clock = new THREE.Clock();
         let animationId: number;
         
-        const animateLoop = () => {
-          animationId = requestAnimationFrame(animateLoop);
-          
-          const deltaTime = clock.getDelta();
-          
-          for (const bookId in bookControllersRef.current) {
-            const bookController = bookControllersRef.current[bookId];
-            bookController.update(deltaTime);
-          }
-          
-          if (rendererRef.current && sceneRef.current && cameraRef.current) {
-            rendererRef.current.render(sceneRef.current, cameraRef.current);
-          }
-        };
+                 const animateLoop = () => {
+           animationId = requestAnimationFrame(animateLoop);
+           
+           const deltaTime = clock.getDelta();
+           
+           // OrbitControls 업데이트
+           if (controlsRef.current) {
+             controlsRef.current.update();
+           }
+           
+           for (const bookId in bookControllersRef.current) {
+             const bookController = bookControllersRef.current[bookId];
+             bookController.update(deltaTime);
+           }
+           
+           if (rendererRef.current && sceneRef.current && cameraRef.current) {
+             rendererRef.current.render(sceneRef.current, cameraRef.current);
+           }
+         };
 
         animateLoop();
 
@@ -233,14 +251,17 @@ export default function Scene3D({ className }: Scene3DProps) {
     // 책 생성 및 추가
     const loadBooks = async () => {
       try {
-        const bookPositions = [
-          { id: 'book1', position: new THREE.Vector3(-1, 10.5, -5) },
-          { id: 'book2', position: new THREE.Vector3(1, 10.5, -5) },
-          { id: 'book3', position: new THREE.Vector3(-1, 5.9, -5) },
-          { id: 'book4', position: new THREE.Vector3(1, 5.9, -5) },
-          { id: 'book5', position: new THREE.Vector3(-1, 1.82, -5) },
-          { id: 'book6', position: new THREE.Vector3(1, 1.82, -5) },
-        ];
+                 const bookPositions = [
+           // 윗층 (3개) - 왼쪽부터
+           { id: 'book1', position: new THREE.Vector3(-1.5, 10.5, -5) },
+           { id: 'book2', position: new THREE.Vector3(0, 10.5, -5) },
+           { id: 'book3', position: new THREE.Vector3(1.5, 10.5, -5) },
+           // 아래층 (4개) - 왼쪽부터
+           { id: 'book4', position: new THREE.Vector3(-2, 5.9, -5) },
+           { id: 'book5', position: new THREE.Vector3(-0.5, 5.9, -5) },
+           { id: 'book6', position: new THREE.Vector3(1, 5.9, -5) },
+           { id: 'book7', position: new THREE.Vector3(2.5, 5.9, -5) },
+         ];
 
         await Promise.all(
           bookPositions.map(async (bookConfig) => {
@@ -251,7 +272,8 @@ export default function Scene3D({ className }: Scene3DProps) {
                   rotation: new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2),
                   scale: new THREE.Vector3(1, 1, 1),
                   id: bookConfig.id,
-                  renderer: renderer
+                  renderer: renderer,
+                  bookId: bookConfig.id
                });
                book.position.copy(bookConfig.position);
                
@@ -268,13 +290,13 @@ export default function Scene3D({ className }: Scene3DProps) {
              }
            })
          );
-      } catch (error) {
-        console.error('Error loading books:', error);
-        // 에러가 발생한 경우에도 진행률 업데이트
-        for (let i = 0; i < 6; i++) {
-          updateLoadingProgress();
-        }
-      }
+             } catch (error) {
+         console.error('Error loading books:', error);
+         // 에러가 발생한 경우에도 진행률 업데이트
+         for (let i = 0; i < 7; i++) {
+           updateLoadingProgress();
+         }
+       }
     };
 
     // 모든 오브젝트 로딩 시작
@@ -312,6 +334,12 @@ export default function Scene3D({ className }: Scene3DProps) {
       // 컨트롤러 정리
       bookControllersRef.current = {};
       
+      // OrbitControls 정리
+      if (controlsRef.current) {
+        controlsRef.current.dispose();
+        controlsRef.current = null;
+      }
+      
       // 초기화 플래그 리셋
       isInitializedRef.current = false;
     };
@@ -348,18 +376,18 @@ export default function Scene3D({ className }: Scene3DProps) {
         </div>
       )}
       
-      {!isLoading && totalLoadingTime > 0 && (
-        <div className="absolute top-2 right-2 bg-green-100 border border-green-300 rounded-lg px-3 py-2 text-sm shadow-lg">
-          <div className="font-semibold text-green-800">✅ 로딩 완료!</div>
-          <div className="text-green-600">총 로딩 시간: {totalLoadingTime}ms</div>
-          <div className="text-green-500 text-xs mt-1">
-            시작: {new Date(loadingStartTime).toLocaleTimeString()}
-          </div>
-          <div className="text-green-500 text-xs">
-            완료: {new Date(loadingStartTime + totalLoadingTime).toLocaleTimeString()}
-          </div>
-        </div>
-      )}
+             {!isLoading && totalLoadingTime > 0 && (
+         <div className="mt-4 bg-green-100 border border-green-300 rounded-lg px-3 py-2 text-sm shadow-lg">
+           <div className="font-semibold text-green-800">✅ 로딩 완료!</div>
+           <div className="text-green-600">총 로딩 시간: {totalLoadingTime}ms</div>
+           <div className="text-green-500 text-xs mt-1">
+             시작: {new Date(loadingStartTime).toLocaleTimeString()}
+           </div>
+           <div className="text-green-500 text-xs">
+             완료: {new Date(loadingStartTime + totalLoadingTime).toLocaleTimeString()}
+           </div>
+         </div>
+       )}
     </div>
   );
 }

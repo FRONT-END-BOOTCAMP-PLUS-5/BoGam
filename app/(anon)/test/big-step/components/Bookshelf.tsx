@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { getKTX2Loader, getDRACOLoader } from '@utils/ktx2loader';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 interface BookshelfProps {
   position?: THREE.Vector3;
@@ -33,17 +34,18 @@ export const createBookshelf = (props: BookshelfProps = {}): Promise<THREE.Group
       console.warn('[Bookshelf] renderer가 제공되지 않아 KTX2 지원 감지를 건너뜁니다');
     }
     
-    // GLTF 로더 생성 및 DRACO, KTX2 로더 연결
+    // GLTF 로더 생성 및 DRACO, KTX2, Meshopt 로더 연결
     const loader = new GLTFLoader();
     loader.setDRACOLoader(dracoLoader);
     loader.setKTX2Loader(ktx2Loader);
+    loader.setMeshoptDecoder(MeshoptDecoder);
     
     // 로더 설정
     loader.setCrossOrigin('anonymous');
     
-    console.log('[Bookshelf] 모델 로딩 시작:', '/models/bookshelf/scene-draco-ktx.glb');
+    console.log('[Bookshelf] 모델 로딩 시작:', '/models/bookshelf/scene-draco-ktx-optimized.glb');
     loader.load(
-      '/models/bookshelf/scene-draco-ktx.glb',
+      '/models/bookshelf/scene-draco-ktx-optimized.glb',
       (gltf: GLTF) => {
         try {
           const bookshelfGroup = new THREE.Group();
