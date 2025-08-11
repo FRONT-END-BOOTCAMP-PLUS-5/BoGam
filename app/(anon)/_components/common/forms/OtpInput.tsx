@@ -1,4 +1,5 @@
 'use client';
+import '@/styles/globals.css';
 import { useRef } from 'react';
 import s from '@/(anon)/_components/common/forms/Forms.module.css';
 

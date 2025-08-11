@@ -1,4 +1,5 @@
 'use client';
+import '@/globals.css';
 import { ReactNode } from 'react';
 import s from '@/(anon)/_components/common/forms/Forms.module.css';
 

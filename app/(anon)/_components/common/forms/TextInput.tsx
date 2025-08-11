@@ -1,4 +1,5 @@
 'use client';
+import '@/globals.css';
 import { InputHTMLAttributes, ReactNode, useId, useState } from 'react';
 import s from '@/(anon)/_components/common/forms/Forms.module.css';
 

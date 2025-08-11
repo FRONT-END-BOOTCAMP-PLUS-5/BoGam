@@ -1,13 +1,4 @@
-/* 공통 색/테마 */
-:root {
-  --brand: #4b72a6;
-  --border: #e5e7eb;
-  --text: #111827;
-  --muted: #6b7280;
-  --error: #d56666;
-  --bg: #ffffff;
-  --ring: rgba(75, 114, 166, 0.35);
-}
+
 
 /* 필드 레이아웃 */
 .field {
