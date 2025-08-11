@@ -398,9 +398,9 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
     // 로더 설정
     loader.setCrossOrigin('anonymous');
     
-    console.log('[Book] 모델 로딩 시작:', '/models/Book/scene-draco-ktx.glb');
+    console.log('[Book] 모델 로딩 시작:', '/models/book/scene-draco-ktx.glb');
     loader.load(
-      '/models/Book/scene-draco-ktx.glb',
+      '/models/book/scene-draco-ktx.glb',
       (gltf: GLTF) => {
         try {
           const bookGroup = new THREE.Group();
