@@ -33,6 +33,7 @@ export class AddUserAddressUseCase {
           legalDistrictCode: request.legalDistrictCode,
           dong: request.dong,
           ho: request.ho,
+          lotAddress: request.lotAddress,
         });
 
       let addressId: number;
@@ -48,6 +49,7 @@ export class AddUserAddressUseCase {
           legalDistrictCode: request.legalDistrictCode,
           dong: request.dong,
           ho: request.ho,
+          lotAddress: request.lotAddress,
         });
         addressId = newAddress.id;
       }
