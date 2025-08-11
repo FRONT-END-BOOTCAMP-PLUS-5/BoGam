@@ -122,13 +122,13 @@
   ],
   "images": [
     {
-      "uri": "textures/initialShadingGroup_baseColor.png"
+      "uri": "textures/initialShadingGroup_baseColor.webp"
     },
     {
-      "uri": "textures/initialShadingGroup_metallicRoughness.png"
+      "uri": "textures/initialShadingGroup_metallicRoughness.webp"
     },
     {
-      "uri": "textures/initialShadingGroup_normal.png"
+      "uri": "textures/initialShadingGroup_normal.webp"
     }
   ],
   "materials": [

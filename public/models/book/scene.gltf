@@ -561,13 +561,13 @@
   ],
   "images": [
     {
-      "uri": "textures/book_baseColor.png"
+      "uri": "textures/book_baseColor.webp"
     },
     {
-      "uri": "textures/book_metallicRoughness.png"
+      "uri": "textures/book_metallicRoughness.webp"
     },
     {
-      "uri": "textures/book_normal.png"
+      "uri": "textures/book_normal.webp"
     }
   ],
   "materials": [
