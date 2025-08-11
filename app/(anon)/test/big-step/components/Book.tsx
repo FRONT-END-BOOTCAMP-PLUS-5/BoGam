@@ -3,8 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AnimationMixer, AnimationClip, AnimationAction, TextureLoader } from 'three';
-import { getKTX2Loader, getDRACOLoader } from '@utils/ktx2loader';
-import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { initializeCommonGLTFLoader, getCommonTextureLoader, loadModelFromCache } from '@utils/gltfTextureLoaders';
 
 /**
  * Book 3D 모델 정보
@@ -362,6 +361,8 @@ export class BookController {
   }
 }
 
+import axios from 'axios';
+
 export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixer?: AnimationMixer }> => {
   const {
     position = new THREE.Vector3(0, 0, 0),
@@ -372,141 +373,146 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
   } = props;
 
   const startTime = Date.now();
-  console.log(`[Book] 로딩 시작: ${new Date(startTime).toLocaleTimeString()}`);
+  console.log(`[Book] ${bookId || '책'} 생성 시작: ${new Date(startTime).toLocaleTimeString()}`);
 
-  return new Promise((resolve, reject) => {
-    // 싱글톤 로더 인스턴스 가져오기
-    const dracoLoader = getDRACOLoader();
-    const ktx2Loader = getKTX2Loader(renderer);
-    
-    if (renderer) {
-      console.log('[Book] KTX2 지원 감지 완료');
-    } else {
-      console.warn('[Book] renderer가 제공되지 않아 KTX2 지원 감지를 건너뜁니다');
-    }
-    
-    // GLTF 로더 생성 및 DRACO, KTX2 로더 연결
-    const loader = new GLTFLoader();
-    loader.setDRACOLoader(dracoLoader);
-    loader.setKTX2Loader(ktx2Loader);
-    loader.setMeshoptDecoder(MeshoptDecoder);
-    
-    // 로더 설정
-    loader.setCrossOrigin('anonymous');
-    
-    console.log('[Book] 모델 로딩 시작:', '/models/book/scene-draco-ktx.glb');
-    loader.load(
-      '/models/book/scene-draco-ktx.glb',
-      (gltf: GLTF) => {
-        try {
-          const bookGroup = new THREE.Group();
-          const bookModel = gltf.scene;
-          
-          // 모델 스케일 조정
-          bookModel.scale.copy(scale);
-          
-          // 모델에 그림자 설정 및 재질 변경
-          bookModel.traverse(async (child: THREE.Object3D) => {
-            if (child instanceof THREE.Mesh) {
-              child.castShadow = true; // 그림자 생성
-              child.receiveShadow = true; // 그림자 받기
-              
-              // 재질이 있는 경우에만 처리
-              if (child.material && Array.isArray(child.material)) {
-                child.material.forEach((material: THREE.Material) => {
-                  if (material instanceof THREE.MeshStandardMaterial) {
-                    material.needsUpdate = true;
-                  }
-                });
-              } else if (child.material && child.material instanceof THREE.MeshStandardMaterial) {
-                child.material.needsUpdate = true;
-              }
-            }
-          });
-
-          // 각 책마다 다른 텍스처 적용
-          if (bookId) {
-            console.log(`[Book] ${bookId}에 맞는 텍스처 적용 중...`);
-            
-            // TextureLoader 인스턴스 생성
-            const textureLoader = new THREE.TextureLoader();
-            
-            // 책 번호에 따른 베이스컬러 텍스처 경로
-            const baseColorTexturePath = `/models/book/textures/${bookId}_baseColor.png`;
-            
+  return new Promise(async (resolve, reject) => {
+    try {
+      // 1. 공통 로더 초기화
+      const loader = initializeCommonGLTFLoader(renderer);
+      
+      // 2. 캐시 우선 모델 로더 사용 (캐시에 있으면 캐시에서, 없으면 다운로드)
+       console.log('[Book] 모델 데이터 로드 시작');
+       const modelData = await loadModelFromCache('/models/optimized/book-draco-ktx.glb');
+       console.log('[Book] 모델 데이터 로드 완료');
+      
+      // 3. Blob URL 생성 (모델별로 새로 생성)
+      const blob = new Blob([modelData], { type: 'model/gltf-binary' });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      console.log('[Book] 모델 파싱 시작:', '/models/optimized/book-draco-ktx.glb');
+      
+      loader.load(
+        blobUrl,
+          (gltf: GLTF) => {
             try {
-              // 베이스컬러 텍스처 로드
-              const baseColorTexture = textureLoader.load(baseColorTexturePath);
-              
-              // 텍스처 설정
-              baseColorTexture.colorSpace = THREE.SRGBColorSpace;
-              baseColorTexture.flipY = false;
-              baseColorTexture.generateMipmaps = true;
-              
-              // 모델의 재질에 텍스처 적용
-              bookModel.traverse((child: THREE.Object3D) => {
-                if (child instanceof THREE.Mesh && child.material) {
-                  if (Array.isArray(child.material)) {
-                    child.material.forEach((material: THREE.Material) => {
-                      if (material instanceof THREE.MeshStandardMaterial) {
-                        material.map = baseColorTexture;
-                        material.needsUpdate = true;
-                      }
-                    });
-                  } else if (child.material instanceof THREE.MeshStandardMaterial) {
-                    child.material.map = baseColorTexture;
-                    child.material.needsUpdate = true;
-                  }
-                }
-              });
-              
-              console.log(`[Book] ${bookId}에 베이스컬러 텍스처 적용 완료: ${baseColorTexturePath}`);
-            } catch (error) {
-              console.error(`[Book] ${bookId} 텍스처 로딩 실패:`, error);
-            }
-          }
-          
-          // 애니메이션 설정
-          let mixer: AnimationMixer | undefined;
-          if (gltf.animations && gltf.animations.length > 0) {
-            mixer = new AnimationMixer(bookModel);
-            mixer.timeScale = 6; // 애니메이션 속도를 6배로 설정
+              // Blob URL은 공통으로 사용하므로 정리하지 않음
             
-            gltf.animations.forEach((clip: AnimationClip) => {
-              const action = mixer!.clipAction(clip);
-              action.loop = THREE.LoopOnce; // 한 번만 재생
-              action.clampWhenFinished = true; // 애니메이션 끝나면 마지막 프레임 유지
-              action.enabled = true;
-              action.play(); // 반드시 play해서 포즈 계산 가능하게 함
-              action.paused = true; // 재생 멈춤
-              action.time = 0; // 0프레임으로 이동
+            const bookGroup = new THREE.Group();
+            const bookModel = gltf.scene;
+            
+            // 모델 스케일 조정
+            bookModel.scale.copy(scale);
+            
+            // 모델에 그림자 설정 및 재질 변경
+            bookModel.traverse(async (child: THREE.Object3D) => {
+              if (child instanceof THREE.Mesh) {
+                child.castShadow = true; // 그림자 생성
+                child.receiveShadow = true; // 그림자 받기
+                
+                // 재질이 있는 경우에만 처리
+                if (child.material && Array.isArray(child.material)) {
+                  child.material.forEach((material: THREE.Material) => {
+                    if (material instanceof THREE.MeshStandardMaterial) {
+                      material.needsUpdate = true;
+                    }
+                  });
+                } else if (child.material && child.material instanceof THREE.MeshStandardMaterial) {
+                  child.material.needsUpdate = true;
+                }
+              }
             });
 
-            // 포즈를 실제로 적용
-            mixer.update(0);
+            // 각 책마다 다른 텍스처 적용
+            if (bookId) {
+              console.log(`[Book] ${bookId}에 맞는 텍스처 적용 중...`);
+              
+              // 공통 텍스처 로더 사용
+              const textureLoader = getCommonTextureLoader();
+              
+              // 책 번호에 따른 베이스컬러 텍스처 경로
+              const baseColorTexturePath = `/models/book/textures/${bookId}_baseColor.png`;
+              
+              try {
+                // 베이스컬러 텍스처 로드
+                const baseColorTexture = textureLoader.load(baseColorTexturePath);
+                
+                // 텍스처 설정
+                baseColorTexture.colorSpace = THREE.SRGBColorSpace;
+                baseColorTexture.flipY = false;
+                baseColorTexture.generateMipmaps = true;
+                
+                // 모델의 재질에 텍스처 적용
+                bookModel.traverse((child: THREE.Object3D) => {
+                  if (child instanceof THREE.Mesh && child.material) {
+                    if (Array.isArray(child.material)) {
+                      child.material.forEach((material: THREE.Material) => {
+                        if (material instanceof THREE.MeshStandardMaterial) {
+                          material.map = baseColorTexture;
+                          material.needsUpdate = true;
+                        }
+                      });
+                    } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                      child.material.map = baseColorTexture;
+                      child.material.needsUpdate = true;
+                    }
+                  }
+                });
+                
+                console.log(`[Book] ${bookId}에 베이스컬러 텍스처 적용 완료: ${baseColorTexturePath}`);
+              } catch (error) {
+                console.error(`[Book] ${bookId} 텍스처 로딩 실패:`, error);
+              }
+            }
+            
+            // 애니메이션 설정
+            let mixer: AnimationMixer | undefined;
+            if (gltf.animations && gltf.animations.length > 0) {
+              mixer = new AnimationMixer(bookModel);
+              mixer.timeScale = 6; // 애니메이션 속도를 6배로 설정
+              
+              gltf.animations.forEach((clip: AnimationClip) => {
+                const action = mixer!.clipAction(clip);
+                action.loop = THREE.LoopOnce; // 한 번만 재생
+                action.clampWhenFinished = true; // 애니메이션 끝나면 마지막 프레임 유지
+                action.enabled = true;
+                action.play(); // 반드시 play해서 포즈 계산 가능하게 함
+                action.paused = true; // 재생 멈춤
+                action.time = 0; // 0프레임으로 이동
+              });
+
+              // 포즈를 실제로 적용
+              mixer.update(0);
+            }
+            
+            // 위치와 회전 설정
+            bookGroup.position.copy(position);
+            bookGroup.rotation.copy(rotation);
+            bookGroup.add(bookModel);
+            
+            const endTime = Date.now();
+            const totalTime = endTime - startTime;
+            console.log(`[Book] 로딩 완료: ${totalTime}ms`);
+                        resolve({ group: bookGroup, mixer });
+          } catch (error) {
+            // Blob URL 정리
+            URL.revokeObjectURL(blobUrl);
+            console.error('Error processing book model:', error);
+            reject(error);
           }
-          
-          // 위치와 회전 설정
-          bookGroup.position.copy(position);
-          bookGroup.rotation.copy(rotation);
-          bookGroup.add(bookModel);
-          
-          const endTime = Date.now();
-          const totalTime = endTime - startTime;
-          console.log(`[Book] 로딩 완료: ${totalTime}ms`);
-          resolve({ group: bookGroup, mixer });
-        } catch (error) {
-          console.error('Error processing book model:', error);
+        },
+        (progress: ProgressEvent) => {
+          // 로딩 진행률 로그 제거
+        },
+        (error: unknown) => {
+          // Blob URL 정리
+          URL.revokeObjectURL(blobUrl);
+          console.error('Error loading book model:', error);
           reject(error);
         }
-      },
-      (progress: ProgressEvent) => {
-        // 로딩 진행률 로그 제거
-      },
-      (error: unknown) => {
-        console.error('Error loading book model:', error);
-        reject(error);
-      }
-    );
+      );
+    } catch (error) {
+      console.error('[Book] 모델 로딩 중 오류:', error);
+      reject(error);
+    }
   });
 };

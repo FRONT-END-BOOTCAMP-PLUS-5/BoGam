@@ -230,17 +230,18 @@ export default function Scene3D({ className }: Scene3DProps) {
     // 책 생성 및 추가
     const loadBooks = async () => {
       try {
-                 const bookPositions = [
-           // 윗층 (3개) - 왼쪽부터
-           { id: 'book1', position: new THREE.Vector3(-1.5, 10.4, -5) },
-           { id: 'book2', position: new THREE.Vector3(0, 10.4, -5) },
-           { id: 'book3', position: new THREE.Vector3(1.5, 10.4, -5) },
-           // 아래층 (4개) - 왼쪽부터
-           { id: 'book4', position: new THREE.Vector3(-2, 5.8, -5) },
-           { id: 'book5', position: new THREE.Vector3(-0.5, 5.8, -5) },
-           { id: 'book6', position: new THREE.Vector3(1, 5.8, -5) },
-           { id: 'book7', position: new THREE.Vector3(2.5, 5.8, -5) },
-         ];
+
+       const bookPositions = [
+          // 윗층 (3개) - 왼쪽부터 1, 2, 3
+          { id: 'book1', position: new THREE.Vector3(-1.5, 10.4, -5) },
+          { id: 'book2', position: new THREE.Vector3(0, 10.4, -5) },
+          { id: 'book3', position: new THREE.Vector3(1.5, 10.4, -5) },
+          // 아래층 (4개) - 왼쪽부터 4, 5, 6, 7
+          { id: 'book4', position: new THREE.Vector3(-2, 5.8, -5) },
+          { id: 'book5', position: new THREE.Vector3(-0.5, 5.8, -5) },
+          { id: 'book6', position: new THREE.Vector3(1, 5.8, -5) },
+          { id: 'book7', position: new THREE.Vector3(2.5, 5.8, -5) },
+        ];
 
         await Promise.all(
           bookPositions.map(async (bookConfig) => {
