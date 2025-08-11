@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetBrokerUsecase } from '@be/applications/brokers/usecases/GetBrokerUsecase';
+import { GetBrokerusecase } from '@be/applications/brokers/usecases/GetBrokerusecase';
 import { ApiBrokerRepository } from '@be/infrastructure/repository/ApiBrokerRepository';
 
 export async function GET(req: NextRequest) {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (!key) {
     return NextResponse.json({ status: 500 });
   }
-  const usecase = new GetBrokerUsecase(new ApiBrokerRepository());
+  const usecase = new GetBrokerusecase(new ApiBrokerRepository());
   const result = await usecase.execute(brkrNm, bsnmCmpnm);
   return NextResponse.json(result);
 }

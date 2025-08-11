@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { TransactionDetailApartRepository } from '@be/domain/repository/TransactionDetailApartRepository';
 import { TransactionDetailApartRequest } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartRequest';
@@ -17,7 +17,7 @@ export class TransactionDetailApartRepositoryImpl
     this.codefAuth = createCodefAuth();
   }
 
-  async getTransactionDetailApart(
+  async getTransactionDetailApartList(
     request: TransactionDetailApartRequest
   ): Promise<GetTransactionDetailApartResponse> {
     try {
@@ -40,13 +40,6 @@ export class TransactionDetailApartRepositoryImpl
 
       // 필요한 필드만 남기기
       const sanitized = sanitizeTransactionDetailApartResponse(data);
-
-      console.log('✅ 실거래가 조회 성공:', {
-        status: response.status,
-        resultCode: sanitized?.result?.code,
-        resultMessage: sanitized?.result?.message,
-        hasData: !!sanitized?.data,
-      });
 
       return sanitized;
     } catch (error) {

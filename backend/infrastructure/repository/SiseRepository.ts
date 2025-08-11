@@ -1,12 +1,14 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import {
-  SiseApiResponse,
-  SiseRequest,
-} from '@be/applications/sise/dtos/SiseDto';
+  loadCodefConfig,
+  validateCodefConfig,
+} from '@libs/codef/codefEnvironment';
+import { GetRealEstatesResponseDto } from '@be/applications/realEstates/dtos/GetRealEstatesResponseDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
+import { GetSiseInfoRequestDto } from '@be/applications/sises/dtos/GetSiseInfoRequestDto';
+import { GetSiseInfoResponseDto } from '@be/applications/sises/dtos/GetSiseInfoResponseDto';
 
 /**
  * 시세정보 조회 Repository 구현체
@@ -21,7 +23,9 @@ export class SiseRepository {
    * @param request 시세정보 조회 요청 데이터
    * @returns 시세정보 조회 응답 데이터
    */
-  async fetchSiseInfo(request: SiseRequest): Promise<SiseApiResponse> {
+  async fetchSiseInfo(
+    request: GetSiseInfoRequestDto
+  ): Promise<GetSiseInfoResponseDto> {
     try {
       // CODEF 설정 검증
       const config = loadCodefConfig();
@@ -31,16 +35,6 @@ export class SiseRepository {
 
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
-
-      console.log('💰 시세정보 조회 요청 중...', {
-        endpoint: this.endpoint,
-        organization: request.organization,
-        searchGbn: request.searchGbn,
-        complexNo: request.complexNo,
-        dong: request.dong,
-        ho: request.ho,
-        is2Way: 'is2Way' in request ? request.is2Way : false,
-      });
 
       const url = `${this.endpoint}`;
 
@@ -53,16 +47,8 @@ export class SiseRepository {
       });
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: SiseApiResponse = processResponse<SiseApiResponse>(
-        response.data
-      );
-
-      console.log('✅ 시세정보 조회 성공:', {
-        status: response.status,
-        resultCode: data?.result?.code,
-        resultMessage: data?.result?.message,
-        hasData: !!data?.data,
-      });
+      const data: GetSiseInfoResponseDto =
+        processResponse<GetSiseInfoResponseDto>(response.data);
 
       return data;
     } catch (error) {

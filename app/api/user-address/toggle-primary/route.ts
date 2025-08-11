@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@libs/auth';
-import { TogglePrimaryAddressUseCase } from '@be/applications/place/usecases/TogglePrimaryAddressUseCase';
+import { TogglePrimaryAddressUsecase } from '@be/applications/places/usecases/TogglePrimaryAddressUsecase';
 import { TogglePrimaryAddressRepositoryImpl } from '@be/infrastructure/repository/TogglePrimaryAddressRepositoryImpl';
 import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
-import { TogglePrimaryAddressRequestDto } from '@be/applications/place/dtos/TogglePrimaryAddressDto';
+import { TogglePrimaryAddressRequestDto } from '@be/applications/places/dtos/TogglePrimaryAddressDto';
 
 export async function PUT(request: NextRequest) {
   try {
@@ -27,15 +27,15 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // UseCase 실행
+    // Usecase 실행
     const userAddressRepository = new TogglePrimaryAddressRepositoryImpl();
     const userRepository = new UserRepositoryImpl();
-    const togglePrimaryAddressUseCase = new TogglePrimaryAddressUseCase(
+    const togglePrimaryAddressUsecase = new TogglePrimaryAddressUsecase(
       userAddressRepository,
       userRepository
     );
 
-    const result = await togglePrimaryAddressUseCase.updatePrimaryAddress(
+    const result = await togglePrimaryAddressUsecase.updatePrimaryAddress(
       session.user.nickname,
       body
     );

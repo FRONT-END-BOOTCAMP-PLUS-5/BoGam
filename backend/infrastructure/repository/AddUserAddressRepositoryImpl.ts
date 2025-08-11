@@ -1,10 +1,10 @@
 import { prisma } from '@utils/prisma';
 import { AddUserAddressRepository } from '@be/domain/repository/AddUserAddressRepository';
-import { UserAddressInfo } from '@be/applications/place/dtos/UserAddressDto';
+import { UserAddressInfo } from '@be/applications/places/dtos/UserAddressDto';
 import {
   AddressInfo,
   AddressLocationParams,
-} from '@be/applications/place/dtos/AddressDto';
+} from '@be/applications/places/dtos/AddressDto';
 import {
   mapAddressToAddressInfo,
   mapUserAddressToUserAddressInfo,
@@ -82,7 +82,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
       data: {
         userId,
         addressId,
-        nickname: addressNickname,
+        nickname: addressNickname || `주소_${Date.now()}`, // nickname이 필수이므로 기본값 제공
         isPrimary: false,
       },
     });

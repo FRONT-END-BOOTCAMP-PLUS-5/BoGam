@@ -1,6 +1,9 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
+import {
+  loadCodefConfig,
+  validateCodefConfig,
+} from '@libs/codef/codefEnvironment';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { TransactionDetailSingleRepository } from '@be/domain/repository/TransactionDetailSingleRepository';
 import { TransactionDetailSingleRequest } from '@be/applications/transactionDetailSingle/dtos/TransactionDetailSingleRequest';
@@ -23,7 +26,7 @@ export class TransactionDetailSingleRepositoryImpl
     this.codefAuth = createCodefAuth();
   }
 
-  async getTransactionDetailSingle(
+  async getTransactionDetailSingleList(
     request: TransactionDetailSingleRequest
   ): Promise<GetTransactionDetailSingleResponse> {
     const accessToken = await this.codefAuth.getAccessToken();

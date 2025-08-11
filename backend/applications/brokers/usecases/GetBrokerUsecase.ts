@@ -1,7 +1,7 @@
 import { BrokerRepository } from '@be/domain/repository/BrokerRepository';
 import { Broker } from '@be/domain/entities/Broker';
 
-export class GetBrokerUsecase {
+export class GetBrokerusecase {
     constructor(
         private brokerRepository: BrokerRepository
     ) {}

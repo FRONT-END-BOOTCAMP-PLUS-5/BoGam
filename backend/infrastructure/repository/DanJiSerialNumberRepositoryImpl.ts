@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { DanJiSerialNumberRepository } from '@be/domain/repository/DanJiSerialNumberRepository';
-import { DanJiSerialNumberRequest } from '@be/applications/danJiSerialNumber/dtos/DanJiSerialNumberRequest';
-import { GetDanJiSerialNumberResponse } from '@be/applications/danJiSerialNumber/dtos/DanJiSerialNumberResponse';
+import { DanJiSerialNumberRequest } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberRequest';
+import { GetDanJiSerialNumberResponse } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberResponse';
 import { processResponse } from '@libs/responseUtils';
 
 /**
@@ -36,6 +36,8 @@ export class DanJiSerialNumberRepositoryImpl
     try {
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
+
+      console.log('request', request);
 
       // API 요청 실행
       const response = await axios.post(

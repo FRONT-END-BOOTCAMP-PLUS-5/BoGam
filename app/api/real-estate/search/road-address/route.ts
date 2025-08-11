@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RealEstateUseCase } from '@be/applications/realEstate/usecases/RealEstateUseCase';
-import { encryptPassword } from '@libs/codefEncryption';
-import { IssueResultRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
-import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
+import { GetRealEstatesUsecase } from '@be/applications/realEstate/usecases/GetRealEstatesUsecase';
+import { encryptPassword } from '@libs/codef/codefEncryption';
+import { IssueResultRequest } from '@be/applications/realEstate/dtos/GetRealEstatesRequestDto';
+import { CreateRealEstateCopyUsecase } from '@be/applications/realEstateCopies/usecases/CreateRealEstateCopyUsecase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { getUserAddressIdByNickname } from '@utils/userAddress';
 
-const useCase = new RealEstateUseCase();
+const usecase = new GetRealEstatesUsecase();
 
 export async function POST(request: NextRequest) {
   try {
@@ -82,7 +82,6 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '3' as const,
-      userAddressNickname: body.userAddressNickname,
       issueType: body.issueType || '1',
       ePrepayNo: body.ePrepayNo || '',
       ePrepayPass: body.ePrepayPass || '',
@@ -100,8 +99,8 @@ export async function POST(request: NextRequest) {
       identityList: body.identityList,
     };
 
-    // UseCase 호출
-    const response = await useCase.getRealEstateRegistry(apiRequest);
+    // Usecase 호출
+    const response = await usecase.getRealEstate(apiRequest);
 
     // CODEF API 성공 코드 확인 (CF-00000일 때만 성공으로 처리)
     const codefResultCode = response?.result?.code;
@@ -111,7 +110,7 @@ export async function POST(request: NextRequest) {
       // CF-00000 (완전 성공) - DB에 저장
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
-        const dbUseCase = new RealEstateCopyUseCase(dbRepository);
+        const dbUsecase = new CreateRealEstateCopyUsecase(dbRepository);
 
         const userAddressId = await getUserAddressIdByNickname(
           body.userAddressNickname
@@ -124,12 +123,12 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        const isSuccess = await dbUseCase.upsertRealEstateCopy({
+        const createResponse = await dbUsecase.createRealEstateCopy({
           userAddressId,
           realEstateJson: JSON.parse(JSON.stringify(response)),
         });
 
-        if (isSuccess) {
+        if (createResponse.success) {
           console.log('✅ 등기부등본 DB upsert 완료:', {
             userAddressId,
           });

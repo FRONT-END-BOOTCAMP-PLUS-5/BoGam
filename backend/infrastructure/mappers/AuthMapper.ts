@@ -1,6 +1,6 @@
 import { UserEntity } from '@be/domain/entities/UserEntity';
-import { UserInfo } from '@be/applications/user/dtos/UserDto';
-import { RegisterResponseDto } from '@be/applications/user/dtos/SignUpDtos';
+import { UserInfo } from '@be/applications/users/dtos/UserDto';
+import { RegisterResponseDto } from '@be/applications/users/dtos/SignUpDtos';
 
 export class AuthMapper {
   /**

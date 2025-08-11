@@ -1,4 +1,4 @@
-import { UserAddressWithAddressInfo } from '@be/applications/place/dtos/UserAddressDto';
+import { UserAddressWithAddressInfo } from '@be/applications/places/dtos/UserAddressDto';
 
 export interface GetUserAddressesRepository {
   findUserAddressesByUserId(

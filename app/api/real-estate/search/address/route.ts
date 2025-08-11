@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { encryptPassword } from '@libs/codefEncryption';
-import { DetailInquiryRequest } from '@be/applications/realEstate/dtos/RealEstateRequest';
-import { RealEstateUseCase } from '@be/applications/realEstate/usecases/RealEstateUseCase';
-import { RealEstateCopyUseCase } from '@be/applications/realEstateCopy/usecases/RealEstateCopyUseCase';
+import { encryptPassword } from '@libs/codef/codefEncryption';
+import { DetailInquiryRequest } from '@be/applications/realEstate/dtos/GetRealEstatesRequestDto';
+import { GetRealEstatesUsecase } from '@be/applications/realEstate/usecases/GetRealEstatesUsecase';
+import { CreateRealEstateCopyUsecase } from '@be/applications/realEstateCopies/usecases/CreateRealEstateCopyUsecase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
-import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
+import { GetRealEstatesResponseDto } from '@be/applications/realEstate/dtos/GetRealEstatesResponseDto';
 import { getUserAddressIdByNickname } from '@utils/userAddress';
 
-const useCase = new RealEstateUseCase();
+const usecase = new GetRealEstatesUsecase();
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,13 +40,6 @@ export async function POST(request: NextRequest) {
     // if (body.password.length !== 4 || !/^\d{4}$/.test(body.password)) {
     //   return NextResponse.json(
     //     { success: false, message: '비밀번호는 4자리 숫자여야 합니다.' },
-    //     { status: 400 }
-    //   );
-    // }
-
-    // if (body.inquiryType !== '1') {
-    //   return NextResponse.json(
-    //     { success: false, message: 'inquiryType은 1이어야 합니다.' },
     //     { status: 400 }
     //   );
     // }
@@ -107,7 +100,6 @@ export async function POST(request: NextRequest) {
       phoneNo: body.phoneNo || '01000000000',
       password: await encryptPassword(body.password), // RSA 암호화
       inquiryType: '1' as const,
-      userAddressNickname: body.userAddressNickname,
       issueType: body.issueType || '1',
 
       //------------------공통 옵션 파라미터-------------------
@@ -145,34 +137,17 @@ export async function POST(request: NextRequest) {
     }
 
     // UseCase 호출
-    let response: GetRealEstateResponse;
+    let response: GetRealEstatesResponseDto;
 
     if (isTwoWayAuth) {
       // 2-way 인증 요청
-      response = await useCase.handleTwoWayAuth(
+      response = await usecase.handleTwoWayAuth(
         apiRequest as unknown as Record<string, unknown>
       );
     } else {
       // 일반 요청
-      response = await useCase.getRealEstateRegistry(apiRequest);
+      response = await usecase.getRealEstate(apiRequest);
     }
-
-    // 응답 검증은 주석 처리 (개발 중)
-    // const validationResult = useCase.validateResponse(response);
-    // if (!validationResult.isValid) {
-    //   if (validationResult.requiresTwoWayAuth) {
-    //     return NextResponse.json({
-    //       success: false,
-    //       message: '추가인증이 필요합니다.',
-    //       requiresTwoWayAuth: true,
-    //       twoWayInfo: response.data,
-    //     });
-    //   }
-    //   return NextResponse.json(
-    //     { success: false, message: validationResult.message },
-    //     { status: 400 }
-    //   );
-    // }
 
     // CODEF API 성공 코드 확인
     const codefResultCode = response?.result?.code;
@@ -182,7 +157,7 @@ export async function POST(request: NextRequest) {
       // CF-00000 (완전 성공) - DB에 저장
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
-        const dbUseCase = new RealEstateCopyUseCase(dbRepository);
+        const dbUseCase = new CreateRealEstateCopyUsecase(dbRepository);
 
         const userAddressId = await getUserAddressIdByNickname(
           body.userAddressNickname
@@ -195,12 +170,12 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        const isSuccess = await dbUseCase.upsertRealEstateCopy({
+        const createResponse = await dbUseCase.createRealEstateCopy({
           userAddressId: userAddressId,
           realEstateJson: JSON.parse(JSON.stringify(response)),
         });
 
-        if (isSuccess) {
+        if (createResponse.success) {
           console.log('✅ 등기부등본 DB upsert 완료:', {
             userAddressNickname: body.userAddressNickname,
           });
@@ -236,7 +211,7 @@ export async function POST(request: NextRequest) {
       }
     } else if (codefResultCode === 'CF-03002') {
       // 추가인증 필요 - 202 Accepted
-      const twoWayInfo = useCase.extractTwoWayInfo(response);
+      const twoWayInfo = usecase.extractTwoWayInfo(response);
 
       return NextResponse.json(
         {
@@ -244,7 +219,9 @@ export async function POST(request: NextRequest) {
           message: '추가인증이 필요합니다.',
           requiresTwoWayAuth: true,
           twoWayInfo: twoWayInfo,
-          resAddrList: response.data?.extraInfo?.resAddrList || [],
+          resAddrList:
+            (response.data as { extraInfo?: { resAddrList?: unknown[] } })
+              ?.extraInfo?.resAddrList || [],
           data: response,
           resultCode: codefResultCode,
         },

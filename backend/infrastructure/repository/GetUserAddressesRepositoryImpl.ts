@@ -1,6 +1,6 @@
 import { prisma } from '@utils/prisma';
 import { GetUserAddressesRepository } from '@be/domain/repository/GetUserAddressesRepository';
-import { UserAddressWithAddressInfo } from '@be/applications/place/dtos/UserAddressDto';
+import { UserAddressWithAddressInfo } from '@be/applications/places/dtos/UserAddressDto';
 
 export class GetUserAddressesRepositoryImpl
   implements GetUserAddressesRepository
