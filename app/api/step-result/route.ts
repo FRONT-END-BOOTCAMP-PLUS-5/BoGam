@@ -83,6 +83,10 @@ export async function POST(request: NextRequest) {
       errors.push('stepId 또는 mainNum+subNum이 필요합니다.');
     }
     
+    if (!body.details) {
+      errors.push('details는 필수입니다.');
+    }
+    
     if (errors.length > 0) {
       return NextResponse.json(
         { success: false, error: errors.join(', ') },
