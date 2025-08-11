@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { TransactionDetailApartRepository } from '@be/domain/repository/TransactionDetailApartRepository';
 import { TransactionDetailApartRequest } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartRequest';
@@ -15,11 +14,6 @@ export class TransactionDetailApartRepositoryImpl
   private readonly timeout = 100000; // 100초
 
   constructor() {
-    const config = loadCodefConfig();
-    const validation = validateCodefConfig(config);
-    if (!validation.isValid) {
-      console.warn('⚠️ CODEF 설정 검증 실패:', validation.errors);
-    }
     this.codefAuth = createCodefAuth();
   }
 
