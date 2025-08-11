@@ -9,6 +9,12 @@ export const CODEF_API_CONFIG = {
   SISE_ENDPOINT: '/v1/kr/public/lt/real-estate-board/market-price-information',
   HOUSING_PRICE_ENDPOINT: '/v1/kr/public/lt/kras-real-estate/housing-price',
   REB_HOUSING_PRICE_ENDPOINT: '/v1/kr/public/lt/reb-real-estate/housing-price',
+  DANJI_SERIAL_NUMBER_ENDPOINT:
+    '/v1/kr/public/lt/actual-transaction-price/serial-number',
+  ACTUAL_TRANSACTION_APARTMENT_ENDPOINT:
+    '/v1/kr/public/lt/actual-transaction-price/apartment',
+  ACTUAL_TRANSACTION_HOUSE_ENDPOINT:
+    '/v1/kr/public/lt/actual-transaction-price/house',
 
   // 전체 URL (BASE_URL + ENDPOINT)
   get TAX_CERT_FULL_URL() {
@@ -30,16 +36,28 @@ export const CODEF_API_CONFIG = {
   get REB_HOUSING_PRICE_FULL_URL() {
     return `${this.BASE_URL}${this.REB_HOUSING_PRICE_ENDPOINT}`;
   },
+
+  get DANJI_SERIAL_NUMBER_FULL_URL() {
+    return `${this.BASE_URL}${this.DANJI_SERIAL_NUMBER_ENDPOINT}`;
+  },
+
+  get ACTUAL_TRANSACTION_APARTMENT_FULL_URL() {
+    return `${this.BASE_URL}${this.ACTUAL_TRANSACTION_APARTMENT_ENDPOINT}`;
+  },
+
+  get ACTUAL_TRANSACTION_HOUSE_FULL_URL() {
+    return `${this.BASE_URL}${this.ACTUAL_TRANSACTION_HOUSE_ENDPOINT}`;
+  },
 };
 
 // 실거래가 API 엔드포인트 설정
 export const REAL_ESTATE_TRANSACTION_API_CONFIG = {
   // 기본 URL (매매 실거래가)
   BASE_URL: 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTrade',
-  
+
   // 서비스키 환경변수명
   SERVICE_KEY_ENV: 'RTMSDATA_TRANSACTION_PRICE_KEY',
-  
+
   // 엔드포인트들
   ENDPOINTS: {
     // 아파트 매매 실거래가
@@ -55,28 +73,28 @@ export const REAL_ESTATE_TRANSACTION_API_CONFIG = {
     // // 오피스텔 전월세 실거래가
     // OFFICETEL_RENT: '/getRTMSDataSvcORTRent',
   },
-  
+
   // 전체 URL들
   get APARTMENT_TRADE_FULL_URL() {
     return `${this.BASE_URL}${this.ENDPOINTS.APARTMENT_TRADE}`;
   },
-  
+
   get ROW_HOUSE_TRADE_FULL_URL() {
     return `https://apis.data.go.kr/1613000/RTMSDataSvcRHTrade${this.ENDPOINTS.ROW_HOUSE_TRADE}`;
   },
-  
+
   get DETACHED_HOUSE_TRADE_FULL_URL() {
     return `https://apis.data.go.kr/1613000/RTMSDataSvcSHTrade${this.ENDPOINTS.DETACHED_HOUSE_TRADE}`;
   },
-  
+
   get OFFICETEL_TRADE_FULL_URL() {
     return `https://apis.data.go.kr/1613000/RTMSDataSvcOffiTrade${this.ENDPOINTS.OFFICETEL_TRADE}`;
   },
-  
+
   // get DETACHED_HOUSE_RENT_FULL_URL() {
   //   return `${this.BASE_URL}${this.ENDPOINTS.DETACHED_HOUSE_RENT}`;
   // },
-  
+
   // get OFFICETEL_RENT_FULL_URL() {
   //   return `${this.BASE_URL}${this.ENDPOINTS.OFFICETEL_RENT}`;
   // },
@@ -86,19 +104,31 @@ export const REAL_ESTATE_TRANSACTION_API_CONFIG = {
 export const API_ENDPOINTS = {
   // 내부 API 엔드포인트 (Next.js API Routes)
   TAX_CERT: '/api/tax-cert',
+  DANJI_SERIAL_NUMBER: '/api/danJi-serial-number',
   TRANSACTION_APARTMENT: '/api/transaction/apartment',
   TRANSACTION_ROW_HOUSE: '/api/transaction/row-house',
   TRANSACTION_DETACHED_HOUSE: '/api/transaction/detached-house',
   TRANSACTION_OFFICETEL: '/api/transaction/officetel',
+  ACTUAL_TRANSACTION: '/api/actual-transaction',
+  ACTUAL_TRANSACTION_HOUSE: '/api/actual-transaction-house',
 
   // 외부 API 엔드포인트 (CODEF)
   CODEF_TAX_CERT: CODEF_API_CONFIG.TAX_CERT_FULL_URL,
-  
+  CODEF_DANJI_SERIAL_NUMBER: CODEF_API_CONFIG.DANJI_SERIAL_NUMBER_FULL_URL,
+  CODEF_ACTUAL_TRANSACTION_APARTMENT:
+    CODEF_API_CONFIG.ACTUAL_TRANSACTION_APARTMENT_FULL_URL,
+  CODEF_ACTUAL_TRANSACTION_HOUSE:
+    CODEF_API_CONFIG.ACTUAL_TRANSACTION_HOUSE_FULL_URL,
+
   // 외부 API 엔드포인트 (실거래가)
-  REAL_ESTATE_APARTMENT_TRADE: REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_TRADE_FULL_URL,
-  REAL_ESTATE_ROW_HOUSE_TRADE: REAL_ESTATE_TRANSACTION_API_CONFIG.ROW_HOUSE_TRADE_FULL_URL,
-  REAL_ESTATE_DETACHED_HOUSE_TRADE: REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_TRADE_FULL_URL,
-  REAL_ESTATE_OFFICETEL_TRADE: REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_TRADE_FULL_URL,
+  REAL_ESTATE_APARTMENT_TRADE:
+    REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_TRADE_FULL_URL,
+  REAL_ESTATE_ROW_HOUSE_TRADE:
+    REAL_ESTATE_TRANSACTION_API_CONFIG.ROW_HOUSE_TRADE_FULL_URL,
+  REAL_ESTATE_DETACHED_HOUSE_TRADE:
+    REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_TRADE_FULL_URL,
+  REAL_ESTATE_OFFICETEL_TRADE:
+    REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_TRADE_FULL_URL,
   // REAL_ESTATE_DETACHED_HOUSE_RENT: REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_RENT_FULL_URL,
   // REAL_ESTATE_OFFICETEL_RENT: REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_RENT_FULL_URL,
 } as const;
