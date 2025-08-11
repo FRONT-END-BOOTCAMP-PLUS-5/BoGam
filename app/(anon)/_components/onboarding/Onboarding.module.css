@@ -1,0 +1,66 @@
+/* 색상 */
+:root {
+  --brand: #4b72a6;
+}
+
+/* 컨테이너 */
+.container {
+  @apply flex flex-col h-screen bg-white text-black;
+}
+
+/* 상단 */
+.header {
+  @apply p-4 flex justify-end;
+}
+.skip {
+  @apply text-sm text-gray-500 hover:underline;
+}
+
+/* 캐러셀 */
+.viewport {
+  @apply relative flex-1 overflow-hidden;
+}
+.track {
+  @apply h-full flex transition-transform duration-300 ease-out;
+}
+.slideWrap {
+  @apply shrink-0 basis-full flex items-center justify-center px-6 text-center select-none;
+}
+
+.content {
+  @apply flex flex-col items-center justify-center;
+}
+.icon {
+  @apply text-5xl mb-4;
+}
+.title {
+  @apply text-base font-semibold;
+}
+.desc {
+  @apply mt-2 text-sm text-gray-500;
+}
+
+/* 도트 */
+.dots {
+  @apply flex gap-2 items-center justify-center mt-4;
+}
+.dot {
+  @apply h-2 w-2 rounded-full bg-black/30 transition-all duration-200 ease-in-out;
+}
+.dotActive {
+  @apply bg-black;
+}
+
+/* 마지막 슬라이드 CTA */
+.footer {
+  @apply px-6 pb-8;
+}
+.startBtn {
+  @apply w-full max-w-xs mx-auto mt-6 text-base;
+  color: var(--brand);
+}
+
+/* 드래그 중 트랙 전환 애니 꺼주기 */
+.dragging .track {
+  @apply transition-none;
+}

@@ -1,0 +1,97 @@
+/* 공통 색/테마 */
+:root {
+  --brand: #4b72a6;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --error: #d56666;
+  --bg: #ffffff;
+  --ring: rgba(75, 114, 166, 0.35);
+}
+
+/* 필드 레이아웃 */
+.field {
+  @apply w-full;
+}
+.labelRow {
+  @apply mb-2 flex items-center justify-between;
+}
+.label {
+  @apply text-sm text-gray-700;
+}
+.required {
+  @apply text-red-500 ml-1;
+}
+.action {
+  @apply text-sm text-blue-600;
+} /* 우측 작은 액션 링크가 필요할 때 */
+
+.control {
+  @apply relative;
+}
+
+/* 베이스 인풋 */
+.inputBase {
+  @apply w-full rounded-xl border px-3 py-3 text-[15px] bg-white;
+  border-color: var(--border);
+}
+.inputBase::placeholder {
+  @apply text-gray-400;
+}
+
+.inputFocus {
+  box-shadow: 0 0 0 3px var(--ring);
+  border-color: var(--brand);
+}
+.inputError {
+  @apply border-red-400;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.addonRight {
+  @apply absolute inset-y-0 right-2 flex items-center;
+}
+.addonButton {
+  @apply h-8 px-3 rounded-lg text-sm border;
+  border-color: var(--brand);
+  color: var(--brand);
+  background: white;
+}
+.addonButton:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.helper {
+  @apply mt-2 text-xs text-gray-500;
+}
+.error {
+  @apply mt-2 text-xs text-red-600;
+}
+
+/* 비밀번호 보기 토글 */
+.eyeBtn {
+  @apply absolute inset-y-0 right-2 flex items-center text-gray-400;
+}
+
+/* OTP */
+.otpRow {
+  @apply mt-2 flex items-center gap-2;
+}
+.otpBox {
+  @apply w-12 h-12 text-center rounded-xl border text-lg;
+  border-color: var(--border);
+}
+.otpBox:focus {
+  box-shadow: 0 0 0 3px var(--ring);
+  border-color: var(--brand);
+}
+
+/* 그리드 레이아웃(선택) */
+.formRow {
+  @apply grid grid-cols-1 gap-4;
+}
+@media (min-width: 768px) {
+  .formRow {
+    @apply grid-cols-2;
+  }
+}
