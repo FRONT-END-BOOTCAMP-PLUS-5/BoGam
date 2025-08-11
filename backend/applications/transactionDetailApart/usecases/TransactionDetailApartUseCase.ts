@@ -1,7 +1,7 @@
 import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { TransactionDetailApartRepositoryImpl } from '../../../infrastructure/repository/TransactionDetailApartRepositoryImpl';
 import { TransactionDetailApartRequest } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartRequest';
 import { GetTransactionDetailApartResponse } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartResponse';
-import { TransactionDetailApartRepositoryImpl } from '@be/infrastructure/repository/TransactionDetailApartRepositoryImpl';
 
 export class TransactionDetailApartUseCase {
   private readonly infrastructure: TransactionDetailApartRepositoryImpl;

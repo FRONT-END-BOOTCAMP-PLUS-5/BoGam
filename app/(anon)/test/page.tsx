@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import Link from 'next/link';
 import './StepDetailCard.css';
 
 const StepDetailPage = () => {
@@ -35,32 +34,6 @@ const StepDetailPage = () => {
 
   return (
     <div className='step-detail-container'>
-      {/* API 테스트 링크 */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          background: '#3498db',
-          padding: '10px 20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-        }}
-      >
-        <Link
-          href='/test/api-test'
-          style={{
-            color: 'white',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-            fontSize: '14px',
-          }}
-        >
-          🔧 API 테스트
-        </Link>
-      </div>
-
       {/* 헤더 */}
       <header className='header'>
         <button className='header-btn'>
