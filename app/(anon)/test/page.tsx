@@ -1,125 +1,74 @@
 'use client';
-import React, { useState } from 'react';
+
 import Link from 'next/link';
-import './StepDetailCard.css';
+import styles from '@/page.module.css';
+import { useEffect, useState } from 'react';
+import Splash from '@/(anon)/_components/Splash';
+import PWAInstallPrompt from '@/(anon)/_components/common/PWAInstallPrompt';
+import ModelPreloader from '@/(anon)/_components/common/ModelPreloader';
 
-const StepDetailPage = () => {
-  const steps = [
-    {
-      title: '등본 조회',
-      purpose: '임대인 소유 여부 확인',
-      dataStatus: { needCheck: 2, confirmed: 3, warning: 1 },
-    },
-    {
-      title: '완납 증명서 조회',
-      purpose: '임대인의 세금 완납 여부 확인',
-      dataStatus: { needCheck: 1, confirmed: 4, warning: 0 },
-    },
-    {
-      title: '확정일자 발급',
-      purpose: '보증금 보호를 위한 확정일자 발급',
-      dataStatus: { needCheck: 0, confirmed: 5, warning: 0 },
-    },
-  ];
+export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [showModelPreloader, setShowModelPreloader] = useState(false);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const currentStep = steps[currentIndex];
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? steps.length - 1 : prev - 1));
+  // 스플래시 완료 후 3D 모델 미리 로드 시작
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    setShowModelPreloader(true);
   };
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === steps.length - 1 ? 0 : prev + 1));
+  // 3D 모델 미리 로드 완료 후 메인 페이지 표시
+  const handleModelPreloadComplete = () => {
+    setShowModelPreloader(false);
   };
 
   return (
-    <div className='step-detail-container'>
-      {/* API 테스트 링크 */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          zIndex: 1000,
-          background: '#3498db',
-          padding: '10px 20px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-        }}
-      >
-        <Link
-          href='/test/api-test'
-          style={{
-            color: 'white',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-            fontSize: '14px',
-          }}
-        >
-          🔧 API 테스트
-        </Link>
-      </div>
+    <>
+      {showSplash ? (
+        <Splash onComplete={handleSplashComplete} />
+      ) : showModelPreloader ? (
+        <ModelPreloader onComplete={handleModelPreloadComplete} />
+      ) : (
+        <div className={styles.page}>
+          <main className={styles.main}>
+            <h1 className={styles.title}>전세보감</h1>
+            <p className={styles.subtitle}>부동산 정보를 한눈에 확인하는 서비스</p>
 
-      {/* 헤더 */}
-      <header className='header'>
-        <button className='header-btn'>
-          {/* <FiChevronLeft size={24} /> */}
-        </button>
-        <button className='header-btn'>{/* <FiMenu size={24} /> */}</button>
-      </header>
+            <div className={styles.grid}>
+              <Link href='/test/post-code' className={styles.card}>
+                <h2>🏠 우편번호 테스트</h2>
+                <p>우편번호 검색 및 주소 입력 기능을 테스트합니다.</p>
+              </Link>
 
-      {/* 전체 단계 상태 요약 */}
-      <div className='overall-status'>
-        <div className='status-item confirmed'>
-          {/* <FaCheckCircle /> 확인 완료: 3개 */}
-        </div>
-        <div className='status-item warning'>
-          {/* <FaExclamationTriangle /> 경고: 6개 */}
-        </div>
-        <div className='status-item error'>
-          {/* <FaTimesCircle /> 문제 발생: 2개 */}
-        </div>
-      </div>
+              <Link href='/test/transaction' className={styles.card}>
+                <h2>📊 거래내역 테스트</h2>
+                <p>부동산 거래내역 조회 기능을 테스트합니다. (실거래가)</p>
+              </Link>
 
-      {/* 세부 단계 카드 */}
-      <div className='card-wrapper'>
-        <button className='nav-btn' onClick={handlePrev}>
-          {/* <FiChevronLeft size={28} /> */}
-        </button>
-        <div className='card'>
-          <h4 className='step-label'>{currentIndex + 1}단계</h4>
-          <h2 className='step-title'>{currentStep.title}</h2>
-          <p className='purpose'>{currentStep.purpose}</p>
+              <Link href='/test/tax-cert' className={styles.card}>
+                <h2>📋 납세확인서 발급 테스트</h2>
+                <p>납세확인서 발급 및 CODEF API 연동을 테스트합니다.</p>
+              </Link>
 
-          <div className='data-status'>
-            <div className='data-item need-check'>
-              📌 확인 필요: {currentStep.dataStatus.needCheck}
+              <Link href='/test/real-estate-search' className={styles.card}>
+                <h2>🏢 등기부등본 조회 테스트</h2>
+                <p>고유번호, 지번, 도로명 주소로 등기부등본을 조회합니다.</p>
+              </Link>
+
+              <Link href='/test/copy-test' className={styles.card}>
+                <h2>📁 문서 조회 테스트 모음</h2>
+                <p>등기부등본과 납세확인서 조회 테스트를 한 곳에서 관리합니다.</p>
+              </Link>
+
+              <Link href='/test/big-step' className={styles.card}>
+                <h2>📚 3D 책 애니메이션 테스트</h2>
+                <p>Three.js를 사용한 3D 책 애니메이션 및 상호작용을 테스트합니다.</p>
+              </Link>
             </div>
-            <div className='data-item confirmed'>
-              ✅ 확인 완료: {currentStep.dataStatus.confirmed}
-            </div>
-            <div className='data-item warning'>
-              ⚠ 문제 발생: {currentStep.dataStatus.warning}
-            </div>
-          </div>
+          </main>
+          <PWAInstallPrompt />
         </div>
-        <button className='nav-btn' onClick={handleNext}>
-          {/* <FiChevronRight size={28} /> */}
-        </button>
-      </div>
-
-      {/* 페이지 인디케이터 */}
-      <div className='indicator'>
-        {steps.map((_, idx) => (
-          <span
-            key={idx}
-            className={`dot ${idx === currentIndex ? 'active' : ''}`}
-          ></span>
-        ))}
-      </div>
-    </div>
+      )}
+    </>
   );
-};
-
-export default StepDetailPage;
+}
