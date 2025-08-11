@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { createBook, BookController } from './Book';
 import { createBookshelf } from './Bookshelf';
 
@@ -25,7 +24,7 @@ export default function Scene3D({ className }: Scene3DProps) {
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-  const controlsRef = useRef<OrbitControls | null>(null);
+
   const isInitializedRef = useRef(false);
 
   useEffect(() => {
@@ -42,7 +41,7 @@ export default function Scene3D({ className }: Scene3DProps) {
     // Scene 설정
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0xf5f5f5); // 연한 회색 배경
+    scene.background = new THREE.Color(0xFFFFFF); // 흰색 배경
 
     // Camera 설정
     const camera = new THREE.PerspectiveCamera(
@@ -52,8 +51,8 @@ export default function Scene3D({ className }: Scene3DProps) {
       1000
     );
     cameraRef.current = camera;
-    camera.position.set(0, 6.2, 7);
-    camera.lookAt(0, 6.2, -10);
+    camera.position.set(0, 6.8, 7);
+    camera.lookAt(0, 6.8, -10);
     camera.updateProjectionMatrix();
 
     // Renderer 설정
@@ -75,16 +74,7 @@ export default function Scene3D({ className }: Scene3DProps) {
     renderer.toneMappingExposure = 1.2;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    // OrbitControls 설정
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controlsRef.current = controls;
-    controls.enableDamping = true; // 부드러운 움직임
-    controls.dampingFactor = 0.05;
-    controls.screenSpacePanning = false;
-    controls.minDistance = 3; // 최소 줌 거리
-    controls.maxDistance = 20; // 최대 줌 거리
-    controls.maxPolarAngle = Math.PI / 2; // 수직 회전 제한 (바닥 아래로 못 가게)
-    controls.target.set(0, 6.2, -10); // 회전 중심점 설정
+
     
     // WebGL 컨텍스트 설정 및 에러 처리
     try {
@@ -124,15 +114,7 @@ export default function Scene3D({ className }: Scene3DProps) {
     pointLight.position.set(0, 15, 0);
     scene.add(pointLight);
 
-    // 바닥 생성
-    const groundGeometry = new THREE.PlaneGeometry(30, 30);
-    const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xe0e0e0 });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -1;
-    ground.castShadow = false; // 바닥은 그림자를 생성하지 않음
-    ground.receiveShadow = true; // 바닥은 그림자를 받음
-    scene.add(ground);
+    
 
     // 로딩 시작 시간 설정
     const startTime = Date.now();
@@ -201,10 +183,7 @@ export default function Scene3D({ className }: Scene3DProps) {
            
            const deltaTime = clock.getDelta();
            
-           // OrbitControls 업데이트
-           if (controlsRef.current) {
-             controlsRef.current.update();
-           }
+
            
            for (const bookId in bookControllersRef.current) {
              const bookController = bookControllersRef.current[bookId];
@@ -235,9 +214,9 @@ export default function Scene3D({ className }: Scene3DProps) {
       try {
         setCurrentLoadingObject('책꽂이 로딩 중...');
         const bookshelf = await createBookshelf({
-          position: new THREE.Vector3(0, 0, 0),
+          position: new THREE.Vector3(0, 4, -5),
           rotation: new THREE.Euler(0, 0, 0),
-          scale: new THREE.Vector3(0.08, 0.08, 0.08),
+          scale: new THREE.Vector3(30, 30, 30),
           renderer: renderer
         });
         scene.add(bookshelf);
@@ -253,14 +232,14 @@ export default function Scene3D({ className }: Scene3DProps) {
       try {
                  const bookPositions = [
            // 윗층 (3개) - 왼쪽부터
-           { id: 'book1', position: new THREE.Vector3(-1.5, 10.5, -5) },
-           { id: 'book2', position: new THREE.Vector3(0, 10.5, -5) },
-           { id: 'book3', position: new THREE.Vector3(1.5, 10.5, -5) },
+           { id: 'book1', position: new THREE.Vector3(-1.5, 10.4, -5) },
+           { id: 'book2', position: new THREE.Vector3(0, 10.4, -5) },
+           { id: 'book3', position: new THREE.Vector3(1.5, 10.4, -5) },
            // 아래층 (4개) - 왼쪽부터
-           { id: 'book4', position: new THREE.Vector3(-2, 5.9, -5) },
-           { id: 'book5', position: new THREE.Vector3(-0.5, 5.9, -5) },
-           { id: 'book6', position: new THREE.Vector3(1, 5.9, -5) },
-           { id: 'book7', position: new THREE.Vector3(2.5, 5.9, -5) },
+           { id: 'book4', position: new THREE.Vector3(-2, 5.8, -5) },
+           { id: 'book5', position: new THREE.Vector3(-0.5, 5.8, -5) },
+           { id: 'book6', position: new THREE.Vector3(1, 5.8, -5) },
+           { id: 'book7', position: new THREE.Vector3(2.5, 5.8, -5) },
          ];
 
         await Promise.all(
@@ -334,11 +313,7 @@ export default function Scene3D({ className }: Scene3DProps) {
       // 컨트롤러 정리
       bookControllersRef.current = {};
       
-      // OrbitControls 정리
-      if (controlsRef.current) {
-        controlsRef.current.dispose();
-        controlsRef.current = null;
-      }
+
       
       // 초기화 플래그 리셋
       isInitializedRef.current = false;
