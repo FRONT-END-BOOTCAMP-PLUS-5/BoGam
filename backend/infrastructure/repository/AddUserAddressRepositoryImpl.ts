@@ -82,7 +82,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
       data: {
         userId,
         addressId,
-        nickname: addressNickname || '기본 주소',
+        nickname: addressNickname,
         isPrimary: false,
       },
     });
