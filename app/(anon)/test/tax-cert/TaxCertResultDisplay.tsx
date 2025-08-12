@@ -1,6 +1,10 @@
 'use client';
 
-import { CodefResponse, TaxCertRespiteItem, TaxCertArrearsItem } from '@be/applications/taxCert/dtos/TaxCertDto';
+import {
+  CodefResponse,
+  TaxCertRespiteItem,
+  TaxCertArrearsItem,
+} from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 import { extractActualData } from '@libs/responseUtils';
 import styles from '@/(anon)/test/tax-cert/TaxCertResultDisplay.module.css';
 
@@ -8,13 +12,15 @@ interface TaxCertResultDisplayProps {
   response: CodefResponse;
 }
 
-export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayProps) {
+export default function TaxCertResultDisplay({
+  response,
+}: TaxCertResultDisplayProps) {
   // 디버깅을 위한 로그
   console.log('🔍 원본 응답:', response);
-  
+
   // 중첩된 응답 구조에서 실제 데이터 추출
   const data = extractActualData(response);
-  
+
   console.log('🔍 추출된 데이터:', data);
 
   if (!data) {
@@ -29,7 +35,7 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
             </p>
           </div>
         </div>
-        
+
         <div className={styles.originalDataContent}>
           <h4 className={styles.originalDataTitle}>원본 응답</h4>
           <pre className={styles.originalDataContent}>
@@ -59,11 +65,15 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>주소(본점)</label>
-            <p className={styles.infoValueSecondary}>{data.resUserAddr || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resUserAddr || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>주민등록번호</label>
-            <p className={styles.infoValueSecondary}>{data.resUserIdentiyNo || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resUserIdentiyNo || '-'}
+            </p>
           </div>
         </div>
 
@@ -74,15 +84,21 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>사업자등록번호</label>
-            <p className={styles.infoValueSecondary}>{data.resCompanyIdentityNo || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resCompanyIdentityNo || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>납세상태</label>
-            <p className={styles.infoValueSecondary}>{data.resPaymentTaxStatus || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resPaymentTaxStatus || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>증명서 사용목적</label>
-            <p className={styles.infoValueSecondary}>{data.resUsePurpose || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resUsePurpose || '-'}
+            </p>
           </div>
         </div>
       </div>
@@ -96,30 +112,42 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>발급기관</label>
-            <p className={styles.infoValueSecondary}>{data.resIssueOgzNm || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resIssueOgzNm || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>발급일자</label>
-            <p className={styles.infoValueSecondary}>{data.resIssueDate || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resIssueDate || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>담당부서</label>
-            <p className={styles.infoValueSecondary}>{data.resDepartmentName || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resDepartmentName || '-'}
+            </p>
           </div>
         </div>
 
         <div className={styles.infoSection}>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>담당자</label>
-            <p className={styles.infoValueSecondary}>{data.resUserNm1 || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resUserNm1 || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>연락처</label>
-            <p className={styles.infoValueSecondary}>{data.resPhoneNo || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resPhoneNo || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>유효기간</label>
-            <p className={styles.infoValueSecondary}>{data.resValidPeriod || '-'}</p>
+            <p className={styles.infoValueSecondary}>
+              {data.resValidPeriod || '-'}
+            </p>
           </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>유효기간 사유</label>
@@ -131,8 +159,10 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
       {/* 징수유예등 또는 체납처분유예의 명세 */}
       {data.resRespiteList && data.resRespiteList.length > 0 && (
         <div className={styles.tableContainer}>
-          <h4 className={styles.tableTitle}>징수유예등 또는 체납처분유예의 명세</h4>
-          <div className="overflow-x-auto">
+          <h4 className={styles.tableTitle}>
+            징수유예등 또는 체납처분유예의 명세
+          </h4>
+          <div className='overflow-x-auto'>
             <table className={styles.table}>
               <thead className={styles.tableHeader}>
                 <tr>
@@ -146,17 +176,33 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {data.resRespiteList.map((item: TaxCertRespiteItem, index: number) => (
-                  <tr key={index} className={styles.tableRow}>
-                    <td className={styles.tableCell}>{item.resRespiteType || '-'}</td>
-                    <td className={styles.tableCell}>{item.resRespitePeriod || '-'}</td>
-                    <td className={styles.tableCell}>{item.resTaxYear || '-'}</td>
-                    <td className={styles.tableCell}>{item.resTaxItemName || '-'}</td>
-                    <td className={styles.tableCell}>{item.resPaymentDeadline || '-'}</td>
-                    <td className={styles.tableCell}>{item.resLocalTaxAmt || '-'}</td>
-                    <td className={styles.tableCell}>{item.resAdditionalCharges || '-'}</td>
-                  </tr>
-                ))}
+                {data.resRespiteList.map(
+                  (item: TaxCertRespiteItem, index: number) => (
+                    <tr key={index} className={styles.tableRow}>
+                      <td className={styles.tableCell}>
+                        {item.resRespiteType || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resRespitePeriod || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resTaxYear || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resTaxItemName || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resPaymentDeadline || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resLocalTaxAmt || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resAdditionalCharges || '-'}
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           </div>
@@ -167,7 +213,7 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
       {data.resArrearsList && data.resArrearsList.length > 0 && (
         <div className={styles.tableContainer}>
           <h4 className={styles.tableTitle}>체납 내역</h4>
-          <div className="overflow-x-auto">
+          <div className='overflow-x-auto'>
             <table className={styles.table}>
               <thead className={styles.tableHeader}>
                 <tr>
@@ -180,16 +226,30 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
                 </tr>
               </thead>
               <tbody className={styles.tableBody}>
-                {data.resArrearsList.map((item: TaxCertArrearsItem, index: number) => (
-                  <tr key={index} className={styles.tableRow}>
-                    <td className={styles.tableCell}>{item.resUserNm || '-'}</td>
-                    <td className={styles.tableCell}>{item.resTaxYear || '-'}</td>
-                    <td className={styles.tableCell}>{item.resTaxItemName || '-'}</td>
-                    <td className={styles.tableCell}>{item.resPaymentDeadline || '-'}</td>
-                    <td className={styles.tableCell}>{item.resLocalTaxAmt || '-'}</td>
-                    <td className={styles.tableCell}>{item.resAdditionalCharges || '-'}</td>
-                  </tr>
-                ))}
+                {data.resArrearsList.map(
+                  (item: TaxCertArrearsItem, index: number) => (
+                    <tr key={index} className={styles.tableRow}>
+                      <td className={styles.tableCell}>
+                        {item.resUserNm || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resTaxYear || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resTaxItemName || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resPaymentDeadline || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resLocalTaxAmt || '-'}
+                      </td>
+                      <td className={styles.tableCell}>
+                        {item.resAdditionalCharges || '-'}
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           </div>
@@ -224,4 +284,4 @@ export default function TaxCertResultDisplay({ response }: TaxCertResultDisplayP
       )}
     </div>
   );
-} 
+}
