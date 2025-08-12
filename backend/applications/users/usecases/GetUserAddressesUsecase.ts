@@ -1,6 +1,6 @@
 import { GetUserAddressesRepository } from '@be/domain/repository/GetUserAddressesRepository';
 import { UserRepository } from '@be/domain/repository/UserRepository';
-import { GetUserAddressesResponseDto } from '@be/applications/places/dtos/GetUserAddressesDto';
+import { GetUserAddressesResponseDto } from '@be/applications/users/dtos/GetUserAddressesDto';
 
 export class GetUserAddressesUsecase {
   constructor(
@@ -8,7 +8,9 @@ export class GetUserAddressesUsecase {
     private userRepository: UserRepository
   ) {}
 
-  async execute(nickname: string): Promise<GetUserAddressesResponseDto> {
+  async getUserAddresses(
+    nickname: string
+  ): Promise<GetUserAddressesResponseDto> {
     try {
       // 1. nickname으로 userId 조회
       const user = await this.userRepository.findByNickname(nickname);

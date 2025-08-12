@@ -1,10 +1,10 @@
 import { prisma } from '@utils/prisma';
 import { AddUserAddressRepository } from '@be/domain/repository/AddUserAddressRepository';
-import { UserAddressInfo } from '@be/applications/places/dtos/UserAddressDto';
+import { UserAddressInfo } from '@be/applications/users/dtos/UserAddressDto';
 import {
   AddressInfo,
   AddressLocationParams,
-} from '@be/applications/places/dtos/AddressDto';
+} from '@be/applications/users/dtos/AddressDto';
 import {
   mapAddressToAddressInfo,
   mapUserAddressToUserAddressInfo,

@@ -1,6 +1,6 @@
 import { DanJiSerialNumber } from '@be/domain/entities/DanjiSerialNumber';
-import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequest';
-import { GetDanJiSerialNumberResponse } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponse';
+import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { GetDanJiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 
 /**
  * 단지 일련번호 조회 리포지토리 인터페이스
@@ -12,6 +12,6 @@ export interface DanJiSerialNumberRepository {
    * @returns 단지 일련번호 조회 결과
    */
   getDanJiSerialNumber(
-    request: DanJiSerialNumberRequest
-  ): Promise<GetDanJiSerialNumberResponse>;
+    request: DanJiSerialNumberRequestDto
+  ): Promise<GetDanJiSerialNumberResponseDto>;
 }

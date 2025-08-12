@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@libs/auth';
-import { AddUserAddressUsecase } from '@be/applications/places/usecases/AddUserAddressUsecase';
+import { AddUserAddressUsecase } from '@be/applications/users/usecases/AddUserAddressUsecase';
 import { AddUserAddressRepositoryImpl } from '@be/infrastructure/repository/AddUserAddressRepositoryImpl';
 import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
-import { AddUserAddressRequestDto } from '@be/applications/places/dtos/AddUserAddressDto';
+import { AddUserAddressRequestDto } from '@be/applications/users/dtos/AddUserAddressDto';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       userRepository
     );
 
-    const result = await addUserAddressUsecase.execute(
+    const result = await addUserAddressUsecase.addUserAddress(
       session.user.nickname,
       body
     );

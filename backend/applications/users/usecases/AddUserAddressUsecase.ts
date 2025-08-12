@@ -3,7 +3,7 @@ import { UserRepository } from '@be/domain/repository/UserRepository';
 import {
   AddUserAddressRequestDto,
   AddUserAddressResponseDto,
-} from '@be/applications/places/dtos/AddUserAddressDto';
+} from '@be/applications/users/dtos/AddUserAddressDto';
 
 export class AddUserAddressUsecase {
   constructor(
@@ -11,7 +11,7 @@ export class AddUserAddressUsecase {
     private userRepository: UserRepository
   ) {}
 
-  async execute(
+  async addUserAddress(
     nickname: string,
     request: AddUserAddressRequestDto
   ): Promise<AddUserAddressResponseDto> {

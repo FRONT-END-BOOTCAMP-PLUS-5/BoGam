@@ -1,8 +1,8 @@
 import {
   AddressInfo,
   AddressLocationParams,
-} from '@be/applications/places/dtos/AddressDto';
-import { UserAddressInfo } from '@be/applications/places/dtos/UserAddressDto';
+} from '@be/applications/users/dtos/AddressDto';
+import { UserAddressInfo } from '@be/applications/users/dtos/UserAddressDto';
 
 /**
  * Address 엔티티를 AddressInfo DTO로 변환
@@ -24,7 +24,7 @@ export function mapAddressToAddressInfo(address: {
     legalDistrictCode: address.legalDistrictCode || undefined,
     dong: address.dong || undefined,
     ho: address.ho || undefined,
-    lotAddress: address.lotAddress || undefined,
+    lotAddress: address.lotAddress || '',
     roadAddress: address.roadAddress || undefined,
   };
 }

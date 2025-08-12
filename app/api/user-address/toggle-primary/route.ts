@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@libs/auth';
-import { TogglePrimaryAddressUsecase } from '@be/applications/places/usecases/TogglePrimaryAddressUsecase';
+import { TogglePrimaryAddressUsecase } from '@be/applications/users/usecases/TogglePrimaryAddressUsecase';
 import { TogglePrimaryAddressRepositoryImpl } from '@be/infrastructure/repository/TogglePrimaryAddressRepositoryImpl';
 import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
-import { TogglePrimaryAddressRequestDto } from '@be/applications/places/dtos/TogglePrimaryAddressDto';
+import { TogglePrimaryAddressRequestDto } from '@be/applications/users/dtos/TogglePrimaryAddressDto';
 
 export async function PUT(request: NextRequest) {
   try {

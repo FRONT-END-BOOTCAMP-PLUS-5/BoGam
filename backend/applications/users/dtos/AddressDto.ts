@@ -5,7 +5,7 @@ export interface AddressInfo {
   legalDistrictCode?: string;
   dong?: string;
   ho?: string;
-  lotAddress?: string;
+  lotAddress: string;
   roadAddress?: string;
 }
 
@@ -15,6 +15,6 @@ export interface AddressLocationParams {
   legalDistrictCode: string;
   dong: string;
   ho: string;
-  lotAddress?: string;
+  lotAddress: string;
   roadAddress?: string;
 }

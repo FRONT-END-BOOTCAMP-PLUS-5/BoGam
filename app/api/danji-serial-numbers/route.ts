@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DanJiSerialNumberUsecase } from '@be/applications/danjiSerialNumbers/usecases/DanjiSerialNumberUsecase';
-import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequest';
+import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
 
 /**
  * 단지 일련번호 조회 API
@@ -9,7 +9,7 @@ import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dt
 export async function POST(request: NextRequest) {
   try {
     // 요청 본문 파싱
-    const body: DanJiSerialNumberRequest = await request.json();
+    const body: DanJiSerialNumberRequestDto = await request.json();
 
     // 필수 필드 검증
     const requiredFields = [
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     ];
 
     for (const field of requiredFields) {
-      if (!body[field as keyof DanJiSerialNumberRequest]) {
+      if (!body[field as keyof DanJiSerialNumberRequestDto]) {
         return NextResponse.json(
           {
             error: '필수 필드가 누락되었습니다.',

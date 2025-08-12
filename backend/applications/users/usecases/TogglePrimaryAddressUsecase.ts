@@ -3,7 +3,7 @@ import { UserRepository } from '@be/domain/repository/UserRepository';
 import {
   TogglePrimaryAddressRequestDto,
   TogglePrimaryAddressResponseDto,
-} from '@be/applications/places/dtos/TogglePrimaryAddressDto';
+} from '@be/applications/users/dtos/TogglePrimaryAddressDto';
 
 export class TogglePrimaryAddressUsecase {
   constructor(
@@ -11,7 +11,7 @@ export class TogglePrimaryAddressUsecase {
     private userRepository: UserRepository
   ) {}
 
-  async execute(
+  async togglePrimaryAddress(
     nickname: string,
     request: TogglePrimaryAddressRequestDto
   ): Promise<TogglePrimaryAddressResponseDto> {

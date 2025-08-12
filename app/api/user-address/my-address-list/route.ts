@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@libs/auth';
-import { GetUserAddressesUsecase } from '@be/applications/places/usecases/GetUserAddressesUsecase';
+import { GetUserAddressesUsecase } from '@be/applications/users/usecases/GetUserAddressesUsecase';
 import { GetUserAddressesRepositoryImpl } from '@be/infrastructure/repository/GetUserAddressesRepositoryImpl';
 import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
 
@@ -24,7 +24,9 @@ export async function GET() {
       userRepository
     );
 
-    const result = await getUserAddressesUsecase.execute(session.user.nickname);
+    const result = await getUserAddressesUsecase.getUserAddresses(
+      session.user.nickname
+    );
 
     return NextResponse.json(result, {
       status: result.success ? 200 : 400,

@@ -2,8 +2,8 @@ import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { DanJiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
-import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequest';
-import { GetDanJiSerialNumberResponse } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponse';
+import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { GetDanJiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 import { processResponse } from '@libs/responseUtils';
 
 /**
@@ -31,8 +31,8 @@ export class DanJiSerialNumberRepositoryImpl
    * @returns 응답 데이터
    */
   async getDanJiSerialNumber(
-    request: DanJiSerialNumberRequest
-  ): Promise<GetDanJiSerialNumberResponse> {
+    request: DanJiSerialNumberRequestDto
+  ): Promise<GetDanJiSerialNumberResponseDto> {
     try {
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
@@ -54,8 +54,8 @@ export class DanJiSerialNumberRepositoryImpl
       );
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetDanJiSerialNumberResponse =
-        processResponse<GetDanJiSerialNumberResponse>(response.data);
+      const data: GetDanJiSerialNumberResponseDto =
+        processResponse<GetDanJiSerialNumberResponseDto>(response.data);
 
       console.log('✅ 단지 일련번호 조회 성공:', {
         status: response.status,
