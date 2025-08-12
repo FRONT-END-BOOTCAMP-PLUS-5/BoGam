@@ -50,15 +50,3 @@ export class RealEstateTransactionResponse {
     public body: RealEstateTransactionResponseBody
   ) {}
 }
-
-// 에러 응답 Entity
-export class RealEstateTransactionErrorResponse {
-  constructor(
-    public header: RealEstateTransactionResponseHeader,
-    public body?: {
-      items: {
-        item: any[];
-      };
-    }
-  ) {}
-} 
