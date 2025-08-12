@@ -5,7 +5,7 @@ import {
   GetRealEstatesResponseDto,
   TwoWayResponse,
 } from '@be/applications/realEstate/dtos/GetRealEstatesResponseDto';
-import { RealEstateEntity } from '@be/domain/entities/RealEstateEntity';
+import { RealEstateEntity } from '@be/domain/entities/RealEstate';
 
 export class GetRealEstatesUsecase {
   private readonly infrastructure: GetRealEstateDataInfrastructure;

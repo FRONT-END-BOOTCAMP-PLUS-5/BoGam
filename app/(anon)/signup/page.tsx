@@ -8,7 +8,6 @@ import s from '@/(anon)/_components/common/forms/Forms.module.css';
 
 export default function SignupForm() {
   return (
-  
     <form className={s.formRow}>
       <Field id='name' label='이름'>
         <TextInput id='name' placeholder='홍길동' />

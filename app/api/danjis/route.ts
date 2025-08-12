@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetDanJiListUsecase } from '@be/applications/danjis/usecases/GetDanjiListUsecase';
-import { DanJiRepository } from '@be/infrastructure/repository/DanjiRepository';
-import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
+import { GetDanjiListUsecase } from '@be/applications/danjis/usecases/GetDanjiListUsecase';
+import { DanjiRepository } from '@be/infrastructure/repository/DanjiRepository';
+import { GetDanjiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
 
-const repository = new DanJiRepository();
-const usecase = new GetDanJiListUsecase(repository);
+const repository = new DanjiRepository();
+const usecase = new GetDanjiListUsecase(repository);
 
 export async function POST(request: NextRequest) {
   try {
-    const body: GetDanJiListRequestDto = await request.json();
+    const body: GetDanjiListRequestDto = await request.json();
 
     // 필수 필드 검증
     if (!body.organization) {
