@@ -1,5 +1,5 @@
 import { StepResultRepository } from '@be/domain/repository/StepResultRepository';
-import { StepResult } from '@be/domain/entities/StepResult';
+import { StepResultEntity } from '@be/domain/entities/StepResult';
 import {
   CreateStepResultDto,
   StepResultResponseDto,
@@ -74,11 +74,11 @@ export class StepResultUsecase {
   }
 
   private calculateSummary(
-    stepResults: StepResult[],
+    stepResults: StepResultEntity[],
     mainNum: number
   ): StepResultSummaryDto {
     const summary = stepResults.reduce(
-      (acc: StepResultSummaryDto, result: StepResult) => ({
+      (acc: StepResultSummaryDto, result: StepResultEntity) => ({
         totalMismatch: acc.totalMismatch + (result.mismatch || 0),
         totalMatch: acc.totalMatch + (result.match || 0),
         totalUnchecked: acc.totalUnchecked + (result.unchecked || 0),
@@ -126,7 +126,7 @@ export class StepResultUsecase {
         };
       }
 
-      const stepResult = new StepResult(
+      const stepResult = new StepResultEntity(
         undefined,
         dto.userAddressId,
         stepId,

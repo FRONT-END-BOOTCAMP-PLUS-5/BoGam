@@ -1,18 +1,18 @@
-import { DanJiRepository } from '@be/infrastructure/repository/DanjiRepository';
-import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
-import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanjiListResponseDto';
+import { DanjiRepository } from '@be/infrastructure/repository/DanjiRepository';
+import { GetDanjiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
+import { GetDanjiListResponseDto } from '@be/applications/danjis/dtos/GetDanjiListResponseDto';
 
-export class GetDanJiListUsecase {
-  private readonly repository: DanJiRepository;
+export class GetDanjiListUsecase {
+  private readonly repository: DanjiRepository;
 
-  constructor(repository: DanJiRepository) {
+  constructor(repository: DanjiRepository) {
     this.repository = repository;
   }
 
   async getDanjiList(
-    request: GetDanJiListRequestDto
-  ): Promise<GetDanJiListResponseDto> {
-    const response = await this.repository.fetchDanJiList(request);
+    request: GetDanjiListRequestDto
+  ): Promise<GetDanjiListResponseDto> {
+    const response = await this.repository.fetchDanjiList(request);
 
     if (!response.data) {
       return {

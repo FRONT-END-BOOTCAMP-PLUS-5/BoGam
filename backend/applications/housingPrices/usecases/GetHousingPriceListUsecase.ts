@@ -1,6 +1,6 @@
-import { HousingPriceRepository } from '@be/infrastructure/repository/HousingPriceRepository';
 import { GetHousingPriceRequestDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListRequestDto';
-import { GetHousingPriceResponseDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListResponseDto';
+import { GetHousingPriceListResponseDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListResponseDto';
+import { HousingPriceRepository } from '@be/infrastructure/repository/HousingPriceRepository';
 
 export class GetHousingPriceListUsecase {
   private readonly repository: HousingPriceRepository;
@@ -11,7 +11,7 @@ export class GetHousingPriceListUsecase {
 
   async getHousingPriceList(
     request: GetHousingPriceRequestDto
-  ): Promise<GetHousingPriceResponseDto> {
+  ): Promise<GetHousingPriceListResponseDto> {
     const response = await this.repository.fetchHousingPriceList(request);
 
     if (!response.data) {

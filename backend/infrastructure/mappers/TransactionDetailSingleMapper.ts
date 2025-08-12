@@ -11,89 +11,77 @@ const isRecord = (v: unknown): v is UnknownRecord =>
 const asRecord = (v: unknown): UnknownRecord => (isRecord(v) ? v : {});
 
 function pickSale(item: UnknownRecord): TransactionDetailSingleSaleItem {
-  return {
-    resYear: String(item.resYear ?? ''),
-    resMonth: String(item.resMonth ?? ''),
-    resDays: String(item.resDays ?? ''),
-    resAddrDong: String(item.resAddrDong ?? ''),
-    resStreetNumber: String(item.resStreetNumber ?? ''),
-    resRoadName: String(item.resRoadName ?? ''),
-    resArea: String(item.resArea ?? ''),
-    resArea1: String(item.resArea1 ?? ''),
-    resCancelDate: item.resCancelDate ? String(item.resCancelDate) : undefined,
-    resTranAmount: String(item.resTranAmount ?? ''),
-    resDealType: String(item.resDealType ?? ''),
-    resLocation: item.resLocation ? String(item.resLocation) : undefined,
-    resDesignationYN: item.resDesignationYN
-      ? String(item.resDesignationYN)
-      : undefined,
-    resRoadCondition: String(item.resRoadCondition ?? ''),
-    resLandMoveDate: String(item.resLandMoveDate ?? ''),
-    resLandMoveReason: String(item.resLandMoveReason ?? ''),
-    resMinBLR: item.resMinBLR ? String(item.resMinBLR) : undefined,
-    resMaxBLR: item.resMaxBLR ? String(item.resMaxBLR) : undefined,
-    resMinFAR: item.resMinFAR ? String(item.resMinFAR) : undefined,
-    resMaxFAR: item.resMaxFAR ? String(item.resMaxFAR) : undefined,
-    resFloorNum: item.resFloorNum ? String(item.resFloorNum) : undefined,
-    resStructure: item.resStructure ? String(item.resStructure) : undefined,
-    resBuildYear: String(item.resBuildYear ?? ''),
-    resHouseType: String(item.resHouseType ?? ''),
-  };
+  return new TransactionDetailSingleSaleItem(
+    String(item.resYear ?? ''),
+    String(item.resMonth ?? ''),
+    String(item.resDays ?? ''),
+    String(item.resAddrDong ?? ''),
+    String(item.resStreetNumber ?? ''),
+    String(item.resRoadName ?? ''),
+    String(item.resArea ?? ''),
+    String(item.resArea1 ?? ''),
+    String(item.resTranAmount ?? ''),
+    String(item.resDealType ?? ''),
+    String(item.resRoadCondition ?? ''),
+    String(item.resLandMoveDate ?? ''),
+    String(item.resLandMoveReason ?? ''),
+    String(item.resBuildYear ?? ''),
+    String(item.resHouseType ?? ''),
+    item.resCancelDate ? String(item.resCancelDate) : undefined,
+    item.resLocation ? String(item.resLocation) : undefined,
+    item.resDesignationYN ? String(item.resDesignationYN) : undefined,
+    item.resMinBLR ? String(item.resMinBLR) : undefined,
+    item.resMaxBLR ? String(item.resMaxBLR) : undefined,
+    item.resMinFAR ? String(item.resMinFAR) : undefined,
+    item.resMaxFAR ? String(item.resMaxFAR) : undefined,
+    item.resFloorNum ? String(item.resFloorNum) : undefined,
+    item.resStructure ? String(item.resStructure) : undefined
+  );
 }
 
 function pickRent(item: UnknownRecord): TransactionDetailSingleRentItem {
-  return {
-    resYear: String(item.resYear ?? ''),
-    resMonth: String(item.resMonth ?? ''),
-    resDays: String(item.resDays ?? ''),
-    resAddrDong: String(item.resAddrDong ?? ''),
-    resStreetNumber: String(item.resStreetNumber ?? ''),
-    resRoadName: item.resRoadName ? String(item.resRoadName) : undefined,
-    resHouseType: String(item.resHouseType ?? ''),
-    resArea: String(item.resArea ?? ''),
-    commStartDate: item.commStartDate ? String(item.commStartDate) : undefined,
-    commEndDate: item.commEndDate ? String(item.commEndDate) : undefined,
-    resDeposit: String(item.resDeposit ?? ''),
-    resMonthlyRent: String(item.resMonthlyRent ?? ''),
-    resContractType: item.resContractType
-      ? String(item.resContractType)
-      : undefined,
-    resRenewalUse: item.resRenewalUse ? String(item.resRenewalUse) : undefined,
-    resPrevDeposit: item.resPrevDeposit
-      ? String(item.resPrevDeposit)
-      : undefined,
-    resPrevMonthlyRent: item.resPrevMonthlyRent
-      ? String(item.resPrevMonthlyRent)
-      : undefined,
-    resDesignationYN: item.resDesignationYN
-      ? String(item.resDesignationYN)
-      : undefined,
-    resRoadCondition: String(item.resRoadCondition ?? ''),
-    resLandMoveDate: String(item.resLandMoveDate ?? ''),
-    resLandMoveReason: String(item.resLandMoveReason ?? ''),
-    resMinBLR: item.resMinBLR ? String(item.resMinBLR) : undefined,
-    resMaxBLR: item.resMaxBLR ? String(item.resMaxBLR) : undefined,
-    resMinFAR: item.resMinFAR ? String(item.resMinFAR) : undefined,
-    resMaxFAR: item.resMaxFAR ? String(item.resMaxFAR) : undefined,
-    resFloorNum: item.resFloorNum ? String(item.resFloorNum) : undefined,
-    resStructure: item.resStructure ? String(item.resStructure) : undefined,
-    resBuildYear: String(item.resBuildYear ?? ''),
-  };
+  return new TransactionDetailSingleRentItem(
+    String(item.resYear ?? ''),
+    String(item.resMonth ?? ''),
+    String(item.resDays ?? ''),
+    String(item.resAddrDong ?? ''),
+    String(item.resStreetNumber ?? ''),
+    String(item.resHouseType ?? ''),
+    String(item.resArea ?? ''),
+    String(item.resDeposit ?? ''),
+    String(item.resMonthlyRent ?? ''),
+    String(item.resRoadCondition ?? ''),
+    String(item.resLandMoveDate ?? ''),
+    String(item.resLandMoveReason ?? ''),
+    String(item.resBuildYear ?? ''),
+    item.resRoadName ? String(item.resRoadName) : undefined,
+    item.commStartDate ? String(item.commStartDate) : undefined,
+    item.commEndDate ? String(item.commEndDate) : undefined,
+    item.resContractType ? String(item.resContractType) : undefined,
+    item.resRenewalUse ? String(item.resRenewalUse) : undefined,
+    item.resPrevDeposit ? String(item.resPrevDeposit) : undefined,
+    item.resPrevMonthlyRent ? String(item.resPrevMonthlyRent) : undefined,
+    item.resDesignationYN ? String(item.resDesignationYN) : undefined,
+    item.resMinBLR ? String(item.resMinBLR) : undefined,
+    item.resMaxBLR ? String(item.resMaxBLR) : undefined,
+    item.resMinFAR ? String(item.resMinFAR) : undefined,
+    item.resMaxFAR ? String(item.resMaxFAR) : undefined,
+    item.resFloorNum ? String(item.resFloorNum) : undefined,
+    item.resStructure ? String(item.resStructure) : undefined
+  );
 }
 
 function sanitizeOne(item: unknown): TransactionDetailSingleEntity {
-  const out: TransactionDetailSingleEntity = {};
-  if (isRecord(item) && Array.isArray(item.resSaleList)) {
-    out.resSaleList = item.resSaleList.map((s: unknown) =>
-      pickSale(asRecord(s))
-    );
-  }
-  if (isRecord(item) && Array.isArray(item.resRentList)) {
-    out.resRentList = item.resRentList.map((r: unknown) =>
-      pickRent(asRecord(r))
-    );
-  }
-  return out;
+  const saleList =
+    isRecord(item) && Array.isArray(item.resSaleList)
+      ? item.resSaleList.map((s: unknown) => pickSale(asRecord(s)))
+      : undefined;
+  const rentList =
+    isRecord(item) && Array.isArray(item.resRentList)
+      ? item.resRentList.map((r: unknown) => pickRent(asRecord(r)))
+      : undefined;
+
+  return new TransactionDetailSingleEntity(saleList, rentList);
 }
 
 export function sanitizeTransactionDetailSingleResponse(

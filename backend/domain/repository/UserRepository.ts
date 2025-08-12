@@ -1,4 +1,4 @@
-import { UserEntity } from '@be/domain/entities/UserEntity';
+import { UserEntity } from '@be/domain/entities/User';
 import { UserInfo } from '@be/applications/users/dtos/UserDto';
 
 export interface UserRepository {
