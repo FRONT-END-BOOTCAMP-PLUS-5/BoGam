@@ -1,12 +1,12 @@
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
-import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopyEntity } from '@be/domain/entities/RealEstateCopy';
 import { prisma } from '@utils/prisma';
 import { CheckRealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopies/dtos/CheckRealEstateCopyExistsResponseDto';
 
 export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
   async findByUserAddressId(
     userAddressId: number
-  ): Promise<RealEstateCopy | null> {
+  ): Promise<RealEstateCopyEntity | null> {
     const realEstate = await prisma.realEstate.findFirst({
       where: { userAddressId },
     });
@@ -24,7 +24,7 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
   async upsertByUserAddressId(
     userAddressId: number,
     data: { realEstateData: string }
-  ): Promise<RealEstateCopy> {
+  ): Promise<RealEstateCopyEntity> {
     const realEstate = await prisma.realEstate.upsert({
       where: { userAddressId },
       update: {

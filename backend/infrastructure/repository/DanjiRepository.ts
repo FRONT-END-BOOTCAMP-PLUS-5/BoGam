@@ -1,16 +1,16 @@
-import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
+import { GetDanjiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
 import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 import axios from 'axios';
-import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanjiListResponseDto';
+import { GetDanjiListResponseDto } from '@be/applications/danjis/dtos/GetDanjiListResponseDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 
 /**
  * 단지목록 조회 Repository 구현체
  * Infrastructure 레이어에서 실제 CODEF API 호출을 담당
  */
-export class DanJiRepository {
+export class DanjiRepository {
   private codefAuth!: CodefAuth;
   private readonly endpoint = CODEF_API_CONFIG.DANJI_FULL_URL;
 
@@ -19,9 +19,9 @@ export class DanJiRepository {
    * @param request 단지목록 조회 요청 데이터
    * @returns 단지목록 조회 응답 데이터
    */
-  async fetchDanJiList(
-    request: GetDanJiListRequestDto
-  ): Promise<GetDanJiListResponseDto> {
+  async fetchDanjiList(
+    request: GetDanjiListRequestDto
+  ): Promise<GetDanjiListResponseDto> {
     try {
       // CODEF 설정 검증
       const config = loadCodefConfig();
@@ -43,8 +43,8 @@ export class DanJiRepository {
       });
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetDanJiListResponseDto =
-        processResponse<GetDanJiListResponseDto>(response.data);
+      const data: GetDanjiListResponseDto =
+        processResponse<GetDanjiListResponseDto>(response.data);
 
       return data;
     } catch (error) {

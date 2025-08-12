@@ -1,6 +1,6 @@
 // 부동산등기부등본 조회 응답 DTO
 
-import { RealEstateEntity } from '@be/domain/entities/RealEstateEntity';
+import { RealEstateEntity } from '@be/domain/entities/RealEstate';
 
 // 2-way 인증 응답 데이터
 export interface TwoWayResponse {

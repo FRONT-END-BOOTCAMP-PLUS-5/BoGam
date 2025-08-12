@@ -1,12 +1,14 @@
-import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopyEntity } from '@be/domain/entities/RealEstateCopy';
 import { CheckRealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopies/dtos/CheckRealEstateCopyExistsResponseDto';
 
 export interface RealEstateCopyRepository {
-  findByUserAddressId(userAddressId: number): Promise<RealEstateCopy | null>;
+  findByUserAddressId(
+    userAddressId: number
+  ): Promise<RealEstateCopyEntity | null>;
   upsertByUserAddressId(
     userAddressId: number,
     data: { realEstateData: string }
-  ): Promise<RealEstateCopy>;
+  ): Promise<RealEstateCopyEntity>;
   existsByUserAddressId(
     userAddressId: number
   ): Promise<

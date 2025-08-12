@@ -1,12 +1,12 @@
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
-import { TaxCertCopy } from '@be/domain/entities/TaxCertCopy';
+import { TaxCertCopyEntity } from '@be/domain/entities/TaxCertCopy';
 import { prisma } from '@utils/prisma';
 import { CheckTaxCertCopyExistsResponseDto } from '@be/applications/taxCertCopies/dtos/CheckTaxCertCopyExistsResponseDto';
 
 export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
   async findByUserAddressId(
     userAddressId: number
-  ): Promise<TaxCertCopy | null> {
+  ): Promise<TaxCertCopyEntity | null> {
     const taxCert = await prisma.taxCert.findFirst({
       where: { userAddressId },
     });
@@ -24,7 +24,7 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
   async upsertByUserAddressId(
     userAddressId: number,
     data: { taxCertData: string }
-  ): Promise<TaxCertCopy> {
+  ): Promise<TaxCertCopyEntity> {
     const taxCert = await prisma.taxCert.upsert({
       where: { userAddressId },
       update: {

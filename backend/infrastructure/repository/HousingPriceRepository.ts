@@ -3,7 +3,7 @@ import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
 import { GetHousingPriceRequestDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListRequestDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
-import { GetHousingPriceResponseDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListResponseDto';
+import { GetHousingPriceListResponseDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListResponseDto';
 
 /**
  * 부동산 공시가격 알리미 개별주택 가격 Repository 구현체
@@ -20,7 +20,7 @@ export class HousingPriceRepository {
    */
   async fetchHousingPriceList(
     request: GetHousingPriceRequestDto
-  ): Promise<GetHousingPriceResponseDto> {
+  ): Promise<GetHousingPriceListResponseDto> {
     try {
       this.codefAuth = createCodefAuth();
 
@@ -38,8 +38,8 @@ export class HousingPriceRepository {
       });
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetHousingPriceResponseDto =
-        processResponse<GetHousingPriceResponseDto>(response.data);
+      const data: GetHousingPriceListResponseDto =
+        processResponse<GetHousingPriceListResponseDto>(response.data);
 
       console.log('✅ 부동산 공시가격 조회 성공:', {
         status: response.status,
