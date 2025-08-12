@@ -1,64 +1,70 @@
 /**
  * 단독/다가구 실거래가 조회 도메인 엔티티
  */
-export interface TransactionDetailSingleSaleItem {
-  resYear: string;
-  resMonth: string;
-  resDays: string;
-  resAddrDong: string;
-  resStreetNumber: string;
-  resRoadName: string;
-  resArea: string;
-  resArea1: string;
-  resCancelDate?: string;
-  resTranAmount: string;
-  resDealType: string;
-  resLocation?: string;
-  resDesignationYN?: string;
-  resRoadCondition: string;
-  resLandMoveDate: string;
-  resLandMoveReason: string;
-  resMinBLR?: string;
-  resMaxBLR?: string;
-  resMinFAR?: string;
-  resMaxFAR?: string;
-  resFloorNum?: string;
-  resStructure?: string;
-  resBuildYear: string;
-  resHouseType: string;
+export class TransactionDetailSingleSaleItem {
+  constructor(
+    public readonly resYear: string,
+    public readonly resMonth: string,
+    public readonly resDays: string,
+    public readonly resAddrDong: string,
+    public readonly resStreetNumber: string,
+    public readonly resRoadName: string,
+    public readonly resArea: string,
+    public readonly resArea1: string,
+    public readonly resTranAmount: string,
+    public readonly resDealType: string,
+    public readonly resRoadCondition: string,
+    public readonly resLandMoveDate: string,
+    public readonly resLandMoveReason: string,
+    public readonly resBuildYear: string,
+    public readonly resHouseType: string,
+    public readonly resCancelDate?: string,
+    public readonly resLocation?: string,
+    public readonly resDesignationYN?: string,
+    public readonly resMinBLR?: string,
+    public readonly resMaxBLR?: string,
+    public readonly resMinFAR?: string,
+    public readonly resMaxFAR?: string,
+    public readonly resFloorNum?: string,
+    public readonly resStructure?: string
+  ) {}
 }
 
-export interface TransactionDetailSingleRentItem {
-  resYear: string;
-  resMonth: string;
-  resDays: string;
-  resAddrDong: string;
-  resStreetNumber: string;
-  resRoadName?: string;
-  resHouseType: string;
-  resArea: string;
-  commStartDate?: string;
-  commEndDate?: string;
-  resDeposit: string;
-  resMonthlyRent: string;
-  resContractType?: string;
-  resRenewalUse?: string;
-  resPrevDeposit?: string;
-  resPrevMonthlyRent?: string;
-  resDesignationYN?: string;
-  resRoadCondition: string;
-  resLandMoveDate: string;
-  resLandMoveReason: string;
-  resMinBLR?: string;
-  resMaxBLR?: string;
-  resMinFAR?: string;
-  resMaxFAR?: string;
-  resFloorNum?: string;
-  resStructure?: string;
-  resBuildYear: string;
+export class TransactionDetailSingleRentItem {
+  constructor(
+    public readonly resYear: string,
+    public readonly resMonth: string,
+    public readonly resDays: string,
+    public readonly resAddrDong: string,
+    public readonly resStreetNumber: string,
+    public readonly resHouseType: string,
+    public readonly resArea: string,
+    public readonly resDeposit: string,
+    public readonly resMonthlyRent: string,
+    public readonly resRoadCondition: string,
+    public readonly resLandMoveDate: string,
+    public readonly resLandMoveReason: string,
+    public readonly resBuildYear: string,
+    public readonly resRoadName?: string,
+    public readonly commStartDate?: string,
+    public readonly commEndDate?: string,
+    public readonly resContractType?: string,
+    public readonly resRenewalUse?: string,
+    public readonly resPrevDeposit?: string,
+    public readonly resPrevMonthlyRent?: string,
+    public readonly resDesignationYN?: string,
+    public readonly resMinBLR?: string,
+    public readonly resMaxBLR?: string,
+    public readonly resMinFAR?: string,
+    public readonly resMaxFAR?: string,
+    public readonly resFloorNum?: string,
+    public readonly resStructure?: string
+  ) {}
 }
 
-export interface TransactionDetailSingleEntity {
-  resSaleList?: TransactionDetailSingleSaleItem[];
-  resRentList?: TransactionDetailSingleRentItem[];
+export class TransactionDetailSingleEntity {
+  constructor(
+    public readonly resSaleList?: TransactionDetailSingleSaleItem[],
+    public readonly resRentList?: TransactionDetailSingleRentItem[]
+  ) {}
 }

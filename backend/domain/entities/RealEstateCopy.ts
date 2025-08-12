@@ -3,9 +3,11 @@ export interface RealEstateCopyJson {
   [key: string]: unknown;
 }
 
-export interface RealEstateCopyEntity {
-  id: number;
-  userAddressId: number;
-  realEstateData: string;
-  updatedAt?: Date;
+export class RealEstateCopyEntity {
+  constructor(
+    public readonly id: number,
+    public readonly userAddressId: number,
+    public readonly realEstateData: string,
+    public readonly updatedAt?: Date
+  ) {}
 }
