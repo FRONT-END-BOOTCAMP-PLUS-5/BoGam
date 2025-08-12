@@ -4,9 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 공통 색/테마 */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --brand: #4b72a6;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
+  --error: #d56666;
+  --bg: #ffffff;
+  --ring: rgba(75, 114, 166, 0.35);
 }
 
 @media (prefers-color-scheme: dark) {

@@ -56,6 +56,7 @@ export class StepResultRepositoryImpl implements StepResultRepository {
             result.unchecked,
             result.details,
             result.createdAt,
+            undefined,
             result.step?.mainNum,
             result.step?.subNum
           )
@@ -95,6 +96,7 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         unchecked: number | null;
         details: unknown;
         createdAt: Date;
+        updatedAt: Date;
         step?: { mainNum: number; subNum: number };
       };
       return new StepResultEntity(
@@ -106,6 +108,7 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         result.unchecked,
         result.details,
         result.createdAt,
+        result.updatedAt,
         result.step?.mainNum,
         result.step?.subNum
       );

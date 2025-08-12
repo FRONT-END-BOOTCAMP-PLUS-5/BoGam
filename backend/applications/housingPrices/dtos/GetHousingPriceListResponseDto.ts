@@ -1,6 +1,6 @@
 import { HousingPriceEntity } from '@be/domain/entities/HousingPrice';
 
-export interface GetHousingPriceResponseDto {
+export interface GetHousingPriceListResponseDto {
   result: {
     code: string;
     message: string;

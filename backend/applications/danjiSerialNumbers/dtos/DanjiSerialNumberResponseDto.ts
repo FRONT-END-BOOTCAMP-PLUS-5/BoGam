@@ -1,24 +1,23 @@
-import { DanjiSerialNumberEntity } from '@be/domain/entities/DanjiSerialNumber';
-
 /**
  * 단지 일련번호 조회 API 응답 DTO
  */
 
-// 기본 응답 인터페이스
-export interface BaseDanjiSerialNumberResponseDto {
+export interface GetDanjiSerialNumberResponseDto {
   result: {
     code: string;
     message: string;
-    extraMessage?: string;
   };
-  data?: DanjiSerialNumberEntity[];
+  data: {
+    danjiList: DanjiInfo[];
+  };
 }
 
-// 단지 일련번호 조회 성공 응답
-export interface DanjiSerialNumberResponseDto
-  extends BaseDanjiSerialNumberResponseDto {
-  data: DanjiSerialNumberEntity[];
+export interface DanjiInfo {
+  danjiCode: string; // 단지코드
+  danjiName: string; // 단지명
+  address: string; // 주소
+  constructionCompany: string; // 건설사
+  completionDate: string; // 준공일
+  totalHouseholds: number; // 총세대수
+  serialNumber: string; // 일련번호
 }
-
-// 통합 응답 타입
-export type GetDanjiSerialNumberResponseDto = DanjiSerialNumberResponseDto;
