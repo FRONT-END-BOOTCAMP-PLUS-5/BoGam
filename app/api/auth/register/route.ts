@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
 import { RegisterRequestDto } from '@be/applications/users/dtos/SignUpDtos';
-import { SignUpusecase } from '@be/applications/users/usecases/SignUpusecase';
+import { SignUpUsecase } from '@be/applications/users/usecases/SignUpUsecase';
 
 const userRepository = new UserRepositoryImpl();
-const signUpusecase = new SignUpusecase(userRepository);
+const signUpUsecase = new SignUpUsecase(userRepository);
 
 export async function POST(request: NextRequest) {
   try {
     const body: RegisterRequestDto = await request.json();
 
-    const result = await signUpusecase.signUp(body);
+    const result = await signUpUsecase.signUp(body);
 
     if (result.success) {
       return NextResponse.json(result, { status: 201 });

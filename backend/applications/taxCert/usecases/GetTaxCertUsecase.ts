@@ -4,10 +4,7 @@ import {
   BaseTaxCertRequest,
   TaxCertTwoWayRequest,
 } from '../dtos/GetTaxCertRequestDto';
-import {
-  GetTaxCertResponseDto,
-  CodefResponse,
-} from '../dtos/GetTaxCertResponseDto';
+import { GetTaxCertResponseDto } from '../dtos/GetTaxCertResponseDto';
 
 /**
  * 납세증명서 조회 Usecase
@@ -23,7 +20,7 @@ export class GetTaxCertUsecase {
     const startTime = Date.now();
 
     try {
-      let response: CodefResponse;
+      let response: GetTaxCertResponseDto;
 
       // 2-way 인증 요청인지 확인
       if (this.isTwoWayRequest(request)) {
@@ -43,7 +40,7 @@ export class GetTaxCertUsecase {
       return {
         success: true,
         message: '납세증명서 조회 요청이 완료되었습니다.',
-        data: response,
+        data: response.data,
         duration,
       };
     } catch (error) {

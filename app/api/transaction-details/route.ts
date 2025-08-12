@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetTransactionDetailListusecase } from '@be/applications/transactionDetails/usecases/GetTransactionDetailListusecase';
+import { GetTransactionDetailListUsecase } from '@be/applications/transactionDetails/usecases/GetTransactionDetailListUsecase';
 import {
   GetTransactionDetailRequestDto,
   GetTransactionDetailQueryDto,
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Usecase 실행 (Query와 Request DTO를 합쳐서 전달)
-    const usecase = new GetTransactionDetailListusecase();
+    const usecase = new GetTransactionDetailListUsecase();
     const combinedRequest = { ...queryDto, ...body };
     const response = await usecase.getTransactionDetailList(combinedRequest);
 

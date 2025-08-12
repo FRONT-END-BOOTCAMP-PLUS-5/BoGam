@@ -4,7 +4,7 @@ import { RegisterResponseDto } from '@be/applications/users/dtos/SignUpDtos';
 import { hashPassword } from '@utils/verifyPassword/password';
 import { AuthMapper } from '@be/infrastructure/mappers/AuthMapper';
 
-export class SignUpusecase {
+export class SignUpUsecase {
   constructor(private userRepository: UserRepository) {}
 
   async signUp(

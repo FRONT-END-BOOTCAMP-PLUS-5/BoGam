@@ -1,5 +1,5 @@
 import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
-import { RealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopies/dtos/RealEstateCopyDto';
+import { CheckRealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopies/dtos/CheckRealEstateCopyExistsResponseDto';
 
 export interface RealEstateCopyRepository {
   findByUserAddressId(userAddressId: number): Promise<RealEstateCopy | null>;
@@ -9,5 +9,7 @@ export interface RealEstateCopyRepository {
   ): Promise<RealEstateCopy>;
   existsByUserAddressId(
     userAddressId: number
-  ): Promise<Pick<RealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>>;
+  ): Promise<
+    Pick<CheckRealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>
+  >;
 }

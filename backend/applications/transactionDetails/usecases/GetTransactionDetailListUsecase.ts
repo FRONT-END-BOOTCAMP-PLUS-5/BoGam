@@ -7,7 +7,7 @@ import { GetTransactionDetailResponseDto } from '@be/applications/transactionDet
 import { TransactionDetailApartRepositoryImpl } from '@be/infrastructure/repository/TransactionDetailApartRepositoryImpl';
 import { TransactionDetailSingleRepositoryImpl } from '@be/infrastructure/repository/TransactionDetailSingleRepositoryImpl';
 
-export class GetTransactionDetailListusecase {
+export class GetTransactionDetailListUsecase {
   private readonly apartRepository: TransactionDetailApartRepositoryImpl;
   private readonly singleRepository: TransactionDetailSingleRepositoryImpl;
   private readonly codefAuth: CodefAuth;

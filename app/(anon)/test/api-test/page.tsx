@@ -6,13 +6,21 @@ import styles from './page.module.css';
 
 interface ApiResult {
   success: boolean;
-  data?: any;
+  data?: unknown;
   error?: string;
   message?: string;
 }
 
+interface DanJiSerialNumber {
+  commBuildingCode: string;
+  resBuildingName: string;
+  commAddrLotNumber: string;
+  resBunji: string;
+  commAddrRoadName: string;
+}
+
 interface FormData {
-  [key: string]: any;
+  [key: string]: string | number | boolean;
 }
 
 export default function ApiTestPage() {
@@ -20,16 +28,33 @@ export default function ApiTestPage() {
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<Record<string, FormData>>({});
   const [showForms, setShowForms] = useState<Record<string, boolean>>({});
+  const [selectedDanJi, setSelectedDanJi] = useState<DanJiSerialNumber | null>(
+    null
+  );
 
   const updateResult = (apiName: string, result: ApiResult) => {
     setResults((prev) => ({ ...prev, [apiName]: result }));
+
+    // 단지 일련번호 조회 성공 시 첫 번째 단지를 자동 선택
+    if (apiName === '단지 일련번호 조회' && result.success && result.data) {
+      const responseData = result.data as { data?: DanJiSerialNumber[] };
+      if (responseData.data && responseData.data.length > 0) {
+        setSelectedDanJi(responseData.data[0]);
+        // 실거래가 상세 폼 데이터에 자동 적용
+        applyDanJiToTransactionForm(responseData.data[0]);
+      }
+    }
   };
 
   const setLoadingState = (apiName: string, isLoading: boolean) => {
     setLoading((prev) => ({ ...prev, [apiName]: isLoading }));
   };
 
-  const updateFormData = (apiName: string, field: string, value: any) => {
+  const updateFormData = (
+    apiName: string,
+    field: string,
+    value: string | number | boolean
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [apiName]: { ...prev[apiName], [field]: value },
@@ -40,16 +65,44 @@ export default function ApiTestPage() {
     setShowForms((prev) => ({ ...prev, [apiName]: !prev[apiName] }));
   };
 
+  // 선택된 단지 데이터를 실거래가 상세 폼에 적용
+  const applyDanJiToTransactionForm = (danJi: DanJiSerialNumber) => {
+    const apartFormData = {
+      organization: '0010',
+      apartType: '0', // 아파트
+      buildingCode: danJi.commBuildingCode, // 단지 일련번호 조회에서 받은 건물코드
+      contractYear: '2024',
+      contractType: '0', // 전체
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      '통합 실거래가 상세 (아파트)': apartFormData,
+    }));
+
+    // 폼을 자동으로 표시
+    setShowForms((prev) => ({
+      ...prev,
+      '통합 실거래가 상세 (아파트)': true,
+    }));
+  };
+
+  // 단지 선택 함수
+  const selectDanJi = (danJi: DanJiSerialNumber) => {
+    setSelectedDanJi(danJi);
+    applyDanJiToTransactionForm(danJi);
+  };
+
   const getDefaultFormData = (apiName: string) => {
     const defaults: Record<string, FormData> = {
-      '아파트 실거래가 상세': {
+      '통합 실거래가 상세 (아파트)': {
         organization: '0010',
-        type: '0',
+        apartType: '0',
         buildingCode: '12345',
         contractYear: '2024',
         contractType: '0',
       },
-      '단독/다가구 실거래가': {
+      '통합 실거래가 상세 (단독/다가구)': {
         organization: '0010',
         addrSido: '서울특별시',
         addrSigungu: '강남구',
@@ -172,32 +225,35 @@ export default function ApiTestPage() {
     }
   };
 
-  // 1. 실거래가 관련 API
+  // 1. 실거래가 관련 API (통합된 transaction-details API)
   const testTransactionDetailApart = () => {
     const requestData =
-      formData['아파트 실거래가 상세'] ||
-      getDefaultFormData('아파트 실거래가 상세');
+      formData['통합 실거래가 상세 (아파트)'] ||
+      getDefaultFormData('통합 실거래가 상세 (아파트)');
 
-    callApi('아파트 실거래가 상세', '/api/transaction-detail-apart', {
-      method: 'POST',
-      body: JSON.stringify(requestData),
-    });
+    callApi(
+      '통합 실거래가 상세 (아파트)',
+      '/api/transaction-details?type=apart',
+      {
+        method: 'POST',
+        body: JSON.stringify(requestData),
+      }
+    );
   };
 
   const testTransactionDetailSingle = () => {
-    const requestData = {
-      organization: '0010',
-      addrSido: '서울특별시', // 시도
-      addrSigungu: '강남구', // 시군구
-      addrDong: '역삼동', // 동
-      contractYear: '2024', // 계약년도
-      contractType: '0', // 계약구분 ("0": 전체, "1": 매매, "2": 전월세)
-    };
+    const requestData =
+      formData['통합 실거래가 상세 (단독/다가구)'] ||
+      getDefaultFormData('통합 실거래가 상세 (단독/다가구)');
 
-    callApi('단독/다가구 실거래가', '/api/transaction-detail-single', {
-      method: 'POST',
-      body: JSON.stringify(requestData),
-    });
+    callApi(
+      '통합 실거래가 상세 (단독/다가구)',
+      '/api/transaction-details?type=single',
+      {
+        method: 'POST',
+        body: JSON.stringify(requestData),
+      }
+    );
   };
 
   // 2. 인증 관련 API
@@ -222,7 +278,7 @@ export default function ApiTestPage() {
     );
   };
 
-  // 4. 단지 관련 API
+  // 4. 단지 관련 API (복수형 경로로 변경)
   const testDanJiSerialNumber = () => {
     const requestData = {
       organization: '0010', // 기관코드 (고정값: "0010")
@@ -235,7 +291,7 @@ export default function ApiTestPage() {
       complexName: '테스트단지', // 단지명 (선택사항)
     };
 
-    callApi('단지 일련번호 조회', '/api/danJi-serial-number', {
+    callApi('단지 일련번호 조회', '/api/danji-serial-number', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
@@ -249,13 +305,13 @@ export default function ApiTestPage() {
       addrDong: '역삼동',
     };
 
-    callApi('단지목록 조회', '/api/danJi', {
+    callApi('단지목록 조회', '/api/danjis', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
   };
 
-  // 5. 공시가격 관련 API
+  // 5. 공시가격 관련 API (복수형 경로로 변경)
   const testHousingPrice = () => {
     const requestData = {
       organization: '0010',
@@ -281,7 +337,7 @@ export default function ApiTestPage() {
       addrLotNumber: '123-45',
     };
 
-    callApi('공동주택 공시가격', '/api/reb-housing-price', {
+    callApi('공동주택 공시가격', '/api/reb-housing-prices', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
@@ -297,9 +353,9 @@ export default function ApiTestPage() {
     callApi('장소 검색', '/api/place?query=강남역');
   };
 
-  // 8. 부동산등기부등본 관련 API
+  // 8. 부동산등기부등본 관련 API (복수형 경로로 변경)
   const testRealEstateExists = () => {
-    callApi('등기부등본 존재 확인', '/api/real-estate/exists?nickname=test');
+    callApi('등기부등본 존재 확인', '/api/real-estates/exists?nickname=test');
   };
 
   const testRealEstateSearchAddress = () => {
@@ -310,7 +366,7 @@ export default function ApiTestPage() {
       userAddressNickname: 'test',
     };
 
-    callApi('주소로 등기부등본 조회', '/api/real-estate/search/address', {
+    callApi('주소로 등기부등본 조회', '/api/real-estates/search/address', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
@@ -324,16 +380,20 @@ export default function ApiTestPage() {
       userAddressNickname: 'test',
     };
 
-    callApi('고유번호로 등기부등본 조회', '/api/real-estate/search/unique-no', {
-      method: 'POST',
-      body: JSON.stringify(requestData),
-    });
+    callApi(
+      '고유번호로 등기부등본 조회',
+      '/api/real-estates/search/unique-no',
+      {
+        method: 'POST',
+        body: JSON.stringify(requestData),
+      }
+    );
   };
 
   const testRealEstateCopy = () => {
     callApi(
       '저장된 등기부등본 조회',
-      '/api/real-estate-copy?userAddressNickname=test'
+      '/api/real-estate-copies?userAddressNickname=test'
     );
   };
 
@@ -373,7 +433,7 @@ export default function ApiTestPage() {
     });
   };
 
-  // 11. 납세증명서 관련 API
+  // 11. 납세증명서 관련 API (복수형 경로로 변경)
   const testTaxCert = () => {
     const requestData = {
       organization: '0001',
@@ -388,49 +448,49 @@ export default function ApiTestPage() {
       certPassword: 'encrypted_password',
     };
 
-    callApi('납세증명서 발급', '/api/tax-cert', {
+    callApi('납세증명서 발급', '/api/tax-certs', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
   };
 
   const testTaxCertExists = () => {
-    callApi('납세증명서 존재 확인', '/api/tax-cert/exists?nickname=test');
+    callApi('납세증명서 존재 확인', '/api/tax-certs/exists?nickname=test');
   };
 
   const testTaxCertCopy = () => {
     callApi(
       '저장된 납세증명서 조회',
-      '/api/tax-cert-copy?userAddressNickname=test'
+      '/api/tax-cert-copies?userAddressNickname=test'
     );
   };
 
-  // 12. 실거래가 조회 API (국토교통부)
+  // 12. 실거래가 조회 API (국토교통부) (복수형 경로로 변경)
   const testTransactionApartment = () => {
     callApi(
       '아파트 실거래가',
-      '/api/transaction/apartment?LAWD_CD=11680&DEAL_YMD=202412'
+      '/api/transactions/apartment?LAWD_CD=11680&DEAL_YMD=202412'
     );
   };
 
   const testTransactionDetachedHouse = () => {
     callApi(
       '단독/다가구 실거래가',
-      '/api/transaction/detached-house?LAWD_CD=11680&DEAL_YMD=202412'
+      '/api/transactions/detached-house?LAWD_CD=11680&DEAL_YMD=202412'
     );
   };
 
   const testTransactionOfficetel = () => {
     callApi(
       '오피스텔 실거래가',
-      '/api/transaction/officetel?LAWD_CD=11680&DEAL_YMD=202412'
+      '/api/transactions/officetel?LAWD_CD=11680&DEAL_YMD=202412'
     );
   };
 
   const testTransactionRowHouse = () => {
     callApi(
       '연립다세대 실거래가',
-      '/api/transaction/row-house?LAWD_CD=11680&DEAL_YMD=202412'
+      '/api/transactions/row-house?LAWD_CD=11680&DEAL_YMD=202412'
     );
   };
 
@@ -516,7 +576,7 @@ export default function ApiTestPage() {
         <label className={styles.formLabel}>{field}:</label>
         <input
           type='text'
-          value={currentFormData[field] || ''}
+          value={String(currentFormData[field] || '')}
           onChange={(e) => updateFormData(apiName, field, e.target.value)}
           className={styles.formInput}
           placeholder={`${field} 입력`}
@@ -544,6 +604,48 @@ export default function ApiTestPage() {
     );
   };
 
+  const renderDanJiList = (danJiList: DanJiSerialNumber[]) => {
+    return (
+      <div className={styles.danJiList}>
+        <h4>🏢 조회된 단지 목록 (클릭하여 실거래가 조회에 적용)</h4>
+        {danJiList.map((danJi, index) => (
+          <div
+            key={index}
+            className={`${styles.danJiItem} ${
+              selectedDanJi?.commBuildingCode === danJi.commBuildingCode
+                ? styles.selected
+                : ''
+            }`}
+            onClick={() => selectDanJi(danJi)}
+          >
+            <div className={styles.danJiName}>
+              <strong>{danJi.resBuildingName}</strong>
+              {selectedDanJi?.commBuildingCode === danJi.commBuildingCode && (
+                <span className={styles.selectedBadge}>✓ 선택됨</span>
+              )}
+            </div>
+            <div className={styles.danJiInfo}>
+              <span>건물코드: {danJi.commBuildingCode}</span>
+              <span>지번: {danJi.commAddrLotNumber}</span>
+              <span>도로명: {danJi.commAddrRoadName}</span>
+            </div>
+          </div>
+        ))}
+        {selectedDanJi && (
+          <div className={styles.actionButtons}>
+            <button
+              onClick={() => testTransactionDetailApart()}
+              className={styles.continueButton}
+              disabled={loading['통합 실거래가 상세 (아파트)']}
+            >
+              🚀 선택된 단지로 실거래가 조회하기
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderResult = (apiName: string) => {
     const result = results[apiName];
     const isLoading = loading[apiName];
@@ -554,6 +656,15 @@ export default function ApiTestPage() {
 
     if (!result) {
       return <div className={styles.noResult}>테스트 결과 없음</div>;
+    }
+
+    // 단지 일련번호 조회 결과 특별 처리
+    let danJiListComponent = null;
+    if (apiName === '단지 일련번호 조회' && result.success && result.data) {
+      const responseData = result.data as { data?: DanJiSerialNumber[] };
+      if (responseData.data && responseData.data.length > 0) {
+        danJiListComponent = renderDanJiList(responseData.data);
+      }
     }
 
     return (
@@ -571,11 +682,14 @@ export default function ApiTestPage() {
           )}
         </div>
         {result.error && <div className={styles.error}>{result.error}</div>}
-        {result.data && (
+
+        {danJiListComponent}
+
+        {result.data ? (
           <div className={styles.data}>
             <pre>{JSON.stringify(result.data, null, 2)}</pre>
           </div>
-        )}
+        ) : null}
       </div>
     );
   };
@@ -606,46 +720,50 @@ export default function ApiTestPage() {
       </div>
 
       <div className={styles.section}>
-        <h2>1. 실거래가 관련 API</h2>
+        <h2>1. 통합 실거래가 상세 API</h2>
         <div className={styles.apiGrid}>
           <div className={styles.apiCard}>
-            <h3>아파트 실거래가 상세</h3>
+            <h3>통합 실거래가 상세 (아파트)</h3>
             <div className={styles.buttonGroup}>
               <button
-                onClick={() => toggleForm('아파트 실거래가 상세')}
+                onClick={() => toggleForm('통합 실거래가 상세 (아파트)')}
                 className={styles.formToggleButton}
               >
-                {showForms['아파트 실거래가 상세'] ? '폼 숨기기' : '폼 보기'}
+                {showForms['통합 실거래가 상세 (아파트)']
+                  ? '폼 숨기기'
+                  : '폼 보기'}
               </button>
               <button
                 onClick={testTransactionDetailApart}
-                disabled={loading['아파트 실거래가 상세']}
+                disabled={loading['통합 실거래가 상세 (아파트)']}
               >
                 테스트 실행
               </button>
             </div>
-            {renderForm('아파트 실거래가 상세')}
-            {renderResult('아파트 실거래가 상세')}
+            {renderForm('통합 실거래가 상세 (아파트)')}
+            {renderResult('통합 실거래가 상세 (아파트)')}
           </div>
 
           <div className={styles.apiCard}>
-            <h3>단독/다가구 실거래가</h3>
+            <h3>통합 실거래가 상세 (단독/다가구)</h3>
             <div className={styles.buttonGroup}>
               <button
-                onClick={() => toggleForm('단독/다가구 실거래가')}
+                onClick={() => toggleForm('통합 실거래가 상세 (단독/다가구)')}
                 className={styles.formToggleButton}
               >
-                {showForms['단독/다가구 실거래가'] ? '폼 숨기기' : '폼 보기'}
+                {showForms['통합 실거래가 상세 (단독/다가구)']
+                  ? '폼 숨기기'
+                  : '폼 보기'}
               </button>
               <button
                 onClick={testTransactionDetailSingle}
-                disabled={loading['단독/다가구 실거래가']}
+                disabled={loading['통합 실거래가 상세 (단독/다가구)']}
               >
                 테스트 실행
               </button>
             </div>
-            {renderForm('단독/다가구 실거래가')}
-            {renderResult('단독/다가구 실거래가')}
+            {renderForm('통합 실거래가 상세 (단독/다가구)')}
+            {renderResult('통합 실거래가 상세 (단독/다가구)')}
           </div>
         </div>
       </div>

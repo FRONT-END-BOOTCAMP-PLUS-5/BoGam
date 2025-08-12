@@ -1,4 +1,4 @@
-import { GetTransactionDetailApartResponse } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartResponse';
+import { GetTransactionDetailResponseDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailResponseDto';
 import {
   TransactionDetailApartEntity,
   TransactionDetailApartRentItem,
@@ -67,8 +67,8 @@ function sanitizeOne(
 }
 
 export function sanitizeTransactionDetailApartResponse(
-  response: GetTransactionDetailApartResponse
-): GetTransactionDetailApartResponse {
+  response: GetTransactionDetailResponseDto
+): GetTransactionDetailResponseDto {
   if (!response?.data) return response;
 
   if (Array.isArray(response.data)) {

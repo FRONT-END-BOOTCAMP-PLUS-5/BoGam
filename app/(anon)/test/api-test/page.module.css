@@ -313,6 +313,108 @@
   background: #c82333;
 }
 
+/* 단지 목록 스타일 */
+.danJiList {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.danJiList h4 {
+  color: #495057;
+  margin: 0 0 16px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.danJiItem {
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.danJiItem:hover {
+  border-color: #3498db;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+}
+
+.danJiItem.selected {
+  border-color: #28a745;
+  background: #f8fff9;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+}
+
+.danJiName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.danJiName strong {
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.selectedBadge {
+  background: #28a745;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.danJiInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.danJiInfo span {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.actionButtons {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #dee2e6;
+}
+
+.continueButton {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.continueButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838 0%, #1ea885 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.continueButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .container {

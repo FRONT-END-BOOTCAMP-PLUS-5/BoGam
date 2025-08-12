@@ -1,10 +1,12 @@
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
 import { TaxCertCopy } from '@be/domain/entities/TaxCertCopy';
 import { prisma } from '@utils/prisma';
-import { TaxCertCopyExistsResponseDto } from '@be/applications/taxCertCopy/dtos/TaxCertCopyDto';
+import { CheckTaxCertCopyExistsResponseDto } from '@be/applications/taxCertCopies/dtos/CheckTaxCertCopyExistsResponseDto';
 
 export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
-  async findByUserAddressId(userAddressId: number): Promise<TaxCertCopy | null> {
+  async findByUserAddressId(
+    userAddressId: number
+  ): Promise<TaxCertCopy | null> {
     const taxCert = await prisma.taxCert.findFirst({
       where: { userAddressId },
     });
@@ -19,7 +21,10 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     };
   }
 
-  async upsertByUserAddressId(userAddressId: number, data: { taxCertData: string }): Promise<TaxCertCopy> {
+  async upsertByUserAddressId(
+    userAddressId: number,
+    data: { taxCertData: string }
+  ): Promise<TaxCertCopy> {
     const taxCert = await prisma.taxCert.upsert({
       where: { userAddressId },
       update: {
@@ -39,20 +44,22 @@ export class TaxCertCopyRepositoryImpl implements TaxCertCopyRepository {
     };
   }
 
-  async existsByUserAddressId(userAddressId: number): Promise<Pick<TaxCertCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+  async existsByUserAddressId(
+    userAddressId: number
+  ): Promise<Pick<CheckTaxCertCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
     try {
       const taxCert = await prisma.taxCert.findFirst({
         where: { userAddressId },
-        select: { id: true, updatedAt: true }
+        select: { id: true, updatedAt: true },
       });
-      
+
       return {
         exists: !!taxCert,
-        updatedAt: taxCert?.updatedAt
+        updatedAt: taxCert?.updatedAt,
       };
     } catch (error) {
       console.error('❌ 납세확인서 복사본 존재 여부 확인 DB 오류:', error);
       return { exists: false };
     }
   }
-} 
+}
