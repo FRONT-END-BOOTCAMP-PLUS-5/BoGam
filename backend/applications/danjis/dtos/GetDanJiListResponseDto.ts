@@ -1,4 +1,4 @@
-import { DanjiEntity } from '@be/domain/entities/DanjiEntity';
+import { DanjiEntity } from '@be/domain/entities/Danji';
 
 /**
  * 단지목록 조회 API 응답 DTO (원본 구조 유지)

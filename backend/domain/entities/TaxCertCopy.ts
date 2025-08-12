@@ -3,19 +3,9 @@ export interface TaxCertCopyJson {
   [key: string]: unknown;
 }
 
-export interface TaxCertCopy {
+export interface TaxCertCopyEntity {
   id: number;
   userAddressId: number;
   taxCertData: string;
   updatedAt?: Date;
 }
-
-export interface CreateTaxCertCopyDto {
-  userAddressId: number;
-  taxCertData: string;
-}
-
-export interface UpsertTaxCertCopyDto {
-  userAddressId: number;
-  taxCertData: string;
-} 

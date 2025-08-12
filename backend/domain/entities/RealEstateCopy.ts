@@ -3,18 +3,9 @@ export interface RealEstateCopyJson {
   [key: string]: unknown;
 }
 
-export interface RealEstateCopy {
+export interface RealEstateCopyEntity {
   id: number;
   userAddressId: number;
   realEstateData: string;
   updatedAt?: Date;
-}
-
-export interface CreateRealEstateCopyDto {
-  userAddressId: number;
-  realEstateData: string;
-}
-
-export interface UpdateRealEstateCopyDto {
-  realEstateData?: string;
 }

@@ -1,4 +1,4 @@
-import { DanjiSerialNumber } from '@be/domain/entities/DanjiSerialNumber';
+import { DanjiSerialNumberEntity } from '@be/domain/entities/DanjiSerialNumber';
 
 /**
  * 단지 일련번호 조회 API 응답 DTO
@@ -11,13 +11,13 @@ export interface BaseDanjiSerialNumberResponseDto {
     message: string;
     extraMessage?: string;
   };
-  data?: DanjiSerialNumber[];
+  data?: DanjiSerialNumberEntity[];
 }
 
 // 단지 일련번호 조회 성공 응답
 export interface DanjiSerialNumberResponseDto
   extends BaseDanjiSerialNumberResponseDto {
-  data: DanjiSerialNumber[];
+  data: DanjiSerialNumberEntity[];
 }
 
 // 통합 응답 타입
