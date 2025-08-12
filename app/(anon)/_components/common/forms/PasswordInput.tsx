@@ -1,6 +1,7 @@
 'use client';
-import '@/styles/globals.css';
+import '@/globals.css';
 import { useState } from 'react';
+import { Eye, EyeClosed } from 'lucide-react';
 import s from '@/(anon)/_components/common/forms/Forms.module.css';
 
 type Props = {
@@ -33,7 +34,11 @@ export default function PasswordInput({
         onClick={() => setShow((v) => !v)}
         aria-label={show ? '비밀번호 숨기기' : '비밀번호 보기'}
       >
-        {show ? '🙈' : '👁️'}
+        {show ? (
+          <EyeClosed width={18} height={18} />
+        ) : (
+          <Eye width={18} height={18} />
+        )}
       </button>
     </div>
   );

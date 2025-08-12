@@ -8,6 +8,7 @@ import s from '@/(anon)/_components/common/forms/Forms.module.css';
 
 export default function SignupForm() {
   return (
+  
     <form className={s.formRow}>
       <Field id='name' label='이름'>
         <TextInput id='name' placeholder='홍길동' />
@@ -22,12 +23,7 @@ export default function SignupForm() {
       </Field>
 
       <Field id='email' label='아이디' error='이미 존재하는 아이디입니다.'>
-        <TextInput
-          id='email'
-          type='email'
-          placeholder='example@naver.com'
-          error
-        />
+        <TextInput id='email' type='email' placeholder='example@naver.com' />
       </Field>
 
       <Field
@@ -46,8 +42,8 @@ export default function SignupForm() {
         <PasswordInput id='password2' placeholder='비밀번호 확인' />
       </Field>
 
-      <Field id='pin' label='핀번호' hint='문자/카톡으로 전송된 6자리'>
-        <OtpInput length={6} onChange={(v) => console.log('OTP', v)} />
+      <Field id='pin' label='핀번호' hint='인증서 간편 비밀번호'>
+        <OtpInput length={4} onChange={(v) => console.log('OTP', v)} />
       </Field>
 
       <Field id='phone' label='전화번호'>

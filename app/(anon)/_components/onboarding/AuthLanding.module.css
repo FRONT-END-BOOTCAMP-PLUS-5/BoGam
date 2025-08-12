@@ -1,5 +1,6 @@
 .container {
-  @apply h-screen flex items-center justify-center bg-white;
+  @apply h-screen flex items-center justify-center;
+  background: var(--bg);
 }
 .wrap {
   @apply w-full px-8;
@@ -15,12 +16,12 @@
 .btns {
   @apply flex flex-col gap-4;
 }
+
 .primary {
   background: var(--brand);
   color: #fff;
   @apply w-full py-3 rounded-2xl text-base font-medium flex items-center justify-center;
 }
-
 .outline {
   background: transparent;
   color: var(--brand);
@@ -32,23 +33,22 @@
   @apply mt-6 flex items-center justify-center gap-6;
 }
 
-/* 접근성: 44px 이상, 포커스 링 */
 .socialBtn {
   @apply h-12 w-12 rounded-full flex items-center justify-center overflow-hidden relative;
   outline: none;
 }
 .socialBtn:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), 0 0 0 6px rgba(75, 114, 166, 0.35);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), 0 0 0 6px var(--ring);
   border-radius: 9999px;
 }
 
+/* 브랜드 고유 배경유지 */
 .kakao {
   background: #fee500;
-} /* 카카오: 배경 노랑, 로고 검정 */
+}
 .naver {
   background: #03c75a;
-} /* 네이버: 배경 초록, 로고 흰색 */
-
+}
 .socialIcon {
   @apply block;
-} /* 아이콘 크기는 TSX에서 width/height로 제어 */
+}

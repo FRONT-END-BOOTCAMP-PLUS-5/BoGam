@@ -15,7 +15,8 @@ export default function TextInput({
   ...rest
 }: Props) {
   const [focus, setFocus] = useState(false);
-  const id = rest.id || useId();
+  const autoId = useId();
+  const id = (rest.id as string | undefined) ?? autoId;
 
   return (
     <>

@@ -1,6 +1,7 @@
 /* 컨테이너 */
 .container {
-  @apply flex flex-col h-screen bg-white text-black;
+  @apply flex flex-col h-screen text-black;
+  background: var(--bg);
 }
 
 /* 상단 */
@@ -8,7 +9,8 @@
   @apply p-4 flex justify-end;
 }
 .skip {
-  @apply text-sm text-gray-500 hover:underline;
+  color: var(--muted);
+  @apply text-sm hover:underline;
 }
 
 /* 캐러셀 */
@@ -32,7 +34,8 @@
   @apply text-base font-semibold;
 }
 .desc {
-  @apply mt-2 text-sm text-gray-500;
+  color: var(--muted);
+  @apply mt-2 text-sm;
 }
 
 /* 도트 */
@@ -40,10 +43,11 @@
   @apply flex gap-2 items-center justify-center mt-4;
 }
 .dot {
-  @apply h-2 w-2 rounded-full bg-black/30 transition-all duration-200 ease-in-out;
+  background: var(--border);
+  @apply h-2 w-2 rounded-full transition-all duration-200 ease-in-out;
 }
 .dotActive {
-  @apply bg-black;
+  background: var(--brand);
 }
 
 /* 마지막 슬라이드 CTA */
@@ -51,8 +55,8 @@
   @apply px-6 pb-8;
 }
 .startBtn {
-  @apply w-full max-w-xs mx-auto mt-6 text-base;
   color: var(--brand);
+  @apply w-full max-w-xs mx-auto mt-6 text-base;
 }
 
 /* 드래그 중 트랙 전환 애니 꺼주기 */

@@ -1,16 +1,25 @@
 'use client';
-import '@/styles/globals.css';
-import { useRef } from 'react';
+
+import '@/globals.css';
+import { useRef, useCallback } from 'react';
 import s from '@/(anon)/_components/common/forms/Forms.module.css';
 
 export default function OtpInput({
-  length = 6,
+  length = 4,
   onChange,
 }: {
   length?: number;
   onChange?: (value: string) => void;
 }) {
   const refs = useRef<Array<HTMLInputElement | null>>([]);
+
+  const setRef = useCallback(
+    (idx: number) => (el: HTMLInputElement | null) => {
+      // 반환값 없음 → void
+      refs.current[idx] = el;
+    },
+    []
+  );
 
   const handle = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value.replace(/\D/g, '').slice(0, 1);
@@ -35,7 +44,7 @@ export default function OtpInput({
       {Array.from({ length }).map((_, i) => (
         <input
           key={i}
-          ref={(el) => (refs.current[i] = el)}
+          ref={setRef(i)}
           inputMode='numeric'
           pattern='\d*'
           maxLength={1}
