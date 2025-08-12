@@ -1,15 +1,9 @@
-<<<<<<< HEAD
-import * as THREE from 'three';
-import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
-import { AnimationMixer, AnimationClip, AnimationAction } from 'three';
-=======
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AnimationMixer, AnimationClip, AnimationAction, TextureLoader } from 'three';
 import { initializeCommonGLTFLoader, getCommonTextureLoader, loadModelFromCache } from '@utils/gltfTextureLoaders';
->>>>>>> develop
 
 /**
  * Book 3D 모델 정보
@@ -26,23 +20,15 @@ interface BookProps {
   rotation?: THREE.Euler; // 책의 회전
   scale?: THREE.Vector3; // 책의 스케일
   id: string; // 책의 고유 ID
-<<<<<<< HEAD
-=======
   renderer?: THREE.WebGLRenderer; // WebGL 렌더러 (KTX2 지원 감지용)
   bookId?: string; // 책 번호 (book1, book2, ...)
->>>>>>> develop
 }
 
 // 책의 상태를 관리하는 클래스
 export class BookController {
   private id: string;
-<<<<<<< HEAD
-  private group: THREE.Group;
-  private mixer?: AnimationMixer;
-=======
   public group: THREE.Group;
   public mixer?: AnimationMixer;
->>>>>>> develop
   private action?: AnimationAction;
   private state: 'closed' | 'open' = 'closed';
   private isAnimating: boolean = false;
@@ -63,12 +49,6 @@ export class BookController {
   private moveProgress: number = 0;
   private moveDuration: number = 0.4; // 이동에 걸리는 시간 (초)
   
-<<<<<<< HEAD
-  // 모든 BookController 인스턴스를 추적하기 위한 정적 배열
-  private static allControllers: BookController[] = [];
-
-  constructor(id: string, group: THREE.Group, mixer?: AnimationMixer) {
-=======
   // 링크 URL 저장
   public linkUrl: string;
   
@@ -76,17 +56,13 @@ export class BookController {
   private static allControllers: BookController[] = [];
 
   constructor(id: string, group: THREE.Group, mixer?: AnimationMixer, linkUrl?: string) {
->>>>>>> develop
     this.id = id;
     this.group = group;
     this.mixer = mixer;
     
-<<<<<<< HEAD
-=======
     // 링크 URL 설정 (기본값: /step1, /step2 등)
     this.linkUrl = linkUrl || `/step${id.replace('book', '')}`;
     
->>>>>>> develop
     // 원래 위치와 회전 저장
     this.originalPosition = group.position.clone();
     this.originalRotation = group.rotation.clone();
@@ -166,17 +142,6 @@ export class BookController {
         const time = action.time;
         const duration = action.getClip().duration;
         
-<<<<<<< HEAD
-        // 책펼치기: 0~40% 구간에서만 재생하고 완료 후 40% 상태 유지
-        if (this.animationType === 'open' && time >= duration * 0.4) {
-          action.time = duration * 0.4; // 40% 상태로 고정
-          action.paused = true;
-          action.enabled = true; // 애니메이션 상태 유지
-          this.isAnimating = false;
-          this.hasPlayed = true;
-          this.animationType = null;
-        }
-=======
                  // 책펼치기: 0~40% 구간에서만 재생하고 완료 후 40% 상태 유지
          if (this.animationType === 'open' && time >= duration * 0.4) {
            action.time = duration * 0.4; // 40% 상태로 고정
@@ -191,7 +156,6 @@ export class BookController {
              this.navigateToLink();
            }, 100); // 0.1초 후 링크 이동
          }
->>>>>>> develop
         // 책닫기: 60~100% 구간에서만 재생하고 완료 후 100% 상태 유지
         else if (this.animationType === 'close' && time >= duration) {
           action.time = duration; // 100% 상태로 고정
@@ -284,14 +248,6 @@ export class BookController {
     this.moveTargetPosition.set(1.36, 6, 0);
     this.moveTargetRotation.set(Math.PI / 2, 0, -Math.PI / 2);
     
-<<<<<<< HEAD
-    // 콘솔 로그 출력 (이동만)
-    console.log(`[${this.id}] moveToCenter:`);
-    console.log(`  시작 위치: (${this.moveStartPosition.x.toFixed(2)}, ${this.moveStartPosition.y.toFixed(2)}, ${this.moveStartPosition.z.toFixed(2)})`);
-    console.log(`  목표 위치: (${this.moveTargetPosition.x.toFixed(2)}, ${this.moveTargetPosition.y.toFixed(2)}, ${this.moveTargetPosition.z.toFixed(2)})`);
-    
-=======
->>>>>>> develop
     // 이동 애니메이션 시작
     this.moveProgress = 0;
     this.isMoving = true;
@@ -359,14 +315,6 @@ export class BookController {
     this.moveTargetPosition.copy(this.originalPosition);
     this.moveTargetRotation.copy(this.originalRotation);
     
-<<<<<<< HEAD
-    // 콘솔 로그 출력 (이동만)
-    console.log(`[${this.id}] returnToOriginal:`);
-    console.log(`  시작 위치: (${this.moveStartPosition.x.toFixed(2)}, ${this.moveStartPosition.y.toFixed(2)}, ${this.moveStartPosition.z.toFixed(2)})`);
-    console.log(`  목표 위치: (${this.moveTargetPosition.x.toFixed(2)}, ${this.moveTargetPosition.y.toFixed(2)}, ${this.moveTargetPosition.z.toFixed(2)})`);
-    
-=======
->>>>>>> develop
     // 이동 애니메이션 시작
     this.moveProgress = 0;
     this.isMoving = true;
@@ -374,8 +322,6 @@ export class BookController {
     this.isAnimating = false;
   }
 
-<<<<<<< HEAD
-=======
   // 링크로 이동하는 메서드
   private navigateToLink(): void {
     console.log(`[${this.id}] 링크로 이동: ${this.linkUrl}`);
@@ -383,7 +329,6 @@ export class BookController {
     window.location.href = this.linkUrl;
   }
 
->>>>>>> develop
   // 클릭 이벤트 처리
   handleClick(): void {
     if (!this.isAnimating) {
@@ -416,75 +361,12 @@ export class BookController {
   }
 }
 
-<<<<<<< HEAD
-=======
 import axios from 'axios';
 
->>>>>>> develop
 export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixer?: AnimationMixer }> => {
   const {
     position = new THREE.Vector3(0, 0, 0),
     rotation = new THREE.Euler(0, 0, 0),
-<<<<<<< HEAD
-    scale = new THREE.Vector3(1, 1, 1)
-  } = props;
-
-  return new Promise((resolve, reject) => {
-    const loader = new GLTFLoader();
-    
-    loader.load(
-      '/models/book/scene.gltf',
-      (gltf: GLTF) => {
-        const bookGroup = new THREE.Group();
-        const bookModel = gltf.scene;
-        
-        // 모델 스케일 조정
-        bookModel.scale.copy(scale);
-        
-        // 모델에 그림자 설정 및 재질 변경
-        bookModel.traverse(async (child: THREE.Object3D) => {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = true; // 그림자 생성
-            child.receiveShadow = true; // 그림자 받기
-          }
-        });
-        
-        // 애니메이션 설정
-        let mixer: AnimationMixer | undefined;
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new AnimationMixer(bookModel);
-          mixer.timeScale = 6; // 애니메이션 속도를 4배로 설정
-          
-          gltf.animations.forEach((clip: AnimationClip) => {
-            const action = mixer!.clipAction(clip);
-            action.loop = THREE.LoopOnce; // 한 번만 재생
-            action.clampWhenFinished = true; // 애니메이션 끝나면 마지막 프레임 유지
-            action.enabled = true;
-            action.play(); // 반드시 play해서 포즈 계산 가능하게 함
-            action.paused = true; // 재생 멈춤
-            action.time = 0; // 0프레임으로 이동
-          });
-
-          // 포즈를 실제로 적용
-          mixer.update(0);
-        }
-        
-        // 위치와 회전 설정
-        bookGroup.position.copy(position);
-        bookGroup.rotation.copy(rotation);
-        bookGroup.add(bookModel);
-        
-        resolve({ group: bookGroup, mixer });
-      },
-      (progress: ProgressEvent) => {
-        // 로딩 진행률 로그 제거
-      },
-      (error: unknown) => {
-        console.error('Error loading book model:', error);
-        reject(error);
-      }
-    );
-=======
     scale = new THREE.Vector3(1, 1, 1),
     renderer,
     bookId
@@ -632,6 +514,5 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
       console.error('[Book] 모델 로딩 중 오류:', error);
       reject(error);
     }
->>>>>>> develop
   });
 };
