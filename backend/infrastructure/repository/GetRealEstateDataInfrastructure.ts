@@ -1,13 +1,8 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
-import {
-  DetailInquiryRequest,
-  GetRealEstateRequest,
-  IssueResultRequest,
-  SummaryInquiryRequest,
-} from '@be/applications/realEstate/dtos/RealEstateRequest';
-import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
+import { GetRealEstatesRequestDto } from '@be/applications/realEstate/dtos/GetRealEstatesRequestDto';
+import { GetRealEstatesResponseDto } from '@be/applications/realEstate/dtos/GetRealEstatesResponseDto';
 import { processResponse } from '@libs/responseUtils';
 
 /**
@@ -42,12 +37,8 @@ export class GetRealEstateDataInfrastructure {
    * @returns 응답 데이터
    */
   async getRealEstateRegistry(
-    request:
-      | IssueResultRequest
-      | GetRealEstateRequest
-      | SummaryInquiryRequest
-      | DetailInquiryRequest
-  ): Promise<GetRealEstateResponse> {
+    request: GetRealEstatesRequestDto
+  ): Promise<GetRealEstatesResponseDto> {
     try {
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
@@ -67,8 +58,8 @@ export class GetRealEstateDataInfrastructure {
       );
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetRealEstateResponse =
-        processResponse<GetRealEstateResponse>(response.data);
+      const data: GetRealEstatesResponseDto =
+        processResponse<GetRealEstatesResponseDto>(response.data);
 
       console.log('✅ 부동산등기부등본 조회 성공:', {
         status: response.status,
@@ -91,7 +82,7 @@ export class GetRealEstateDataInfrastructure {
    */
   async handleTwoWayAuth(
     twoWayRequest: Record<string, unknown>
-  ): Promise<GetRealEstateResponse> {
+  ): Promise<GetRealEstatesResponseDto> {
     try {
       const accessToken = await this.codefAuth.getAccessToken();
 
@@ -115,8 +106,8 @@ export class GetRealEstateDataInfrastructure {
       );
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetRealEstateResponse =
-        processResponse<GetRealEstateResponse>(response.data);
+      const data: GetRealEstatesResponseDto =
+        processResponse<GetRealEstatesResponseDto>(response.data);
 
       console.log('✅ 2-way 인증 처리 성공:', {
         status: response.status,

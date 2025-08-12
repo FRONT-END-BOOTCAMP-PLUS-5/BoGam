@@ -1,6 +1,6 @@
 import { prisma } from '@utils/prisma';
 import { GetUserAddressesRepository } from '@be/domain/repository/GetUserAddressesRepository';
-import { UserAddressWithAddressInfo } from '@be/applications/place/dtos/UserAddressDto';
+import { UserAddressWithAddressInfo } from '@be/applications/users/dtos/UserAddressDto';
 
 export class GetUserAddressesRepositoryImpl
   implements GetUserAddressesRepository
@@ -29,6 +29,7 @@ export class GetUserAddressesRepositoryImpl
         legalDistrictCode: userAddress.address.legalDistrictCode || undefined,
         dong: userAddress.address.dong || undefined,
         ho: userAddress.address.ho || undefined,
+        lotAddress: userAddress.address.lotAddress || '',
       },
       isPrimary: userAddress.isPrimary,
     }));

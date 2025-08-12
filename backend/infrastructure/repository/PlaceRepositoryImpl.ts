@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { Place } from '@be/domain/entities/Place';
 import { PlaceRepository } from '@be/domain/repository/PlaceRepository';
-import { PlaceSearchApiResponseDto } from '@be/applications/place/dtos/PlaceSearchApiResponseDto';
-import { PlaceApiDto, PlaceApiResponse } from '@be/applications/place/dtos/PlaceApiDto';
+import { PlaceSearchApiResponseDto } from '@be/applications/places/dtos/PlaceSearchApiResponseDto';
+import {
+  PlaceApiDto,
+  PlaceApiResponse,
+} from '@be/applications/places/dtos/PlaceApiDto';
 
 export class PlaceRepositoryImpl implements PlaceRepository {
   private readonly BASE_URL = 'https://dapi.kakao.com/v2/local';

@@ -1,3 +1,3 @@
-export default function StepDetailPage() {
+export default function StepDetail() {
   return null;
 }

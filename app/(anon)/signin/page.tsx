@@ -1,3 +1,3 @@
-export default function SignInPage() {
+export default function SignIn() {
   return null;
 }

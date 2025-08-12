@@ -1,43 +1,52 @@
 'use client';
 
 import React from 'react';
-import { TaxCertRequest } from '@be/applications/taxCert/dtos/TaxCertDto';
+import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
 import commonStyles from '@/(anon)/test/tax-cert/_components/Common.module.css';
 
 interface IdLoginFormProps {
-  formData: TaxCertRequest;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  formData: GetTaxCertRequestDto;
+  onInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => void;
 }
 
-export default function IdLoginForm({ formData, onInputChange }: IdLoginFormProps) {
+export default function IdLoginForm({
+  formData,
+  onInputChange,
+}: IdLoginFormProps) {
   return (
     <>
       <div className={commonStyles.formGridTwo}>
         <div className={commonStyles.formField}>
           <label className={commonStyles.labelRequired}>아이디</label>
           <input
-            type="text"
-            name="userId"
+            type='text'
+            name='userId'
             value={formData.userId || ''}
             onChange={onInputChange}
             className={commonStyles.inputRequired}
             required
-            placeholder="필수: 아이디"
+            placeholder='필수: 아이디'
           />
         </div>
         <div className={commonStyles.formField}>
-          <label className={commonStyles.labelRequired}>비밀번호 (RSA암호화)</label>
+          <label className={commonStyles.labelRequired}>
+            비밀번호 (RSA암호화)
+          </label>
           <input
-            type="password"
-            name="userPassword"
+            type='password'
+            name='userPassword'
             value={formData.userPassword || ''}
             onChange={onInputChange}
             className={commonStyles.inputRequired}
             required
-            placeholder="필수: 비밀번호 (RSA암호화)"
+            placeholder='필수: 비밀번호 (RSA암호화)'
           />
         </div>
       </div>
     </>
   );
-} 
+}
