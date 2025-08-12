@@ -1,5 +1,5 @@
-import { NaverNews } from '@be/domain/entities/NaverNews';
+import { NaverNewsEntity } from '@be/domain/entities/NaverNews';
 
 export interface NewsRepository {
-  fetchNews(): Promise<NaverNews[]>;
+  fetchNews(): Promise<NaverNewsEntity[]>;
 }

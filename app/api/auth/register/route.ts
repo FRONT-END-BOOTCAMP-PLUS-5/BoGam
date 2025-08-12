@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@utils/prisma';
-import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepository';
-import { RegisterRequestDto } from '@be/applications/auth/dtos/LoginDtos';
-import { SignUpUseCase } from '@be/applications/user/usecases/SignUpUseCase';
+import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
+import { RegisterRequestDto } from '@be/applications/users/dtos/SignUpDtos';
+import { SignUpUsecase } from '@be/applications/users/usecases/SignUpUsecase';
 
-const userRepository = new UserRepositoryImpl(prisma);
-const signUpUseCase = new SignUpUseCase(userRepository);
+const userRepository = new UserRepositoryImpl();
+const signUpUsecase = new SignUpUsecase(userRepository);
 
 export async function POST(request: NextRequest) {
   try {
     const body: RegisterRequestDto = await request.json();
 
-    const result = await signUpUseCase.register(body);
+    const result = await signUpUsecase.signUp(body);
 
     if (result.success) {
       return NextResponse.json(result, { status: 201 });

@@ -1,0 +1,84 @@
+name: Deploy (Production)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Deploy to Production via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -e
+            APP_NAME=bogam-app
+            PORT=3121
+            WORKDIR=${WORKDIR:-/home/${{ secrets.SSH_USER }}/BoGam}
+
+            cd "${WORKDIR}"
+
+            echo "[1/6] Git pull"
+            git fetch --all --prune
+            git checkout main
+            git pull origin main --ff-only
+
+            echo "[2/6] Install dependencies"
+            rm -rf node_modules
+            npm ci
+
+            echo "[3/6] Prisma"
+            npx prisma generate
+            npx prisma migrate deploy
+
+            echo "[4/6] Build"
+            rm -rf .next
+            npm run build
+
+            echo "[5/6] PM2 reload/start"
+            if pm2 describe "${APP_NAME}" > /dev/null; then
+              pm2 reload "${APP_NAME}"
+            else
+              pm2 start npm --name "${APP_NAME}" -- start -- -p ${PORT} -H 0.0.0.0
+            fi
+            pm2 save
+
+            echo "[6/6] Health check"
+            curl -fsS "http://127.0.0.1:${PORT}/" > /dev/null || (echo "❌ Health check failed" && exit 1)
+
+      - name: Show PM2 status (always)
+        if: always()
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            pm2 list
+            pm2 describe bogam-app || true
+
+      - name: Tail PM2 logs on failure
+        if: failure()
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "=== STDOUT ==="
+            pm2 logs bogam-app --lines 200 || true
+            echo "=== STDERR (err only) ==="
+            pm2 logs bogam-app --err --lines 200 || true

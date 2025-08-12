@@ -1,8 +1,17 @@
-import { RealEstateCopy, CreateRealEstateCopyDto, UpdateRealEstateCopyDto } from '../entities/RealEstateCopy';
+import { RealEstateCopyEntity } from '@be/domain/entities/RealEstateCopy';
+import { CheckRealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopies/dtos/CheckRealEstateCopyExistsResponseDto';
 
 export interface RealEstateCopyRepository {
-  create(data: CreateRealEstateCopyDto): Promise<RealEstateCopy>;
-  findByUserAddressId(userAddressId: number): Promise<RealEstateCopy[]>;
-  updateByUserAddressId(userAddressId: number, data: UpdateRealEstateCopyDto): Promise<RealEstateCopy>;
-  deleteByUserAddressId(userAddressId: number): Promise<void>;
+  findByUserAddressId(
+    userAddressId: number
+  ): Promise<RealEstateCopyEntity | null>;
+  upsertByUserAddressId(
+    userAddressId: number,
+    data: { realEstateData: string }
+  ): Promise<RealEstateCopyEntity>;
+  existsByUserAddressId(
+    userAddressId: number
+  ): Promise<
+    Pick<CheckRealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>
+  >;
 }

@@ -1,4 +1,4 @@
-export class Place {
+export class PlaceEntity {
   constructor(
     public readonly name: string,
     public readonly address: string,

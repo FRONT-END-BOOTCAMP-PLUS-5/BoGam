@@ -1,11 +1,8 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import {
-  RebHousingPriceRequest,
-  RebHousingPriceTwoWayRequest,
-  RebHousingPriceApiResponse,
-} from '@be/applications/rebHousingPrice/dtos/RebHousingPriceDto';
+import { GetRebHousingPriceListRequestDto } from '@be/applications/rebHousingPrices/dtos/GetRebHousingPriceListRequestDto';
+import { GetRebHousingPriceListResponseDto } from '@be/applications/rebHousingPrices/dtos/GetRebHousingPriceListResponseDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 
 /**
@@ -21,23 +18,14 @@ export class RebHousingPriceRepository {
    * @param request 부동산 공시가격 조회 요청 데이터
    * @returns 부동산 공시가격 조회 응답 데이터
    */
-  async getRebHousingPrice(
-    request: RebHousingPriceRequest | RebHousingPriceTwoWayRequest
-  ): Promise<RebHousingPriceApiResponse> {
+  async getRebHousingPriceList(
+    request: GetRebHousingPriceListRequestDto
+  ): Promise<GetRebHousingPriceListResponseDto> {
     try {
       this.codefAuth = createCodefAuth();
 
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
-
-      console.log('🏢 부동산 공시가격(공동주택) 조회 요청 중...', {
-        endpoint: this.endpoint,
-        organization: request.organization,
-        addrSearchType: request.addrSearchType,
-        addrSido: request.addrSido,
-        addrSiGunGu: request.addrSiGunGu,
-        is2Way: 'is2Way' in request ? request.is2Way : false,
-      });
 
       const url = `${this.endpoint}`;
 
@@ -50,15 +38,8 @@ export class RebHousingPriceRepository {
       });
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: RebHousingPriceApiResponse =
-        processResponse<RebHousingPriceApiResponse>(response.data);
-
-      console.log('✅ 부동산 공시가격(공동주택) 조회 성공:', {
-        status: response.status,
-        resultCode: data?.result?.code,
-        resultMessage: data?.result?.message,
-        hasData: !!data?.data,
-      });
+      const data: GetRebHousingPriceListResponseDto =
+        processResponse<GetRebHousingPriceListResponseDto>(response.data);
 
       return data;
     } catch (error) {

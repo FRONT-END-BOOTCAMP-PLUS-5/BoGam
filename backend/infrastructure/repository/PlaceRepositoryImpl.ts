@@ -1,14 +1,17 @@
 import axios from 'axios';
-import { Place } from '@be/domain/entities/Place';
+import { PlaceEntity } from '@be/domain/entities/Place';
 import { PlaceRepository } from '@be/domain/repository/PlaceRepository';
-import { PlaceSearchApiResponseDto } from '@be/applications/place/dtos/PlaceSearchApiResponseDto';
-import { PlaceApiDto, PlaceApiResponse } from '@be/applications/place/dtos/PlaceApiDto';
+import { PlaceSearchApiResponseDto } from '@be/applications/places/dtos/PlaceSearchApiResponseDto';
+import {
+  PlaceApiDto,
+  PlaceApiResponse,
+} from '@be/applications/places/dtos/PlaceApiDto';
 
 export class PlaceRepositoryImpl implements PlaceRepository {
   private readonly BASE_URL = 'https://dapi.kakao.com/v2/local';
   private readonly API_KEY = process.env.KAKAO_REST_API_KEY || '';
 
-  async search(query: string): Promise<Place[]> {
+  async search(query: string): Promise<PlaceEntity[]> {
     const headers = {
       Authorization: `KakaoAK ${this.API_KEY}`,
     };
@@ -28,12 +31,12 @@ export class PlaceRepositoryImpl implements PlaceRepository {
     const addressDocs = addressRes.data.documents || [];
 
     const combined = [...keywordDocs, ...addressDocs].map(
-      (doc: PlaceApiDto): Place =>
-        new Place(doc.place_name || '', doc.address_name, doc.x, doc.y)
+      (doc: PlaceApiDto): PlaceEntity =>
+        new PlaceEntity(doc.place_name || '', doc.address_name, doc.x, doc.y)
     );
 
     // 중복 제거 (위도+경도로 비교)
-    const uniqueMap = new Map<string, PlaceSearchApiResponseDto>();
+    const uniqueMap = new Map<string, PlaceEntity>();
 
     for (const item of combined) {
       const key = `${item.latitude},${item.longitude}`;

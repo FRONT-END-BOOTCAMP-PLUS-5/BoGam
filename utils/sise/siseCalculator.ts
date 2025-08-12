@@ -1,4 +1,4 @@
-import { SiseEntity } from '@be/domain/entities/SiseEntity';
+import { SiseEntity } from '@be/domain/entities/Sise';
 
 /**
  * 시세정보 계산 및 변환 유틸리티

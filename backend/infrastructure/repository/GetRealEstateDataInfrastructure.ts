@@ -1,13 +1,8 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
-import {
-  DetailInquiryRequest,
-  GetRealEstateRequest,
-  IssueResultRequest,
-  SummaryInquiryRequest,
-} from '@be/applications/realEstate/dtos/RealEstateRequest';
-import { GetRealEstateResponse } from '@be/applications/realEstate/dtos/RealEstateResponse';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
+import { GetRealEstatesRequestDto } from '@be/applications/realEstate/dtos/GetRealEstatesRequestDto';
+import { GetRealEstatesResponseDto } from '@be/applications/realEstate/dtos/GetRealEstatesResponseDto';
 import { processResponse } from '@libs/responseUtils';
 
 /**
@@ -42,12 +37,8 @@ export class GetRealEstateDataInfrastructure {
    * @returns 응답 데이터
    */
   async getRealEstateRegistry(
-    request:
-      | IssueResultRequest
-      | GetRealEstateRequest
-      | SummaryInquiryRequest
-      | DetailInquiryRequest
-  ): Promise<GetRealEstateResponse> {
+    request: GetRealEstatesRequestDto
+  ): Promise<GetRealEstatesResponseDto> {
     try {
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
@@ -67,8 +58,8 @@ export class GetRealEstateDataInfrastructure {
       );
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetRealEstateResponse =
-        processResponse<GetRealEstateResponse>(response.data);
+      const data: GetRealEstatesResponseDto =
+        processResponse<GetRealEstatesResponseDto>(response.data);
 
       console.log('✅ 부동산등기부등본 조회 성공:', {
         status: response.status,
@@ -86,33 +77,24 @@ export class GetRealEstateDataInfrastructure {
 
   /**
    * 2-way 인증 처리 API 호출
-   * @param uniqueNo 부동산 고유번호
-   * @param twoWayInfo 추가인증 정보
+   * @param twoWayRequest 2-way 인증 요청 데이터 (원본 요청 + 2-way 인증 정보)
    * @returns 응답 데이터
    */
   async handleTwoWayAuth(
-    uniqueNo: string,
-    twoWayInfo: {
-      jobIndex: number;
-      threadIndex: number;
-      jti: string;
-      twoWayTimestamp: number;
-    }
-  ): Promise<GetRealEstateResponse> {
+    twoWayRequest: Record<string, unknown>
+  ): Promise<GetRealEstatesResponseDto> {
     try {
-      console.log('🔐 2-way 인증 처리 시작:', { uniqueNo, twoWayInfo });
-
       const accessToken = await this.codefAuth.getAccessToken();
 
-      const twoWayRequest = {
-        uniqueNo,
+      // twoWayRequest에 is2Way 플래그 추가
+      const requestWithFlag = {
+        ...twoWayRequest,
         is2Way: true,
-        twoWayInfo,
       };
 
       const response = await axios.post(
         `${this.baseUrl}/v1/kr/public/ck/real-estate-register/status`,
-        twoWayRequest,
+        requestWithFlag,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -124,8 +106,8 @@ export class GetRealEstateDataInfrastructure {
       );
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetRealEstateResponse =
-        processResponse<GetRealEstateResponse>(response.data);
+      const data: GetRealEstatesResponseDto =
+        processResponse<GetRealEstatesResponseDto>(response.data);
 
       console.log('✅ 2-way 인증 처리 성공:', {
         status: response.status,
@@ -138,43 +120,6 @@ export class GetRealEstateDataInfrastructure {
     } catch (error: unknown) {
       console.error('❌ 2-way 인증 처리 실패:', error);
       throw error;
-    }
-  }
-
-  /**
-   * 에러 처리
-   * @param error 에러 객체
-   */
-  private handleError(error: any): void {
-    if ('response' in error && error.response) {
-      // 서버 응답이 있는 경우
-      const { status, data } = error.response;
-      console.error('API 응답 에러:', {
-        status,
-        code: (data as GetRealEstateResponse)?.result?.code,
-        message: (data as GetRealEstateResponse)?.result?.message,
-      });
-
-      // 특정 에러 코드에 대한 처리
-      switch ((data as GetRealEstateResponse)?.result?.code) {
-        case 'CF-03002':
-          console.log('⚠️ 추가인증이 필요합니다.');
-          break;
-        case 'CF-13002':
-          console.log('⚠️ 전화번호 형식이 올바르지 않습니다.');
-          break;
-        case 'CF-13007':
-          console.log('⚠️ 조회건수가 100건을 초과했습니다.');
-          break;
-        default:
-          console.log('⚠️ 기타 API 에러가 발생했습니다.');
-      }
-    } else if ('request' in error && error.request) {
-      // 요청은 보냈지만 응답이 없는 경우
-      console.error('네트워크 에러:', error.message);
-    } else {
-      // 요청 설정 중 에러
-      console.error('요청 설정 에러:', error.message);
     }
   }
 }
