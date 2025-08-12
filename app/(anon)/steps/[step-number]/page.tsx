@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import StepDetail from './_components/StepDetail';
-import styles from './page.module.css';
+import { styles } from './page.styles';
 
 interface StepNumberPageProps {
   params: Promise<{
@@ -27,7 +27,7 @@ export default function StepNumberPage({ params }: StepNumberPageProps) {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <h1>중단계 페이지</h1>
+        <h1 className={styles.title}>중단계 페이지</h1>
         <button 
           className={styles.clickButton}
           onClick={handleClick}

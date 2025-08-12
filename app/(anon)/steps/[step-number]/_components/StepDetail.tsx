@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, TouchEvent, MouseEvent } from 'react';
 import { getStepDetail, StepDetailData } from '@libs/constants/stepDetails';
-import styles from './StepDetail.module.css';
+import { styles } from './StepDetail.styles';
 
 interface StepDetailProps {
   stepNumber: string;
@@ -217,7 +217,7 @@ export default function StepDetail({
               onClick={toggleExpanded}
             >
               <svg 
-                className={`${styles.expandIcon} ${isExpanded ? styles.expanded : ''}`}
+                className={`${styles.expandIcon} ${isExpanded ? 'rotate-90' : ''}`}
                 viewBox="0 0 16 16" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
