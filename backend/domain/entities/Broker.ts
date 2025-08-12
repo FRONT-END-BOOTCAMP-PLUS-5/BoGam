@@ -1,4 +1,4 @@
-export interface Broker {
+export interface BrokerEntity {
     idCode: number,
     idCodeNm: string,
     jurirno: string,

@@ -1,5 +1,5 @@
 import { BrokerRepository } from '@be/domain/repository/BrokerRepository';
-import { Broker } from '@be/domain/entities/Broker';
+import { BrokerEntity } from '@be/domain/entities/Broker';
 import axios from 'axios';
 
 // API 응답 타입 정의
@@ -25,7 +25,7 @@ interface BrokerApiResponse {
 }
 
 export class ApiBrokerRepository implements BrokerRepository {
-  async find(brkrNm: string, bsnmCmpnm: string): Promise<Broker> {
+  async find(brkrNm: string, bsnmCmpnm: string): Promise<BrokerEntity> {
     try {
       const key = process.env.VWORLD_BROKER_KEY;
       const response = await axios.get(
