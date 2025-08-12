@@ -21,7 +21,7 @@
   @apply h-full flex transition-transform duration-300 ease-out;
 }
 .slideWrap {
-  @apply shrink-0 basis-full flex items-center justify-center px-6 text-center select-none;
+  @apply shrink-0 basis-full flex items-center justify-center text-center select-none;
 }
 
 .content {
