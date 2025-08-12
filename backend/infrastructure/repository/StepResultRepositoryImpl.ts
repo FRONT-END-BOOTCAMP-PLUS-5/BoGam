@@ -1,19 +1,31 @@
 import { StepResultRepository } from '@be/domain/repository/StepResultRepository';
-import { StepResult } from '@be/domain/entities/StepResult';
+import { StepResultEntity } from '@be/domain/entities/StepResult';
 import { prisma } from '@utils/prisma';
 
 export class StepResultRepositoryImpl implements StepResultRepository {
-  async findByParams(params: Record<string, unknown>): Promise<StepResult[]> {
+  async findByParams(
+    params: Record<string, unknown>
+  ): Promise<StepResultEntity[]> {
     try {
       const where: Record<string, unknown> = {};
-      if (params.userAddressId) { where.userAddressId = params.userAddressId; }
-      if (params.id) { where.id = params.id; }
-      if (params.stepId) { where.stepId = params.stepId; }
+      if (params.userAddressId) {
+        where.userAddressId = params.userAddressId;
+      }
+      if (params.id) {
+        where.id = params.id;
+      }
+      if (params.stepId) {
+        where.stepId = params.stepId;
+      }
 
       if (params.mainNum || params.subNum) {
         where.step = {};
-        if (params.mainNum) { (where.step as Record<string, unknown>).mainNum = params.mainNum; }
-        if (params.subNum) { (where.step as Record<string, unknown>).subNum = params.subNum; }
+        if (params.mainNum) {
+          (where.step as Record<string, unknown>).mainNum = params.mainNum;
+        }
+        if (params.subNum) {
+          (where.step as Record<string, unknown>).subNum = params.subNum;
+        }
       }
 
       const orderBy: Record<string, unknown> = {};
@@ -30,44 +42,54 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         include: { step: true },
         orderBy,
         take: params.limit as number,
-        skip: params.offset as number
+        skip: params.offset as number,
       });
 
-      return stepResults.map((result) => new StepResult(
-        result.id, result.userAddressId, result.stepId,
-        result.mismatch, result.match, result.unchecked,
-        result.details, result.createdAt, result.updatedAt,
-        result.step?.mainNum, result.step?.subNum
-      ));
+      return stepResults.map(
+        (result) =>
+          new StepResultEntity(
+            result.id,
+            result.userAddressId,
+            result.stepId,
+            result.mismatch,
+            result.match,
+            result.unchecked,
+            result.details,
+            result.createdAt,
+            undefined,
+            result.step?.mainNum,
+            result.step?.subNum
+          )
+      );
     } catch (error) {
       console.error('❌ StepResult 조회 오류:', error);
       throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
     }
   }
 
-  async upsert(stepResult: StepResult): Promise<StepResult> {
+  async upsert(stepResult: StepResultEntity): Promise<StepResultEntity> {
     try {
       const upsertedStepResult = await prisma.stepResult.upsert({
         where: {
           userAddressId_stepId: {
             userAddressId: stepResult.userAddressId!,
-            stepId: stepResult.stepId!
-          }
+            stepId: stepResult.stepId!,
+          },
         },
         create: {
           userAddressId: stepResult.userAddressId!,
           stepId: stepResult.stepId!,
-          details: stepResult.details as never
+          details: stepResult.details as never,
         },
         update: {
-          details: stepResult.details as never
+          details: stepResult.details as never,
         },
-        include: { step: true }
+        include: { step: true },
       });
 
-      const result = upsertedStepResult as unknown as { 
-        id: number; 
-        userAddressId: number; 
+      const result = upsertedStepResult as unknown as {
+        id: number;
+        userAddressId: number;
         stepId: number;
         mismatch: number | null;
         match: number | null;
@@ -77,11 +99,18 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         updatedAt: Date;
         step?: { mainNum: number; subNum: number };
       };
-      return new StepResult(
-        result.id, result.userAddressId, result.stepId,
-        result.mismatch, result.match, result.unchecked,
-        result.details, result.createdAt, result.updatedAt,
-        result.step?.mainNum, result.step?.subNum
+      return new StepResultEntity(
+        result.id,
+        result.userAddressId,
+        result.stepId,
+        result.mismatch,
+        result.match,
+        result.unchecked,
+        result.details,
+        result.createdAt,
+        result.updatedAt,
+        result.step?.mainNum,
+        result.step?.subNum
       );
     } catch (error) {
       console.error('❌ StepResult upsert 오류:', error);
@@ -89,10 +118,13 @@ export class StepResultRepositoryImpl implements StepResultRepository {
     }
   }
 
-  async findStepIdByMainSub(mainNum: number, subNum: number): Promise<number | null> {
+  async findStepIdByMainSub(
+    mainNum: number,
+    subNum: number
+  ): Promise<number | null> {
     try {
       const step = await prisma.step.findFirst({
-        where: { mainNum, subNum }
+        where: { mainNum, subNum },
       });
       return step?.id || null;
     } catch (error) {
@@ -100,4 +132,4 @@ export class StepResultRepositoryImpl implements StepResultRepository {
       throw new Error('스탭 조회 중 오류가 발생했습니다.');
     }
   }
-} 
+}

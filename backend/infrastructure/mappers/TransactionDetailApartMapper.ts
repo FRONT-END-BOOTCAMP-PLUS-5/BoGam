@@ -8,62 +8,54 @@ import {
 function pickSale(
   item: Record<string, unknown>
 ): TransactionDetailApartSaleItem {
-  return {
-    resYear: String(item.resYear ?? ''),
-    resMonth: String(item.resMonth ?? ''),
-    resDays: String(item.resDays ?? ''),
-    resArea: String(item.resArea ?? ''),
-    resArea1: item.resArea1 ? String(item.resArea1) : undefined,
-    resCancelYN: item.resCancelYN ? String(item.resCancelYN) : undefined,
-    resRegistrationDate: item.resRegistrationDate
-      ? String(item.resRegistrationDate)
-      : undefined,
-    resTranAmount: String(item.resTranAmount ?? ''),
-    resFloor: String(item.resFloor ?? ''),
-    resDealType: item.resDealType ? String(item.resDealType) : undefined,
-    resLocation: item.resLocation ? String(item.resLocation) : undefined,
-    resFloorNum: item.resFloorNum ? String(item.resFloorNum) : undefined,
-    resDong: item.resDong ? String(item.resDong) : undefined,
-  };
+  return new TransactionDetailApartSaleItem(
+    String(item.resYear ?? ''),
+    String(item.resMonth ?? ''),
+    String(item.resDays ?? ''),
+    String(item.resArea ?? ''),
+    String(item.resTranAmount ?? ''),
+    String(item.resFloor ?? ''),
+    item.resArea1 ? String(item.resArea1) : undefined,
+    item.resCancelYN ? String(item.resCancelYN) : undefined,
+    item.resRegistrationDate ? String(item.resRegistrationDate) : undefined,
+    item.resDealType ? String(item.resDealType) : undefined,
+    item.resLocation ? String(item.resLocation) : undefined,
+    item.resFloorNum ? String(item.resFloorNum) : undefined,
+    item.resDong ? String(item.resDong) : undefined
+  );
 }
 
 function pickRent(
   item: Record<string, unknown>
 ): TransactionDetailApartRentItem {
-  return {
-    resYear: String(item.resYear ?? ''),
-    resMonth: String(item.resMonth ?? ''),
-    resDays: String(item.resDays ?? ''),
-    resArea: String(item.resArea ?? ''),
-    resArea1: item.resArea1 ? String(item.resArea1) : undefined,
-    resCancelYN: item.resCancelYN ? String(item.resCancelYN) : undefined,
-    resRegistrationDate: item.resRegistrationDate
-      ? String(item.resRegistrationDate)
-      : undefined,
-    resTranAmount: String(item.resTranAmount ?? ''),
-    resFloor: String(item.resFloor ?? ''),
-    resDealType: item.resDealType ? String(item.resDealType) : undefined,
-    resLocation: item.resLocation ? String(item.resLocation) : undefined,
-    resFloorNum: item.resFloorNum ? String(item.resFloorNum) : undefined,
-    resDong: item.resDong ? String(item.resDong) : undefined,
-  };
+  return new TransactionDetailApartRentItem(
+    String(item.resYear ?? ''),
+    String(item.resMonth ?? ''),
+    String(item.resDays ?? ''),
+    String(item.resArea ?? ''),
+    String(item.resTranAmount ?? ''),
+    String(item.resFloor ?? ''),
+    item.resArea1 ? String(item.resArea1) : undefined,
+    item.resCancelYN ? String(item.resCancelYN) : undefined,
+    item.resRegistrationDate ? String(item.resRegistrationDate) : undefined,
+    item.resDealType ? String(item.resDealType) : undefined,
+    item.resLocation ? String(item.resLocation) : undefined,
+    item.resFloorNum ? String(item.resFloorNum) : undefined,
+    item.resDong ? String(item.resDong) : undefined
+  );
 }
 
 function sanitizeOne(
   item: Record<string, unknown>
 ): TransactionDetailApartEntity {
-  const out: TransactionDetailApartEntity = {};
-  if (Array.isArray(item?.resSaleList)) {
-    out.resSaleList = item.resSaleList.map((s: Record<string, unknown>) =>
-      pickSale(s)
-    );
-  }
-  if (Array.isArray(item?.resRentList)) {
-    out.resRentList = item.resRentList.map((r: Record<string, unknown>) =>
-      pickRent(r)
-    );
-  }
-  return out;
+  const saleList = Array.isArray(item?.resSaleList)
+    ? item.resSaleList.map((s: Record<string, unknown>) => pickSale(s))
+    : undefined;
+  const rentList = Array.isArray(item?.resRentList)
+    ? item.resRentList.map((r: Record<string, unknown>) => pickRent(r))
+    : undefined;
+
+  return new TransactionDetailApartEntity(saleList, rentList);
 }
 
 export function sanitizeTransactionDetailApartResponse(

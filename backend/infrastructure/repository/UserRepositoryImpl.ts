@@ -1,6 +1,6 @@
 import { prisma } from '@utils/prisma';
 import { UserRepository } from '@be/domain/repository/UserRepository';
-import { UserEntity } from '@be/domain/entities/UserEntity';
+import { UserEntity } from '@be/domain/entities/User';
 import { UserInfo } from '@be/applications/users/dtos/UserDto';
 
 export class UserRepositoryImpl implements UserRepository {

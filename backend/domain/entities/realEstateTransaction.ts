@@ -44,9 +44,21 @@ export class RealEstateTransactionResponseBody {
 }
 
 // 실거래가 통합 응답 Entity
-export class RealEstateTransactionResponse {
+export class RealEstateTransactionEntity {
   constructor(
     public header: RealEstateTransactionResponseHeader,
     public body: RealEstateTransactionResponseBody
+  ) {}
+}
+
+// 에러 응답 Entity
+export class RealEstateTransactionErrorResponseEntity {
+  constructor(
+    public header: RealEstateTransactionResponseHeader,
+    public body?: {
+      items: {
+        item: RealEstateTransactionItem[];
+      };
+    }
   ) {}
 }

@@ -2,7 +2,7 @@
  * 단지 일련번호 조회 API 요청 DTO
  */
 
-export interface DanJiSerialNumberRequestDto {
+export interface DanjiSerialNumberRequestDto {
   organization: '0010'; // 기관코드 (고정 값: "0010")
   year: string; // 기준년도 (YYYY)
   type: string; // 구분 ("0":아파트, "1":연립/다세대, "2":오피스텔)
