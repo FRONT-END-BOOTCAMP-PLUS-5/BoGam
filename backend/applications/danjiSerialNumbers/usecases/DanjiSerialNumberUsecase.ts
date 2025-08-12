@@ -1,4 +1,4 @@
-import { DanjiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanjiSerialNumberRepositoryImpl';
+import { DanjiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanJiSerialNumberRepositoryImpl';
 import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
 import { GetDanjiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 

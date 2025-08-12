@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
-import { DanjiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
 import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
 import { GetDanjiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 import { processResponse } from '@libs/responseUtils';
+import { DanjiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
 
 /**
  * 단지 일련번호 조회 API 인프라스트럭처
