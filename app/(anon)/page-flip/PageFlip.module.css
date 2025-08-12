@@ -1,37 +1,23 @@
 #book {
-    margin: 5% auto;
-    width: 400px;
-    height: 600px;
+   @apply mx-auto my-[5%] w-[400px] h-[600px] relative;
 }
 
 #book>div {
-    display: none;
+   @apply hidden;
 }
 
 #book.turn-js>div {
-    display: block;
-}
-
-#book .turn-page {
-    background-size: 100% 100%;
+   @apply block;
 }
 
 #book div {
-    background-size: cover;
-    background-position: center center;
+   @apply bg-cover bg-center;
 }
 
 .triangle {
-    width: 0;
-    height: 0;
-    border-bottom: 25px solid white;
-    border-top: 25px solid transparent;
-    border-left: 25px solid transparent;
-    border-right: 25px solid white;
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    box-shadow:
-        -1px 0 0 black,
-        0 -1px 0 black;
+   @apply absolute bottom-0 right-0 w-0 h-0
+   border-b-[25px] border-b-white
+   border-t-[25px] border-t-transparent
+   border-l-[25px] border-l-transparent
+   border-r-[25px] border-r-white
 }
