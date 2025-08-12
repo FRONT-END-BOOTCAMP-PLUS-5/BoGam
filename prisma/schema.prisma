@@ -90,6 +90,7 @@ model StepResult {
   unchecked     Int?
   details       Json        @map("details")
   createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   step          Step        @relation(fields: [stepId], references: [id], onDelete: Cascade)
   userAddress   UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
