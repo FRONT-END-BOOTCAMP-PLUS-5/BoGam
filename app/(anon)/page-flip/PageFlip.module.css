@@ -1,0 +1,37 @@
+#book {
+    margin: 5% auto;
+    width: 400px;
+    height: 600px;
+}
+
+#book>div {
+    display: none;
+}
+
+#book.turn-js>div {
+    display: block;
+}
+
+#book .turn-page {
+    background-size: 100% 100%;
+}
+
+#book div {
+    background-size: cover;
+    background-position: center center;
+}
+
+.triangle {
+    width: 0;
+    height: 0;
+    border-bottom: 25px solid white;
+    border-top: 25px solid transparent;
+    border-left: 25px solid transparent;
+    border-right: 25px solid white;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    box-shadow:
+        -1px 0 0 black,
+        0 -1px 0 black;
+}

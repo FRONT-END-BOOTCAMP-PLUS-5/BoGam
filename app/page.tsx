@@ -25,7 +25,7 @@ export default function Home() {
 
           <Link href='/test/transaction' className={styles.card}>
             <h2>📊 거래내역 테스트</h2>
-            <p>부동산 거래내역 조회 기능을 테스트합니다.</p>
+            <p>부동산 거래내역 조회 기능을 테스트합니다. (실거래가)</p>
           </Link>
 
           <Link href='/test/tax-cert' className={styles.card}>
@@ -41,6 +41,16 @@ export default function Home() {
           <Link href='/test/copy-test' className={styles.card}>
             <h2>📁 문서 조회 테스트 모음</h2>
             <p>등기부등본과 납세확인서 조회 테스트를 한 곳에서 관리합니다.</p>
+          </Link>
+
+          <Link href='/test/big-step' className={styles.card}>
+            <h2>📚 3D 책 애니메이션 테스트</h2>
+            <p>Three.js를 사용한 3D 책 애니메이션 및 상호작용을 테스트합니다.</p>
+          </Link>
+
+          <Link href='/page-flip' className={styles.card}>
+            <h2>📕 책 넘기기 테스트</h2>
+            <p>Turn.js를 사용한 책 넘기기를 테스트합니다.</p>
           </Link>
         </div>
       </main>
