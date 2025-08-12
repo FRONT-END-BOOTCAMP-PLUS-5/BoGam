@@ -1,4 +1,4 @@
-import { DanJiSerialNumber } from '@be/domain/entities/DanJiSerialNumber';
+import { DanJiSerialNumber } from '@be/domain/entities/DanjiSerialNumber';
 
 /**
  * 단지 일련번호 조회 API 응답 DTO

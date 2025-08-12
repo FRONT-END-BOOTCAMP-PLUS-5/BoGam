@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
-import { DanJiSerialNumberRepository } from '@be/domain/repository/DanJiSerialNumberRepository';
-import { DanJiSerialNumberRequest } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberRequest';
-import { GetDanJiSerialNumberResponse } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberResponse';
+import { DanJiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
+import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequest';
+import { GetDanJiSerialNumberResponse } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponse';
 import { processResponse } from '@libs/responseUtils';
 
 /**

@@ -314,7 +314,7 @@
 }
 
 /* 단지 목록 스타일 */
-.danJiList {
+.danjiList {
   background: #f8f9fa;
   border: 1px solid #dee2e6;
   border-radius: 8px;
@@ -322,14 +322,14 @@
   margin-top: 12px;
 }
 
-.danJiList h4 {
+.danjiList h4 {
   color: #495057;
   margin: 0 0 16px 0;
   font-size: 1rem;
   font-weight: 600;
 }
 
-.danJiItem {
+.danjiItem {
   background: white;
   border: 2px solid #dee2e6;
   border-radius: 6px;
@@ -339,25 +339,25 @@
   transition: all 0.2s ease;
 }
 
-.danJiItem:hover {
+.danjiItem:hover {
   border-color: #3498db;
   box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
 }
 
-.danJiItem.selected {
+.danjiItem.selected {
   border-color: #28a745;
   background: #f8fff9;
   box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
 }
 
-.danJiName {
+.danjiName {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.danJiName strong {
+.danjiName strong {
   color: #2c3e50;
   font-size: 0.95rem;
 }
@@ -371,13 +371,13 @@
   font-weight: 500;
 }
 
-.danJiInfo {
+.danjiInfo {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.danJiInfo span {
+.danjiInfo span {
   font-size: 0.8rem;
   color: #6c757d;
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetDanJiListUsecase } from '@be/applications/danjis/usecases/GetDanJiListUsecase';
-import { DanJiRepository } from '@be/infrastructure/repository/DanJiRepository';
-import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanJiListRequestDto';
+import { GetDanJiListUsecase } from '@be/applications/danjis/usecases/GetDanjiListUsecase';
+import { DanJiRepository } from '@be/infrastructure/repository/DanjiRepository';
+import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
 
 const repository = new DanJiRepository();
 const usecase = new GetDanJiListUsecase(repository);

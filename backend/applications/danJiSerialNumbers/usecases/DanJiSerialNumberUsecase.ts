@@ -1,6 +1,6 @@
-import { DanJiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanJiSerialNumberRepositoryImpl';
-import { DanJiSerialNumberRequest } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberRequest';
-import { GetDanJiSerialNumberResponse } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberResponse';
+import { DanJiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanjiSerialNumberRepositoryImpl';
+import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequest';
+import { GetDanJiSerialNumberResponse } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponse';
 
 /**
  * 단지 일련번호 조회 CODEF API 요청 UseCase

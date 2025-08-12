@@ -1,6 +1,6 @@
-import { DanJiRepository } from '@be/infrastructure/repository/DanJiRepository';
-import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanJiListRequestDto';
-import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanJiListResponseDto';
+import { DanJiRepository } from '@be/infrastructure/repository/DanjiRepository';
+import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
+import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanjiListResponseDto';
 
 export class GetDanJiListUsecase {
   private readonly repository: DanJiRepository;

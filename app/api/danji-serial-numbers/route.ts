@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DanJiSerialNumberUsecase } from '@be/applications/danJiSerialNumbers/usecases/DanJiSerialNumberUsecase';
-import { DanJiSerialNumberRequest } from '@be/applications/danJiSerialNumbers/dtos/DanJiSerialNumberRequest';
+import { DanJiSerialNumberUsecase } from '@be/applications/danjiSerialNumbers/usecases/DanjiSerialNumberUsecase';
+import { DanJiSerialNumberRequest } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequest';
 
 /**
  * 단지 일련번호 조회 API
