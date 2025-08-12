@@ -1,5 +1,5 @@
-import { GetRealEstateTransactionRequest } from '@be/applications/transaction/dtos/GetRealEstateTransactionRequest';
-import { GetRealEstateTransactionResponse } from '@be/applications/transaction/dtos/GetRealEstateTransactionResponse';
+import { GetRealEstateTransactionRequest } from '@be/applications/transactions/dtos/GetRealEstateTransactionRequest';
+import { GetRealEstateTransactionResponse } from '@be/applications/transactions/dtos/GetRealEstateTransactionResponse';
 import { REAL_ESTATE_TRANSACTION_API_CONFIG } from '@libs/api-endpoints';
 import PublicDataAxiosInstance from '@utils/axiosInstance';
 import { parseXmlResponse } from '@utils/xmlParser';
@@ -11,18 +11,23 @@ import { parseXmlResponse } from '@utils/xmlParser';
 export class RealEstateTransactionRepository {
   private readonly baseUrl: string;
   private readonly serviceKey: string;
-  private readonly axiosInstance: ReturnType<typeof PublicDataAxiosInstance.getInstance>;
+  private readonly axiosInstance: ReturnType<
+    typeof PublicDataAxiosInstance.getInstance
+  >;
 
   constructor() {
     this.baseUrl = REAL_ESTATE_TRANSACTION_API_CONFIG.BASE_URL;
-    
+
     // 서비스키 환경변수에서 가져오기
-    const serviceKey = process.env[REAL_ESTATE_TRANSACTION_API_CONFIG.SERVICE_KEY_ENV];
+    const serviceKey =
+      process.env[REAL_ESTATE_TRANSACTION_API_CONFIG.SERVICE_KEY_ENV];
     if (!serviceKey) {
-      throw new Error(`${REAL_ESTATE_TRANSACTION_API_CONFIG.SERVICE_KEY_ENV} 환경변수가 설정되지 않았습니다.`);
+      throw new Error(
+        `${REAL_ESTATE_TRANSACTION_API_CONFIG.SERVICE_KEY_ENV} 환경변수가 설정되지 않았습니다.`
+      );
     }
     this.serviceKey = serviceKey;
-    
+
     // 싱글톤 axios 인스턴스 사용
     this.axiosInstance = PublicDataAxiosInstance.getInstance();
   }
@@ -32,10 +37,12 @@ export class RealEstateTransactionRepository {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findRowHouseTradeAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async findRowHouseTradeAll(
+    request: GetRealEstateTransactionRequest
+  ): Promise<GetRealEstateTransactionResponse> {
     try {
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
-      
+
       const response = await this.axiosInstance.get(
         REAL_ESTATE_TRANSACTION_API_CONFIG.ROW_HOUSE_TRADE_FULL_URL,
         {
@@ -49,7 +56,9 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
+      return parseXmlResponse(
+        (response as { data: string }).data
+      ) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -61,10 +70,12 @@ export class RealEstateTransactionRepository {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findOfficetelTradeAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async findOfficetelTradeAll(
+    request: GetRealEstateTransactionRequest
+  ): Promise<GetRealEstateTransactionResponse> {
     try {
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
-      
+
       const response = await this.axiosInstance.get(
         REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_TRADE_FULL_URL,
         {
@@ -78,7 +89,9 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
+      return parseXmlResponse(
+        (response as { data: string }).data
+      ) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -90,10 +103,12 @@ export class RealEstateTransactionRepository {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findDetachedHouseTradeAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async findDetachedHouseTradeAll(
+    request: GetRealEstateTransactionRequest
+  ): Promise<GetRealEstateTransactionResponse> {
     try {
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
-      
+
       const response = await this.axiosInstance.get(
         REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_TRADE_FULL_URL,
         {
@@ -107,7 +122,9 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
+      return parseXmlResponse(
+        (response as { data: string }).data
+      ) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -119,10 +136,12 @@ export class RealEstateTransactionRepository {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async findAll(request: GetRealEstateTransactionRequest): Promise<GetRealEstateTransactionResponse> {
+  async findAll(
+    request: GetRealEstateTransactionRequest
+  ): Promise<GetRealEstateTransactionResponse> {
     try {
       const decodedServiceKey = decodeURIComponent(this.serviceKey);
-      
+
       const response = await this.axiosInstance.get(
         REAL_ESTATE_TRANSACTION_API_CONFIG.APARTMENT_TRADE_FULL_URL,
         {
@@ -136,7 +155,9 @@ export class RealEstateTransactionRepository {
           responseType: 'text',
         }
       );
-      return parseXmlResponse((response as { data: string }).data) as GetRealEstateTransactionResponse;
+      return parseXmlResponse(
+        (response as { data: string }).data
+      ) as GetRealEstateTransactionResponse;
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -159,4 +180,4 @@ export class RealEstateTransactionRepository {
       console.error('일반 에러:', error.message || error);
     }
   }
-} 
+}

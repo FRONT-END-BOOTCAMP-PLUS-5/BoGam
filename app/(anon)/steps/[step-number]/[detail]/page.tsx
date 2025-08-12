@@ -49,4 +49,3 @@ export default function StepDetailPage({ params }: StepDetailPageProps) {
       />
     </div>
   );
-}

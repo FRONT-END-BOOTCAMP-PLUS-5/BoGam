@@ -1,3 +1,3 @@
-export default function StepsPage() {
+export default function Steps() {
   return null;
 }
