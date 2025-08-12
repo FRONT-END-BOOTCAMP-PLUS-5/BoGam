@@ -16,6 +16,7 @@ export default function Scene3D({ className }: Scene3DProps) {
   const mouseRef = useRef<THREE.Vector2 | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
+<<<<<<< HEAD
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -23,6 +24,34 @@ export default function Scene3D({ className }: Scene3DProps) {
     // Scene 설정
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf5f5f5); // 연한 회색 배경
+=======
+  const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
+  const [totalLoadingTime, setTotalLoadingTime] = useState<number>(0);
+  const [currentLoadingObject, setCurrentLoadingObject] = useState<string>('');
+  
+  // 렌더러와 씬 참조를 위한 ref 추가
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+
+  const isInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (!mountRef.current || isInitializedRef.current) return;
+    
+    isInitializedRef.current = true;
+
+    // WebGL 지원 확인
+    if (!window.WebGLRenderingContext) {
+      console.error('WebGL is not supported in this browser');
+      return;
+    }
+
+    // Scene 설정
+    const scene = new THREE.Scene();
+    sceneRef.current = scene;
+    scene.background = new THREE.Color(0xFFFFFF); // 흰색 배경
+>>>>>>> develop
 
     // Camera 설정
     const camera = new THREE.PerspectiveCamera(
@@ -31,6 +60,7 @@ export default function Scene3D({ className }: Scene3DProps) {
       0.1,
       1000
     );
+<<<<<<< HEAD
     camera.position.set(0, 6.2, 7);
     camera.lookAt(0, 6.2, -10);
     camera.updateProjectionMatrix();
@@ -44,6 +74,45 @@ export default function Scene3D({ className }: Scene3DProps) {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+=======
+    cameraRef.current = camera;
+    camera.position.set(0, 6.8, 7);
+    camera.lookAt(0, 6.8, -10);
+    camera.updateProjectionMatrix();
+
+    // Renderer 설정
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: true,
+      powerPreference: "high-performance",
+      failIfMajorPerformanceCaveat: false,
+      preserveDrawingBuffer: false,
+      stencil: false,
+      depth: true,
+      alpha: false
+    });
+    rendererRef.current = renderer;
+    renderer.setSize(300, 400);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.autoUpdate = true; // TypeScript 오류 해결을 위해 다시 활성화
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.2;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+
+    
+    // WebGL 컨텍스트 설정 및 에러 처리
+    try {
+      const gl = renderer.getContext();
+      gl.getExtension('WEBGL_debug_renderer_info');
+      
+      // 텍스처 관련 설정
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    } catch (error) {
+      console.warn('WebGL context setup warning:', error);
+    }
+>>>>>>> develop
     
     // 로딩 중에는 DOM에 추가하지 않음
     // mountRef.current.appendChild(renderer.domElement);
@@ -55,8 +124,13 @@ export default function Scene3D({ className }: Scene3DProps) {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
     directionalLight.position.set(10, 20, 10);
     directionalLight.castShadow = true;
+<<<<<<< HEAD
     directionalLight.shadow.mapSize.width = 4096;
     directionalLight.shadow.mapSize.height = 4096;
+=======
+    directionalLight.shadow.mapSize.width = 512; // 4096에서 1024로 축소
+    directionalLight.shadow.mapSize.height = 512; // 4096에서 1024로 축소
+>>>>>>> develop
     directionalLight.shadow.camera.near = 0.1;
     directionalLight.shadow.camera.far = 50;
     directionalLight.shadow.camera.left = -20;
@@ -71,6 +145,7 @@ export default function Scene3D({ className }: Scene3DProps) {
     pointLight.position.set(0, 15, 0);
     scene.add(pointLight);
 
+<<<<<<< HEAD
     // 바닥 생성
     const groundGeometry = new THREE.PlaneGeometry(30, 30);
     const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xe0e0e0 });
@@ -83,6 +158,17 @@ export default function Scene3D({ className }: Scene3DProps) {
     // 로딩 진행률 추적
     let loadedObjects = 0;
     const totalObjects = 7; // 책꽂이 1개 + 책 6개
+=======
+    
+
+    // 로딩 시작 시간 설정
+    const startTime = Date.now();
+    setLoadingStartTime(startTime);
+    
+         // 로딩 진행률 추적
+     let loadedObjects = 0;
+     const totalObjects = 8; // 책꽂이 1개 + 책 7개
+>>>>>>> develop
 
     const updateLoadingProgress = () => {
       loadedObjects++;
@@ -91,9 +177,20 @@ export default function Scene3D({ className }: Scene3DProps) {
       
       if (loadedObjects === totalObjects) {
         // 모든 오브젝트가 로딩 완료
+<<<<<<< HEAD
         setIsLoading(false);
         // 이제 DOM에 렌더러 추가
         mountRef.current?.appendChild(renderer.domElement);
+=======
+        const endTime = Date.now();
+        const totalTime = endTime - startTime;
+        setTotalLoadingTime(totalTime);
+        setIsLoading(false);
+        // 이제 DOM에 렌더러 추가
+        if (rendererRef.current && mountRef.current) {
+          mountRef.current.appendChild(rendererRef.current.domElement);
+        }
+>>>>>>> develop
         
         // Raycaster 초기화
         raycasterRef.current = new THREE.Raycaster();
@@ -101,7 +198,11 @@ export default function Scene3D({ className }: Scene3DProps) {
 
         // 마우스 클릭 이벤트 핸들러
         const handleMouseClick = (event: MouseEvent) => {
+<<<<<<< HEAD
           if (!raycasterRef.current || !mouseRef.current || !camera) {
+=======
+          if (!raycasterRef.current || !mouseRef.current || !cameraRef.current) {
+>>>>>>> develop
             return;
           }
 
@@ -110,7 +211,11 @@ export default function Scene3D({ className }: Scene3DProps) {
           mouseRef.current.x = (event.offsetX / 300) * 2 - 1;
           mouseRef.current.y = -(event.offsetY / 400) * 2 + 1;
 
+<<<<<<< HEAD
           raycasterRef.current.setFromCamera(mouseRef.current, camera);
+=======
+          raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+>>>>>>> develop
 
           for (const bookId in bookControllersRef.current) {
             const bookController = bookControllersRef.current[bookId];
@@ -125,6 +230,7 @@ export default function Scene3D({ className }: Scene3DProps) {
           }
         };
 
+<<<<<<< HEAD
         renderer.domElement.addEventListener('click', handleMouseClick);
 
         // 애니메이션 루프 시작
@@ -141,12 +247,47 @@ export default function Scene3D({ className }: Scene3DProps) {
           
           renderer.render(scene, camera);
         };
+=======
+        if (rendererRef.current) {
+          rendererRef.current.domElement.addEventListener('click', handleMouseClick);
+        }
+
+        // 애니메이션 루프 시작
+        const clock = new THREE.Clock();
+        let animationId: number;
+        
+                 const animateLoop = () => {
+           animationId = requestAnimationFrame(animateLoop);
+           
+           const deltaTime = clock.getDelta();
+           
+
+           
+           for (const bookId in bookControllersRef.current) {
+             const bookController = bookControllersRef.current[bookId];
+             bookController.update(deltaTime);
+           }
+           
+           if (rendererRef.current && sceneRef.current && cameraRef.current) {
+             rendererRef.current.render(sceneRef.current, cameraRef.current);
+           }
+         };
+>>>>>>> develop
 
         animateLoop();
 
         // 클린업 함수에 이벤트 리스너 제거 추가
         return () => {
+<<<<<<< HEAD
           renderer.domElement.removeEventListener('click', handleMouseClick);
+=======
+          if (rendererRef.current) {
+            rendererRef.current.domElement.removeEventListener('click', handleMouseClick);
+          }
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+          }
+>>>>>>> develop
         };
       }
     };
@@ -154,10 +295,19 @@ export default function Scene3D({ className }: Scene3DProps) {
     // 책꽂이 생성 및 추가
     const loadBookshelf = async () => {
       try {
+<<<<<<< HEAD
         const bookshelf = await createBookshelf({
           position: new THREE.Vector3(0, 0, 0),
           rotation: new THREE.Euler(0, 0, 0),
           scale: new THREE.Vector3(0.08, 0.08, 0.08)
+=======
+        setCurrentLoadingObject('책꽂이 로딩 중...');
+        const bookshelf = await createBookshelf({
+          position: new THREE.Vector3(0, 4, -5),
+          rotation: new THREE.Euler(0, 0, 0),
+          scale: new THREE.Vector3(30, 30, 30),
+          renderer: renderer
+>>>>>>> develop
         });
         scene.add(bookshelf);
         updateLoadingProgress();
@@ -170,6 +320,7 @@ export default function Scene3D({ className }: Scene3DProps) {
     // 책 생성 및 추가
     const loadBooks = async () => {
       try {
+<<<<<<< HEAD
         const bookPositions = [
           { id: 'book1', position: new THREE.Vector3(-1, 10.5, -5) },
           { id: 'book2', position: new THREE.Vector3(1, 10.5, -5) },
@@ -177,10 +328,24 @@ export default function Scene3D({ className }: Scene3DProps) {
           { id: 'book4', position: new THREE.Vector3(1, 5.9, -5) },
           { id: 'book5', position: new THREE.Vector3(-1, 1.82, -5) },
           { id: 'book6', position: new THREE.Vector3(1, 1.82, -5) },   
+=======
+
+       const bookPositions = [
+          // 윗층 (3개) - 왼쪽부터 1, 2, 3
+          { id: 'book1', position: new THREE.Vector3(-1.5, 10.4, -5) },
+          { id: 'book2', position: new THREE.Vector3(0, 10.4, -5) },
+          { id: 'book3', position: new THREE.Vector3(1.5, 10.4, -5) },
+          // 아래층 (4개) - 왼쪽부터 4, 5, 6, 7
+          { id: 'book4', position: new THREE.Vector3(-2, 5.8, -5) },
+          { id: 'book5', position: new THREE.Vector3(-0.5, 5.8, -5) },
+          { id: 'book6', position: new THREE.Vector3(1, 5.8, -5) },
+          { id: 'book7', position: new THREE.Vector3(2.5, 5.8, -5) },
+>>>>>>> develop
         ];
 
         await Promise.all(
           bookPositions.map(async (bookConfig) => {
+<<<<<<< HEAD
             const { group: book, mixer } = await createBook({
               position: bookConfig.position,
               rotation: new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2),
@@ -204,6 +369,40 @@ export default function Scene3D({ className }: Scene3DProps) {
           updateLoadingProgress();
         }
       }
+=======
+            try {
+              setCurrentLoadingObject(`${bookConfig.id} 로딩 중...`);
+              const { group: book, mixer } = await createBook({
+                 position: bookConfig.position,
+                  rotation: new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2),
+                  scale: new THREE.Vector3(1, 1, 1),
+                  id: bookConfig.id,
+                  renderer: renderer,
+                  bookId: bookConfig.id
+               });
+               book.position.copy(bookConfig.position);
+               
+               // 각 책마다 다른 링크 URL 설정
+               const linkUrl = `/step${bookConfig.id.replace('book', '')}`;
+               const bookController = new BookController(bookConfig.id, book, mixer, linkUrl);
+               
+               bookControllersRef.current[bookConfig.id] = bookController;
+               scene.add(book);
+               updateLoadingProgress();
+             } catch (error) {
+               console.error(`Error loading book ${bookConfig.id}:`, error);
+               updateLoadingProgress(); // 개별 책 로딩 실패 시에도 진행률 업데이트
+             }
+           })
+         );
+             } catch (error) {
+         console.error('Error loading books:', error);
+         // 에러가 발생한 경우에도 진행률 업데이트
+         for (let i = 0; i < 7; i++) {
+           updateLoadingProgress();
+         }
+       }
+>>>>>>> develop
     };
 
     // 모든 오브젝트 로딩 시작
@@ -216,10 +415,42 @@ export default function Scene3D({ className }: Scene3DProps) {
 
     // 클린업
     return () => {
+<<<<<<< HEAD
       if (mountRef.current && renderer.domElement.parentNode === mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
       }
       renderer.dispose();
+=======
+      // 애니메이션 루프 정리
+      if (rendererRef.current) {
+        // DOM에서 렌더러 제거
+        if (mountRef.current && rendererRef.current.domElement.parentNode === mountRef.current) {
+          mountRef.current.removeChild(rendererRef.current.domElement);
+        }
+        
+        // 렌더러 정리
+        rendererRef.current.dispose();
+        rendererRef.current = null;
+      }
+      
+      // 씬과 카메라 정리
+      if (sceneRef.current) {
+        sceneRef.current.clear();
+        sceneRef.current = null;
+      }
+      
+      if (cameraRef.current) {
+        cameraRef.current = null;
+      }
+      
+      // 컨트롤러 정리
+      bookControllersRef.current = {};
+      
+
+      
+      // 초기화 플래그 리셋
+      isInitializedRef.current = false;
+>>>>>>> develop
     };
   }, []);
 
@@ -233,6 +464,14 @@ export default function Scene3D({ className }: Scene3DProps) {
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-90">
           <div className="text-center">
             <div className="text-lg font-semibold mb-2">3D 모델 로딩 중...</div>
+<<<<<<< HEAD
+=======
+            {currentLoadingObject && (
+              <div className="text-sm text-blue-600 mb-3 font-medium">
+                {currentLoadingObject}
+              </div>
+            )}
+>>>>>>> develop
             <div className="w-48 bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
@@ -240,9 +479,33 @@ export default function Scene3D({ className }: Scene3DProps) {
               ></div>
             </div>
             <div className="text-sm text-gray-600 mt-1">{Math.round(loadingProgress)}%</div>
+<<<<<<< HEAD
           </div>
         </div>
       )}
+=======
+            {loadingStartTime > 0 && (
+              <div className="text-xs text-gray-500 mt-2">
+                로딩 시작: {new Date(loadingStartTime).toLocaleTimeString()}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
+             {!isLoading && totalLoadingTime > 0 && (
+         <div className="mt-4 bg-green-100 border border-green-300 rounded-lg px-3 py-2 text-sm shadow-lg">
+           <div className="font-semibold text-green-800">✅ 로딩 완료!</div>
+           <div className="text-green-600">총 로딩 시간: {totalLoadingTime}ms</div>
+           <div className="text-green-500 text-xs mt-1">
+             시작: {new Date(loadingStartTime).toLocaleTimeString()}
+           </div>
+           <div className="text-green-500 text-xs">
+             완료: {new Date(loadingStartTime + totalLoadingTime).toLocaleTimeString()}
+           </div>
+         </div>
+       )}
+>>>>>>> develop
     </div>
   );
 }

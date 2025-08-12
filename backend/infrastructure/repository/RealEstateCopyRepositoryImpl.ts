@@ -1,10 +1,12 @@
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
 import { RealEstateCopy } from '@be/domain/entities/RealEstateCopy';
 import { prisma } from '@utils/prisma';
-import { RealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopy/dtos/RealEstateCopyDto';
+import { CheckRealEstateCopyExistsResponseDto } from '@be/applications/realEstateCopies/dtos/CheckRealEstateCopyExistsResponseDto';
 
 export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
-  async findByUserAddressId(userAddressId: number): Promise<RealEstateCopy | null> {
+  async findByUserAddressId(
+    userAddressId: number
+  ): Promise<RealEstateCopy | null> {
     const realEstate = await prisma.realEstate.findFirst({
       where: { userAddressId },
     });
@@ -19,7 +21,10 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     };
   }
 
-  async upsertByUserAddressId(userAddressId: number, data: { realEstateData: string }): Promise<RealEstateCopy> {
+  async upsertByUserAddressId(
+    userAddressId: number,
+    data: { realEstateData: string }
+  ): Promise<RealEstateCopy> {
     const realEstate = await prisma.realEstate.upsert({
       where: { userAddressId },
       update: {
@@ -39,16 +44,20 @@ export class RealEstateCopyRepositoryImpl implements RealEstateCopyRepository {
     };
   }
 
-  async existsByUserAddressId(userAddressId: number): Promise<Pick<RealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>> {
+  async existsByUserAddressId(
+    userAddressId: number
+  ): Promise<
+    Pick<CheckRealEstateCopyExistsResponseDto, 'exists' | 'updatedAt'>
+  > {
     try {
       const realEstate = await prisma.realEstate.findFirst({
         where: { userAddressId },
-        select: { id: true, updatedAt: true }
+        select: { id: true, updatedAt: true },
       });
-      
+
       return {
         exists: !!realEstate,
-        updatedAt: realEstate?.updatedAt
+        updatedAt: realEstate?.updatedAt,
       };
     } catch (error) {
       console.error('❌ 등기부등본 복사본 존재 여부 확인 DB 오류:', error);

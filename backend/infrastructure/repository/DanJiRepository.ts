@@ -1,9 +1,9 @@
-import { DanJiRequest } from '@be/applications/danJi/dtos/DanJiDto';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { GetDanJiListRequestDto } from '@be/applications/danjis/dtos/GetDanjiListRequestDto';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import { loadCodefConfig, validateCodefConfig } from '@libs/codefEnvironment';
+import { loadCodefConfig, validateCodefConfig } from '@libs/codef/codefConfig';
 import axios from 'axios';
-import { DanJiApiResponse } from '@be/applications/danJi/dtos/DanJiDto';
+import { GetDanJiListResponseDto } from '@be/applications/danjis/dtos/GetDanjiListResponseDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 
 /**
@@ -19,7 +19,9 @@ export class DanJiRepository {
    * @param request 단지목록 조회 요청 데이터
    * @returns 단지목록 조회 응답 데이터
    */
-  async fetchDanJiList(request: DanJiRequest): Promise<DanJiApiResponse> {
+  async fetchDanJiList(
+    request: GetDanJiListRequestDto
+  ): Promise<GetDanJiListResponseDto> {
     try {
       // CODEF 설정 검증
       const config = loadCodefConfig();
@@ -29,14 +31,6 @@ export class DanJiRepository {
 
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
-
-      console.log('🏢 단지목록 조회 요청 중...', {
-        endpoint: this.endpoint,
-        organization: request.organization,
-        addrSido: request.addrSido,
-        addrSigun: request.addrSigun,
-        addrDong: request.addrDong,
-      });
 
       const url = `${this.endpoint}`;
 
@@ -49,16 +43,8 @@ export class DanJiRepository {
       });
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: DanJiApiResponse = processResponse<DanJiApiResponse>(
-        response.data
-      );
-
-      console.log('✅ 단지목록 조회 성공:', {
-        status: response.status,
-        resultCode: data?.result?.code,
-        resultMessage: data?.result?.message,
-        hasData: !!data?.data,
-      });
+      const data: GetDanJiListResponseDto =
+        processResponse<GetDanJiListResponseDto>(response.data);
 
       return data;
     } catch (error) {

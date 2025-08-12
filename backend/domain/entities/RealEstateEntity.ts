@@ -85,7 +85,7 @@ export class RealEstateRegisterEntry {
 }
 
 // 부동산등기부등본 통합 응답 Entity
-export class RealEstateRegisterResponse {
+export class RealEstateEntity {
   constructor(
     // 발행 관련
     public commIssueCode?: string, // 발행코드 (2025.02 사이트 개편 이후 미제공)

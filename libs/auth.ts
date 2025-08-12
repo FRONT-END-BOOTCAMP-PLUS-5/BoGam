@@ -1,7 +1,7 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@utils/prisma';
-import { PasswordService } from '@be/services/PasswordService';
+import { verifyPassword } from '@utils/verifyPassword/password';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
 
           // 비밀번호 검증
           if (user.password) {
-            const isValidPassword = await PasswordService.verifyPassword(
+            const isValidPassword = await verifyPassword(
               credentials.password,
               user.password
             );
