@@ -1,8 +1,10 @@
+// OTP(인증서 간편 비밀번호) 입력용으로, 한 자리씩 입력받아 자동 포커스 이동과 삭제 시 이전 필드로 이동 기능을 제공.
+
 'use client';
 
 import '@/globals.css';
 import { useRef, useCallback } from 'react';
-import s from '@/(anon)/_components/common/forms/Forms.module.css';
+import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 
 export default function OtpInput({
   length = 4,
@@ -40,7 +42,7 @@ export default function OtpInput({
   };
 
   return (
-    <div className={s.otpRow}>
+    <div className={styles.otpRow}>
       {Array.from({ length }).map((_, i) => (
         <input
           key={i}
@@ -48,7 +50,7 @@ export default function OtpInput({
           inputMode='numeric'
           pattern='\d*'
           maxLength={1}
-          className={s.otpBox}
+          className={styles.otpBox}
           onChange={(e) => handle(i, e)}
           onKeyDown={(e) => onKey(i, e)}
           aria-label={`인증번호 ${i + 1}자리`}

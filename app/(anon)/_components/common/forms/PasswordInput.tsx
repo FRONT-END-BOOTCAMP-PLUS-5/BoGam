@@ -1,8 +1,10 @@
+//비밀번호 입력 필드로, 보기/숨기기 토글 버튼이 포함된 컴포넌트.
+
 'use client';
 import '@/globals.css';
 import { useState } from 'react';
 import { Eye, EyeClosed } from 'lucide-react';
-import s from '@/(anon)/_components/common/forms/Forms.module.css';
+import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 
 type Props = {
   id: string;
@@ -25,12 +27,16 @@ export default function PasswordInput({
         type={show ? 'text' : 'password'}
         placeholder={placeholder}
         onChange={onChange}
-        className={[s.inputBase, error ? s.inputError : '', 'pr-10'].join(' ')}
+        className={[
+          styles.inputBase,
+          error ? styles.inputError : '',
+          'pr-10',
+        ].join(' ')}
         autoComplete='new-password'
       />
       <button
         type='button'
-        className={s.eyeBtn}
+        className={styles.eyeBtn}
         onClick={() => setShow((v) => !v)}
         aria-label={show ? '비밀번호 숨기기' : '비밀번호 보기'}
       >

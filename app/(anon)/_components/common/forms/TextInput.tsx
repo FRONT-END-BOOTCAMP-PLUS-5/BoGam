@@ -1,7 +1,9 @@
+// 기본 텍스트 입력 필드로, 오른쪽에 부가 버튼(예: 중복확인)이나 아이콘을 추가할 수 있는 컴포넌트.
+
 'use client';
 import '@/globals.css';
 import { InputHTMLAttributes, ReactNode, useId, useState } from 'react';
-import s from '@/(anon)/_components/common/forms/Forms.module.css';
+import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   rightAddon?: ReactNode; // 버튼/아이콘
@@ -24,9 +26,9 @@ export default function TextInput({
         id={id}
         {...rest}
         className={[
-          s.inputBase,
-          focus ? s.inputFocus : '',
-          error ? s.inputError : '',
+          styles.inputBase,
+          focus ? styles.inputFocus : '',
+          error ? styles.inputError : '',
           className || '',
           rightAddon ? 'pr-24' : '', // 오른쪽 버튼 자리
         ].join(' ')}
@@ -39,7 +41,7 @@ export default function TextInput({
           rest.onBlur?.(e);
         }}
       />
-      {rightAddon && <div className={s.addonRight}>{rightAddon}</div>}
+      {rightAddon && <div className={styles.addonRight}>{rightAddon}</div>}
     </>
   );
 }

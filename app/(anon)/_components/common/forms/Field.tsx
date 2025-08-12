@@ -1,3 +1,5 @@
+// 폼 필드의 레이블, 힌트, 오류 메시지를 표시하고 내부에 입력 컴포넌트를 감싸는 래퍼 컴포넌트
+
 'use client';
 import '@/globals.css';
 import { ReactNode } from 'react';
