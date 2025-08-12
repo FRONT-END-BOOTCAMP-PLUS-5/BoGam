@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
-import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
-import { GetDanjiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 import { processResponse } from '@libs/responseUtils';
 import { DanjiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
+import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { GetDanjiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 
 /**
  * 단지 일련번호 조회 API 인프라스트럭처
@@ -62,7 +62,7 @@ export class DanjiSerialNumberRepositoryImpl
         resultCode: data?.result?.code,
         resultMessage: data?.result?.message,
         hasData: !!data?.data,
-        dataCount: data?.data?.length || 0,
+        dataCount: data?.data?.danjiList?.length || 0,
       });
 
       return data;

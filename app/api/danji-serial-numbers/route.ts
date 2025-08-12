@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { DanjiSerialNumberUsecase } from '@be/applications/danjiSerialNumbers/usecases/DanjiSerialNumberUsecase';
 import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { DanjiSerialNumberUsecase } from '@be/applications/danjiSerialNumbers/usecases/DanjiSerialNumberUsecase';
+import { DanjiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanjiSerialNumberRepositoryImsi';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * 단지 일련번호 조회 API
@@ -61,13 +62,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Usecase 인스턴스 생성 및 API 호출
-    const usecase = new DanjiSerialNumberUsecase();
+    const usecase = new DanjiSerialNumberUsecase(
+      new DanjiSerialNumberRepositoryImpl()
+    );
     const response = await usecase.getDanjiSerialNumber(body);
 
     console.log('✅ 단지 일련번호 조회 API 성공:', {
       resultCode: response.result?.code,
       resultMessage: response.result?.message,
-      dataCount: usecase.getDataCount(response),
+      dataCount: response.data?.danjiList.length,
     });
 
     return NextResponse.json(response);
