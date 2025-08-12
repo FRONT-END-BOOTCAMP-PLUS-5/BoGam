@@ -1,19 +1,23 @@
 'use client';
 
 import React from 'react';
-import { TaxCertRequest } from '@be/applications/taxCert/dtos/TaxCertDto';
+import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
 import commonStyles from '@/(anon)/test/tax-cert/_components/Common.module.css';
 
 interface CertificateLoginFormProps {
-  formData: TaxCertRequest;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  formData: GetTaxCertRequestDto;
+  onInputChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => void;
   loginType: string;
 }
 
-export default function CertificateLoginForm({ 
-  formData, 
-  onInputChange, 
-  loginType 
+export default function CertificateLoginForm({
+  formData,
+  onInputChange,
+  loginType,
 }: CertificateLoginFormProps) {
   return (
     <>
@@ -21,55 +25,61 @@ export default function CertificateLoginForm({
         <div className={commonStyles.formField}>
           <label className={commonStyles.labelRequired}>인증서 구분</label>
           <select
-            name="certType"
+            name='certType'
             value={formData.certType || ''}
             onChange={onInputChange}
             className={commonStyles.selectRequired}
             required
           >
-            <option value="">인증서 구분 선택</option>
-            <option value="1">기본인증서(der/key)</option>
-            <option value="2">금융인증서</option>
-            <option value="pfx">pfx 인증서</option>
+            <option value=''>인증서 구분 선택</option>
+            <option value='1'>기본인증서(der/key)</option>
+            <option value='2'>금융인증서</option>
+            <option value='pfx'>pfx 인증서</option>
           </select>
         </div>
       )}
       {(formData.certType === '1' || formData.certType === 'pfx') && (
         <>
           <div className={commonStyles.formField}>
-            <label className={commonStyles.labelRequired}>인증서 der/pfx 파일</label>
+            <label className={commonStyles.labelRequired}>
+              인증서 der/pfx 파일
+            </label>
             <textarea
-              name="certFile"
+              name='certFile'
               value={formData.certFile || ''}
               onChange={onInputChange}
               className={commonStyles.inputRequired}
               required
-              placeholder="필수: 인증서 der 또는 pfx 파일(Base64)"
+              placeholder='필수: 인증서 der 또는 pfx 파일(Base64)'
             />
           </div>
           {formData.certType === '1' && (
             <div className={commonStyles.formField}>
-              <label className={commonStyles.labelRequired}>인증서 key 파일</label>
+              <label className={commonStyles.labelRequired}>
+                인증서 key 파일
+              </label>
               <textarea
-                name="keyFile"
+                name='keyFile'
                 value={formData.keyFile || ''}
                 onChange={onInputChange}
                 className={commonStyles.inputRequired}
                 required
-                placeholder="필수: 인증서 key 파일(Base64)"
+                placeholder='필수: 인증서 key 파일(Base64)'
               />
             </div>
           )}
           <div className={commonStyles.formField}>
-            <label className={commonStyles.labelRequired}>인증서 비밀번호 (RSA암호화)</label>
+            <label className={commonStyles.labelRequired}>
+              인증서 비밀번호 (RSA암호화)
+            </label>
             <input
-              type="password"
-              name="certPassword"
+              type='password'
+              name='certPassword'
               value={formData.certPassword || ''}
               onChange={onInputChange}
               className={commonStyles.inputRequired}
               required
-              placeholder="필수: 인증서 비밀번호 (RSA암호화)"
+              placeholder='필수: 인증서 비밀번호 (RSA암호화)'
             />
           </div>
         </>
@@ -78,42 +88,46 @@ export default function CertificateLoginForm({
         <div className={commonStyles.formField}>
           <label className={commonStyles.labelRequired}>요청 식별 아이디</label>
           <input
-            type="text"
-            name="id"
+            type='text'
+            name='id'
             value={formData.id || ''}
             onChange={onInputChange}
             className={commonStyles.inputRequired}
             required
-            placeholder="필수: 요청 식별 아이디"
+            placeholder='필수: 요청 식별 아이디'
           />
         </div>
       )}
       {loginType === '0' && (
         <>
           <div className={commonStyles.formField}>
-            <label className={commonStyles.label}>세무대리인 관리번호 (선택)</label>
+            <label className={commonStyles.label}>
+              세무대리인 관리번호 (선택)
+            </label>
             <input
-              type="text"
-              name="manageNo"
+              type='text'
+              name='manageNo'
               value={formData.manageNo || ''}
               onChange={onInputChange}
               className={commonStyles.input}
-              placeholder="선택: 세무대리인 관리번호"
+              placeholder='선택: 세무대리인 관리번호'
             />
           </div>
           <div className={commonStyles.formField}>
-            <label className={commonStyles.label}>세무대리인 관리 비밀번호 (RSA암호화, 선택)</label>
+            <label className={commonStyles.label}>
+              세무대리인 관리 비밀번호 (RSA암호화, 선택)
+            </label>
             <input
-              type="password"
-              name="managePassword"
+              type='password'
+              name='managePassword'
               value={formData.managePassword || ''}
               onChange={onInputChange}
               className={commonStyles.input}
-              placeholder="선택: 세무대리인 관리 비밀번호 (RSA암호화)"
+              placeholder='선택: 세무대리인 관리 비밀번호 (RSA암호화)'
             />
           </div>
         </>
       )}
     </>
   );
-} 
+}
