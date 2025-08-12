@@ -36,7 +36,7 @@ export class StepResultRepositoryImpl implements StepResultRepository {
       return stepResults.map((result) => new StepResult(
         result.id, result.userAddressId, result.stepId,
         result.mismatch, result.match, result.unchecked,
-        result.details, result.createdAt,
+        result.details, result.createdAt, result.updatedAt,
         result.step?.mainNum, result.step?.subNum
       ));
     } catch (error) {
@@ -74,12 +74,13 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         unchecked: number | null;
         details: unknown;
         createdAt: Date;
+        updatedAt: Date;
         step?: { mainNum: number; subNum: number };
       };
       return new StepResult(
         result.id, result.userAddressId, result.stepId,
         result.mismatch, result.match, result.unchecked,
-        result.details, result.createdAt,
+        result.details, result.createdAt, result.updatedAt,
         result.step?.mainNum, result.step?.subNum
       );
     } catch (error) {

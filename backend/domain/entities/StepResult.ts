@@ -8,6 +8,7 @@ export class StepResult {
     public unchecked?: number | null,
     public details?: unknown,
     public createdAt?: Date,
+    public updatedAt?: Date,
     public mainNum?: number,
     public subNum?: number
   ) {}
