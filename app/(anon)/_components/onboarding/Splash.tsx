@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import styles from './Splash.module.css';
+import { useEffect, useState } from 'react';
+import styles from '@/(anon)/_components/onboarding/Splash.module.css';
 
 export default function Splash({ onComplete }: { onComplete: () => void }) {
   const [exiting, setExiting] = useState(false);
@@ -13,7 +13,7 @@ export default function Splash({ onComplete }: { onComplete: () => void }) {
       setTimeout(() => {
         onComplete();
       }, 700);
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -30,7 +30,7 @@ export default function Splash({ onComplete }: { onComplete: () => void }) {
         className={styles.section}
       >
         <Image
-          src='/images/logo.png'
+          src='/images/Logo.png'
           alt='전세보감 로고'
           width={80}
           height={80}
