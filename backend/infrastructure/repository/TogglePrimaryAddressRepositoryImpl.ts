@@ -1,9 +1,5 @@
 import { prisma } from '@utils/prisma';
 import { TogglePrimaryAddressRepository } from '@be/domain/repository/TogglePrimaryAddressRepository';
-import {
-  AddressInfo,
-  AddressLocationParams,
-} from '@be/applications/place/dtos/AddressDto';
 
 export class TogglePrimaryAddressRepositoryImpl
   implements TogglePrimaryAddressRepository

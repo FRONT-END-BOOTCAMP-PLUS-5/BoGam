@@ -1,6 +1,9 @@
-import { TaxCertRequest, TaxCertTwoWayRequest, CodefResponse } from '@be/applications/taxCert/dtos/TaxCertDto';
+import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
+import { GetTaxCertResponseDto } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 export interface TaxCertRepository {
-  requestTaxCert(request: TaxCertRequest): Promise<CodefResponse>;
-  requestTaxCertTwoWay(request: TaxCertTwoWayRequest): Promise<CodefResponse>;
-} 
+  requestTaxCert(request: GetTaxCertRequestDto): Promise<GetTaxCertResponseDto>;
+  requestTaxCertTwoWay(
+    request: GetTaxCertRequestDto
+  ): Promise<GetTaxCertResponseDto>;
+}

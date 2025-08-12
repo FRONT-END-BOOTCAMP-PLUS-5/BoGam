@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { NewsRepositoryImpl } from '@be/infrastructure/repository/NewsRepositoryImpl';
-import { GetNaverNewsUseCase } from '@be/applications/naverNews/usecases/GetNaverNewsUseCase';
+import { GetNaverNewsUsecase } from '@be/applications/naverNewses/usecases/GetNaverNewsUsecase';
 
 export async function GET() {
-  const usecase = new GetNaverNewsUseCase(new NewsRepositoryImpl());
+  const usecase = new GetNaverNewsUsecase(new NewsRepositoryImpl());
 
   try {
     const result = await usecase.fetchNaverNews();
