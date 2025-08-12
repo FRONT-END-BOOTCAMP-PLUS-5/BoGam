@@ -3,7 +3,7 @@
 'use client';
 import '@/globals.css';
 import { ReactNode } from 'react';
-import s from '@/(anon)/_components/common/forms/Forms.module.css';
+import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 
 type FieldProps = {
   id: string;
@@ -23,26 +23,26 @@ export default function Field({
   children,
 }: FieldProps) {
   return (
-    <div className={s.field}>
+    <div className={styles.field}>
       {(label || actionSlot) && (
-        <div className={s.labelRow}>
+        <div className={styles.labelRow}>
           {label && (
-            <label htmlFor={id} className={s.label}>
+            <label htmlFor={id} className={styles.label}>
               {label}
             </label>
           )}
-          {actionSlot && <div className={s.action}>{actionSlot}</div>}
+          {actionSlot && <div className={styles.action}>{actionSlot}</div>}
         </div>
       )}
 
-      <div className={s.control}>{children}</div>
+      <div className={styles.control}>{children}</div>
 
       {error ? (
-        <p className={s.error} role='alert'>
+        <p className={styles.error} role='alert'>
           {error}
         </p>
       ) : hint ? (
-        <p className={s.helper}>{hint}</p>
+        <p className={styles.helper}>{hint}</p>
       ) : null}
     </div>
   );
