@@ -1,6 +1,7 @@
 'use client';
 
 import Field from '@/(anon)/_components/common/forms/Field';
+import Button from '@/(anon)/_components/common/button/Button';
 import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import PasswordInput from '@/(anon)/_components/common/forms/PasswordInput';
@@ -59,6 +60,29 @@ export default function SignupForm() {
           placeholder='010-1234-5678'
         />
       </Field>
+      <Button type='submit' fullWidth variant='primary'>
+        회원가입
+      </Button>
+      <Button
+        type='submit'
+        fullWidth
+        variant='secondary'
+        isLoading={true}
+      ></Button>
+      <Button type='submit' variant='ghost'>
+        회원가입
+      </Button>
+      <div className='flex gap-2'>
+        <Button variant='secondary' className='flex-1'>
+          취소하기
+        </Button>
+        <Button variant='primary' className='flex-1'>
+          시작하기
+        </Button>
+      </div>
+      <Button variant='secondary' disabled>
+        안눌리는 버튼
+      </Button>
     </form>
   );
 }

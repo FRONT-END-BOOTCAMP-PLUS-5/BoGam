@@ -1,34 +1,37 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import styles from './AuthHeader.module.css';
 
 export default function AuthHeader() {
   const router = useRouter();
 
   return (
-    <header className='relative h-14 flex items-center border-b border-gray-200 bg-white'>
-      {/* 왼쪽: 이전 */}
-      <button
-        type='button'
-        onClick={() => router.back()}
-        className='text-sm font-semibold text-gray-900'
-        aria-label='이전으로'
-      >
-        <ChevronLeft />
-      </button>
+    <header className={styles.headerEdge}>
+      <div className={styles.inner}>
+        <button
+          type='button'
+          onClick={() => router.back()}
+          className={styles.backBtn}
+          aria-label='이전으로'
+        >
+          <ChevronLeft className={styles.icon} aria-hidden />
+        </button>
 
-      {/* 가운데: 로고 */}
-      <div className='absolute left-1/2 -translate-x-1/2'>
-        <Image
-          src='/images/Logo.png'
-          alt='로고'
-          width={30}
-          height={30}
-          className='h-6 w-auto'
-          priority
-        />
+        <div className={styles.logoWrap}>
+          <Link href='/' aria-label='홈으로'>
+            <Image
+              src='/images/Logo.png'
+              alt='로고'
+              width={35}
+              height={35}
+              priority
+            />
+          </Link>
+        </div>
       </div>
     </header>
   );

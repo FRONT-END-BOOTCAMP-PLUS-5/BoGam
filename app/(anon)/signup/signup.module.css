@@ -1,0 +1,12 @@
+/* signup 상단 안내 블럭 */
+.intro {
+  @apply border-b border-gray-200 py-4 mb-6;
+}
+
+.title {
+  @apply text-base font-semibold;
+}
+
+.desc {
+  @apply mt-1 text-sm text-gray-500;
+}

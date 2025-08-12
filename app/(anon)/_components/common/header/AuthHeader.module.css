@@ -1,0 +1,21 @@
+.headerEdge {
+  @apply bg-white;
+}
+
+.inner {
+  @apply relative flex items-center w-full px-0;
+  height: 5rem;
+}
+
+.backBtn {
+  @apply absolute left-0 h-12 w-12 items-center justify-center rounded-full
+         hover:bg-gray-50 active:scale-95 transition;
+}
+
+.icon {
+  @apply h-5 w-5;
+}
+
+.logoWrap {
+  @apply absolute left-1/2 -translate-x-1/2;
+}
