@@ -13,7 +13,7 @@
 }
 
 .modalContent {
-  background-color: white;
+  background-color: #DFE9F2;
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
@@ -60,7 +60,7 @@
 }
 
 .mainContent {
-  background-color: #f9fafb;
+  background-color: #DFE9F2;
   padding: 24px;
   min-height: 400px;
   position: relative;
