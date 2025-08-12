@@ -42,23 +42,3 @@ export class RealEstateTransactionResponseBody {
     public totalCount: string // 전체 결과 수
   ) {}
 }
-
-// 실거래가 통합 응답 Entity
-export class RealEstateTransactionResponse {
-  constructor(
-    public header: RealEstateTransactionResponseHeader,
-    public body: RealEstateTransactionResponseBody
-  ) {}
-}
-
-// 에러 응답 Entity
-export class RealEstateTransactionErrorResponse {
-  constructor(
-    public header: RealEstateTransactionResponseHeader,
-    public body?: {
-      items: {
-        item: any[];
-      };
-    }
-  ) {}
-} 
