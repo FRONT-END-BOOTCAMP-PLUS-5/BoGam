@@ -1,4 +1,4 @@
-import { Providers } from './providers';
+import { SessionProvider } from 'next-auth/react';
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
@@ -83,9 +83,7 @@ export default function RootLayout({
         <link rel='manifest' href='/manifest.json' />
         <link rel='shortcut icon' href='/favicon.ico' />
       </head>
-      <body className='font-sans'>
-        <Providers>{children}</Providers>
-      </body>
+      <body className='font-sans'>{children}</body>
     </html>
   );
 }

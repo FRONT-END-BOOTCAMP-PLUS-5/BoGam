@@ -1,0 +1,457 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.navigation {
+  margin-bottom: 20px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  color: #3498db;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: #ecf0f1;
+  transition: background-color 0.2s ease;
+}
+
+.backLink:hover {
+  background: #d5dbdb;
+}
+
+.allTestSection {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.allTestButton {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+}
+
+.allTestButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.allTestButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.allTestDescription {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.title {
+  text-align: center;
+  color: #333;
+  margin-bottom: 40px;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.section {
+  margin-bottom: 40px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+}
+
+.apiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.apiCard {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e8ed;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.apiCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.apiCard h3 {
+  color: #34495e;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.apiCard button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.apiCard button:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.apiCard button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  color: #7f8c8d;
+  font-style: italic;
+  padding: 10px;
+  background: #ecf0f1;
+  border-radius: 4px;
+}
+
+.noResult {
+  text-align: center;
+  color: #95a5a6;
+  font-style: italic;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.result {
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+
+.result.success {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.result.error {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.result.success .status {
+  background: #28a745;
+  color: white;
+}
+
+.result.error .status {
+  background: #dc3545;
+  color: white;
+}
+
+.message {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.error {
+  background: rgba(220, 53, 69, 0.1);
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+  border-left: 3px solid #dc3545;
+}
+
+.data {
+  margin-top: 12px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.data pre {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 폼 스타일 */
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.formToggleButton {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.formToggleButton:hover {
+  background: #5a6268;
+}
+
+.formContainer {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.formFields {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formLabel {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.formInput {
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.resetButton {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease;
+}
+
+.resetButton:hover {
+  background: #c82333;
+}
+
+/* 단지 목록 스타일 */
+.danjiList {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.danjiList h4 {
+  color: #495057;
+  margin: 0 0 16px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.danjiItem {
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.danjiItem:hover {
+  border-color: #3498db;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+}
+
+.danjiItem.selected {
+  border-color: #28a745;
+  background: #f8fff9;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+}
+
+.danjiName {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.danjiName strong {
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.selectedBadge {
+  background: #28a745;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.danjiInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.danjiInfo span {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.actionButtons {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #dee2e6;
+}
+
+.continueButton {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.continueButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838 0%, #1ea885 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.continueButton:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .section {
+    padding: 16px;
+  }
+
+  .apiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .apiCard {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .section h2 {
+    font-size: 1.2rem;
+  }
+
+  .apiCard h3 {
+    font-size: 1rem;
+  }
+
+  .data pre {
+    font-size: 0.7rem;
+  }
+}
