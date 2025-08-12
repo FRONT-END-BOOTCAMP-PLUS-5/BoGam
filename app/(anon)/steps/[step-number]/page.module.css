@@ -1,0 +1,37 @@
+.container {
+  padding: 20px;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.content {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.content h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 30px;
+}
+
+.clickButton {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickButton:hover {
+  background-color: #2563eb;
+}
+
+.clickButton:active {
+  background-color: #1d4ed8;
+}
