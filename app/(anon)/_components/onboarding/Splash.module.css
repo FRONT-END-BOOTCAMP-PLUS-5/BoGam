@@ -1,22 +1,23 @@
 .wrapper {
-  @apply flex items-center justify-center h-screen px-4 transition-all duration-700 ease-in-out;
-  background: var(--bg);
+  @apply flex items-center justify-center h-screen bg-white transition-all duration-700 ease-in-out;
 }
+
 .wrapperEnter {
   @apply opacity-100 blur-0;
 }
+
 .wrapperExit {
   @apply opacity-0 blur-sm;
 }
 
 .section {
-  @apply w-full h-full border flex flex-col items-center justify-center text-center;
-  background: #e3eff9;
+  @apply w-full h-full bg-[#e3eff9] border flex flex-col items-center justify-center text-center;
 }
+
 .logo {
   @apply mb-4;
 }
+
 .subText {
-  color: var(--muted);
-  @apply text-sm;
+  @apply text-sm text-gray-600;
 }

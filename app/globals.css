@@ -8,13 +8,6 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --brand: #4b72a6;
-  --border: #e5e7eb;
-  --text: #111827;
-  --muted: #6b7280;
-  --error: #d56666;
-  --bg: #ffffff;
-  --ring: rgba(75, 114, 166, 0.35);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,13 +32,13 @@ html {
   -webkit-text-size-adjust: none; /* iOS 폰트 확대 방지 */
 }
 
-body {
-  max-width: 480px; /* 모바일 전용 중앙 정렬 */
+/* body {
+  max-width: 480px;
   margin: 0 auto;
   background-color: #fff;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-}
+} */
 
 /* 스크롤바 제거 (모바일 UX 최적화) */
 ::-webkit-scrollbar {
