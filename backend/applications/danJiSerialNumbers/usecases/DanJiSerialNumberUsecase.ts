@@ -1,17 +1,17 @@
-import { DanJiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanjiSerialNumberRepositoryImpl';
-import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
-import { GetDanJiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
+import { DanjiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanjiSerialNumberRepositoryImpl';
+import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { GetDanjiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 
 /**
  * 단지 일련번호 조회 CODEF API 요청 UseCase
  * 클린 아키텍처의 Application 레이어
  * CODEF API 호출 비즈니스 로직을 담당하며 Infrastructure를 통해 외부 API 호출
  */
-export class DanJiSerialNumberUsecase {
-  private readonly infrastructure: DanJiSerialNumberRepositoryImpl;
+export class DanjiSerialNumberUsecase {
+  private readonly infrastructure: DanjiSerialNumberRepositoryImpl;
 
   constructor() {
-    this.infrastructure = new DanJiSerialNumberRepositoryImpl();
+    this.infrastructure = new DanjiSerialNumberRepositoryImpl();
   }
 
   // ===== 단지 일련번호 조회 API =====
@@ -21,10 +21,10 @@ export class DanJiSerialNumberUsecase {
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async getDanJiSerialNumber(
-    request: DanJiSerialNumberRequestDto
-  ): Promise<GetDanJiSerialNumberResponseDto> {
-    return this.infrastructure.getDanJiSerialNumber(request);
+  async getDanjiSerialNumber(
+    request: DanjiSerialNumberRequestDto
+  ): Promise<GetDanjiSerialNumberResponseDto> {
+    return this.infrastructure.getDanjiSerialNumber(request);
   }
 
   // ===== 응답 검증 및 처리 =====
@@ -34,7 +34,7 @@ export class DanJiSerialNumberUsecase {
    * @param response API 응답
    * @returns 조회 결과 존재 여부
    */
-  hasData(response: GetDanJiSerialNumberResponseDto): boolean {
+  hasData(response: GetDanjiSerialNumberResponseDto): boolean {
     return response.data && response.data.length > 0;
   }
 
@@ -43,7 +43,7 @@ export class DanJiSerialNumberUsecase {
    * @param response API 응답
    * @returns 조회 결과 개수
    */
-  getDataCount(response: GetDanJiSerialNumberResponseDto): number {
+  getDataCount(response: GetDanjiSerialNumberResponseDto): number {
     return response.data ? response.data.length : 0;
   }
 }

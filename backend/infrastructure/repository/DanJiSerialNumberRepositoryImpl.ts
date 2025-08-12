@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
-import { DanJiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
-import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
-import { GetDanJiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
+import { DanjiSerialNumberRepository } from '@be/domain/repository/DanjiSerialNumberRepository';
+import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { GetDanjiSerialNumberResponseDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberResponseDto';
 import { processResponse } from '@libs/responseUtils';
 
 /**
@@ -11,8 +11,8 @@ import { processResponse } from '@libs/responseUtils';
  * 클린 아키텍처의 Infrastructure 레이어
  * 순수하게 API 호출과 HTTP 통신만 담당
  */
-export class DanJiSerialNumberRepositoryImpl
-  implements DanJiSerialNumberRepository
+export class DanjiSerialNumberRepositoryImpl
+  implements DanjiSerialNumberRepository
 {
   private codefAuth: CodefAuth;
   private readonly baseUrl: string;
@@ -30,9 +30,9 @@ export class DanJiSerialNumberRepositoryImpl
    * @param request 요청 데이터
    * @returns 응답 데이터
    */
-  async getDanJiSerialNumber(
-    request: DanJiSerialNumberRequestDto
-  ): Promise<GetDanJiSerialNumberResponseDto> {
+  async getDanjiSerialNumber(
+    request: DanjiSerialNumberRequestDto
+  ): Promise<GetDanjiSerialNumberResponseDto> {
     try {
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
@@ -54,8 +54,8 @@ export class DanJiSerialNumberRepositoryImpl
       );
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetDanJiSerialNumberResponseDto =
-        processResponse<GetDanJiSerialNumberResponseDto>(response.data);
+      const data: GetDanjiSerialNumberResponseDto =
+        processResponse<GetDanjiSerialNumberResponseDto>(response.data);
 
       console.log('✅ 단지 일련번호 조회 성공:', {
         status: response.status,
