@@ -58,7 +58,7 @@ export interface TransactionDetailSingleRentItem {
   resBuildYear: string;
 }
 
-export interface TransactionDetailSingle {
+export interface TransactionDetailSingleEntity {
   resSaleList?: TransactionDetailSingleSaleItem[];
   resRentList?: TransactionDetailSingleRentItem[];
 }

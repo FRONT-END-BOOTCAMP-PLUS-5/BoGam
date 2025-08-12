@@ -1,4 +1,4 @@
-import { Providers } from './providers';
+import { SessionProvider } from 'next-auth/react';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import './globals.css';
@@ -93,8 +93,8 @@ export default function RootLayout({
           src="/turn.js" 
           strategy="beforeInteractive"
         />
-        <Providers>{children}</Providers>
       </body>
+      <body className='font-sans'>{children}</body>
     </html>
   );
 }

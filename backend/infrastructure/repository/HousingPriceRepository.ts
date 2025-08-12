@@ -1,11 +1,9 @@
 import axios from 'axios';
-import { CodefAuth, createCodefAuth } from '@libs/codefAuth';
+import { CodefAuth, createCodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
-import {
-  HousingPriceRequest,
-  HousingPriceApiResponse,
-} from '@be/applications/housingPrice/dtos/HousingPriceDto';
+import { GetHousingPriceRequestDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListRequestDto';
 import { CODEF_API_CONFIG } from '@libs/api-endpoints';
+import { GetHousingPriceResponseDto } from '@be/applications/housingPrices/dtos/GetHousingPriceListResponseDto';
 
 /**
  * 부동산 공시가격 알리미 개별주택 가격 Repository 구현체
@@ -20,9 +18,9 @@ export class HousingPriceRepository {
    * @param request 부동산 공시가격 조회 요청 데이터
    * @returns 부동산 공시가격 조회 응답 데이터
    */
-  async getHousingPrice(
-    request: HousingPriceRequest
-  ): Promise<HousingPriceApiResponse> {
+  async fetchHousingPriceList(
+    request: GetHousingPriceRequestDto
+  ): Promise<GetHousingPriceResponseDto> {
     try {
       this.codefAuth = createCodefAuth();
 
@@ -40,8 +38,8 @@ export class HousingPriceRepository {
       });
 
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: HousingPriceApiResponse =
-        processResponse<HousingPriceApiResponse>(response.data);
+      const data: GetHousingPriceResponseDto =
+        processResponse<GetHousingPriceResponseDto>(response.data);
 
       console.log('✅ 부동산 공시가격 조회 성공:', {
         status: response.status,

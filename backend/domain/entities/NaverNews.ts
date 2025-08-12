@@ -1,4 +1,4 @@
-import { NaverNewsItemDto } from '@be/applications/naverNews/dtos/NaverNewsDto';
+import { NaverNewsItemDto } from '@be/applications/naverNewses/dtos/NaverNewsDto';
 
 export class NaverNews {
   constructor(

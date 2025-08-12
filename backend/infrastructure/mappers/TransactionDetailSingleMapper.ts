@@ -1,6 +1,6 @@
-import { GetTransactionDetailSingleResponse } from '@be/applications/transactionDetailSingle/dtos/TransactionDetailSingleResponse';
+import { GetTransactionDetailResponseDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailResponseDto';
 import {
-  TransactionDetailSingle,
+  TransactionDetailSingleEntity,
   TransactionDetailSingleRentItem,
   TransactionDetailSingleSaleItem,
 } from '@be/domain/entities/TransactionDetailSingle';
@@ -81,8 +81,8 @@ function pickRent(item: UnknownRecord): TransactionDetailSingleRentItem {
   };
 }
 
-function sanitizeOne(item: unknown): TransactionDetailSingle {
-  const out: TransactionDetailSingle = {};
+function sanitizeOne(item: unknown): TransactionDetailSingleEntity {
+  const out: TransactionDetailSingleEntity = {};
   if (isRecord(item) && Array.isArray(item.resSaleList)) {
     out.resSaleList = item.resSaleList.map((s: unknown) =>
       pickSale(asRecord(s))
@@ -97,14 +97,14 @@ function sanitizeOne(item: unknown): TransactionDetailSingle {
 }
 
 export function sanitizeTransactionDetailSingleResponse(
-  response: GetTransactionDetailSingleResponse
-): GetTransactionDetailSingleResponse {
+  response: GetTransactionDetailResponseDto
+): GetTransactionDetailResponseDto {
   const rawData: unknown = (response as { data?: unknown }).data;
   if (!rawData) return response;
   if (Array.isArray(rawData)) {
     const mapped = rawData.map((d: unknown) => sanitizeOne(d));
-    return { ...response, data: mapped } as GetTransactionDetailSingleResponse;
+    return { ...response, data: mapped } as GetTransactionDetailResponseDto;
   }
   const mappedOne = sanitizeOne(rawData);
-  return { ...response, data: mappedOne } as GetTransactionDetailSingleResponse;
+  return { ...response, data: mappedOne } as GetTransactionDetailResponseDto;
 }

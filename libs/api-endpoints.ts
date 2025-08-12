@@ -104,7 +104,7 @@ export const REAL_ESTATE_TRANSACTION_API_CONFIG = {
 export const API_ENDPOINTS = {
   // 내부 API 엔드포인트 (Next.js API Routes)
   TAX_CERT: '/api/tax-cert',
-  DANJI_SERIAL_NUMBER: '/api/danJi-serial-number',
+  DANJI_SERIAL_NUMBER: '/api/danji-serial-number',
   TRANSACTION_APARTMENT: '/api/transaction/apartment',
   TRANSACTION_ROW_HOUSE: '/api/transaction/row-house',
   TRANSACTION_DETACHED_HOUSE: '/api/transaction/detached-house',

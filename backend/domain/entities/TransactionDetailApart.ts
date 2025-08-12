@@ -33,7 +33,7 @@ export interface TransactionDetailApartRentItem {
   resDong?: string;
 }
 
-export interface TransactionDetailApart {
+export interface TransactionDetailApartEntity {
   resSaleList?: TransactionDetailApartSaleItem[];
   resRentList?: TransactionDetailApartRentItem[];
 }

@@ -1,5 +1,5 @@
 import { UserEntity } from '@be/domain/entities/UserEntity';
-import { UserInfo } from '@be/applications/user/dtos/UserDto';
+import { UserInfo } from '@be/applications/users/dtos/UserDto';
 
 export interface UserRepository {
   findByNickname(nickname: string): Promise<UserInfo | null>;

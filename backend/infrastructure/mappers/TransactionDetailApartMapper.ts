@@ -1,6 +1,6 @@
-import { GetTransactionDetailApartResponse } from '@be/applications/transactionDetailApart/dtos/TransactionDetailApartResponse';
+import { GetTransactionDetailResponseDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailResponseDto';
 import {
-  TransactionDetailApart,
+  TransactionDetailApartEntity,
   TransactionDetailApartRentItem,
   TransactionDetailApartSaleItem,
 } from '@be/domain/entities/TransactionDetailApart';
@@ -49,8 +49,10 @@ function pickRent(
   };
 }
 
-function sanitizeOne(item: Record<string, unknown>): TransactionDetailApart {
-  const out: TransactionDetailApart = {};
+function sanitizeOne(
+  item: Record<string, unknown>
+): TransactionDetailApartEntity {
+  const out: TransactionDetailApartEntity = {};
   if (Array.isArray(item?.resSaleList)) {
     out.resSaleList = item.resSaleList.map((s: Record<string, unknown>) =>
       pickSale(s)
@@ -65,8 +67,8 @@ function sanitizeOne(item: Record<string, unknown>): TransactionDetailApart {
 }
 
 export function sanitizeTransactionDetailApartResponse(
-  response: GetTransactionDetailApartResponse
-): GetTransactionDetailApartResponse {
+  response: GetTransactionDetailResponseDto
+): GetTransactionDetailResponseDto {
   if (!response?.data) return response;
 
   if (Array.isArray(response.data)) {

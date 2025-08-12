@@ -3,6 +3,9 @@
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState } from 'react';
 
+// 동적 렌더링 설정
+export const dynamic = 'force-dynamic';
+
 interface AddressData {
   latitude: number;
   longitude: number;
@@ -30,7 +33,12 @@ interface UserAddress {
 }
 
 export default function UserAddressTestPage() {
-  const { data: session, status } = useSession();
+  const sessionResult = useSession();
+  const session = sessionResult?.data;
+  const status = sessionResult?.status;
+
+  // session이 undefined일 때를 대비한 안전한 처리
+  const isAuthenticated = !!session?.user?.nickname;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [addressData, setAddressData] = useState<AddressData>({
@@ -75,7 +83,7 @@ export default function UserAddressTestPage() {
 
   // 1. 주소 추가 API
   const handleAddAddress = async () => {
-    if (!session?.user?.nickname) {
+    if (!isAuthenticated) {
       setMessage('로그인이 필요합니다.');
       return;
     }
@@ -110,7 +118,7 @@ export default function UserAddressTestPage() {
 
   // 2. 주소 목록 조회 API
   const handleGetAddresses = async () => {
-    if (!session?.user?.nickname) {
+    if (!isAuthenticated) {
       setMessage('로그인이 필요합니다.');
       return;
     }
@@ -137,7 +145,7 @@ export default function UserAddressTestPage() {
 
   // 3. 즐겨찾기 토글 API
   const handleTogglePrimary = async (userAddressId: number) => {
-    if (!session?.user?.nickname) {
+    if (!isAuthenticated) {
       setMessage('로그인이 필요합니다.');
       return;
     }
@@ -205,7 +213,7 @@ export default function UserAddressTestPage() {
         </div>
 
         {/* 로그인 폼 */}
-        {!session ? (
+        {!isAuthenticated ? (
           <div className='bg-white p-6 rounded-lg shadow-md mb-6'>
             <h2 className='text-xl font-semibold mb-4'>로그인</h2>
             <form onSubmit={handleLogin}>
@@ -255,7 +263,7 @@ export default function UserAddressTestPage() {
         )}
 
         {/* API 테스트 섹션 */}
-        {session && (
+        {isAuthenticated && (
           <>
             {/* 1. 주소 추가 API */}
             <div className='bg-white p-6 rounded-lg shadow-md mb-6'>

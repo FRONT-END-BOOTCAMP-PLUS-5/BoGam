@@ -1,8 +1,8 @@
 import {
   AddressInfo,
   AddressLocationParams,
-} from '@be/applications/place/dtos/AddressDto';
-import { UserAddressInfo } from '@be/applications/place/dtos/UserAddressDto';
+} from '@be/applications/users/dtos/AddressDto';
+import { UserAddressInfo } from '@be/applications/users/dtos/UserAddressDto';
 
 export interface AddUserAddressRepository {
   findAddressByLocation(

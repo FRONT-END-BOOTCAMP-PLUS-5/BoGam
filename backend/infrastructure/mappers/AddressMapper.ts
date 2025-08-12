@@ -1,8 +1,8 @@
 import {
   AddressInfo,
   AddressLocationParams,
-} from '@be/applications/place/dtos/AddressDto';
-import { UserAddressInfo } from '@be/applications/place/dtos/UserAddressDto';
+} from '@be/applications/users/dtos/AddressDto';
+import { UserAddressInfo } from '@be/applications/users/dtos/UserAddressDto';
 
 /**
  * Address 엔티티를 AddressInfo DTO로 변환
@@ -15,6 +15,10 @@ export function mapAddressToAddressInfo(address: {
   dong: string | null;
   ho: string | null;
   lotAddress: string | null;
+<<<<<<< HEAD
+=======
+  roadAddress: string | null;
+>>>>>>> develop
 }): AddressInfo {
   return {
     id: address.id,
@@ -23,7 +27,12 @@ export function mapAddressToAddressInfo(address: {
     legalDistrictCode: address.legalDistrictCode || undefined,
     dong: address.dong || undefined,
     ho: address.ho || undefined,
+<<<<<<< HEAD
     lotAddress: address.lotAddress || undefined,
+=======
+    lotAddress: address.lotAddress || '',
+    roadAddress: address.roadAddress || undefined,
+>>>>>>> develop
   };
 }
 
@@ -68,6 +77,11 @@ export function createAddressData(params: AddressLocationParams) {
     legalDistrictCode: params.legalDistrictCode || '',
     dong: params.dong,
     ho: params.ho,
+<<<<<<< HEAD
     lotAddress: params.lotAddress,
+=======
+    lotAddress: params.lotAddress || '', // Prisma 스키마에서 필수 필드
+    roadAddress: params.roadAddress || null, // 선택적 필드
+>>>>>>> develop
   };
 }

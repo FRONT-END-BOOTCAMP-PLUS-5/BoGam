@@ -1,7 +1,7 @@
 import { prisma } from '@utils/prisma';
 import { UserRepository } from '@be/domain/repository/UserRepository';
 import { UserEntity } from '@be/domain/entities/UserEntity';
-import { UserInfo } from '@be/applications/user/dtos/UserDto';
+import { UserInfo } from '@be/applications/users/dtos/UserDto';
 
 export class UserRepositoryImpl implements UserRepository {
   async findByNickname(nickname: string): Promise<UserInfo | null> {
