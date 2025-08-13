@@ -41,7 +41,7 @@ export const styles = {
 
   // 버튼 스타일 - 취소 버튼에 회색 테두리 추가
   cancelButton:
-    'flex-1 px-4 py-3 text-brand-dark-gray bg-brand-white border-2 border-brand-light-gray rounded-lg font-medium transition-colors hover:bg-brand-light-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-light-gray',
+    'flex-1 px-4 py-3 text-brand-dark-gray bg-brand-white border-2 border-solid border-brand-light-gray rounded-lg font-medium transition-colors hover:bg-brand-light-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-light-gray',
   confirmButton:
     'flex-1 px-4 py-3 text-brand-white bg-brand border border-brand rounded-lg font-medium transition-colors hover:bg-brand-dark-blue focus:outline-none focus:ring-2 focus:ring-brand/30',
 
