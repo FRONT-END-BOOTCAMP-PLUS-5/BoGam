@@ -11,7 +11,7 @@ export default function PageFlipPage() {
         <button className={styles['page-num']}> 2 </button>
         <button className={styles['page-num']}> 3 </button>
       </div>
-      <div className={styles['flip-book']}>
+      <div className={`${styles['flip-book']} box-book`}>
         <HTMLFlipBook
           className={styles.flipBook}
           style={{}}
@@ -37,7 +37,7 @@ export default function PageFlipPage() {
           showPageCorners={true}
           disableFlipByClick={false}
         >
-          <div className={styles['intro-page']}>
+          <div className={`${styles['intro-page']} box-lg`}>
             <p className={styles['bold-main-text']} id={styles['bold-main-text-id']}>
               <span> 전세 계약 시 사기를 당하는 경우는 크게 </span>
               <span className={styles['underline-bold']}> 2가지 </span>
