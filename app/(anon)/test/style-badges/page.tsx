@@ -7,6 +7,21 @@ export default function StyleBadgesPage() {
     <div className="p-6 space-y-8">
       <h1 className="text-2xl font-bold text-center mb-8">뱃지 컴포넌트 스타일 가이드</h1>
 
+      {/* 새로운 타입들 - 이미지 스타일 */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-[var(--brand-green)]">새로운 타입들 (이미지 스타일)</h2>
+        <div className="flex flex-wrap gap-4">
+          <div className="text-center">
+            <CircularIconBadge type="match-light-green" size="md" weight="thick" />
+            <p className="text-sm mt-2 text-gray-600">match-light-green</p>
+          </div>
+          <div className="text-center">
+            <CircularIconBadge type="mismatch-emoji" size="md" weight="thick" />
+            <p className="text-sm mt-2 text-gray-600">mismatch-emoji</p>
+          </div>
+        </div>
+      </section>
+
       {/* 크기별 비교 */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">크기별 비교</h2>
@@ -18,6 +33,8 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="mismatch" size="sm" />
             <CircularIconBadge type="unchecked" size="sm" />
             <CircularIconBadge type="link" size="sm" />
+            <CircularIconBadge type="match-light-green" size="sm" />
+            <CircularIconBadge type="mismatch-emoji" size="sm" />
           </div>
           <div className="flex items-center gap-4">
             <span className="w-16 text-sm font-medium">Medium:</span>
@@ -26,6 +43,8 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="mismatch" size="md" />
             <CircularIconBadge type="unchecked" size="md" />
             <CircularIconBadge type="link" size="md" />
+            <CircularIconBadge type="match-light-green" size="md" />
+            <CircularIconBadge type="mismatch-emoji" size="md" />
           </div>
           <div className="flex items-center gap-4">
             <span className="w-16 text-sm font-medium">Large:</span>
@@ -34,6 +53,8 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="mismatch" size="lg" />
             <CircularIconBadge type="unchecked" size="lg" />
             <CircularIconBadge type="link" size="lg" />
+            <CircularIconBadge type="match-light-green" size="lg" />
+            <CircularIconBadge type="mismatch-emoji" size="lg" />
           </div>
         </div>
       </section>
@@ -48,6 +69,8 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="mismatch" weight="thin" />
             <CircularIconBadge type="unchecked" weight="thin" />
             <CircularIconBadge type="link" weight="thin" />
+            <CircularIconBadge type="match-light-green" weight="thin" />
+            <CircularIconBadge type="mismatch-emoji" weight="thin" />
           </div>
           <div className="flex items-center gap-4">
             <span className="w-16 text-sm font-medium">Normal:</span>
@@ -55,6 +78,8 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="mismatch" weight="normal" />
             <CircularIconBadge type="unchecked" weight="normal" />
             <CircularIconBadge type="link" weight="normal" />
+            <CircularIconBadge type="match-light-green" weight="normal" />
+            <CircularIconBadge type="mismatch-emoji" weight="normal" />
           </div>
           <div className="flex items-center gap-4">
             <span className="w-16 text-sm font-medium">Thick:</span>
@@ -62,6 +87,8 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="mismatch" weight="thick" />
             <CircularIconBadge type="unchecked" weight="thick" />
             <CircularIconBadge type="link" weight="thick" />
+            <CircularIconBadge type="match-light-green" weight="thick" />
+            <CircularIconBadge type="mismatch-emoji" weight="thick" />
           </div>
         </div>
       </section>
@@ -84,6 +111,9 @@ export default function StyleBadgesPage() {
           <CircularIconBadge type="match" weight="thin" />
           <CircularIconBadge type="mismatch" weight="thin" />
           <CircularIconBadge type="unchecked" weight="thin" />
+          <CircularIconBadge type="match-light-green" size="lg" weight="thick" />
+          <CircularIconBadge type="mismatch-emoji" size="lg" weight="thick" />
+          <CircularIconBadge type="unchecked" size="lg" weight="thick" />
         </div>
       </section>
 
@@ -102,6 +132,11 @@ export default function StyleBadgesPage() {
           <div className="flex items-center gap-2">
             <span>확인:</span>
             <CircularIconBadge type="unchecked" size="sm" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span>새로운 타입:</span>
+            <CircularIconBadge type="match-light-green" size="sm" />
+            <CircularIconBadge type="mismatch-emoji" size="sm" />
           </div>
         </div>
       </section>
@@ -134,6 +169,16 @@ export default function StyleBadgesPage() {
             <div className="font-medium">Link (링크)</div>
             <div className="text-gray-600">배경: var(--brand-gold) = #a68a56</div>
             <div className="text-gray-600">아이콘: white</div>
+          </div>
+          <div className="p-3 bg-white border rounded-lg">
+            <div className="font-medium">Match-light-green (새로운 타입)</div>
+            <div className="text-gray-600">배경: var(--brand-green) 30% 불투명도</div>
+            <div className="text-gray-600">아이콘: var(--brand-green)</div>
+          </div>
+          <div className="p-3 bg-white border rounded-lg">
+            <div className="font-medium">Mismatch-emoji (새로운 타입)</div>
+            <div className="text-gray-600">배경: var(--error) 30% 불투명도</div>
+            <div className="text-gray-600">아이콘: 😱 이모지</div>
           </div>
         </div>
       </section>
