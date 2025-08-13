@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CheckTaxCertCopyExistsUsecase } from '@be/applications/taxCertCopies/usecases/CheckTaxCertCopyExistsUsecase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
-import { getUserAddressIdByNickname } from '@utils/userAddress';
+import { getUserAddressId } from '@utils/userAddress';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 닉네임을 userAddressId로 변환
-    const userAddressId = await getUserAddressIdByNickname(nickname);
+    const userAddressId = await getUserAddressId(nickname);
 
     if (!userAddressId) {
       return NextResponse.json(
