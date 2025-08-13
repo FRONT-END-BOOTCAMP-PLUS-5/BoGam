@@ -3,19 +3,11 @@ export interface TaxCertCopyJson {
   [key: string]: unknown;
 }
 
-export interface TaxCertCopy {
-  id: number;
-  userAddressId: number;
-  taxCertData: string;
-  updatedAt?: Date;
+export class TaxCertCopyEntity {
+  constructor(
+    public readonly id: number,
+    public readonly userAddressId: number,
+    public readonly taxCertData: string,
+    public readonly updatedAt?: Date
+  ) {}
 }
-
-export interface CreateTaxCertCopyDto {
-  userAddressId: number;
-  taxCertData: string;
-}
-
-export interface UpsertTaxCertCopyDto {
-  userAddressId: number;
-  taxCertData: string;
-} 

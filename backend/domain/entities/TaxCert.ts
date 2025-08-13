@@ -3,18 +3,11 @@ export interface TaxCertJson {
   [key: string]: unknown;
 }
 
-export interface TaxCert {
-  id: number;
-  userAddressId: number;
-  taxCertData: string;
-  updatedAt?: Date;
+export class TaxCertEntity {
+  constructor(
+    public readonly id: number,
+    public readonly userAddressId: number,
+    public readonly taxCertData: string,
+    public readonly updatedAt?: Date
+  ) {}
 }
-
-export interface CreateTaxCertDto {
-  userAddressId: number;
-  taxCertData: string;
-}
-
-export interface UpdateTaxCertDto {
-  taxCertData?: string;
-} 

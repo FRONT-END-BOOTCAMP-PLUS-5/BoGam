@@ -11,7 +11,7 @@ interface ApiResult {
   message?: string;
 }
 
-interface DanJiSerialNumber {
+interface DanjiSerialNumberEntity {
   commBuildingCode: string;
   resBuildingName: string;
   commAddrLotNumber: string;
@@ -28,18 +28,17 @@ export default function ApiTestPage() {
   const [loading, setLoading] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<Record<string, FormData>>({});
   const [showForms, setShowForms] = useState<Record<string, boolean>>({});
-  const [selectedDanJi, setSelectedDanJi] = useState<DanJiSerialNumber | null>(
-    null
-  );
+  const [selectedDanji, setSelectedDanji] =
+    useState<DanjiSerialNumberEntity | null>(null);
 
   const updateResult = (apiName: string, result: ApiResult) => {
     setResults((prev) => ({ ...prev, [apiName]: result }));
 
     // 단지 일련번호 조회 성공 시 첫 번째 단지를 자동 선택
     if (apiName === '단지 일련번호 조회' && result.success && result.data) {
-      const responseData = result.data as { data?: DanJiSerialNumber[] };
+      const responseData = result.data as { data?: DanjiSerialNumberEntity[] };
       if (responseData.data && responseData.data.length > 0) {
-        setSelectedDanJi(responseData.data[0]);
+        setSelectedDanji(responseData.data[0]);
         // 실거래가 상세 폼 데이터에 자동 적용
         applyDanjiToTransactionForm(responseData.data[0]);
       }
@@ -66,7 +65,7 @@ export default function ApiTestPage() {
   };
 
   // 선택된 단지 데이터를 실거래가 상세 폼에 적용
-  const applyDanjiToTransactionForm = (danji: DanJiSerialNumber) => {
+  const applyDanjiToTransactionForm = (danji: DanjiSerialNumberEntity) => {
     const apartFormData = {
       organization: '0010',
       apartType: '0', // 아파트
@@ -88,8 +87,8 @@ export default function ApiTestPage() {
   };
 
   // 단지 선택 함수
-  const selectDanji = (danji: DanJiSerialNumber) => {
-    setSelectedDanJi(danji);
+  const selectDanji = (danji: DanjiSerialNumberEntity) => {
+    setSelectedDanji(danji);
     applyDanjiToTransactionForm(danji);
   };
 
@@ -279,7 +278,7 @@ export default function ApiTestPage() {
   };
 
   // 4. 단지 관련 API (복수형 경로로 변경)
-  const testDanJiSerialNumber = () => {
+  const testDanjiSerialNumber = () => {
     const requestData = {
       organization: '0010', // 기관코드 (고정값: "0010")
       year: '2024', // 기준년도 (YYYY)
@@ -297,7 +296,7 @@ export default function ApiTestPage() {
     });
   };
 
-  const testDanJi = () => {
+  const testDanji = () => {
     const requestData = {
       organization: '0010',
       addrSido: '서울특별시',
@@ -532,8 +531,8 @@ export default function ApiTestPage() {
       testTransactionDetailSingle,
       testRegister,
       testBroker,
-      testDanJiSerialNumber,
-      testDanJi,
+      testDanjiSerialNumber,
+      testDanji,
       testHousingPrice,
       testRebHousingPrice,
       testNaverNews,
@@ -604,7 +603,7 @@ export default function ApiTestPage() {
     );
   };
 
-  const renderDanjiList = (danjiList: DanJiSerialNumber[]) => {
+  const renderDanjiList = (danjiList: DanjiSerialNumberEntity[]) => {
     return (
       <div className={styles.danjiList}>
         <h4>🏢 조회된 단지 목록 (클릭하여 실거래가 조회에 적용)</h4>
@@ -612,7 +611,7 @@ export default function ApiTestPage() {
           <div
             key={index}
             className={`${styles.danjiItem} ${
-              selectedDanJi?.commBuildingCode === danji.commBuildingCode
+              selectedDanji?.commBuildingCode === danji.commBuildingCode
                 ? styles.selected
                 : ''
             }`}
@@ -620,7 +619,7 @@ export default function ApiTestPage() {
           >
             <div className={styles.danjiName}>
               <strong>{danji.resBuildingName}</strong>
-              {selectedDanJi?.commBuildingCode === danji.commBuildingCode && (
+              {selectedDanji?.commBuildingCode === danji.commBuildingCode && (
                 <span className={styles.selectedBadge}>✓ 선택됨</span>
               )}
             </div>
@@ -631,7 +630,7 @@ export default function ApiTestPage() {
             </div>
           </div>
         ))}
-        {selectedDanJi && (
+        {selectedDanji && (
           <div className={styles.actionButtons}>
             <button
               onClick={() => testTransactionDetailApart()}
@@ -661,7 +660,7 @@ export default function ApiTestPage() {
     // 단지 일련번호 조회 결과 특별 처리
     let danjiListComponent = null;
     if (apiName === '단지 일련번호 조회' && result.success && result.data) {
-      const responseData = result.data as { data?: DanJiSerialNumber[] };
+      const responseData = result.data as { data?: DanjiSerialNumberEntity[] };
       if (responseData.data && responseData.data.length > 0) {
         danjiListComponent = renderDanjiList(responseData.data);
       }
@@ -807,7 +806,7 @@ export default function ApiTestPage() {
                 {showForms['단지 일련번호 조회'] ? '폼 숨기기' : '폼 보기'}
               </button>
               <button
-                onClick={testDanJiSerialNumber}
+                onClick={testDanjiSerialNumber}
                 disabled={loading['단지 일련번호 조회']}
               >
                 테스트 실행
@@ -826,7 +825,7 @@ export default function ApiTestPage() {
               >
                 {showForms['단지목록 조회'] ? '폼 숨기기' : '폼 보기'}
               </button>
-              <button onClick={testDanJi} disabled={loading['단지목록 조회']}>
+              <button onClick={testDanji} disabled={loading['단지목록 조회']}>
                 테스트 실행
               </button>
             </div>

@@ -1,4 +1,4 @@
-import { RebHousingPriceEntity } from '@be/domain/entities/RebHousingPriceEntity';
+import { RebHousingPriceEntity } from '@be/domain/entities/RebHousingPrice';
 
 export interface TwoWayResponse {
   continue2Way: boolean;

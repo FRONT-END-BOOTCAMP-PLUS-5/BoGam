@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CheckRealEstateCopyExistsUsecase } from '@be/applications/realEstateCopies/usecases/CheckRealEstateCopyExistsUsecase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
-import { getUserAddressIdByNickname } from '@utils/userAddress';
+import { getUserAddressId } from '@utils/userAddress';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 닉네임을 userAddressId로 변환
-    const userAddressId = await getUserAddressIdByNickname(nickname);
+    const userAddressId = await getUserAddressId(nickname);
 
     if (!userAddressId) {
       return NextResponse.json(

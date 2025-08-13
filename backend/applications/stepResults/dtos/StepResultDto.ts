@@ -1,4 +1,4 @@
-import { StepResult } from '@be/domain/entities/StepResult';
+import { StepResultEntity } from '@be/domain/entities/StepResult';
 
 export interface CreateStepResultDto {
   userAddressId: number;
@@ -10,7 +10,10 @@ export interface CreateStepResultDto {
 
 export interface StepResultResponseDto {
   success: boolean;
-  data?: StepResult | StepResult[] | { results: StepResult[]; summary: StepResultSummaryDto };
+  data?:
+    | StepResultEntity
+    | StepResultEntity[]
+    | { results: StepResultEntity[]; summary: StepResultSummaryDto };
   error?: string;
   message?: string;
 }
@@ -21,4 +24,4 @@ export interface StepResultSummaryDto {
   totalUnchecked: number;
   stepCount: number;
   mainNum: number;
-} 
+}

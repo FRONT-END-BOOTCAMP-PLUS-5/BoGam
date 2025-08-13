@@ -1,4 +1,4 @@
-import { SiseEntity } from '@be/domain/entities/SiseEntity';
+import { SiseEntity } from '@be/domain/entities/Sise';
 
 export interface TwoWayExtraInfo {
   reqSecureNo?: string;

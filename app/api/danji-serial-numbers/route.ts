@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { DanJiSerialNumberUsecase } from '@be/applications/danjiSerialNumbers/usecases/DanjiSerialNumberUsecase';
-import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { DanjiSerialNumberUsecase } from '@be/applications/danjiSerialNumbers/usecases/DanjiSerialNumberUsecase';
+import { DanjiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers/dtos/DanjiSerialNumberRequestDto';
+import { DanjiSerialNumberRepositoryImpl } from '@be/infrastructure/repository/DanjiSerialNumberRepositoryImsi';
 
 /**
  * 단지 일련번호 조회 API
@@ -9,7 +10,7 @@ import { DanJiSerialNumberRequestDto } from '@be/applications/danjiSerialNumbers
 export async function POST(request: NextRequest) {
   try {
     // 요청 본문 파싱
-    const body: DanJiSerialNumberRequestDto = await request.json();
+    const body: DanjiSerialNumberRequestDto = await request.json();
 
     // 필수 필드 검증
     const requiredFields = [
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
     ];
 
     for (const field of requiredFields) {
-      if (!body[field as keyof DanJiSerialNumberRequestDto]) {
+      if (!body[field as keyof DanjiSerialNumberRequestDto]) {
         return NextResponse.json(
           {
             error: '필수 필드가 누락되었습니다.',
@@ -61,13 +62,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Usecase 인스턴스 생성 및 API 호출
-    const usecase = new DanJiSerialNumberUsecase();
-    const response = await usecase.getDanJiSerialNumber(body);
+    const usecase = new DanjiSerialNumberUsecase(new DanjiSerialNumberRepositoryImpl());
+    const response = await usecase.getDanjiSerialNumber(body);
 
     console.log('✅ 단지 일련번호 조회 API 성공:', {
       resultCode: response.result?.code,
       resultMessage: response.result?.message,
-      dataCount: usecase.getDataCount(response),
     });
 
     return NextResponse.json(response);

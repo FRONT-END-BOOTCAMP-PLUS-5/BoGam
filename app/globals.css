@@ -7,7 +7,6 @@
 /* 공통 색/테마 */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
   --brand: #4b72a6;
   --border: #e5e7eb;
   --text: #111827;
@@ -25,6 +24,15 @@
   --padding-xs: 8px;
   --padding-sm: 12px;
   --padding-lg: 20px;
+  --brand-dark-blue: #4F6273;
+  --brand-light-blue: #DFE9F2;
+  --brand-black: #111827;
+  --brand-dark-gray: #6D6D6D;
+  --brand-light-gray: #e5e7eb;
+  --brand-green: #4fa373;
+  --brand-gold: #a68a56;
+  --error: #c24a4a;
+  --brand-shadow: #4B72A659;
 }
 
 @media (prefers-color-scheme: dark) {
