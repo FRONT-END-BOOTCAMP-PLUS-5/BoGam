@@ -1,103 +1,126 @@
 'use client';
 
 import React from 'react';
+import { Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  ChartOptions
+} from 'chart.js';
 import { styles } from './GuideResultSummary.styles';
 
+// Chart.js 컴포넌트 등록
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 interface GuideResultSummaryProps {
-  safetyLevel?: number; // 1-5 단계
-  safeCount?: number;
-  warningCount?: number;
-  unconfirmedCount?: number;
+  match?: number;
+  mismatch?: number;
+  unchecked?: number;
 }
 
 export default function GuideResultSummary({
-  safetyLevel = 2,
-  safeCount = 15,
-  warningCount = 9,
-  unconfirmedCount = 4
+  match = 0,
+  mismatch = 0,
+  unchecked = 0
 }: GuideResultSummaryProps = {}) {
-  // 안전도 단계를 퍼센트로 변환 (1단계=20%, 2단계=40%, 3단계=60%, 4단계=80%, 5단계=100%)
-  const safetyPercentage = (safetyLevel / 5) * 100;
+  // 전체 합계 계산
+  const total = match + mismatch + unchecked;
   
-  // 게이지 색상 결정
-  const getGaugeColor = (level: number) => {
-    if (level <= 2) return '#10b981'; // 초록색 (안전)
-    if (level <= 3) return '#f59e0b'; // 주황색 (주의)
-    return '#ef4444'; // 빨간색 (위험)
+  // 각 항목의 비율 계산 (퍼센트)
+  const matchPercentage = total > 0 ? Math.round((match / total) * 100) : 0;
+  const mismatchPercentage = total > 0 ? Math.round((mismatch / total) * 100) : 0;
+  const uncheckedPercentage = total > 0 ? Math.round((unchecked / total) * 100) : 0;
+
+  // Chart.js 데이터 설정
+  const chartData = {
+    labels: ['안전', '간격1', '경고', '간격2', '미확인'],
+    datasets: [
+      {
+        data: [match, 0.3, mismatch, 0.3, unchecked], // 0.3으로 간격 줄임
+        backgroundColor: ['#10b981', '#ffffff', '#ef4444', '#ffffff', '#9ca3af'],
+        borderColor: ['#10b981', '#ffffff', '#ef4444', '#ffffff', '#9ca3af'],
+        borderWidth: 0,
+        cutout: '80%', // 중앙 구멍을 더 늘려서 차트를 더 얇게 만듦
+        circumference: 180, // 반원형 (180도)
+        rotation: -90, // 서쪽(왼쪽)에서 시작
+      }
+    ]
   };
 
-  const gaugeColor = getGaugeColor(safetyLevel);
+  // Chart.js 옵션 설정
+  const chartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false, // 범례 숨기기
+      },
+      tooltip: {
+        enabled: false, // 툴팁 숨기기
+      }
+    }
+  };
+
+  // 안전도 단계 계산
+  const getSafetyLevel = () => {
+    if (matchPercentage >= 80) return '1단계';
+    if (matchPercentage >= 60) return '2단계';
+    if (matchPercentage >= 40) return '3단계';
+    return '4단계';
+  };
 
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>가이드 결과 요약</h2>
       
-      {/* 안전도 게이지 */}
+      {/* 반원형 게이지 */}
       <div className={styles.gaugeContainer}>
-        <div className={styles.gauge}>
-          <svg width="200" height="100" viewBox="0 0 200 100">
-            {/* 배경 원호 */}
-            <path
-              d="M 20 80 A 80 80 0 0 1 180 80"
-              fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="16"
-            />
-            {/* 안전도 원호 */}
-            <path
-              d={`M 20 80 A 80 80 0 0 1 ${20 + (160 * safetyPercentage / 100)} ${80 - (80 * Math.sin((safetyPercentage / 100) * Math.PI))}`}
-              fill="none"
-              stroke={gaugeColor}
-              strokeWidth="16"
-              strokeLinecap="round"
-            />
-          </svg>
-          
-          {/* 중앙 텍스트 */}
-          <div className={styles.gaugeText}>
-            <span className={styles.safetyLabel}>안전도</span>
-            <div className={styles.safetyLevel}>{safetyLevel}단계</div>
+        <div className={styles.chartWrapper}>
+          <Doughnut data={chartData} options={chartOptions} />
+        </div>
+        <div className={styles.centerText}>
+          <div className={styles.safetyLabel}>안전도</div>
+          <div className={styles.safetyLevelContainer}>
+            <div className={styles.safetyLevelTop}></div>
+            <div className={styles.safetyLevelText}>{getSafetyLevel()}</div>
+            <div className={styles.safetyLevelBottom}></div>
           </div>
         </div>
       </div>
-      
+
+      {/* 구분선 */}
+      <div className={styles.divider}></div>
+
       {/* 통계 카드들 */}
       <div className={styles.statsContainer}>
-        {/* 안전 카드 */}
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <div className={styles.safeIcon}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M16 6L7 15L4 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+          <div className={styles.statIcon} style={{ backgroundColor: '#dcfce7' }}>
+            <span className={styles.checkmark}>✓</span>
           </div>
-          <span className={styles.statLabel}>안전</span>
-          <span className={styles.statCount}>{safeCount}건</span>
+          <div className={styles.statLabel}>안전</div>
+          <div className={styles.statValue}>{match}건</div>
         </div>
-        
-        {/* 경고 카드 */}
+
+        <div className={styles.statDivider}></div>
+
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <div className={styles.warningIcon}>
-              <span className={styles.warningEmoji}>😱</span>
-            </div>
+          <div className={styles.statIcon} style={{ backgroundColor: '#fce7f3' }}>
+            <span className={styles.emoji}>😮</span>
           </div>
-          <span className={styles.statLabel}>경고</span>
-          <span className={styles.statCount}>{warningCount}건</span>
+          <div className={styles.statLabel}>경고</div>
+          <div className={styles.statValue}>{mismatch}건</div>
         </div>
-        
-        {/* 미확인 카드 */}
+
+        <div className={styles.statDivider}></div>
+
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>
-            <div className={styles.unconfirmedIcon}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M15 5L5 15M5 5L15 15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
+          <div className={styles.statIcon} style={{ backgroundColor: '#f3f4f6' }}>
+            <span className={styles.xmark}>✗</span>
           </div>
-          <span className={styles.statLabel}>미확인</span>
-          <span className={styles.statCount}>{unconfirmedCount}건</span>
+          <div className={styles.statLabel}>미확인</div>
+          <div className={styles.statValue}>{unchecked}건</div>
         </div>
       </div>
     </div>
