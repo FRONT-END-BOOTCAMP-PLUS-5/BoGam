@@ -12,7 +12,9 @@
   --border: #e5e7eb;
   --text: #111827;
   --muted: #6b7280;
-  --error: #d56666;
+  --error: #c24a4a;
+  --primary-brown: #a68a56;
+  --primary-green: #4fa373;
   --bg: #ffffff;
   --ring: rgba(75, 114, 166, 0.35);
 }
