@@ -9,10 +9,9 @@ import {
   Legend,
   ChartOptions
 } from 'chart.js';
-<<<<<<< HEAD
+
 import clsx from 'clsx';
-=======
->>>>>>> 50986aa0ca7eef694011da7b670e5098fd9cfab3
+
 import { styles } from './GuideResultSummary.styles';
 
 // Chart.js 컴포넌트 등록
@@ -43,7 +42,6 @@ export default function GuideResultSummary({
     datasets: [
       {
         data: [match, 0.3, mismatch, 0.3, unchecked], // 0.3으로 간격 줄임
-<<<<<<< HEAD
         backgroundColor: [
           matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
           '#ffffff', 
@@ -58,17 +56,13 @@ export default function GuideResultSummary({
           '#ffffff', 
           '#e5e7eb'
         ],
-=======
-        backgroundColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
-        borderColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
->>>>>>> 50986aa0ca7eef694011da7b670e5098fd9cfab3
         borderWidth: 0,
         cutout: '80%', // 중앙 구멍을 더 늘려서 차트를 더 얇게 만듦
         circumference: 180, // 반원형 (180도)
         rotation: -90, // 서쪽(왼쪽)에서 시작
       }
     ]
-<<<<<<< HEAD
+
   };
 
   // Chart.js 옵션 설정
@@ -105,30 +99,6 @@ export default function GuideResultSummary({
     if (matchPercentage >= 20) return 'bg-[#A36E4F]';            // 20-39%: 주황색
     if (matchPercentage > 0) return 'bg-[#A34F4F]';              // 1-19%: 빨간색
     return 'bg-[#870F0F]';                                        // 0%: 진한 빨간색
-=======
-  };
-
-  // Chart.js 옵션 설정
-  const chartOptions: ChartOptions<'doughnut'> = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false, // 범례 숨기기
-      },
-      tooltip: {
-        enabled: false, // 툴팁 숨기기
-      }
-    }
-  };
-
-  // 안전도 단계 계산
-  const getSafetyLevel = () => {
-    if (matchPercentage >= 80) return '1단계';
-    if (matchPercentage >= 60) return '2단계';
-    if (matchPercentage >= 40) return '3단계';
-    return '4단계';
->>>>>>> 50986aa0ca7eef694011da7b670e5098fd9cfab3
   };
 
   return (
@@ -145,11 +115,7 @@ export default function GuideResultSummary({
           <div className={styles.safetyLevelContainer}>
             <div className={styles.safetyLevelTop}></div>
             <div className={styles.safetyLevelText}>{getSafetyLevel()}</div>
-<<<<<<< HEAD
             <div className={clsx(styles.safetyLevelBottom, getSafetyLevelColorClass())}></div>
-=======
-            <div className={styles.safetyLevelBottom}></div>
->>>>>>> 50986aa0ca7eef694011da7b670e5098fd9cfab3
           </div>
         </div>
       </div>
