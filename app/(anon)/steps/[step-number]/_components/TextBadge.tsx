@@ -2,8 +2,13 @@
 
 import { Check, X, TriangleAlert } from 'lucide-react';
 import clsx from 'clsx';
-import { TextBadgeProps } from '@/types/TextBadgeProps';
 import { styles } from './TextBadge.styles';
+
+type TextBadgeProps = {
+  type: 'match' | 'mismatch' | 'unchecked';
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+};
 
 const TextBadge = ({ type, size = 'md', className }: TextBadgeProps) => {
   // 아이콘과 텍스트 결정

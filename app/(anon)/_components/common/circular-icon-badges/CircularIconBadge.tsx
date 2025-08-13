@@ -2,8 +2,14 @@
 
 import { Check, X, Link } from 'lucide-react';
 import clsx from 'clsx';
-import { CircularIconBadgeProps } from '@/types/BadgeProps';
 import { styles } from './CircularIconBadge.styles';
+
+type CircularIconBadgeProps = {
+  type: 'match' | 'match-blue' | 'mismatch' | 'unchecked' | 'link';
+  size?: 'sm' | 'md' | 'lg';
+  weight?: 'thin' | 'normal' | 'thick';
+  className?: string;
+};
 
 const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: CircularIconBadgeProps) => {
   // 아이콘 결정

@@ -1,6 +1,6 @@
 'use client';
 
-import { CircularIconBadge } from '@/(anon)/_components/common/circular-icon-badges';
+import CircularIconBadge from '@/(anon)/_components/common/circular-icon-badges/CircularIconBadge';
 
 export default function StyleBadgesPage() {
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { TextBadge } from '@/(anon)/steps/[step-number]/_components';
+import TextBadge from '@/(anon)/steps/[step-number]/_components/TextBadge';
 
 export default function StyleTextBadgesPage() {
   return (

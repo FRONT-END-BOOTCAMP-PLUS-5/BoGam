@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, TouchEvent, MouseEvent } from 'react';
-import { X, ChevronRight, Check } from 'lucide-react';
+import { X, ChevronRight } from 'lucide-react';
 import { getStepDetail, StepDetailData } from '@libs/constants/stepDetails';
 import { styles } from './StepDetail.styles';
-import { TextBadge } from './';
+import TextBadge from './TextBadge';
 
 interface StepDetailProps {
   stepNumber: string;
