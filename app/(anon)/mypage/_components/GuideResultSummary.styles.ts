@@ -39,7 +39,11 @@ export const styles = {
   safetyLevelText: "relative z-10 text-brand-black text-base font-semibold px-1",
   
   // 안전도 단계 아래쪽
+<<<<<<< HEAD
   safetyLevelBottom: "absolute bottom-0 left-0 right-0 h-1/2 opacity-30",
+=======
+  safetyLevelBottom: "absolute bottom-0 left-0 right-0 h-1/2 bg-brand-green opacity-30",
+>>>>>>> 50986aa0ca7eef694011da7b670e5098fd9cfab3
   
   // 통계 컨테이너
   statsContainer: "grid grid-cols-5 gap-0 items-center [grid-template-columns:1fr_16px_1fr_16px_1fr]",
