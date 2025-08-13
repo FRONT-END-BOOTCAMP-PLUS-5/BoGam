@@ -6,31 +6,36 @@ import {
   styles,
   getIconStyle,
   getTitleBackgroundColor,
+  getIconContainerStyle,
 } from './ConfirmModal.styles';
 import { useModalStore } from './modalStore';
 
-// 아이콘 컴포넌트
+// 아이콘 컴포넌트 - brand 컬러 동그라미 + brand 컬러 아이콘
 const IconComponent = ({
   iconType,
 }: {
   iconType: 'warning' | 'info' | 'error' | 'success';
 }) => {
   const iconProps = {
-    size: 24,
+    size: 20,
     className: getIconStyle(iconType),
   };
 
-  switch (iconType) {
-    case 'warning':
-      return <AlertTriangle {...iconProps} />;
-    case 'error':
-      return <XCircle {...iconProps} />;
-    case 'success':
-      return <CheckCircle {...iconProps} />;
-    case 'info':
-    default:
-      return <Info {...iconProps} />;
-  }
+  const renderIcon = () => {
+    switch (iconType) {
+      case 'warning':
+        return <AlertTriangle {...iconProps} />;
+      case 'error':
+        return <XCircle {...iconProps} />;
+      case 'success':
+        return <CheckCircle {...iconProps} />;
+      case 'info':
+      default:
+        return <Info {...iconProps} />;
+    }
+  };
+
+  return <div className={getIconContainerStyle(iconType)}>{renderIcon()}</div>;
 };
 
 export function ConfirmModal() {
@@ -92,9 +97,7 @@ export function ConfirmModal() {
       >
         {/* 헤더 */}
         <div className={styles.header}>
-          <div className={styles.iconContainer}>
-            <IconComponent iconType={displayIcon} />
-          </div>
+          <IconComponent iconType={displayIcon} />
           <h2 className={styles.title}>
             <div className={styles.titleContainer}>
               <div className={styles.titleTop}></div>
@@ -123,7 +126,18 @@ export function ConfirmModal() {
               </div>
             </div>
           ) : typeof modalContent === 'string' ? (
-            <p className={styles.contentText}>{modalContent}</p>
+            // "이미 사용 중인 닉네임입니다" 같은 에러 메시지는 brand-error 색상 적용
+            <p
+              className={
+                modalContent.includes('이미 사용 중인') ||
+                modalContent.includes('오류') ||
+                modalContent.includes('실패')
+                  ? styles.errorText
+                  : styles.contentText
+              }
+            >
+              {modalContent}
+            </p>
           ) : (
             <div className={styles.contentText}>{modalContent}</div>
           )}

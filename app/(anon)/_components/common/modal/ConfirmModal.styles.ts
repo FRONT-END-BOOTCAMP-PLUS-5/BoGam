@@ -17,12 +17,20 @@ export const styles = {
   titleText: 'relative z-10 text-brand-black text-lg font-semibold px-1',
   titleBottom: 'absolute bottom-0 left-0 right-0 h-1/2 opacity-30',
 
-  // 아이콘 스타일
-  iconContainer: 'flex-shrink-0',
-  warningIcon: 'w-6 h-6 text-brand-gold',
-  infoIcon: 'w-6 h-6 text-brand',
-  errorIcon: 'w-6 h-6 text-brand-error',
-  successIcon: 'w-6 h-6 text-brand-green',
+  // 아이콘 컨테이너 - brand 컬러 테두리만
+  iconContainer:
+    'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border-2',
+  iconContainerWarning: 'border-brand-gold',
+  iconContainerInfo: 'border-brand',
+  iconContainerError: 'border-brand-error',
+  iconContainerSuccess: 'border-brand-green',
+
+  // 아이콘 스타일 - brand 컬러로 통일
+  iconBase: 'w-5 h-5',
+  warningIcon: 'w-5 h-5 text-brand-gold',
+  infoIcon: 'w-5 h-5 text-brand',
+  errorIcon: 'w-5 h-5 text-brand-error',
+  successIcon: 'w-5 h-5 text-brand-green',
 
   // 모달 본문
   content: 'px-6 pb-6',
@@ -31,20 +39,23 @@ export const styles = {
   // 버튼 컨테이너
   buttonContainer: 'flex gap-3 px-6 pb-6',
 
-  // 버튼 스타일
+  // 버튼 스타일 - 취소 버튼에 회색 테두리 추가
   cancelButton:
-    'flex-1 px-4 py-3 text-brand-dark-gray bg-brand-white border border-brand-light-gray rounded-lg font-medium transition-colors hover:bg-brand-light-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-light-gray',
+    'flex-1 px-4 py-3 text-brand-dark-gray bg-brand-white border-2 border-brand-light-gray rounded-lg font-medium transition-colors hover:bg-brand-light-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-light-gray',
   confirmButton:
     'flex-1 px-4 py-3 text-brand-white bg-brand border border-brand rounded-lg font-medium transition-colors hover:bg-brand-dark-blue focus:outline-none focus:ring-2 focus:ring-brand/30',
 
   // 비활성화된 버튼
   disabledButton: 'opacity-50 cursor-not-allowed',
 
-  // 에러 관련 스타일
+  // 에러 관련 스타일 - brand-error 컬러 적용
   errorContainer: 'space-y-3',
   errorBox: 'p-3 bg-brand-error/10 border border-brand-error/20 rounded-lg',
   errorTitle: 'text-brand-error text-sm font-medium',
   errorMessage: 'text-brand-error/80 text-sm mt-1',
+
+  // 에러 메시지 스타일 ("이미 사용 중인 닉네임입니다" 등)
+  errorText: 'text-brand-error text-sm',
 } as const;
 
 // 아이콘 타입별 스타일 함수
@@ -58,6 +69,22 @@ export const getIconStyle = (
     success: styles.successIcon,
   };
   return iconStyles[iconType] || styles.infoIcon;
+};
+
+// 아이콘 컨테이너 배경색 함수
+export const getIconContainerStyle = (
+  iconType: 'warning' | 'info' | 'error' | 'success'
+) => {
+  const containerStyles = {
+    warning: `${styles.iconContainer} ${styles.iconContainerWarning}`,
+    info: `${styles.iconContainer} ${styles.iconContainerInfo}`,
+    error: `${styles.iconContainer} ${styles.iconContainerError}`,
+    success: `${styles.iconContainer} ${styles.iconContainerSuccess}`,
+  };
+  return (
+    containerStyles[iconType] ||
+    `${styles.iconContainer} ${styles.iconContainerInfo}`
+  );
 };
 
 // 아이콘 타입별 제목 배경색 함수
