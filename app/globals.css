@@ -6,7 +6,7 @@
 
 /* 공통 색/테마 */
 :root {
-  --background: #ffffff;
+  --brand-white: #ffffff;
   --brand: #4b72a6;
   --border: #e5e7eb;
   --text: #111827;
