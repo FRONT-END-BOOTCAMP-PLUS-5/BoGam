@@ -1,0 +1,55 @@
+body {
+    background-color: #EFF0F2;
+}
+
+.intro-page {
+    background-color: white;
+    margin: 0 auto;
+    border-radius: 16px;
+}
+
+.up-point {
+    width: 0;
+    height: 0;
+    border-left: 15px solid #C24A4A;
+    border-right: 15px solid #C24A4A;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid #C24A4A;
+    margin-left: 50%;
+}
+
+.page-num {
+    background-color: #4B72A6;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+    padding-right: 10px;
+}
+
+.flip-book {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 10px 10px 15px -5px rgba(0, 0, 0, 0.4);
+    width: fit-content;
+    height: fit-content;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.page-num-div {
+    position: absolute;
+    left: 61%;
+    top: 27%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
