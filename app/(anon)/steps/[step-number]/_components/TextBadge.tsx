@@ -2,35 +2,35 @@
 
 import { Check, X, TriangleAlert } from 'lucide-react';
 import clsx from 'clsx';
-import { TextBadgeProps } from '../../../../../types/TextBadgeProps';
+import { TextBadgeProps } from '@/types/TextBadgeProps';
 import { styles } from './TextBadge.styles';
 
 const TextBadge = ({ type, size = 'md', className }: TextBadgeProps) => {
   // 아이콘과 텍스트 결정
-  const getIconAndText = () => {
-    switch (type) {
-      case 'match':
-        return {
-          icon: Check,
-          text: '안전'
-        };
-      case 'mismatch':
-        return {
-          icon: X,
-          text: '미확인'
-        };
-      case 'unchecked':
-        return {
-          icon: TriangleAlert,
-          text: '경고'
-        };
-      default:
-        return {
-          icon: TriangleAlert,
-          text: '경고'
-        };
-    }
-  };
+               const getIconAndText = () => {
+               switch (type) {
+                 case 'match':
+                   return {
+                     icon: Check,
+                     text: '안전'
+                   };
+                 case 'mismatch':
+                   return {
+                     icon: TriangleAlert,
+                     text: '경고'
+                   };
+                 case 'unchecked':
+                   return {
+                     icon: X,
+                     text: '미확인'
+                   };
+                 default:
+                   return {
+                     icon: X,
+                     text: '미확인'
+                   };
+               }
+             };
 
   const { icon: Icon, text } = getIconAndText();
 

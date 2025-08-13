@@ -19,7 +19,7 @@ export default function StyleTextBadgesPage() {
 
       {/* Mismatch 타입 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-[var(--error)]">Mismatch 타입 (미확인)</h2>
+        <h2 className="text-xl font-semibold text-[var(--error)]">Mismatch 타입 (경고고)</h2>
         <div className="flex flex-wrap gap-4">
           <TextBadge type="mismatch" size="sm" />
           <TextBadge type="mismatch" size="md" />
@@ -29,7 +29,7 @@ export default function StyleTextBadgesPage() {
 
       {/* Unchecked 타입 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-[var(--error)]">Unchecked 타입 (경고)</h2>
+        <h2 className="text-xl font-semibold text-[var(--error)]">Unchecked 타입 (미확인)</h2>
         <div className="flex flex-wrap gap-4">
           <TextBadge type="unchecked" size="sm" />
           <TextBadge type="unchecked" size="md" />
