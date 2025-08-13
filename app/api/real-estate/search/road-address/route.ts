@@ -4,7 +4,7 @@ import { encryptPassword } from '@libs/codef/codefEncrypter';
 import { IssueResultRequest } from '@be/applications/realEstate/dtos/GetRealEstatesRequestDto';
 import { CreateRealEstateCopyUsecase } from '@be/applications/realEstateCopies/usecases/CreateRealEstateCopyUsecase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
-import { getUserAddressIdByNickname } from '@utils/userAddress';
+import { getUserAddressId } from '@utils/userAddress';
 
 const usecase = new GetRealEstatesUsecase();
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     }
 
     // userAddressNickname으로부터 userAddressId 가져오기
-    const userAddressId = await getUserAddressIdByNickname(
+    const userAddressId = await getUserAddressId(
       body.userAddressNickname
     );
     if (!userAddressId) {
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUsecase = new CreateRealEstateCopyUsecase(dbRepository);
 
-        const userAddressId = await getUserAddressIdByNickname(
+        const userAddressId = await getUserAddressId(
           body.userAddressNickname
         );
 
