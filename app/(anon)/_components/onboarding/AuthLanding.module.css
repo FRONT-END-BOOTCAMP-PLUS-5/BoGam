@@ -38,7 +38,7 @@
   outline: none;
 }
 .socialBtn:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), 0 0 0 6px var(--ring);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.15), 0 0 0 6px var(--brand-shadow);
   border-radius: 9999px;
 }
 

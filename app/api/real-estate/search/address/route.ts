@@ -5,7 +5,7 @@ import { GetRealEstatesUsecase } from '@be/applications/realEstate/usecases/GetR
 import { CreateRealEstateCopyUsecase } from '@be/applications/realEstateCopies/usecases/CreateRealEstateCopyUsecase';
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { GetRealEstatesResponseDto } from '@be/applications/realEstate/dtos/GetRealEstatesResponseDto';
-import { getUserAddressIdByNickname } from '@utils/userAddress';
+import { getUserAddressId } from '@utils/userAddress';
 
 const usecase = new GetRealEstatesUsecase();
 
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new CreateRealEstateCopyUsecase(dbRepository);
 
-        const userAddressId = await getUserAddressIdByNickname(
+        const userAddressId = await getUserAddressId(
           body.userAddressNickname
         );
 
