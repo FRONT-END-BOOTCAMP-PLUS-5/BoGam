@@ -108,6 +108,25 @@ img {
   padding-bottom: calc(var(--page-y) + env(safe-area-inset-bottom));
 }
 
+/* 드롭다운 애니메이션 */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 모바일 글자 크기 반응형 */
+@media (max-width: 360px) {
+  html {
+    font-size: 14px;
+  }
+}
+
 /* ==== Full Bleed Section (화면 끝까지 확장) ==== */
 .full-bleed {
   margin-left: calc(-1 * max(var(--page-x), env(safe-area-inset-left)));
