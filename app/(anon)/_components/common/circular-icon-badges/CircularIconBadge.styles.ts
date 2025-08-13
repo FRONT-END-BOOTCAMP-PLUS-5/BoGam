@@ -8,13 +8,13 @@ export const styles = {
   lg: "p-2 aspect-square w-10 h-10",
   
   // Type variants
-  match: "bg-[var(--brand-green)] text-white",
-  "match-blue": "bg-[var(--brand)] text-white",
-  mismatch: "bg-[var(--error)] text-white",
-  unchecked: "bg-[var(--brand-light-gray)] text-[var(--brand-dark-gray)]",
-  link: "bg-[var(--brand-gold)] text-white",
-  "match-light-green": "bg-[color-mix(in_srgb,var(--brand-green)_30%,transparent)] text-[var(--brand-green)]",
-  "mismatch-emoji": "bg-[color-mix(in_srgb,var(--error)_30%,transparent)]",
+  match: "bg-brand-green text-white",
+  "match-blue": "bg-brand text-white",
+  mismatch: "bg-brand-error text-white",
+  unchecked: "bg-brand-light-gray text-brand-dark-gray",
+  link: "bg-brand-gold text-white",
+  "match-light-green": "bg-[color-mix(in_srgb,theme(colors.brand.green)_30%,transparent)] text-brand-green",
+  "mismatch-emoji": "bg-[color-mix(in_srgb,theme(colors.brand.error)_30%,transparent)]",
   
   // Icon sizes
   iconSm: "w-3 h-3",
