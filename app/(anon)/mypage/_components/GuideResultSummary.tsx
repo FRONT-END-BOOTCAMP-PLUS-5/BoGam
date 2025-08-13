@@ -9,6 +9,7 @@ import {
   Legend,
   ChartOptions
 } from 'chart.js';
+import CircularIconBadge from '@/(anon)/_components/common/circular-icon-badges/CircularIconBadge';
 import { styles } from './GuideResultSummary.styles';
 
 // Chart.js 컴포넌트 등록
@@ -96,9 +97,7 @@ export default function GuideResultSummary({
       {/* 통계 카드들 */}
       <div className={styles.statsContainer}>
         <div className={styles.statCard}>
-          <div className={styles.statIconSafe}>
-            <span className={styles.checkmark}>✓</span>
-          </div>
+          <CircularIconBadge type="match-light-green" size="lg" weight="thick" />
           <div className={styles.statLabel}>안전</div>
           <div className={styles.statValue}>{match}건</div>
         </div>
@@ -106,9 +105,7 @@ export default function GuideResultSummary({
         <div className={styles.statDivider}></div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIconWarning}>
-            <span className={styles.emoji}>😮</span>
-          </div>
+          <CircularIconBadge type="mismatch-emoji" size="lg" weight="thick" />
           <div className={styles.statLabel}>경고</div>
           <div className={styles.statValue}>{mismatch}건</div>
         </div>
@@ -116,9 +113,7 @@ export default function GuideResultSummary({
         <div className={styles.statDivider}></div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIconUnchecked}>
-            <span className={styles.xmark}>✗</span>
-          </div>
+          <CircularIconBadge type="unchecked" size="lg" weight="thick" />
           <div className={styles.statLabel}>미확인</div>
           <div className={styles.statValue}>{unchecked}건</div>
         </div>

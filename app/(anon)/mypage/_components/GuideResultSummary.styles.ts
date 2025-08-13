@@ -50,41 +50,9 @@ export const styles = {
   // 통계 카드 구분선
   statDivider: "w-px bg-brand-light-gray h-24 self-center mx-auto",
   
-  // 통계 아이콘
-  statIcon: "w-8 h-8 rounded-full flex items-center justify-center mb-1",
-  
-  // 통계 아이콘 배경색
-  statIconSafe: "w-8 h-8 rounded-full flex items-center justify-center mb-1 bg-brand-light-blue",
-  statIconWarning: "w-8 h-8 rounded-full flex items-center justify-center mb-1 bg-brand-light-gray",
-  statIconUnchecked: "w-8 h-8 rounded-full flex items-center justify-center mb-1 bg-brand-light-gray",
-  
-  // 체크마크
-  checkmark: "text-brand-green text-sm font-bold",
-  
-  // 이모지
-  emoji: "text-error text-sm",
-  
-  // X마크
-  xmark: "text-brand-light-gray text-sm font-bold",
-  
-  // 안전 아이콘
-  safeIcon: "w-10 h-10 bg-brand-green rounded-full flex items-center justify-center",
-  
-  // 경고 아이콘
-  warningIcon: "w-10 h-10 bg-error rounded-full flex items-center justify-center",
-  
-  // 미확인 아이콘
-  unconfirmedIcon: "w-10 h-10 bg-brand-light-gray rounded-full flex items-center justify-center",
-  
-  // 경고 이모지
-  warningEmoji: "text-brand-white text-lg",
-  
   // 통계 라벨
-  statLabel: "text-xs text-brand-black mb-1",
+  statLabel: "text-xs text-brand-black mb-1 mt-3",
   
   // 통계 값
-  statValue: "text-sm font-semibold text-brand-black",
-  
-  // 통계 카운트
-  statCount: "text-lg font-semibold text-brand-black"
+  statValue: "text-sm font-semibold text-brand-black"
 } as const;
