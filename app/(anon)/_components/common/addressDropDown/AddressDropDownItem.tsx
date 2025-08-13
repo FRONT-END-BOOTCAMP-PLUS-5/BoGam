@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { Star } from 'lucide-react';
 import {
   styles,
   getListItemStyle,
@@ -9,6 +8,7 @@ import {
 } from './AddressDropDown.styles';
 import { AddressItem } from './types';
 import { formatAddress } from '@utils/addressUtils';
+import { StarIcon } from './AddressDropDown';
 
 interface AddressDropDownItemProps {
   address: AddressItem;
@@ -20,17 +20,6 @@ interface AddressDropDownItemProps {
   showDeleteButton?: boolean;
   animationDelay?: number;
 }
-
-// 별 아이콘 컴포넌트
-const StarIcon = ({ filled }: { filled: boolean }) => (
-  <Star
-    size={18}
-    fill={filled ? '#FFC107' : 'none'}
-    stroke={filled ? '#FFC107' : '#9CA3AF'}
-    strokeWidth={1.5}
-    className={styles.starIcon}
-  />
-);
 
 export function AddressDropDownItem({
   address,
