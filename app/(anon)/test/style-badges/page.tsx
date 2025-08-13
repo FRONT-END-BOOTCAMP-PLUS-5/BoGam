@@ -16,7 +16,7 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="match" size="sm" />
             <CircularIconBadge type="match-blue" size="sm" />
             <CircularIconBadge type="mismatch" size="sm" />
-            <CircularIconBadge type="uncheck" size="sm" />
+            <CircularIconBadge type="unchecked" size="sm" />
             <CircularIconBadge type="link" size="sm" />
           </div>
           <div className="flex items-center gap-4">
@@ -24,7 +24,7 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="match" size="md" />
             <CircularIconBadge type="match-blue" size="md" />
             <CircularIconBadge type="mismatch" size="md" />
-            <CircularIconBadge type="uncheck" size="md" />
+            <CircularIconBadge type="unchecked" size="md" />
             <CircularIconBadge type="link" size="md" />
           </div>
           <div className="flex items-center gap-4">
@@ -32,7 +32,7 @@ export default function StyleBadgesPage() {
             <CircularIconBadge type="match" size="lg" />
             <CircularIconBadge type="match-blue" size="lg" />
             <CircularIconBadge type="mismatch" size="lg" />
-            <CircularIconBadge type="uncheck" size="lg" />
+            <CircularIconBadge type="unchecked" size="lg" />
             <CircularIconBadge type="link" size="lg" />
           </div>
         </div>
@@ -46,21 +46,21 @@ export default function StyleBadgesPage() {
             <span className="w-16 text-sm font-medium">Thin:</span>
             <CircularIconBadge type="match" weight="thin" />
             <CircularIconBadge type="mismatch" weight="thin" />
-            <CircularIconBadge type="uncheck" weight="thin" />
+            <CircularIconBadge type="unchecked" weight="thin" />
             <CircularIconBadge type="link" weight="thin" />
           </div>
           <div className="flex items-center gap-4">
             <span className="w-16 text-sm font-medium">Normal:</span>
             <CircularIconBadge type="match" weight="normal" />
             <CircularIconBadge type="mismatch" weight="normal" />
-            <CircularIconBadge type="uncheck" weight="normal" />
+            <CircularIconBadge type="unchecked" weight="normal" />
             <CircularIconBadge type="link" weight="normal" />
           </div>
           <div className="flex items-center gap-4">
             <span className="w-16 text-sm font-medium">Thick:</span>
             <CircularIconBadge type="match" weight="thick" />
             <CircularIconBadge type="mismatch" weight="thick" />
-            <CircularIconBadge type="uncheck" weight="thick" />
+            <CircularIconBadge type="unchecked" weight="thick" />
             <CircularIconBadge type="link" weight="thick" />
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function StyleBadgesPage() {
         <div className="flex flex-wrap gap-4">
           <CircularIconBadge type="match-blue" weight="thick" />
           <CircularIconBadge type="mismatch" weight="thick" />
-          <CircularIconBadge type="uncheck" weight="thick" />
+          <CircularIconBadge type="unchecked" weight="thick" />
           <CircularIconBadge type="link" weight="thick" />
         </div>
       </section>
@@ -83,7 +83,7 @@ export default function StyleBadgesPage() {
         <div className="flex flex-wrap gap-4">
           <CircularIconBadge type="match" weight="thin" />
           <CircularIconBadge type="mismatch" weight="thin" />
-          <CircularIconBadge type="uncheck" weight="thin" />
+          <CircularIconBadge type="unchecked" weight="thin" />
         </div>
       </section>
 
@@ -101,7 +101,7 @@ export default function StyleBadgesPage() {
           </div>
           <div className="flex items-center gap-2">
             <span>확인:</span>
-            <CircularIconBadge type="uncheck" size="sm" />
+            <CircularIconBadge type="unchecked" size="sm" />
           </div>
         </div>
       </section>

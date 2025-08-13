@@ -14,7 +14,7 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
         return Check;
       case 'mismatch':
         return X;
-      case 'uncheck':
+      case 'unchecked':
         return X;
       case 'link':
         return Link;

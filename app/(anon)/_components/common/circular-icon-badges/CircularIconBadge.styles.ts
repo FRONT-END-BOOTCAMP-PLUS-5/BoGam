@@ -11,7 +11,7 @@ export const styles = {
   match: "bg-[var(--brand-green)] text-white",
   "match-blue": "bg-[var(--brand)] text-white",
   mismatch: "bg-[var(--error)] text-white",
-  uncheck: "bg-[var(--brand-light-gray)] text-[var(--brand-dark-gray)]",
+  unchecked: "bg-[var(--brand-light-gray)] text-[var(--brand-dark-gray)]",
   link: "bg-[var(--brand-gold)] text-white",
   
   // Icon sizes
