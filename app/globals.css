@@ -1,57 +1,71 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 공통 색/테마 */
+/* ==== Theme Variables ==== */
 :root {
   --brand-white: #ffffff;
   --brand: #4b72a6;
-  --brand-dark-blue: #4F6273;
-  --brand-light-blue: #DFE9F2;
+  --brand-dark-blue: #4f6273;
+  --brand-light-blue: #dfe9f2;
   --brand-black: #111827;
-  --brand-dark-gray: #6D6D6D;
+  --brand-dark-gray: #6d6d6d;
   --brand-light-gray: #e5e7eb;
   --brand-green: #4fa373;
   --brand-gold: #a68a56;
   --error: #c24a4a;
-  --brand-shadow: #4B72A659;
+  --brand-shadow: #4b72a659;
+
+  --container: 100%;
+  --page-x: 28px;
+  --page-y: 24px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* 디바이스 해상도별 컨테이너 크기 */
+@media (min-width: 640px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --container: 480px;
+    --page-x: 18px;
   }
 }
+@media (min-width: 768px) {
+  :root {
+    --container: 680px;
+    --page-x: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --container: 960px;
+    --page-x: 32px;
+  }
+}
+@media (min-width: 1280px) {
+  :root {
+    --container: 1120px;
+    --page-x: 40px;
+  }
+}
+
+/* ==== 기본 세팅 ==== */
 html,
 body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
-    Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', sans-serif;
+    Roboto, 'Helvetica Neue', 'Segoe UI', sans-serif;
   font-size: 16px;
-  color: #222;
+  color: var(--brand-black);
+  background-color: var(--background);
   margin: 0;
   padding: 0;
-  background-color: #fff;
+  -webkit-text-size-adjust: none;
 }
 
-/* 모바일 환경 뷰포트 최적화 */
-html {
-  -webkit-text-size-adjust: none; /* iOS 폰트 확대 방지 */
-}
-
-body {
-  max-width: 480px; /* 모바일 전용 중앙 정렬 */
-  margin: 0 auto;
-  background-color: #fff;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* 스크롤바 제거 (모바일 UX 최적화) */
-::-webkit-scrollbar {
-  display: none;
+/* 모바일 최적화 */
+@media (max-width: 360px) {
+  html {
+    font-size: 14px;
+  }
 }
 
 /* 공통 리셋 */
@@ -59,40 +73,50 @@ body {
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
-
 a {
   color: inherit;
   text-decoration: none;
 }
-
 button {
   background: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
 }
-
-/* 이미지 반응형 */
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-/* 터치 하이라이트 제거 */
-* {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+/* 스크롤바 제거 (모바일 UX) */
+::-webkit-scrollbar {
+  display: none;
 }
 
-/* 카드 & 컨테이너 기본 스타일 */
-.container {
-  padding: 16px;
+/* ==== PWA App Shell ==== */
+.app-shell {
+  min-height: 100dvh;
+  margin-inline: auto;
+  max-width: var(--container);
+
+  padding-left: max(var(--page-x), env(safe-area-inset-left));
+  padding-right: max(var(--page-x), env(safe-area-inset-right));
+  padding-top: calc(var(--page-y) + env(safe-area-inset-top));
+  padding-bottom: calc(var(--page-y) + env(safe-area-inset-bottom));
 }
 
-/* 모바일 글자 크기 반응형 */
-@media (max-width: 360px) {
-  html {
-    font-size: 14px;
-  }
+/* ==== Full Bleed Section (화면 끝까지 확장) ==== */
+.full-bleed {
+  margin-left: calc(-1 * max(var(--page-x), env(safe-area-inset-left)));
+  margin-right: calc(-1 * max(var(--page-x), env(safe-area-inset-right)));
+}
+.edge-container {
+  margin-inline: auto;
+  max-width: var(--container);
+
+  padding-left: max(var(--page-x), env(safe-area-inset-left));
+  padding-right: max(var(--page-x), env(safe-area-inset-right));
 }
