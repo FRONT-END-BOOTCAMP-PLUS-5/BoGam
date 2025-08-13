@@ -126,6 +126,7 @@ img {
     font-size: 14px;
   }
 }
+
 /* ==== Full Bleed Section (화면 끝까지 확장) ==== */
 .full-bleed {
   margin-left: calc(-1 * max(var(--page-x), env(safe-area-inset-left)));
