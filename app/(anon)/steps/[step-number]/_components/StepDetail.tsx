@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef, TouchEvent, MouseEvent } from 'react';
+import { X, ChevronRight } from 'lucide-react';
 import { getStepDetail, StepDetailData } from '@libs/constants/stepDetails';
 import { styles } from './StepDetail.styles';
+import TextBadge from './TextBadge';
 
 interface StepDetailProps {
   stepNumber: string;
@@ -189,9 +191,7 @@ export default function StepDetail({
             className={styles.closeButton}
             onClick={onClose}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <X className="w-6 h-6" />
           </button>
         </div>
         
@@ -201,12 +201,7 @@ export default function StepDetail({
           <div className={styles.sectionHeader}>
             <h2 className={styles.detailTitle}>{stepData.detailTitle}</h2>
             {stepData.isSafe && (
-              <div className={styles.safetyBadge}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M13 4L6 11L3 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span>안전</span>
-              </div>
+              <TextBadge type="match" size="md" />
             )}
           </div>
 
@@ -216,14 +211,9 @@ export default function StepDetail({
               className={styles.expandableHeader}
               onClick={toggleExpanded}
             >
-              <svg 
-                className={`${styles.expandIcon} ${isExpanded ? 'rotate-90' : ''}`}
-                viewBox="0 0 16 16" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M6 12L10 8L6 4" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+                          <ChevronRight 
+              className={`${styles.expandIcon} ${isExpanded ? 'rotate-90' : ''}`}
+            />
               <span className={styles.expandableTitle}>{stepData.expandableTitle}</span>
             </button>
             
