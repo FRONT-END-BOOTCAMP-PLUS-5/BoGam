@@ -40,8 +40,20 @@ export default function GuideResultSummary({
     datasets: [
       {
         data: [match, 0.3, mismatch, 0.3, unchecked], // 0.3으로 간격 줄임
-        backgroundColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
-        borderColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
+        backgroundColor: [
+          matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
+          '#ffffff', 
+          '#c24a4a', 
+          '#ffffff', 
+          '#e5e7eb'
+        ],
+        borderColor: [
+          matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
+          '#ffffff', 
+          '#c24a4a', 
+          '#ffffff', 
+          '#e5e7eb'
+        ],
         borderWidth: 0,
         cutout: '80%', // 중앙 구멍을 더 늘려서 차트를 더 얇게 만듦
         circumference: 180, // 반원형 (180도)
