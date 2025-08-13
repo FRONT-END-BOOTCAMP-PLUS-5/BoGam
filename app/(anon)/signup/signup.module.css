@@ -1,0 +1,33 @@
+/* 상단 섹션 공통 여백/보더 */
+.intro {
+  @apply border-b border-gray-200 py-6 mb-6;
+}
+
+/* 헤더 래퍼: 상대 위치 + 가운데 배치 레이아웃 */
+.header {
+  @apply relative flex justify-center;
+}
+
+/* 중앙 정렬 블록(제목+설명) */
+.center {
+  @apply text-center;
+}
+
+/* 아이콘 공통 스타일 */
+.icon {
+  @apply w-5 h-5 text-gray-500 cursor-pointer;
+}
+
+/* 아이콘 위치: 컨테이너의 좌측 중앙 */
+.arrow {
+  @apply absolute left-0 top-1/2 -translate-y-1/2;
+}
+
+/* 타이틀/설명 */
+.title {
+  @apply text-base font-semibold leading-none;
+}
+
+.desc {
+  @apply mt-2 text-[.75rem] text-gray-500;
+}
