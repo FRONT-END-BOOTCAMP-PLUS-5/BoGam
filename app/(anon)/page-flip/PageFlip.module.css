@@ -6,6 +6,17 @@ body {
     background-color: white;
     margin: 0 auto;
     border-radius: 16px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.underline-bold {
+    background-color: #DFE9F2;
 }
 
 .up-point {
@@ -52,4 +63,38 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.bold-main-text {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-top: 3vh;
+    margin-left: 2.5%;
+}
+
+.num-circle {
+    width: 6%;
+    height: 6%;
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    border-radius: 50%;
+}
+
+.circle-and-text {
+    display: flex;
+    margin-top: 4vh;
+    margin-left: 2.5%;
+}
+
+.small-text {
+    font-size: 0.75em;
+    margin-left: 5%;
+}
+
+#bold-main-text-id {
+    margin-top: 12%;
 }
