@@ -1,7 +1,13 @@
 .wrapper {
-  @apply flex items-center justify-center h-screen px-4 transition-all duration-700 ease-in-out;
-  background: var(--bg);
+  @apply fixed inset-0 flex items-center justify-center transition-all duration-700 ease-in-out;
+  background-color: #e3eff9;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
+
+/* 페이드 인/아웃 효과 */
 .wrapperEnter {
   @apply opacity-100 blur-0;
 }
@@ -9,14 +15,14 @@
   @apply opacity-0 blur-sm;
 }
 
+/* 내부 내용만 정렬 — 배경/높이는 wrapper가 담당 */
 .section {
-  @apply w-full h-full border flex flex-col items-center justify-center text-center;
-  background: #e3eff9;
+  @apply flex flex-col items-center justify-center text-center;
 }
+
 .logo {
   @apply mb-4;
 }
 .subText {
-  color: var(--muted);
-  @apply text-sm;
+  @apply text-sm text-gray-600;
 }
