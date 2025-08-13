@@ -15,7 +15,7 @@ export default function PageFlipPage() {
       </div>
       <div className={`${styles['flip-book']} box-book`}>
         <HTMLFlipBook
-          className={styles.flipBook}
+          className={styles.flipBook} 
           style={{}}
           startPage={0}
           size="fixed"
