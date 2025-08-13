@@ -1,5 +1,6 @@
 import { HTMLFlipBook } from './PageFlip';
 import styles from './PageFlip.module.css'
+import CircleAndText from './components/CircleAndText';
 
 export default function PageFlipPage() {
   return (
@@ -43,31 +44,17 @@ export default function PageFlipPage() {
               <span className={styles['underline-bold']}> 2가지 </span>
               <span> 입니다. </span>
             </p>
-            <div className={styles['circle-and-text']}>
-              <p className={styles['num-circle']}> 1 </p>
-              <p className={styles['small-text']}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
-            </div>
-            <div className={styles['circle-and-text']}>
-              <p className={styles['num-circle']}> 2 </p>
-              <p className={styles['small-text']}> 사용자님 말고 다른 세입자와 이중계약 </p>
-            </div>
+            <CircleAndText num={1} text='월셋집을 전셋집으로 둔갑시킨 중개사' />
+            <CircleAndText num={2} text='사용자님 말고 다른 세입자와 이중계약' />
 
             <p className={styles['bold-main-text']}>
               전세보감은 이러한 피해를 막기 위해 다음을 제공합니다.
             </p>
-            <div className={styles['circle-and-text']}>
-              <p className={styles['num-circle']}> 1 </p>
-              <p className={styles['small-text']}> 공인중개사 자격증 유무 조회 </p>
-            </div>
-            <div className={styles['circle-and-text']}>
-              <p className={styles['num-circle']}> 2 </p>
-              <p className={styles['small-text']}> 최우선 변제 기준 데이터 제공 </p>
-            </div>
-            <div className={styles['circle-and-text']}>
-              <p className={styles['num-circle']}> 3 </p>
-              <p className={styles['small-text']}> 공제 증서 안내 </p>
-            </div>
-            
+
+            <CircleAndText num={1} text='공인중개사 자격증 유무 조회' />
+            <CircleAndText num={2} text='최우선 변제 기준 데이터 제공' />
+            <CircleAndText num={3} text='공제 증서 안내' />
+
           </div>
           <div className="page-2 w-full h-full bg-red-200 flex items-center justify-center">
             <h1>Page 2</h1>
