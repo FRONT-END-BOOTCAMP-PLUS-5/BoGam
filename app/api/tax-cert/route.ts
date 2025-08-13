@@ -4,7 +4,7 @@ import { TaxCertRepositoryImpl } from '@be/infrastructure/repository/TaxCertRepo
 import { CreateTaxCertCopyUsecase } from '@be/applications/taxCertCopies/usecases/CreateTaxCertCopyUsecase';
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 import { encryptPassword } from '@libs/codef/codefEncrypter';
-import { getUserAddressIdByNickname } from '@utils/userAddress';
+import { getUserAddressId } from '@utils/userAddress';
 
 export async function POST(request: NextRequest) {
   try {
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     }
 
     // userAddress 닉네임으로부터 ID 가져오기
-    const userAddressId = await getUserAddressIdByNickname(
+    const userAddressId = await getUserAddressId(
       body.userAddressNickname
     );
     if (!userAddressId) {

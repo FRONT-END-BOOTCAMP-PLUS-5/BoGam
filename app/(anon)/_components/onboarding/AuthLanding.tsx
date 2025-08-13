@@ -22,7 +22,7 @@ export default function AuthLanding() {
 
         {/* 버튼들 */}
         <div className={styles.btns}>
-          <Link href='/login' className={styles.primary}>
+          <Link href='/signin' className={styles.primary}>
             로그인
           </Link>
           <Link href='/signup' className={styles.outline}>
