@@ -39,8 +39,8 @@ export default function GuideResultSummary({
     datasets: [
       {
         data: [match, 0.3, mismatch, 0.3, unchecked], // 0.3으로 간격 줄임
-        backgroundColor: ['#10b981', '#ffffff', '#ef4444', '#ffffff', '#9ca3af'],
-        borderColor: ['#10b981', '#ffffff', '#ef4444', '#ffffff', '#9ca3af'],
+        backgroundColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
+        borderColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
         borderWidth: 0,
         cutout: '80%', // 중앙 구멍을 더 늘려서 차트를 더 얇게 만듦
         circumference: 180, // 반원형 (180도)
@@ -96,7 +96,7 @@ export default function GuideResultSummary({
       {/* 통계 카드들 */}
       <div className={styles.statsContainer}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#dcfce7' }}>
+          <div className={styles.statIconSafe}>
             <span className={styles.checkmark}>✓</span>
           </div>
           <div className={styles.statLabel}>안전</div>
@@ -106,7 +106,7 @@ export default function GuideResultSummary({
         <div className={styles.statDivider}></div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#fce7f3' }}>
+          <div className={styles.statIconWarning}>
             <span className={styles.emoji}>😮</span>
           </div>
           <div className={styles.statLabel}>경고</div>
@@ -116,7 +116,7 @@ export default function GuideResultSummary({
         <div className={styles.statDivider}></div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ backgroundColor: '#f3f4f6' }}>
+          <div className={styles.statIconUnchecked}>
             <span className={styles.xmark}>✗</span>
           </div>
           <div className={styles.statLabel}>미확인</div>
