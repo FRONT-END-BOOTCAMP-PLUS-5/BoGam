@@ -20,11 +20,11 @@ const DEFAULT_PROPS = {
 };
 
 // 별 아이콘 컴포넌트
-const StarIcon = ({ filled }: { filled: boolean }) => (
+export const StarIcon = ({ filled }: { filled: boolean }) => (
   <Star
     size={18}
-    fill={filled ? '#FFC107' : 'none'}
-    stroke={filled ? '#FFC107' : '#9CA3AF'}
+    fill={filled ? 'var(--brand-gold)' : 'none'}
+    stroke={filled ? 'var(--brand-gold)' : 'var(--brand-dark-gray)'}
     strokeWidth={1.5}
     className={styles.starIcon}
   />
