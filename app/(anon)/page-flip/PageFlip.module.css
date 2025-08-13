@@ -55,7 +55,7 @@ body {
 
 .page-num-div {
     position: absolute;
-    left: 62.5%;
+    left: 61%;
     top: 27%;
     display: flex;
     flex-direction: column;
