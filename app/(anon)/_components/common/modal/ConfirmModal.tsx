@@ -2,7 +2,11 @@
 
 import React, { useEffect } from 'react';
 import { AlertTriangle, Info, XCircle, CheckCircle } from 'lucide-react';
-import { styles, getIconStyle } from './ConfirmModal.styles';
+import {
+  styles,
+  getIconStyle,
+  getTitleBackgroundColor,
+} from './ConfirmModal.styles';
 import { useModalStore } from './modalStore';
 
 // 아이콘 컴포넌트
@@ -92,7 +96,15 @@ export function ConfirmModal() {
             <IconComponent iconType={displayIcon} />
           </div>
           <h2 className={styles.title}>
-            <span className={styles.titleBackground}>{title}</span>
+            <div className={styles.titleContainer}>
+              <div className={styles.titleTop}></div>
+              <div className={styles.titleText}>{title}</div>
+              <div
+                className={`${styles.titleBottom} ${getTitleBackgroundColor(
+                  displayIcon
+                )}`}
+              ></div>
+            </div>
           </h2>
         </div>
 
