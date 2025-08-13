@@ -1,6 +1,7 @@
 import { HTMLFlipBook } from './PageFlip';
 import styles from './PageFlip.module.css'
 import CircleAndText from './components/CircleAndText';
+import GeneralPage from './components/GeneralPage';
 
 export default function PageFlipPage() {
   return (
@@ -56,12 +57,50 @@ export default function PageFlipPage() {
             <CircleAndText num={3} text='공제 증서 안내' />
 
           </div>
-          <div className="page-2 w-full h-full bg-red-200 flex items-center justify-center">
-            <h1>Page 2</h1>
+
+          <GeneralPage title='3-1단계 공인중개사 자격증 유무 조회'>
+            무자격자가 중개업 등록증이나 자격증을 빌려서 <br />
+            중개사무소를 차리는 경우가 많아지고 있습니다. <br />
+            이런 경우 공식적인 중개업 등록증이나 자격증을 <br />
+            소지하고 일하는 중개사무소보다 사기 위험이 <br />
+            더 높을 수 밖에 없습니다. <br />
+            사업자상호(부동산 이름)과 중개업자 이름을 입력하면 <br />
+            전세보감이 증명된 중개업자인지 확인해드리겠습니다.
+          </GeneralPage>
+
+          <GeneralPage title='3-2단계 최우선변제 금액 안내'>
+            주택임대차보호법 제8조를 따라 사용자님이 가장 <br />
+            늦게 입주 세입자이더라도 최우선으로 <br />
+            보증금을 변제 받을 수 있습니다. <br />
+            이 기준은 지역마다 다릅니다. <br />
+            전세보감이 초기 설정 때 작성한 매물 지역의 <br />
+            최우선변제 금액을 안내해드리겠습니다
+          </GeneralPage>
+
+          <div className={`${styles['general-page']}`}>
+            <h1 className={styles['general-page-title']}> 3-3단계 공제증서 발급 링크 안내 </h1>
+            <div className={styles['inside-box']}>
+              <div className={styles['danger-div']}>
+                <p className={styles.danger}> 위험 요소 </p>
+              </div>
+              <div className={styles.text}>
+                <p>
+                  공인중개사와의 중개 과정에서 발생할 수 있는 사고로 <br />
+                  사용자님에게 손해를 입힐 수 있으므로 <br />
+                  공제증서를 발급받는 것이 좋습니다. <br />
+                  현재 공제증서를 받는 방법으로는 구청이나 <br />
+                  시청에 방문하시거나 한국공인중개사협회 <br />
+                  온라인 서비스를 이용하셔야 됩니다. <br />
+                  전세보감이 해당 온라인 서비스 링크를 <br />
+                  제공해드리곘습니다. 클릭 시 링크로 이동됩니다.
+                </p>
+              </div>
+              <nav className={styles['go-to-link']}> 링크로 이동 </nav>
+            </div>
+            <div className={styles.blue}></div>
+            <button className={styles['go-to-next']}> 다음으로 이동 </button>
           </div>
-          <div className="page-3 w-full h-full bg-green-200 flex items-center justify-center">
-            <h1>Page 3</h1>
-          </div>
+
         </HTMLFlipBook>
       </div>
     </div>

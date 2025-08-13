@@ -1,4 +1,3 @@
-
 body {
     background-color: #EFF0F2;
 }
@@ -59,7 +58,7 @@ body {
     top: 27%;
     display: flex;
     flex-direction: column;
-    gap: var(--padding-sm); 
+    gap: var(--padding-sm);
 }
 
 .bold-main-text {
@@ -94,4 +93,97 @@ body {
 
 #bold-main-text-id {
     margin-top: 12%;
+}
+
+.general-page {
+    background-color: #4B72A6;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.general-page-title {
+    color: white;
+    font-weight: bold;
+    margin-top: 3vh;
+    margin-left: 5%;
+}
+
+.inside-box {
+    width: 85%;
+    height: 80%;
+    background-color: white;
+    margin-top: 2.5vh;
+    margin-left: 0;
+}
+
+.blue {
+    position: absolute;
+    width: 90%;
+    height: 4vh;
+    background-color: #4B72A6;
+    border-radius: 30em;
+    top: 53vh;
+    z-index: 1;
+}
+
+.danger-div {
+    position: absolute;
+    width: 40%;
+    border: 0.5px solid black;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+    border-radius: var(--radius-lg);
+    margin-left: 23%;
+    display: flex;
+    top: 12vh;
+}
+
+.danger {
+    flex: 1;
+    text-align: center;
+    color: #C24A4A;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.text {
+    width: 95%;
+    height: 50%;
+    padding-top: 25%;
+    padding-left: 5%;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+.go-div {
+    position: absolute;
+    bottom: 6.3vh;
+    left: 65%;
+}
+
+.go {
+    font-weight: bold;
+}
+
+.go-to-link {
+    display: flex;
+    justify-content: center;
+    padding-top: 10vh;
+    text-decoration: underline;
+}
+
+.go-to-next {
+    position: absolute;
+    width: 30%;
+    height: 3vh;
+    background-color: white;
+    z-index: 5;
+    bottom: 1.3vh;
+    margin-left: 65%;
 }
