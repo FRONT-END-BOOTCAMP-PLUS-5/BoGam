@@ -64,24 +64,8 @@ export default function SignupForm() {
       <Button type='submit' fullWidth variant='primary'>
         회원가입
       </Button>
-
       <Button variant='ghost' href='/signin' fullWidth>
         로그인
-      </Button>
-
-      <Button type='submit' fullWidth variant='secondary' isLoading={true}>
-        아무거나
-      </Button>
-      <div className='flex gap-2'>
-        <Button variant='secondary' className='flex-1'>
-          취소하기
-        </Button>
-        <Button variant='primary' className='flex-1'>
-          시작하기
-        </Button>
-      </div>
-      <Button variant='secondary' disabled>
-        안눌리는 버튼
       </Button>
     </form>
   );
