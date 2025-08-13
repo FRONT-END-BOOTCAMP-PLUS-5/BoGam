@@ -6,16 +6,19 @@
 /* ==== Theme Variables ==== */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
   --brand: #4b72a6;
-  --border: #e5e7eb;
-  --text: #111827;
-  --muted: #6b7280;
-  --error: #d56666;
-  --ring: rgba(75, 114, 166, 0.35);
+  --brand-dark-blue: #4f6273;
+  --brand-light-blue: #dfe9f2;
+  --brand-black: #111827;
+  --brand-dark-gray: #6d6d6d;
+  --brand-light-gray: #e5e7eb;
+  --brand-green: #4fa373;
+  --brand-gold: #a68a56;
+  --error: #c24a4a;
+  --brand-shadow: #4b72a659;
 
   --container: 100%;
-  --page-x: 16px;
+  --page-x: 28px;
   --page-y: 24px;
 }
 
@@ -51,7 +54,7 @@ body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
     Roboto, 'Helvetica Neue', 'Segoe UI', sans-serif;
   font-size: 16px;
-  color: var(--text);
+  color: var(--brand-black);
   background-color: var(--background);
   margin: 0;
   padding: 0;

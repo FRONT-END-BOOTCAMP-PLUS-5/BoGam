@@ -9,7 +9,7 @@ module.exports = {
       colors: {
         brand: {
           DEFAULT: '#4b72a6',
-          90: '#5e84b0', // hover용으로 하나 수동 지정
+          90: '#5e84b0',
         },
       },
       keyframes: {

@@ -56,6 +56,7 @@ export default function SignupForm() {
         <TextInput
           id='phone'
           name='phone'
+          mask='phone'
           inputMode='numeric'
           placeholder='010-1234-5678'
         />
@@ -63,14 +64,13 @@ export default function SignupForm() {
       <Button type='submit' fullWidth variant='primary'>
         회원가입
       </Button>
-      <Button
-        type='submit'
-        fullWidth
-        variant='secondary'
-        isLoading={true}
-      ></Button>
-      <Button type='submit' variant='ghost'>
-        회원가입
+
+      <Button variant='ghost' href='/signin' fullWidth>
+        로그인
+      </Button>
+
+      <Button type='submit' fullWidth variant='secondary' isLoading={true}>
+        아무거나
       </Button>
       <div className='flex gap-2'>
         <Button variant='secondary' className='flex-1'>
