@@ -21,7 +21,7 @@
   @apply h-full flex transition-transform duration-300 ease-out;
 }
 .slideWrap {
-  @apply shrink-0 basis-full flex items-center justify-center px-6 text-center select-none;
+  @apply shrink-0 basis-full flex items-center justify-center text-center select-none;
 }
 
 .content {
@@ -43,7 +43,7 @@
   @apply flex gap-2 items-center justify-center mt-4;
 }
 .dot {
-  background: var(--border);
+  background: var(--brand-light-gray);
   @apply h-2 w-2 rounded-full transition-all duration-200 ease-in-out;
 }
 .dotActive {
