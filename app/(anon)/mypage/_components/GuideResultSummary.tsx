@@ -9,6 +9,7 @@ import {
   Legend,
   ChartOptions
 } from 'chart.js';
+import clsx from 'clsx';
 import { styles } from './GuideResultSummary.styles';
 
 // Chart.js 컴포넌트 등록
@@ -63,12 +64,26 @@ export default function GuideResultSummary({
     }
   };
 
-  // 안전도 단계 계산
+  // 안전도 단계 계산 (7단계)
   const getSafetyLevel = () => {
-    if (matchPercentage >= 80) return '1단계';
-    if (matchPercentage >= 60) return '2단계';
-    if (matchPercentage >= 40) return '3단계';
-    return '4단계';
+    if (matchPercentage === 100) return '매우 안전';      // 100%: 매우 안전
+    if (matchPercentage >= 80) return '안전';            // 80-99%: 안전
+    if (matchPercentage >= 60) return '양호';            // 60-79%: 양호
+    if (matchPercentage >= 40) return '보통';            // 40-59%: 보통
+    if (matchPercentage >= 20) return '주의';            // 20-39%: 주의
+    if (matchPercentage > 0) return '경고';              // 1-19%: 경고
+    return '위험';                                        // 0%: 위험
+  };
+
+  // 안전도 단계별 색상 클래스 반환
+  const getSafetyLevelColorClass = () => {
+    if (matchPercentage === 100) return 'bg-[#3E92F9]';           // 100%: 파란색
+    if (matchPercentage >= 80) return 'bg-brand-green';           // 80-99%: 브랜드 그린
+    if (matchPercentage >= 60) return 'bg-[#76A34F]';            // 60-79%: 연한 초록색
+    if (matchPercentage >= 40) return 'bg-[#A3954F]';            // 40-59%: 노란색
+    if (matchPercentage >= 20) return 'bg-[#A36E4F]';            // 20-39%: 주황색
+    if (matchPercentage > 0) return 'bg-[#A34F4F]';              // 1-19%: 빨간색
+    return 'bg-[#870F0F]';                                        // 0%: 진한 빨간색
   };
 
   return (
@@ -85,7 +100,7 @@ export default function GuideResultSummary({
           <div className={styles.safetyLevelContainer}>
             <div className={styles.safetyLevelTop}></div>
             <div className={styles.safetyLevelText}>{getSafetyLevel()}</div>
-            <div className={styles.safetyLevelBottom}></div>
+            <div className={clsx(styles.safetyLevelBottom, getSafetyLevelColorClass())}></div>
           </div>
         </div>
       </div>
