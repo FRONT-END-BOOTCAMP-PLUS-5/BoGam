@@ -5,7 +5,7 @@ import GeneralPage from './components/GeneralPage';
 
 export default function PageFlipPage() {
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center">
+    <div className="w-full h-screen flex flex-col items-center justify-center" style={{backgroundColor: '#EFF0F2'}}>
       <div className={styles['up-point']}></div>
       <div className={styles['page-num-div']}>
         <button className={styles['page-num']}> 0 </button>

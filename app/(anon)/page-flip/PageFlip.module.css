@@ -1,5 +1,17 @@
+@media (min-height: 800px) {
+    .blue {
+        position: absolute;
+        width: 95%;
+        height: 4%;
+        background-color: #4B72A6;
+        border-radius: 30em;
+        top: 96%;
+        z-index: 1;
+    }
+}
+
 body {
-    background-color: #EFF0F2;
+    background-color: white;
 }
 
 .intro-page {
@@ -127,11 +139,9 @@ body {
     position: absolute;
     width: 95%;
     height: 4%;
-    /* background-color: #4B72A6; */
-    background-color: red;
+    background-color: #4B72A6;
     border-radius: 30em;
-    top: 0 auto;
-    bottom: 4%;
+    bottom: 2%;
     z-index: 1;
 }
 
@@ -189,8 +199,4 @@ body {
     z-index: 5;
     bottom: 1.3vh;
     margin-left: 65%;
-}
-
-@media (max-width: 360px) {
-    
 }
