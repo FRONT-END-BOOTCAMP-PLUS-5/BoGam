@@ -9,7 +9,7 @@ export default function StyleTextBadgesPage() {
       
       {/* Match 타입 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-[var(--brand-green)]">Match 타입 (안전)</h2>
+        <h2 className="text-xl font-semibold text-brand-green">Match 타입 (안전)</h2>
         <div className="flex flex-wrap gap-4">
           <TextBadge type="match" size="sm" />
           <TextBadge type="match" size="md" />
@@ -19,7 +19,7 @@ export default function StyleTextBadgesPage() {
 
       {/* Mismatch 타입 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-[var(--error)]">Mismatch 타입 (경고고)</h2>
+        <h2 className="text-xl font-semibold text-brand-error">Mismatch 타입 (경고고)</h2>
         <div className="flex flex-wrap gap-4">
           <TextBadge type="mismatch" size="sm" />
           <TextBadge type="mismatch" size="md" />
@@ -29,7 +29,7 @@ export default function StyleTextBadgesPage() {
 
       {/* Unchecked 타입 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-[var(--error)]">Unchecked 타입 (미확인)</h2>
+        <h2 className="text-xl font-semibold text-brand-dark-gray">Unchecked 타입 (미확인)</h2>
         <div className="flex flex-wrap gap-4">
           <TextBadge type="unchecked" size="sm" />
           <TextBadge type="unchecked" size="md" />
@@ -83,22 +83,22 @@ export default function StyleTextBadgesPage() {
 
       {/* CSS 변수 정보 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">사용된 CSS 변수</h2>
+        <h2 className="text-xl font-semibold">사용된 Tailwind 색상 변수</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div className="p-3 bg-white border rounded-lg">
             <div className="font-medium">Match (안전)</div>
-            <div className="text-gray-600">배경: var(--brand-green) = #4fa373</div>
-            <div className="text-gray-600">아이콘 & 텍스트: white</div>
+            <div className="text-gray-600">배경: bg-white</div>
+            <div className="text-gray-600">아이콘 & 텍스트: text-brand-green = #4fa373</div>
           </div>
           <div className="p-3 bg-white border rounded-lg">
-            <div className="font-medium">Mismatch (미확인)</div>
-            <div className="text-gray-600">배경: var(--error) = #c24a4a</div>
-            <div className="text-gray-600">아이콘 & 텍스트: white</div>
+            <div className="font-medium">Mismatch (경고)</div>
+            <div className="text-gray-600">배경: bg-white</div>
+            <div className="text-gray-600">아이콘 & 텍스트: text-brand-error = #c24a4a</div>
           </div>
           <div className="p-3 bg-white border rounded-lg">
-            <div className="font-medium">Unchecked (경고)</div>
-            <div className="text-gray-600">배경: var(--error) = #c24a4a</div>
-            <div className="text-gray-600">아이콘 & 텍스트: white</div>
+            <div className="font-medium">Unchecked (미확인)</div>
+            <div className="text-gray-600">배경: bg-white</div>
+            <div className="text-gray-600">아이콘 & 텍스트: text-brand-dark-gray = #6d6d6d</div>
           </div>
         </div>
       </section>

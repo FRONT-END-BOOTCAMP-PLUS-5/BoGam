@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { styles } from './CircularIconBadge.styles';
 
 type CircularIconBadgeProps = {
-  type: 'match' | 'match-blue' | 'mismatch' | 'unchecked' | 'link';
+  type: 'match' | 'match-blue' | 'mismatch' | 'unchecked' | 'link' | 'match-light-green' | 'mismatch-emoji';
   size?: 'sm' | 'md' | 'lg';
   weight?: 'thin' | 'normal' | 'thick';
   className?: string;
@@ -17,8 +17,10 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
     switch (type) {
       case 'match':
       case 'match-blue':
+      case 'match-light-green':
         return Check;
       case 'mismatch':
+      case 'mismatch-emoji':
         return X;
       case 'unchecked':
         return X;
@@ -44,6 +46,36 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
         return styles.iconMd;
     }
   };
+
+  // 이모지 크기 클래스 결정 - SVG 아이콘과 정확히 동일한 크기로 설정
+  const getEmojiSizeClass = () => {
+    switch (size) {
+      case 'sm':
+        return 'w-3 h-3 text-xs'; // SVG iconSm과 정확히 동일한 크기
+      case 'md':
+        return 'w-4 h-4 text-sm'; // SVG iconMd와 정확히 동일한 크기
+      case 'lg':
+        return 'w-5 h-5 text-base'; // SVG iconLg와 정확히 동일한 크기
+      default:
+        return 'w-4 h-4 text-sm';
+    }
+  };
+
+  // 이모지 뱃지 렌더링 - 일반 아이콘과 완전히 동일한 방식으로 렌더링
+  if (type === 'mismatch-emoji') {
+    return (
+      <div 
+        className={clsx(
+          styles.badge,
+          styles[size as keyof typeof styles], // 일반 아이콘과 동일한 size 클래스 사용
+          styles[type as keyof typeof styles],
+          className
+        )}
+      >
+        <span className={clsx(getEmojiSizeClass(), 'leading-none flex items-center justify-center')}>😱</span>
+      </div>
+    );
+  }
 
   return (
     <div 
