@@ -7,13 +7,13 @@ export default function PageFlipPage() {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center" style={{backgroundColor: '#EFF0F2'}}>
       <div className={styles['up-point']}></div>
-      <div className={styles['page-num-div']}>
-        <button className={styles['page-num']}> 0 </button>
-        <button className={styles['page-num']}> 1 </button>
-        <button className={styles['page-num']}> 2 </button>
-        <button className={styles['page-num']}> 3 </button>
-      </div>
       <div className={`${styles['flip-book']} box-book`}>
+        <div className={styles['page-num-div']}>
+          <button className={styles['page-num']}> 0 </button>
+          <button className={styles['page-num']}> 1 </button>
+          <button className={styles['page-num']}> 2 </button>
+          <button className={styles['page-num']}> 3 </button>
+        </div>
         <HTMLFlipBook
           className={styles.flipBook} 
           style={{}}
@@ -77,29 +77,16 @@ export default function PageFlipPage() {
             최우선변제 금액을 안내해드리겠습니다
           </GeneralPage>
 
-          <div className={`${styles['general-page']}`}>
-            <h1 className={styles['general-page-title']}> 3-3단계 공제증서 발급 링크 안내 </h1>
-            <div className={styles['inside-box']}>
-              <div className={styles['danger-div']}>
-                <p className={styles.danger}> 위험 요소 </p>
-              </div>
-              <div className={styles.text}>
-                <p>
-                  공인중개사와의 중개 과정에서 발생할 수 있는 사고로 <br />
-                  사용자님에게 손해를 입힐 수 있으므로 <br />
-                  공제증서를 발급받는 것이 좋습니다. <br />
-                  현재 공제증서를 받는 방법으로는 구청이나 <br />
-                  시청에 방문하시거나 한국공인중개사협회 <br />
-                  온라인 서비스를 이용하셔야 됩니다. <br />
-                  전세보감이 해당 온라인 서비스 링크를 <br />
-                  제공해드리곘습니다. 클릭 시 링크로 이동됩니다.
-                </p>
-              </div>
-              <nav className={styles['go-to-link']}> 링크로 이동 </nav>
-            </div>
-            <div className={styles.blue}></div>
-            <button className={styles['go-to-next']}> 다음으로 이동 </button>
-          </div>
+          <GeneralPage title='3-3단계 공제증서 발급 링크 안내'>
+            공인중개사와의 중개 과정에서 발생할 수 있는 사고로
+                  사용자님에게 손해를 입힐 수 있으므로
+                  공제증서를 발급받는 것이 좋습니다.
+                  현재 공제증서를 받는 방법으로는 구청이나 
+                  시청에 방문하시거나 한국공인중개사협회 
+                  온라인 서비스를 이용하셔야 됩니다. 
+                  전세보감이 해당 온라인 서비스 링크를 
+                  제공해드리곘습니다.
+          </GeneralPage>
 
         </HTMLFlipBook>
       </div>
