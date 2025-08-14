@@ -49,9 +49,9 @@ export const styles = {
   // 주소 텍스트 스타일
   addressTextActive: 'font-medium text-brand-black',
 
-  // 삭제 버튼
+
   deleteButton:
-    'text-brand-error text-xs hover:text-brand-error/80 transition-colors duration-200 ml-2 flex-shrink-0 px-2 py-1 rounded hover:bg-brand-error/10 border-none bg-transparent cursor-pointer font-medium self-center',
+    'text-brand-error text-xs hover:text-brand-error/80 transition-colors duration-200 ml-2 flex-shrink-0 px-2 py-1 rounded hover:bg-brand-error/10 border-none bg-transparent cursor-pointer font-medium',
 
   // 스크롤바 스타일
   scrollbar:
