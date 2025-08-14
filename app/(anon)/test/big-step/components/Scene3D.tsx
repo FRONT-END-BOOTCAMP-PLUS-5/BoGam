@@ -66,7 +66,10 @@ export default function Scene3D({ className }: Scene3DProps) {
       alpha: false
     });
     rendererRef.current = renderer;
-    renderer.setSize(300, 400);
+    
+         // 해상도 향상을 위한 설정
+     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 10)); // 최대 2배까지 픽셀 비율 증가
+     renderer.setSize(300, 400); // 캔버스 크기는 원래대로 유지
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.shadowMap.autoUpdate = true; // TypeScript 오류 해결을 위해 다시 활성화
@@ -98,8 +101,8 @@ export default function Scene3D({ className }: Scene3DProps) {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
     directionalLight.position.set(10, 20, 10);
     directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 512; // 4096에서 1024로 축소
-    directionalLight.shadow.mapSize.height = 512; // 4096에서 1024로 축소
+    directionalLight.shadow.mapSize.width = 2048; // 그림자 해상도 향상 (512 → 2048)
+    directionalLight.shadow.mapSize.height = 2048; // 그림자 해상도 향상 (512 → 2048)
     directionalLight.shadow.camera.near = 0.1;
     directionalLight.shadow.camera.far = 50;
     directionalLight.shadow.camera.left = -20;
