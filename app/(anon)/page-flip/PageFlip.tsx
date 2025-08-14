@@ -93,21 +93,115 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
             };
 
             if (pages.length > 0 && htmlElementRef.current) {
-                const children = Array.from(htmlElementRef.current.children) as HTMLElement[];
-                childRef.current = children;
+                const container = htmlElementRef.current;
+
+                if (!container.querySelector('#pair-face-style')) {
+                    const styleEl = document.createElement('style');
+                    styleEl.id = 'pair-face-style';
+                    styleEl.textContent = `
+                        [data-merged-wrapper="true"] {
+                            position: relative;
+                            width: 100%;
+                            height: 100%;
+                            box-sizing: border-box;
+                            transform-style: preserve-3d;
+                        }
+                        [data-merged-wrapper="true"] > [data-side] {
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            backface-visibility: hidden;
+                        }
+                        [data-merged-wrapper="true"] > [data-side="back"] {
+                            transform: rotateY(180deg);
+                            background: red !important;
+                            box-shadow: 0 0 0 1px red;
+                            border: 0;
+                            z-index: 2;
+                            min-width: 100%;
+                            min-height: 100%;
+                            background-clip: padding-box;
+                            isolation: isolate;
+                            overflow: hidden;
+                            mix-blend-mode: normal;
+                            filter: brightness(1) drop-shadow(0 0 0 white);
+                            will-change: transform, opacity;
+                        }
+                        [data-merged-wrapper="true"] > [data-side="back"] * {
+                            background: red !important;
+                        }
+                        [data-merged-wrapper="true"] > [data-side="back"]::after {
+                        [data-merged-wrapper="true"] > [data-side="back"]::before {
+                            content: '';
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: red;
+                            opacity: 1;
+                            pointer-events: none;
+                            z-index: 998;
+                        }
+                            content: '';
+                            position: absolute;
+                            inset: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: red;
+                            opacity: 1;
+                            pointer-events: none;
+                            z-index: 999;
+                        }
+                    `;
+                    container.appendChild(styleEl);
+                }
+
+                Array.from(container.querySelectorAll('[data-merged-wrapper="true"], [data-generated-blank="true"]'))
+                    .forEach((el) => el.remove());
+
+                const baseChildren = Array.from(container.children) as HTMLElement[];
 
                 removeHandlers();
 
                 if (!pageFlip.current) {
                     const { className, style, children: propsChildren, renderOnlyPageLengthChange, onFlip, onChangeOrientation, onChangeState, onInit, onUpdate, ...flipSettings } = props;
-                    pageFlip.current = new PageFlip(htmlElementRef.current, flipSettings as any);
+                    pageFlip.current = new PageFlip(container, flipSettings as any);
                 }
 
-                if (pageFlip.current && children.length > 0) {
+                const finalPages: HTMLElement[] = [];
+                for (let i = 0; i < baseChildren.length; i += 2) {
+                    const frontEl = baseChildren[i];
+                    const backEl = baseChildren[i + 1];
+
+                    const wrapper = document.createElement('div');
+                    wrapper.setAttribute('data-merged-wrapper', 'true');
+                    wrapper.style.width = '100%';
+                    wrapper.style.height = '100%';
+                    wrapper.style.boxSizing = 'border-box';
+
+                    const front = document.createElement('div');
+                    front.setAttribute('data-side', 'front');
+                    const back = document.createElement('div');
+                    back.setAttribute('data-side', 'back');
+                    back.style.background = 'white';
+
+                    container.insertBefore(wrapper, frontEl);
+                    wrapper.appendChild(front);
+                    wrapper.appendChild(back);
+                    front.appendChild(frontEl);
+                    if (backEl) back.appendChild(backEl);
+
+                    finalPages.push(wrapper);
+                }
+
+                childRef.current = finalPages;
+
+                if (pageFlip.current && finalPages.length > 0) {
                     if (!pageFlip.current.getFlipController()) {
-                        pageFlip.current.loadFromHTML(children);
+                        pageFlip.current.loadFromHTML(finalPages);
                     } else {
-                        pageFlip.current.updateFromHtml(children);
+                        pageFlip.current.updateFromHtml(finalPages);
                     }
                 }
 

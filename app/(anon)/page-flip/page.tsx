@@ -58,6 +58,8 @@ export default function PageFlipPage() {
 
           </div>
 
+          <div></div>
+
           <GeneralPage title='3-1단계 공인중개사 자격증 유무 조회'>
             무자격자가 중개업 등록증이나 자격증을 빌려서 
             중개사무소를 차리는 경우가 많아지고 있습니다. 
@@ -68,6 +70,8 @@ export default function PageFlipPage() {
             전세보감이 증명된 중개업자인지 확인해드리겠습니다.
           </GeneralPage>
 
+          <div></div>
+
           <GeneralPage title='3-2단계 최우선변제 금액 안내'>
             주택임대차보호법 제8조를 따라 사용자님이 가장 <br />
             늦게 입주 세입자이더라도 최우선으로 <br />
@@ -76,6 +80,8 @@ export default function PageFlipPage() {
             전세보감이 초기 설정 때 작성한 매물 지역의 <br />
             최우선변제 금액을 안내해드리겠습니다
           </GeneralPage>
+
+          <div></div>
 
           <GeneralPage title='3-3단계 공제증서 발급 링크 안내'>
             공인중개사와의 중개 과정에서 발생할 수 있는 사고로
