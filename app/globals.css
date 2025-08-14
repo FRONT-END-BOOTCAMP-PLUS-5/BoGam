@@ -56,8 +56,11 @@ body {
   font-size: 16px;
   color: var(--brand-black);
   background-color: var(--background);
-  margin: 0;
+  max-width: 480px;
+  margin: 0 auto;
   padding: 0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: none;
 }
 

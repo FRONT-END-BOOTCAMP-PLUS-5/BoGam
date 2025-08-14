@@ -13,7 +13,10 @@ export default function Signup() {
               아래의 정보를 기입하여 회원가입을 완료해주세요!
             </p>
           </div>
-          <ChevronLeft className={`${styles.icon} ${styles.arrow}`} aria-hidden />
+          <ChevronLeft
+            className={`${styles.icon} ${styles.arrow}`}
+            aria-hidden
+          />
         </div>
       </section>
 

@@ -24,9 +24,6 @@ export default function RootLayout({
       <body className='font-sans'>
         {/* <Providers> */}
         {children}
-        <DetailSlot />
-        {detail}
-        {/* </Providers> */}
         <ConfirmModal />
         <DetailSlot />
         {detail}

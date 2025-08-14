@@ -2,28 +2,25 @@ export const styles = {
   // 컨테이너
   container: 'flex gap-1.5 w-full',
 
-  // 상태 아이템
-  item: 'flex items-center justify-center gap-1 px-2 py-1.5 rounded-2xl flex-1',
+  // 상태 아이템 - 고정 크기로 균등 배치
+  item: 'flex items-center justify-evenly px-3 py-2 rounded-2xl flex-1 min-w-[6rem] max-w-[6rem]',
 
-  // 상태별 배경색
-  completed: 'bg-green-500',
-  unconfirmed: 'bg-gray-200',
-  warning: 'bg-red-600',
+  // 상태별 배경색 (tailwind.config 브랜드 색상 사용)
+  completed: 'bg-brand-green',
+  unconfirmed: 'bg-brand-light-gray',
+  warning: 'bg-brand-error',
 
-  // 아이콘 스타일
-  icon: 'w-3.5 h-3.5',
-  completedIcon: 'text-white',
-  unconfirmedIcon: 'text-red-500',
-  warningIcon: 'text-white',
+  // 텍스트 스타일 - 굵은 폰트
+  text: 'text-xs font-bold',
 
-  // 텍스트 스타일
-  text: 'flex items-center gap-1 text-xs',
+  // 아이콘 스타일 - 고정 크기
+  icon: 'flex items-center justify-center w-4 h-4',
   completedText: 'text-white',
-  unconfirmedText: 'text-gray-700',
+  unconfirmedText: 'text-brand-black',
   warningText: 'text-white',
 
-  // 개수 스타일
-  count: 'text-black font-medium',
+  // 개수 스타일 (굵은 폰트)
+  count: 'font-bold text-xs',
 } as const;
 
 // 상태별 스타일 함수
@@ -33,16 +30,6 @@ export const getItemStyle = (type: 'completed' | 'unconfirmed' | 'warning') => {
     completed: styles.completed,
     unconfirmed: styles.unconfirmed,
     warning: styles.warning,
-  };
-  return `${baseStyle} ${typeStyles[type]}`;
-};
-
-export const getIconStyle = (type: 'completed' | 'unconfirmed' | 'warning') => {
-  const baseStyle = styles.icon;
-  const typeStyles = {
-    completed: styles.completedIcon,
-    unconfirmed: styles.unconfirmedIcon,
-    warning: styles.warningIcon,
   };
   return `${baseStyle} ${typeStyles[type]}`;
 };
