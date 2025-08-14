@@ -1,6 +1,8 @@
 import GuideResultSummary from './_components/GuideResultSummary';
 import ResultAccordion from './_components/resultAccordion/ResultAccordion';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import GuideStepItem from '@/(anon)/_components/common/guideStepItem/GuideStepItem';
+import GuideStepContent from '@/(anon)/_components/common/guideStepContent/GuideStepContent';
 
 export default function MyPage() {
   // 랜덤 데이터 생성 (0~100 사이)
@@ -32,50 +34,44 @@ export default function MyPage() {
             defaultOpen={true}
             numbers={["1", "10", "9"]}
           >
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <div className="flex-1">
-                  <div className="font-bold text-gray-900 mb-1">3-1</div>
-                  <h4 className="font-medium text-gray-900 mb-2">가짜 임대인 구분하기</h4>
-                  <div className="flex items-center space-x-2">
-                    <CircularIconBadge type="match-blue" weight="thick" />
-                    <p className="text-gray-700">신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!</p>
-                  </div>
-                </div>
-              </div>
+            <GuideStepItem stepNumber="3-1" title="가짜 임대인 구분하기" showDivider={true}>
+              <GuideStepContent>
+                <GuideStepContent.Row>
+                  <CircularIconBadge type="match-blue" weight="thick" />
+                  <GuideStepContent.Text>
+                    신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!
+                  </GuideStepContent.Text>
+                </GuideStepContent.Row>
+              </GuideStepContent>
+            </GuideStepItem>
 
-              <div className="flex items-start space-x-3">
-                <div className="flex-1">
-                  <div className="font-bold text-gray-900 mb-1">3-2</div>
-                  <h4 className="font-medium text-gray-900 mb-2">최우선변제 금액 안내</h4>
-                  <div className="flex items-center space-x-2">
-                    <CircularIconBadge type="unchecked" weight="thick" />
-                    <div className="text-gray-700">
-                      <p>서울특별시</p>
-                      <p>소액보증금 범위 : 1억 5천만원 이하</p>
-                      <p>최우선변제금액 : 5천만원</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <GuideStepItem stepNumber="3-2" title="최우선변제 금액 안내" showDivider={true}>
+              <GuideStepContent>
+                <GuideStepContent.Row>
+                  <CircularIconBadge type="unchecked" weight="thick" />
+                  <GuideStepContent.MultiLineText>
+                    <p>서울특별시</p>
+                    <p>소액보증금 범위 : 1억 5천만원 이하</p>
+                    <p>최우선변제금액 : 5천만원</p>
+                  </GuideStepContent.MultiLineText>
+                </GuideStepContent.Row>
+              </GuideStepContent>
+            </GuideStepItem>
 
-              <div className="flex items-start space-x-3">
-                <div className="flex-1">
-                  <div className="font-bold text-gray-900 mb-1">3-3</div>
-                  <h4 className="font-medium text-gray-900 mb-2">공제증서 발급 안내</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <CircularIconBadge type="mismatch" weight="thick" />
-                      <p className="text-gray-700">공제증서 발급 요건이 불충족되었습니다.</p>
-                    </div>
-                    <div className="flex items-center space-x-2 text-blue-600 underline cursor-pointer">
-                      <CircularIconBadge type="link" weight="thick" />
-                      <span>온라인 서비스로 이동하기</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <GuideStepItem stepNumber="3-3" title="공제증서 발급 안내">
+              <GuideStepContent>
+                <GuideStepContent.Row>
+                  <CircularIconBadge type="mismatch" weight="thick" />
+                  <GuideStepContent.Text>
+                    공제증서 발급 요건이 불충족되었습니다.
+                  </GuideStepContent.Text>
+                </GuideStepContent.Row>
+                <GuideStepContent.Link>
+                  <CircularIconBadge type="link" weight="thick" />
+                  <span>온라인 서비스로 이동하기</span>
+                </GuideStepContent.Link>
+              </GuideStepContent>
+            </GuideStepItem>
           </ResultAccordion>
 
           <ResultAccordion 
