@@ -9,6 +9,9 @@ import {
   Legend,
   ChartOptions
 } from 'chart.js';
+
+import clsx from 'clsx';
+
 import CircularIconBadge from '@/(anon)/_components/common/circular-icon-badges/CircularIconBadge';
 import { styles } from './GuideResultSummary.styles';
 
@@ -40,14 +43,27 @@ export default function GuideResultSummary({
     datasets: [
       {
         data: [match, 0.3, mismatch, 0.3, unchecked], // 0.3으로 간격 줄임
-        backgroundColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
-        borderColor: ['#4fa373', '#ffffff', '#c24a4a', '#ffffff', '#e5e7eb'],
+        backgroundColor: [
+          matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
+          '#ffffff', 
+          '#c24a4a', 
+          '#ffffff', 
+          '#e5e7eb'
+        ],
+        borderColor: [
+          matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
+          '#ffffff', 
+          '#c24a4a', 
+          '#ffffff', 
+          '#e5e7eb'
+        ],
         borderWidth: 0,
         cutout: '80%', // 중앙 구멍을 더 늘려서 차트를 더 얇게 만듦
         circumference: 180, // 반원형 (180도)
         rotation: -90, // 서쪽(왼쪽)에서 시작
       }
     ]
+
   };
 
   // Chart.js 옵션 설정
@@ -64,12 +80,26 @@ export default function GuideResultSummary({
     }
   };
 
-  // 안전도 단계 계산
+  // 안전도 단계 계산 (7단계)
   const getSafetyLevel = () => {
-    if (matchPercentage >= 80) return '1단계';
-    if (matchPercentage >= 60) return '2단계';
-    if (matchPercentage >= 40) return '3단계';
-    return '4단계';
+    if (matchPercentage === 100) return '매우 안전';      // 100%: 매우 안전
+    if (matchPercentage >= 80) return '안전';            // 80-99%: 안전
+    if (matchPercentage >= 60) return '양호';            // 60-79%: 양호
+    if (matchPercentage >= 40) return '보통';            // 40-59%: 보통
+    if (matchPercentage >= 20) return '주의';            // 20-39%: 주의
+    if (matchPercentage > 0) return '경고';              // 1-19%: 경고
+    return '위험';                                        // 0%: 위험
+  };
+
+  // 안전도 단계별 색상 클래스 반환
+  const getSafetyLevelColorClass = () => {
+    if (matchPercentage === 100) return 'bg-[#3E92F9]';           // 100%: 파란색
+    if (matchPercentage >= 80) return 'bg-brand-green';           // 80-99%: 브랜드 그린
+    if (matchPercentage >= 60) return 'bg-[#76A34F]';            // 60-79%: 연한 초록색
+    if (matchPercentage >= 40) return 'bg-[#A3954F]';            // 40-59%: 노란색
+    if (matchPercentage >= 20) return 'bg-[#A36E4F]';            // 20-39%: 주황색
+    if (matchPercentage > 0) return 'bg-[#A34F4F]';              // 1-19%: 빨간색
+    return 'bg-[#870F0F]';                                        // 0%: 진한 빨간색
   };
 
   return (
@@ -86,7 +116,7 @@ export default function GuideResultSummary({
           <div className={styles.safetyLevelContainer}>
             <div className={styles.safetyLevelTop}></div>
             <div className={styles.safetyLevelText}>{getSafetyLevel()}</div>
-            <div className={styles.safetyLevelBottom}></div>
+            <div className={clsx(styles.safetyLevelBottom, getSafetyLevelColorClass())}></div>
           </div>
         </div>
       </div>
