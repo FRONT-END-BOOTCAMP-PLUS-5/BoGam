@@ -12,9 +12,9 @@ import Button from '@/(anon)/_components/common/button/Button';
 
 // ConfirmModal Props 인터페이스
 interface ConfirmModalProps {
-  isOpen: boolean;
-  title: string;
-  onConfirm: () => void | Promise<void>;
+  isOpen?: boolean;
+  title?: string;
+  onConfirm?: () => void | Promise<void>;
   onCancel?: () => void;
   confirmText?: string;
   cancelText?: string;
@@ -97,7 +97,7 @@ export function ConfirmModal({
 
   const handleConfirm = async () => {
     try {
-      await onConfirm();
+      await onConfirm?.();
     } catch (error) {
       console.error('Modal confirm error:', error);
       // 에러는 부모 컴포넌트에서 처리하도록 다시 throw
