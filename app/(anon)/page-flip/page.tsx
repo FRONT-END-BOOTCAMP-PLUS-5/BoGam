@@ -19,11 +19,11 @@ export default function PageFlipPage() {
           style={{}}
           startPage={0}
           size="fixed"
-          width={380}
-          height={450}
-          minWidth={380}
+          width={300}
+          height={400}
+          minWidth={300}
           maxWidth={380}
-          minHeight={450}
+          minHeight={400}
           maxHeight={250}
           drawShadow={true}
           flippingTime={1000}
@@ -59,12 +59,12 @@ export default function PageFlipPage() {
           </div>
 
           <GeneralPage title='3-1단계 공인중개사 자격증 유무 조회'>
-            무자격자가 중개업 등록증이나 자격증을 빌려서 <br />
-            중개사무소를 차리는 경우가 많아지고 있습니다. <br />
-            이런 경우 공식적인 중개업 등록증이나 자격증을 <br />
-            소지하고 일하는 중개사무소보다 사기 위험이 <br />
-            더 높을 수 밖에 없습니다. <br />
-            사업자상호(부동산 이름)과 중개업자 이름을 입력하면 <br />
+            무자격자가 중개업 등록증이나 자격증을 빌려서 
+            중개사무소를 차리는 경우가 많아지고 있습니다. 
+            이런 경우 공식적인 중개업 등록증이나 자격증을 
+            소지하고 일하는 중개사무소보다 사기 위험이 
+            더 높을 수 밖에 없습니다. 
+            사업자상호(부동산 이름)과 중개업자 이름을 입력하면 
             전세보감이 증명된 중개업자인지 확인해드리겠습니다.
           </GeneralPage>
 
