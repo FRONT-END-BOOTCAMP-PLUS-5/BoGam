@@ -39,7 +39,8 @@
     "react-dom": "19.1.0",
     "react-pageflip": "^2.0.3",
     "sharp": "^0.34.3",
-    "three": "^0.179.1"
+    "three": "^0.179.1",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

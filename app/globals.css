@@ -14,13 +14,13 @@
   --error: #d56666;
   --bg: #ffffff;
   --ring: rgba(75, 114, 166, 0.35);
-  
+
   /* 박스 스타일 공통 값 */
   --radius-lg: 16px;
-  
+
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-book: 10px 10px 15px -5px rgba(0, 0, 0, 0.4);
-  
+
   --padding-xs: 8px;
   --padding-sm: 12px;
   --padding-lg: 20px;
@@ -41,6 +41,7 @@
     --foreground: #ededed;
   }
 }
+
 html,
 body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
@@ -54,11 +55,13 @@ body {
 
 /* 모바일 환경 뷰포트 최적화 */
 html {
-  -webkit-text-size-adjust: none; /* iOS 폰트 확대 방지 */
+  -webkit-text-size-adjust: none;
+  /* iOS 폰트 확대 방지 */
 }
 
 body {
-  max-width: 480px; /* 모바일 전용 중앙 정렬 */
+  max-width: 480px;
+  /* 모바일 전용 중앙 정렬 */
   margin: 0 auto;
   background-color: #fff;
   line-height: 1.5;
@@ -111,17 +114,43 @@ img {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   padding: var(--padding-lg);
-}
 
-.box-book {
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-book);
-  padding: 0;
-}
+  /* 드롭다운 애니메이션 */
+  @keyframes fadeInSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
 
-/* 모바일 글자 크기 반응형 */
-@media (max-width: 360px) {
-  html {
-    font-size: 14px;
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* 모바일 글자 크기 반응형 */
+  @media (max-width: 360px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  /* ==== Full Bleed Section (화면 끝까지 확장) ==== */
+  .full-bleed {
+    margin-left: calc(-1 * max(var(--page-x), env(safe-area-inset-left)));
+    margin-right: calc(-1 * max(var(--page-x), env(safe-area-inset-right)));
+  }
+
+  .box-book {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-book);
+    padding: 0;
+  }
+
+  /* 모바일 글자 크기 반응형 */
+  @media (max-width: 360px) {
+    html {
+      font-size: 14px;
+    }
   }
 }
