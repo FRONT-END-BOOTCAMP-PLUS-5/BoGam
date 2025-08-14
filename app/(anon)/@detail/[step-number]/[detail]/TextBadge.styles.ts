@@ -8,9 +8,9 @@ export const styles = {
   lg: "px-5 py-2.5 text-base",
   
   // Type variants
-  match: "bg-white text-[var(--brand-green)]",
-  mismatch: "bg-white text-[var(--error)]",
-  unchecked: "bg-white text-[var(--brand-dark-gray)]",
+  match: "bg-white text-brand-green",
+  mismatch: "bg-white text-brand-error",
+  unchecked: "bg-white text-brand-dark-gray",
   
   // Icon sizes
   iconSm: "w-3 h-3 stroke-[3.5]",
