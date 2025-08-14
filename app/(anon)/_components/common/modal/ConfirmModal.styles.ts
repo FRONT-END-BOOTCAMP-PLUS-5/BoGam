@@ -5,57 +5,44 @@ export const styles = {
 
   // 모달 컨테이너
   modalContainer:
-    'bg-brand-white rounded-2xl shadow-2xl max-w-md w-full mx-4 animate-scaleIn',
+    'bg-brand-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 animate-scaleIn',
 
-  // 모달 헤더
-  header: 'flex items-center gap-3 p-6 pb-4',
-  title: 'text-lg font-semibold text-brand-black flex-1',
+  // 모달 헤더 - 간격 증가
+  header: 'flex items-center gap-4 p-6 pb-6',
+  title: 'text-xl font-semibold text-brand-black flex-1',
 
-  // 제목 배경 컨테이너 (GuideResultSummary 스타일 적용)
+  // 제목 배경 컨테이너 (GuideResultSummary 스타일 적용) - 제목 크기 증가
   titleContainer: 'relative inline-block',
   titleTop: 'absolute top-0 left-0 right-0 h-1/2 bg-brand-white',
-  titleText: 'relative z-10 text-brand-black text-lg font-semibold px-1',
+  titleText: 'relative z-10 text-brand-black text-xl font-semibold px-1',
   titleBottom: 'absolute bottom-0 left-0 right-0 h-1/2 opacity-30',
 
-  // 아이콘 컨테이너 - brand 컬러 테두리만
+  // 아이콘 컨테이너 - brand 컬러 테두리 유지
   iconContainer:
-    'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border-2',
+    'flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center border-2',
   iconContainerWarning: 'border-brand-gold',
   iconContainerInfo: 'border-brand',
   iconContainerError: 'border-brand-error',
   iconContainerSuccess: 'border-brand-green',
 
   // 아이콘 스타일 - brand 컬러로 통일
-  iconBase: 'w-5 h-5',
-  warningIcon: 'w-5 h-5 text-brand-gold',
-  infoIcon: 'w-5 h-5 text-brand',
-  errorIcon: 'w-5 h-5 text-brand-error',
-  successIcon: 'w-5 h-5 text-brand-green',
+  warningIcon: 'w-6 h-6 text-brand-gold',
+  infoIcon: 'w-11 h-11 text-brand',
+  errorIcon: 'w-11 h-11 text-brand-error',
+  successIcon: 'w-6 h-6 text-brand-green',
 
-  // 모달 본문
-  content: 'px-6 pb-6',
+  // 모달 본문 - 간격 증가
+  content: 'px-6 pb-8',
   contentText: 'text-brand-black leading-relaxed',
 
-  // 버튼 컨테이너
-  buttonContainer: 'flex gap-3 px-6 pb-6',
+  // 버튼 컨테이너 - 간격 증가
+  buttonContainer: 'flex gap-3 px-6 pb-6 justify-center',
 
-  // 버튼 스타일 - 취소 버튼에 회색 테두리 추가
-  cancelButton:
-    'flex-1 px-4 py-3 text-brand-dark-gray bg-brand-white border-2 border-solid border-brand-light-gray rounded-lg font-medium transition-colors hover:bg-brand-light-blue/10 focus:outline-none focus:ring-2 focus:ring-brand-light-gray',
-  confirmButton:
-    'flex-1 px-4 py-3 text-brand-white bg-brand border border-brand rounded-lg font-medium transition-colors hover:bg-brand-dark-blue focus:outline-none focus:ring-2 focus:ring-brand/30',
+  // 텍스트 아이콘 스타일 (크기 증가)
+  textIcon: 'text-2xl font-bold flex items-center justify-center',
 
-  // 비활성화된 버튼
-  disabledButton: 'opacity-50 cursor-not-allowed',
-
-  // 에러 관련 스타일 - brand-error 컬러 적용
-  errorContainer: 'space-y-3',
-  errorBox: 'p-3 bg-brand-error/10 border border-brand-error/20 rounded-lg',
-  errorTitle: 'text-brand-error text-sm font-medium',
-  errorMessage: 'text-brand-error/80 text-sm mt-1',
-
-  // 에러 메시지 스타일 ("이미 사용 중인 닉네임입니다" 등)
-  errorText: 'text-brand-error text-sm',
+  // 버튼 스타일
+  modalButton: 'px-8 min-w-[9.5rem]',
 } as const;
 
 // 아이콘 타입별 스타일 함수
@@ -71,7 +58,7 @@ export const getIconStyle = (
   return iconStyles[iconType] || styles.infoIcon;
 };
 
-// 아이콘 컨테이너 배경색 함수
+// 아이콘 컨테이너 스타일 함수
 export const getIconContainerStyle = (
   iconType: 'warning' | 'info' | 'error' | 'success'
 ) => {
