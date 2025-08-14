@@ -27,11 +27,20 @@ export const initializeCommonGLTFLoader = (renderer?: THREE.WebGLRenderer): GLTF
   return commonGLTFLoader;
 };
 
-// 공통 텍스처 로더 가져오기
-export const getCommonTextureLoader = (): THREE.TextureLoader => {
+// 공통 텍스처 로더 가져오기 (KTX2 지원)
+export const getCommonTextureLoader = (renderer?: THREE.WebGLRenderer): THREE.TextureLoader | any => {
+  // KTX2 파일인 경우 KTX2Loader 반환
+  if (renderer) {
+    if (!commonKTX2Loader) {
+      commonKTX2Loader = getKTX2Loader(renderer);
+    }
+    return commonKTX2Loader;
+  }
+  
+  // 일반 이미지 파일인 경우 TextureLoader 반환
   if (!commonTextureLoader) {
     commonTextureLoader = new THREE.TextureLoader();
-    console.log('[GLTFTextureLoaders] 텍스처 로더 초기화 완료');
+    console.log('[GLTFTextureLoaders] 일반 텍스처 로더 초기화 완료');
   }
   return commonTextureLoader;
 };
