@@ -38,38 +38,32 @@ export default function MyPage() {
             numbers={["1", "10", "9"]}
           >
             <GuideStepItem stepNumber="3-1" title="가짜 임대인 구분하기" showDivider={true}>
-              <div className={styles.tempContent}>
-                <GuideStepRow iconType="match">
-                  <GuideStepText>
-                    신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!
-                  </GuideStepText>
-                </GuideStepRow>
-              </div>
+              <GuideStepRow iconType="match">
+                <GuideStepText>
+                  신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!
+                </GuideStepText>
+              </GuideStepRow>
             </GuideStepItem>
 
             <GuideStepItem stepNumber="3-2" title="최우선변제 금액 안내" showDivider={true}>
-              <div className={styles.tempContent}>
-                <GuideStepRow iconType="unchecked">
-                  <GuideStepMultiLineText>
-                    <p>서울특별시</p>
-                    <p>소액보증금 범위 : 1억 5천만원 이하</p>
-                    <p>최우선변제금액 : 5천만원</p>
-                  </GuideStepMultiLineText>
-                </GuideStepRow>
-              </div>
+              <GuideStepRow iconType="unchecked">
+                <GuideStepMultiLineText>
+                  <p>서울특별시</p>
+                  <p>소액보증금 범위 : 1억 5천만원 이하</p>
+                  <p>최우선변제금액 : 5천만원</p>
+                </GuideStepMultiLineText>
+              </GuideStepRow>
             </GuideStepItem>
 
             <GuideStepItem stepNumber="3-3" title="공제증서 발급 안내">
-              <div className={styles.tempContent}>
-                <GuideStepRow iconType="mismatch">
-                  <GuideStepText>
-                    공제증서 발급 요건이 불충족되었습니다.
-                  </GuideStepText>
-                </GuideStepRow>
-                <GuideStepLink>
-                  온라인 서비스로 이동하기
-                </GuideStepLink>
-              </div>
+              <GuideStepRow iconType="mismatch">
+                <GuideStepText>
+                  공제증서 발급 요건이 불충족되었습니다.
+                </GuideStepText>
+              </GuideStepRow>
+              <GuideStepLink href="http://localhost:3000/">
+                온라인 서비스로 이동하기
+              </GuideStepLink>
             </GuideStepItem>
           </ResultAccordion>
 
