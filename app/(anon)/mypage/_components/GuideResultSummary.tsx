@@ -12,7 +12,7 @@ import {
 
 import clsx from 'clsx';
 
-import CircularIconBadge from '@/(anon)/_components/common/circular-icon-badges/CircularIconBadge';
+import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { styles } from './GuideResultSummary.styles';
 
 // Chart.js 컴포넌트 등록
