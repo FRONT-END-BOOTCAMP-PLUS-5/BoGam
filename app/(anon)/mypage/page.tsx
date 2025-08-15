@@ -1,8 +1,11 @@
 import GuideResultSummary from './_components/GuideResultSummary';
-import ResultAccordion from './_components/resultAccordion/ResultAccordion';
-import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import ResultAccordion from './_components/ResultAccordion';
 import GuideStepItem from '@/(anon)/_components/common/guideStepItem/GuideStepItem';
-import GuideStepContent from '@/(anon)/_components/common/guideStepContent/GuideStepContent';
+import GuideStepRow from '@/(anon)/_components/common/guideStepContent/GuideStepRow';
+import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideStepText';
+import GuideStepMultiLineText from '@/(anon)/_components/common/guideStepContent/GuideStepMultiLineText';
+import GuideStepLink from '@/(anon)/_components/common/guideStepContent/GuideStepLink';
+import { styles } from './page.styles';
 
 export default function MyPage() {
   // 랜덤 데이터 생성 (0~100 사이)
@@ -13,9 +16,9 @@ export default function MyPage() {
   const unchecked = generateRandomValue();     // 미확인
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8 text-center">마이페이지</h1>
+    <div className={styles.mainContainer}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>마이페이지</h1>
         
         {/* 가이드 결과 요약 컴포넌트 */}
         <GuideResultSummary 
@@ -25,8 +28,8 @@ export default function MyPage() {
         />
 
         {/* 결과 아코디언 섹션 */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">가이드 결과 상세</h2>
+        <div className={styles.accordionSection}>
+          <h2 className={styles.accordionTitle}>가이드 결과 상세</h2>
           
           <ResultAccordion 
             stageNumber="1단계" 
@@ -35,42 +38,38 @@ export default function MyPage() {
             numbers={["1", "10", "9"]}
           >
             <GuideStepItem stepNumber="3-1" title="가짜 임대인 구분하기" showDivider={true}>
-              <GuideStepContent>
-                <GuideStepContent.Row>
-                  <CircularIconBadge type="match-blue" weight="thick" />
-                  <GuideStepContent.Text>
+              <div className={styles.tempContent}>
+                <GuideStepRow iconType="match">
+                  <GuideStepText>
                     신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!
-                  </GuideStepContent.Text>
-                </GuideStepContent.Row>
-              </GuideStepContent>
+                  </GuideStepText>
+                </GuideStepRow>
+              </div>
             </GuideStepItem>
 
             <GuideStepItem stepNumber="3-2" title="최우선변제 금액 안내" showDivider={true}>
-              <GuideStepContent>
-                <GuideStepContent.Row>
-                  <CircularIconBadge type="unchecked" weight="thick" />
-                  <GuideStepContent.MultiLineText>
+              <div className={styles.tempContent}>
+                <GuideStepRow iconType="unchecked">
+                  <GuideStepMultiLineText>
                     <p>서울특별시</p>
                     <p>소액보증금 범위 : 1억 5천만원 이하</p>
                     <p>최우선변제금액 : 5천만원</p>
-                  </GuideStepContent.MultiLineText>
-                </GuideStepContent.Row>
-              </GuideStepContent>
+                  </GuideStepMultiLineText>
+                </GuideStepRow>
+              </div>
             </GuideStepItem>
 
             <GuideStepItem stepNumber="3-3" title="공제증서 발급 안내">
-              <GuideStepContent>
-                <GuideStepContent.Row>
-                  <CircularIconBadge type="mismatch" weight="thick" />
-                  <GuideStepContent.Text>
+              <div className={styles.tempContent}>
+                <GuideStepRow iconType="mismatch">
+                  <GuideStepText>
                     공제증서 발급 요건이 불충족되었습니다.
-                  </GuideStepContent.Text>
-                </GuideStepContent.Row>
-                <GuideStepContent.Link>
-                  <CircularIconBadge type="link" weight="thick" />
-                  <span>온라인 서비스로 이동하기</span>
-                </GuideStepContent.Link>
-              </GuideStepContent>
+                  </GuideStepText>
+                </GuideStepRow>
+                <GuideStepLink>
+                  온라인 서비스로 이동하기
+                </GuideStepLink>
+              </div>
             </GuideStepItem>
           </ResultAccordion>
 
@@ -79,9 +78,9 @@ export default function MyPage() {
             subtitle="계약서 확인할 때"
             numbers={["2", "8", "7"]}
           >
-            <div className="space-y-3">
-              <p className="text-gray-700">계약서 관련 상세 내용이 여기에 표시됩니다.</p>
-              <p className="text-gray-700">각 항목별로 확인해야 할 사항들을 정리해드립니다.</p>
+            <div className={styles.tempContent}>
+              <p className={styles.tempText}>계약서 관련 상세 내용이 여기에 표시됩니다.</p>
+              <p className={styles.tempText}>각 항목별로 확인해야 할 사항들을 정리해드립니다.</p>
             </div>
           </ResultAccordion>
 
@@ -90,9 +89,9 @@ export default function MyPage() {
             subtitle="입주 전 확인할 때"
             numbers={["3", "6", "5"]}
           >
-            <div className="space-y-3">
-              <p className="text-gray-700">입주 전 체크리스트가 여기에 표시됩니다.</p>
-              <p className="text-gray-700">안전하고 만족스러운 입주를 위한 가이드입니다.</p>
+            <div className={styles.tempContent}>
+              <p className={styles.tempText}>입주 전 체크리스트가 여기에 표시됩니다.</p>
+              <p className={styles.tempText}>안전하고 만족스러운 입주를 위한 가이드입니다.</p>
             </div>
           </ResultAccordion>
         </div>
