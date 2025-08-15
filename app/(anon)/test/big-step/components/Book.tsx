@@ -4,6 +4,8 @@ import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { AnimationMixer, AnimationClip, AnimationAction, TextureLoader } from 'three';
 import { initializeCommonGLTFLoader, getCommonTextureLoader, loadModelFromCache } from '@utils/gltfTextureLoaders';
+import { getBookTexturePath } from '@utils/textureMapper';
+import { MODEL_PATHS } from '@libs/constants/modelPaths';
 
 /**
  * Book 3D 모델 정보
@@ -142,20 +144,20 @@ export class BookController {
         const time = action.time;
         const duration = action.getClip().duration;
         
-                 // 책펼치기: 0~40% 구간에서만 재생하고 완료 후 40% 상태 유지
-         if (this.animationType === 'open' && time >= duration * 0.4) {
-           action.time = duration * 0.4; // 40% 상태로 고정
-           action.paused = true;
-           action.enabled = true; // 애니메이션 상태 유지
-           this.isAnimating = false;
-           this.hasPlayed = true;
-           this.animationType = null;
-           
-           // 애니메이션 완료 후 링크로 이동
-           setTimeout(() => {
-             this.navigateToLink();
-           }, 100); // 0.1초 후 링크 이동
-         }
+        // 책펼치기: 0~40% 구간에서만 재생하고 완료 후 40% 상태 유지
+        if (this.animationType === 'open' && time >= duration * 0.4) {
+          action.time = duration * 0.4; // 40% 상태로 고정
+          action.paused = true;
+          action.enabled = true; // 애니메이션 상태 유지
+          this.isAnimating = false;
+          this.hasPlayed = true;
+          this.animationType = null;
+          
+          // 애니메이션 완료 후 링크로 이동
+          setTimeout(() => {
+            this.navigateToLink();
+          }, 100); // 0.1초 후 링크 이동
+        }
         // 책닫기: 60~100% 구간에서만 재생하고 완료 후 100% 상태 유지
         else if (this.animationType === 'close' && time >= duration) {
           action.time = duration; // 100% 상태로 고정
@@ -381,21 +383,21 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
       const loader = initializeCommonGLTFLoader(renderer);
       
       // 2. 캐시 우선 모델 로더 사용 (캐시에 있으면 캐시에서, 없으면 다운로드)
-       console.log('[Book] 모델 데이터 로드 시작');
-       const modelData = await loadModelFromCache('/models/optimized/book-draco-ktx.glb');
-       console.log('[Book] 모델 데이터 로드 완료');
+      console.log('[Book] 모델 데이터 로드 시작');
+      const modelData = await loadModelFromCache(MODEL_PATHS.BOOK);
+      console.log('[Book] 모델 데이터 로드 완료');
       
       // 3. Blob URL 생성 (모델별로 새로 생성)
       const blob = new Blob([modelData], { type: 'model/gltf-binary' });
       const blobUrl = URL.createObjectURL(blob);
       
-      console.log('[Book] 모델 파싱 시작:', '/models/optimized/book-draco-ktx.glb');
+      console.log('[Book] 모델 파싱 시작:', MODEL_PATHS.BOOK);
       
       loader.load(
         blobUrl,
-          (gltf: GLTF) => {
-            try {
-              // Blob URL은 공통으로 사용하므로 정리하지 않음
+        (gltf: GLTF) => {
+          try {
+            // Blob URL은 공통으로 사용하므로 정리하지 않음
             
             const bookGroup = new THREE.Group();
             const bookModel = gltf.scene;
@@ -422,46 +424,76 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
               }
             });
 
-            // 각 책마다 다른 텍스처 적용
+            // GLTF의 공통 텍스처(노말, 메탈릭/러프니스)는 그대로 사용하고
+            // 베이스컬러만 책마다 다르게 적용
             if (bookId) {
-              console.log(`[Book] ${bookId}에 맞는 텍스처 적용 중...`);
+              console.log(`[Book] ${bookId}에 맞는 베이스컬러 KTX2 텍스처 적용 중...`);
               
-              // 공통 텍스처 로더 사용
-              const textureLoader = getCommonTextureLoader();
+              // 공통 텍스처 로더 사용 (KTX2 지원을 위해 renderer 전달)
+              const textureLoader = getCommonTextureLoader(renderer);
               
-              // 책 번호에 따른 베이스컬러 텍스처 경로
-              const baseColorTexturePath = `/models/book/textures/${bookId}_baseColor.png`;
+              // 책 번호에 따른 베이스컬러 KTX2 텍스처 경로
+              const baseColorTexturePath = getBookTexturePath(bookId);
               
-              try {
-                // 베이스컬러 텍스처 로드
-                const baseColorTexture = textureLoader.load(baseColorTexturePath);
-                
-                // 텍스처 설정
-                baseColorTexture.colorSpace = THREE.SRGBColorSpace;
-                baseColorTexture.flipY = false;
-                baseColorTexture.generateMipmaps = true;
-                
-                // 모델의 재질에 텍스처 적용
-                bookModel.traverse((child: THREE.Object3D) => {
-                  if (child instanceof THREE.Mesh && child.material) {
-                    if (Array.isArray(child.material)) {
-                      child.material.forEach((material: THREE.Material) => {
-                        if (material instanceof THREE.MeshStandardMaterial) {
-                          material.map = baseColorTexture;
-                          material.needsUpdate = true;
-                        }
-                      });
-                    } else if (child.material instanceof THREE.MeshStandardMaterial) {
-                      child.material.map = baseColorTexture;
-                      child.material.needsUpdate = true;
+              // KTX2 로더는 콜백 기반이므로 Promise로 래핑
+              const loadTexture = (texturePath?: string): Promise<THREE.Texture> => {
+                const path = texturePath || baseColorTexturePath;
+                return new Promise((resolve, reject) => {
+                  textureLoader.load(
+                    path,
+                    (texture: THREE.Texture) => {
+                      // 텍스처 설정
+                      texture.colorSpace = THREE.SRGBColorSpace;
+                      texture.flipY = false;
+                      texture.generateMipmaps = true;
+                      resolve(texture);
+                    },
+                    undefined,
+                    (error: unknown) => {
+                      console.error(`[Book] ${bookId} KTX2 텍스처 로딩 실패: ${path}`, error);
+                      reject(error);
                     }
-                  }
+                  );
                 });
-                
-                console.log(`[Book] ${bookId}에 베이스컬러 텍스처 적용 완료: ${baseColorTexturePath}`);
-              } catch (error) {
-                console.error(`[Book] ${bookId} 텍스처 로딩 실패:`, error);
-              }
+              };
+
+              // 모든 텍스처 타입을 로딩 후 재질에 적용
+              Promise.all([
+                loadTexture(), // 베이스컬러 (개별)
+                loadTexture('/models/book/textures_ktx2/book_normal.ktx2'), // 노말맵 (공통)
+                loadTexture('/models/book/textures_ktx2/book_metallicRoughness.ktx2') // 메탈릭러프니스 (공통)
+              ])
+                .then(([baseColorTexture, normalTexture, metallicRoughnessTexture]) => {
+                  // 모델의 재질에 모든 텍스처 적용
+                  bookModel.traverse((child: THREE.Object3D) => {
+                    if (child instanceof THREE.Mesh && child.material) {
+                      if (Array.isArray(child.material)) {
+                        child.material.forEach((material: THREE.Material) => {
+                          if (material instanceof THREE.MeshStandardMaterial) {
+                            material.map = baseColorTexture; // 베이스컬러
+                            material.normalMap = normalTexture; // 노말맵
+                            material.metalnessMap = metallicRoughnessTexture; // 메탈릭
+                            material.roughnessMap = metallicRoughnessTexture; // 러프니스
+                            material.needsUpdate = true;
+                          }
+                        });
+                      } else if (child.material instanceof THREE.MeshStandardMaterial) {
+                        child.material.map = baseColorTexture; // 베이스컬러
+                        child.material.normalMap = normalTexture; // 노말맵
+                        child.material.metalnessMap = metallicRoughnessTexture; // 메탈릭
+                        child.material.roughnessMap = metallicRoughnessTexture; // 러프니스
+                        child.material.needsUpdate = true;
+                      }
+                    }
+                  });
+                  
+                  console.log(`[Book] ${bookId}에 모든 KTX2 텍스처 적용 완료`);
+                })
+                .catch((error) => {
+                  console.error(`[Book] ${bookId} 베이스컬러 KTX2 텍스처 로딩 실패:`, error);
+                });
+            } else {
+              console.log(`[Book] - GLTF 원본 텍스처 모두 사용`);
             }
             
             // 애니메이션 설정
@@ -492,7 +524,7 @@ export const createBook = (props: BookProps): Promise<{ group: THREE.Group; mixe
             const endTime = Date.now();
             const totalTime = endTime - startTime;
             console.log(`[Book] 로딩 완료: ${totalTime}ms`);
-                        resolve({ group: bookGroup, mixer });
+            resolve({ group: bookGroup, mixer });
           } catch (error) {
             // Blob URL 정리
             URL.revokeObjectURL(blobUrl);
