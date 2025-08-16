@@ -561,10 +561,13 @@
   ],
   "images": [
     {
-              "uri": "textures_ktx2/book_metallicRoughness.ktx2"
+      "uri": "textures/book_baseColor.png"
     },
     {
-              "uri": "textures_ktx2/book_normal.ktx2"
+      "uri": "textures/book_metallicRoughness.png"
+    },
+    {
+      "uri": "textures/book_normal.png"
     }
   ],
   "materials": [
@@ -572,11 +575,14 @@
       "doubleSided": true,
       "name": "book",
       "normalTexture": {
-        "index": 1
+        "index": 2
       },
       "pbrMetallicRoughness": {
-        "metallicRoughnessTexture": {
+        "baseColorTexture": {
           "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
         }
       }
     }
@@ -938,6 +944,10 @@
     {
       "sampler": 0,
       "source": 1
+    },
+    {
+      "sampler": 0,
+      "source": 2
     }
   ]
 }

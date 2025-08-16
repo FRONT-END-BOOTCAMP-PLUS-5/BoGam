@@ -1,0 +1,350 @@
+[1mdiff --git a/app/(anon)/_components/common/circular-icon-badges/CircularIconBadge.styles.ts b/app/(anon)/_components/common/circularIconBadges/CircularIconBadge.styles.ts[m
+[1msimilarity index 100%[m
+[1mrename from app/(anon)/_components/common/circular-icon-badges/CircularIconBadge.styles.ts[m
+[1mrename to app/(anon)/_components/common/circularIconBadges/CircularIconBadge.styles.ts[m
+[1mdiff --git a/app/(anon)/_components/common/circular-icon-badges/CircularIconBadge.tsx b/app/(anon)/_components/common/circularIconBadges/CircularIconBadge.tsx[m
+[1msimilarity index 100%[m
+[1mrename from app/(anon)/_components/common/circular-icon-badges/CircularIconBadge.tsx[m
+[1mrename to app/(anon)/_components/common/circularIconBadges/CircularIconBadge.tsx[m
+[1mdiff --git a/app/(anon)/_components/common/guideStepContent/GuideStepContent.tsx b/app/(anon)/_components/common/guideStepContent/GuideStepContent.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4f27007[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/_components/common/guideStepContent/GuideStepContent.tsx[m
+[36m@@ -0,0 +1,20 @@[m
+[32m+[m[32m'use client';[m
+[32m+[m
+[32m+[m[32mimport { ReactNode } from 'react';[m
+[32m+[m[32mimport clsx from 'clsx';[m
+[32m+[m[32mimport { styles } from './GuideStepStyles';[m
+[32m+[m
+[32m+[m[32mtype GuideStepContentProps = {[m
+[32m+[m[32m  children: ReactNode;[m
+[32m+[m[32m  className?: string;[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mconst GuideStepContent = ({ children, className }: GuideStepContentProps) => {[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className={clsx(styles.container, className)}>[m
+[32m+[m[32m      {children}[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mexport default GuideStepContent;[m
+[1mdiff --git a/app/(anon)/_components/common/guideStepContent/GuideStepRow.tsx b/app/(anon)/_components/common/guideStepContent/GuideStepRow.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..c2f2685[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/_components/common/guideStepContent/GuideStepRow.tsx[m
+[36m@@ -0,0 +1,49 @@[m
+[32m+[m[32m'use client';[m
+[32m+[m
+[32m+[m[32mimport { ReactNode } from 'react';[m
+[32m+[m[32mimport Link from 'next/link';[m
+[32m+[m[32mimport clsx from 'clsx';[m
+[32m+[m[32mimport { styles } from './GuideStepStyles';[m
+[32m+[m[32mimport CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';[m
+[32m+[m
+[32m+[m[32mtype GuideStepRowProps = {[m
+[32m+[m[32m  children: ReactNode;[m
+[32m+[m[32m  iconType: 'match' | 'mismatch' | 'unchecked' | 'link';[m
+[32m+[m[32m  href?: string;[m
+[32m+[m[32m  className?: string;[m
+[32m+[m[32m  onClick?: () => void;[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mconst GuideStepRow = ({ children, iconType, href, className, onClick }: GuideStepRowProps) => {[m
+[32m+[m[32m  // 링크 타입일 때는 Link 컴포넌트로 감싸기[m
+[32m+[m[32m  if (iconType === 'link' && href) {[m
+[32m+[m[32m    return ([m
+[32m+[m[32m      <Link href={href} className={clsx(styles.linkRow, className)} onClick={onClick}>[m
+[32m+[m[32m        <CircularIconBadge[m[41m [m
+[32m+[m[32m          type="link"[m[41m [m
+[32m+[m[32m          size="md"[m[41m [m
+[32m+[m[32m          weight="thick"[m[41m [m
+[32m+[m[32m        />[m
+[32m+[m[32m        <span className={styles.linkText}>{children}</span>[m
+[32m+[m[32m      </Link>[m
+[32m+[m[32m    );[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  // 일반 타입일 때는 div로 렌더링[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className={clsx(styles.row, className)} onClick={onClick}>[m
+[32m+[m[32m      <div className={styles.iconContainer}>[m
+[32m+[m[32m        <CircularIconBadge[m[41m [m
+[32m+[m[32m          type={iconType === 'match' ? 'match-blue' : iconType}[m[41m [m
+[32m+[m[32m          size="md"[m[41m [m
+[32m+[m[32m          weight="thick"[m[41m [m
+[32m+[m[32m        />[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m      <div className={styles.content}>[m
+[32m+[m[32m        {children}[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mexport default GuideStepRow;[m
+[1mdiff --git a/app/(anon)/_components/common/guideStepContent/GuideStepStyles.ts b/app/(anon)/_components/common/guideStepContent/GuideStepStyles.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1517a1f[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/_components/common/guideStepContent/GuideStepStyles.ts[m
+[36m@@ -0,0 +1,22 @@[m
+[32m+[m[32mexport const styles = {[m
+[32m+[m[32m  // 공통 컨테이너[m
+[32m+[m[32m  container: "space-y-3",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // 들여쓰기 컨테이너[m
+[32m+[m[32m  indentedContainer: "space-y-3 pl-6",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // Row 컴포넌트 (들여쓰기 포함)[m
+[32m+[m[32m  row: "flex items-center space-x-3 pl-6",[m
+[32m+[m[32m  iconContainer: "flex-shrink-0",[m
+[32m+[m[32m  content: "flex-1",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // Text 컴포넌트[m
+[32m+[m[32m  text: "text-sm text-brand-black",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // MultiLineText 컴포넌트[m
+[32m+[m[32m  multiLineText: "text-sm space-y-1",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // Link 컴포넌트 (들여쓰기 포함)[m
+[32m+[m[32m  linkRow: "flex items-center space-x-2 underline cursor-pointer pl-6",[m
+[32m+[m[32m  linkText: "text-sm text-brand underline cursor-pointer"[m
+[32m+[m[32m} as const;[m
+[1mdiff --git a/app/(anon)/_components/common/guideStepContent/GuideStepText.tsx b/app/(anon)/_components/common/guideStepContent/GuideStepText.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4dd387b[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/_components/common/guideStepContent/GuideStepText.tsx[m
+[36m@@ -0,0 +1,21 @@[m
+[32m+[m[32m'use client';[m
+[32m+[m
+[32m+[m[32mimport { ReactNode } from 'react';[m
+[32m+[m[32mimport clsx from 'clsx';[m
+[32m+[m[32mimport { styles } from './GuideStepStyles';[m
+[32m+[m
+[32m+[m[32mtype GuideStepTextProps = {[m
+[32m+[m[32m  children: ReactNode;[m
+[32m+[m[32m  multiLine?: boolean;[m
+[32m+[m[32m  className?: string;[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mconst GuideStepText = ({ children, multiLine = false, className }: GuideStepTextProps) => {[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className={clsx(multiLine ? styles.multiLineText : styles.text, className)}>[m
+[32m+[m[32m      {children}[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mexport default GuideStepText;[m
+[1mdiff --git a/app/(anon)/_components/common/guideStepItem/GuideStepItem.styles.ts b/app/(anon)/_components/common/guideStepItem/GuideStepItem.styles.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6df1dca[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/_components/common/guideStepItem/GuideStepItem.styles.ts[m
+[36m@@ -0,0 +1,8 @@[m
+[32m+[m[32mexport const styles = {[m
+[32m+[m[32m  container: "py-4",[m
+[32m+[m[32m  stepHeader: "mb-3",[m
+[32m+[m[32m  stepNumber: "text-sm font-bold text-brand-black mb-1",[m
+[32m+[m[32m  stepTitle: "text-sm font-medium text-brand-black mb-8",[m
+[32m+[m[32m  stepContent: "space-y-3",[m
+[32m+[m[32m  divider: "border-t border-brand-light-gray mt-8"[m
+[32m+[m[32m} as const;[m
+[1mdiff --git a/app/(anon)/_components/common/guideStepItem/GuideStepItem.tsx b/app/(anon)/_components/common/guideStepItem/GuideStepItem.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..09b40d7[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/_components/common/guideStepItem/GuideStepItem.tsx[m
+[36m@@ -0,0 +1,38 @@[m
+[32m+[m[32m'use client';[m
+[32m+[m
+[32m+[m[32mimport { ReactNode } from 'react';[m
+[32m+[m[32mimport clsx from 'clsx';[m
+[32m+[m[32mimport { styles } from './GuideStepItem.styles';[m
+[32m+[m
+[32m+[m[32mtype GuideStepItemProps = {[m
+[32m+[m[32m  stepNumber: string;[m
+[32m+[m[32m  title: string;[m
+[32m+[m[32m  children: ReactNode;[m
+[32m+[m[32m  showDivider?: boolean;[m
+[32m+[m[32m  className?: string;[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mconst GuideStepItem = ({[m[41m [m
+[32m+[m[32m  stepNumber,[m[41m [m
+[32m+[m[32m  title,[m[41m [m
+[32m+[m[32m  children,[m[41m [m
+[32m+[m[32m  showDivider = false,[m
+[32m+[m[32m  className[m[41m [m
+[32m+[m[32m}: GuideStepItemProps) => {[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className={clsx(styles.container, className)}>[m
+[32m+[m[32m      <div className={styles.stepHeader}>[m
+[32m+[m[32m        <div className={styles.stepNumber}>{stepNumber}</div>[m
+[32m+[m[32m        <h4 className={styles.stepTitle}>{title}</h4>[m
+[32m+[m[32m      </div>[m
+[32m+[m[41m      [m
+[32m+[m[32m      <div className={styles.stepContent}>[m
+[32m+[m[32m        {children}[m
+[32m+[m[32m      </div>[m
+[32m+[m[41m      [m
+[32m+[m[32m      {showDivider && <div className={styles.divider} />}[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mexport default GuideStepItem;[m
+[1mdiff --git a/app/(anon)/mypage/_components/GuideResultSummary.tsx b/app/(anon)/mypage/_components/GuideResultSummary.tsx[m
+[1mindex 5586293..f67457a 100644[m
+[1m--- a/app/(anon)/mypage/_components/GuideResultSummary.tsx[m
+[1m+++ b/app/(anon)/mypage/_components/GuideResultSummary.tsx[m
+[36m@@ -12,7 +12,7 @@[m [mimport {[m
+ [m
+ import clsx from 'clsx';[m
+ [m
+[31m-import CircularIconBadge from '@/(anon)/_components/common/circular-icon-badges/CircularIconBadge';[m
+[32m+[m[32mimport CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';[m
+ import { styles } from './GuideResultSummary.styles';[m
+ [m
+ // Chart.js 컴포넌트 등록[m
+[1mdiff --git a/app/(anon)/mypage/_components/ResultAccordion.styles.ts b/app/(anon)/mypage/_components/ResultAccordion.styles.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d073ba1[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/mypage/_components/ResultAccordion.styles.ts[m
+[36m@@ -0,0 +1,15 @@[m
+[32m+[m[32mexport const styles = {[m
+[32m+[m[32m  container: "w-full bg-white overflow-hidden",[m
+[32m+[m[32m  header: "w-full px-4 py-3 flex items-center justify-between bg-white hover:bg-brand-light-gray transition-colors duration-200",[m
+[32m+[m[32m  title: "text-sm font-medium text-brand-black text-left flex items-center",[m
+[32m+[m[32m  stageNumber: "font-bold text-brand-black",[m
+[32m+[m[32m  subtitle: "font-normal text-brand-black ml-1",[m
+[32m+[m[32m  numbers: "flex items-center space-x-4 text-xs text-brand-black",[m
+[32m+[m[32m  numberItem: "w-4 text-center",[m
+[32m+[m[32m  icon: "w-5 h-5 text-brand-dark-gray",[m
+[32m+[m[32m  iconOpen: "w-5 h-5 text-brand-gold",[m
+[32m+[m[32m  content: "bg-brand-light-gray/20 border-t border-brand-light-gray/20 overflow-hidden transition-all duration-300 ease-in-out",[m
+[32m+[m[32m  contentClosed: "max-h-0 py-0 px-0 opacity-0 border-t-0",[m
+[32m+[m[32m  contentOpen: "max-h-[1000px] py-4 px-4 opacity-100",[m
+[32m+[m[32m  bottomBorder: "border-b border-brand-light-gray"[m
+[32m+[m[32m} as const;[m
+[1mdiff --git a/app/(anon)/mypage/_components/ResultAccordion.tsx b/app/(anon)/mypage/_components/ResultAccordion.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2255742[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/mypage/_components/ResultAccordion.tsx[m
+[36m@@ -0,0 +1,76 @@[m
+[32m+[m[32m'use client';[m
+[32m+[m
+[32m+[m[32mimport { useState } from 'react';[m
+[32m+[m[32mimport { ChevronDown, ChevronUp } from 'lucide-react';[m
+[32m+[m[32mimport clsx from 'clsx';[m
+[32m+[m[32mimport { styles } from './ResultAccordion.styles';[m
+[32m+[m
+[32m+[m[32mtype ResultAccordionProps = {[m
+[32m+[m[32m  stageNumber: string;[m
+[32m+[m[32m  subtitle: string;[m
+[32m+[m[32m  children: React.ReactNode;[m
+[32m+[m[32m  defaultOpen?: boolean;[m
+[32m+[m[32m  className?: string;[m
+[32m+[m[32m  numbers?: [string, string, string];[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mconst ResultAccordion = ({[m[41m [m
+[32m+[m[32m  stageNumber,[m[41m [m
+[32m+[m[32m  subtitle,[m[41m [m
+[32m+[m[32m  children,[m[41m [m
+[32m+[m[32m  defaultOpen = false,[m[41m [m
+[32m+[m[32m  className,[m
+[32m+[m[32m  numbers[m
+[32m+[m[32m}: ResultAccordionProps) => {[m
+[32m+[m[32m  const [isOpen, setIsOpen] = useState(defaultOpen);[m
+[32m+[m
+[32m+[m[32m  const toggleAccordion = () => {[m
+[32m+[m[32m    setIsOpen(!isOpen);[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className={clsx([m
+[32m+[m[32m      styles.container,[m[41m [m
+[32m+[m[32m      styles.bottomBorder,[m
+[32m+[m[32m      className[m
+[32m+[m[32m    )}>[m
+[32m+[m[32m      {/* Header */}[m
+[32m+[m[32m      <button[m
+[32m+[m[32m        onClick={toggleAccordion}[m
+[32m+[m[32m        className={styles.header}[m
+[32m+[m[32m      >[m
+[32m+[m[32m        <div className={styles.title}>[m
+[32m+[m[32m          <span className={styles.stageNumber}>{stageNumber}</span>[m
+[32m+[m[32m          <span className={styles.subtitle}>{subtitle}</span>[m
+[32m+[m[32m        </div>[m
+[32m+[m[41m        [m
+[32m+[m[32m        <div className="flex items-center space-x-6">[m
+[32m+[m[32m          {numbers && ([m
+[32m+[m[32m            <div className={styles.numbers}>[m
+[32m+[m[32m              <span className={styles.numberItem}>{numbers[0]}</span>[m
+[32m+[m[32m              <span className={styles.numberItem}>{numbers[1]}</span>[m
+[32m+[m[32m              <span className={styles.numberItem}>{numbers[2]}</span>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m          )}[m
+[32m+[m[32m          {isOpen ? ([m
+[32m+[m[32m            <ChevronUp className={styles.iconOpen} />[m
+[32m+[m[32m          ) : ([m
+[32m+[m[32m            <ChevronDown className={styles.icon} />[m
+[32m+[m[32m          )}[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </button>[m
+[32m+[m
+[32m+[m[32m      {/* Content with Animation */}[m
+[32m+[m[32m      <div[m[41m [m
+[32m+[m[32m        className={clsx([m
+[32m+[m[32m          styles.content,[m
+[32m+[m[32m          isOpen ? styles.contentOpen : styles.contentClosed[m
+[32m+[m[32m        )}[m
+[32m+[m[32m      >[m
+[32m+[m[32m        {children}[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32mexport default ResultAccordion;[m
+[1mdiff --git a/app/(anon)/mypage/mypage.module.css b/app/(anon)/mypage/mypage.module.css[m
+[1mdeleted file mode 100644[m
+[1mindex e69de29..0000000[m
+[1mdiff --git a/app/(anon)/mypage/page.styles.ts b/app/(anon)/mypage/page.styles.ts[m
+[1mnew file mode 100644[m
+[1mindex 0000000..95c9339[m
+[1m--- /dev/null[m
+[1m+++ b/app/(anon)/mypage/page.styles.ts[m
+[36m@@ -0,0 +1,16 @@[m
+[32m+[m[32mexport const styles = {[m
+[32m+[m[32m  // 메인 컨테이너[m
+[32m+[m[32m  mainContainer: "min-h-screen bg-gray-50 py-8",[m
+[32m+[m[32m  container: "container mx-auto px-4",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // 제목[m
+[32m+[m[32m  title: "text-2xl font-bold text-gray-900 mb-8 text-center",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // 결과 아코디언 섹션[m
+[32m+[m[32m  accordionSection: "mt-8",[m
+[32m+[m[32m  accordionTitle: "text-xl font-semibold text-gray-900 mb-4",[m
+[32m+[m[41m  [m
+[32m+[m[32m  // 임시 콘텐츠[m
+[32m+[m[32m  tempContent: "space-y-3",[m
+[32m+[m[32m  tempText: "text-gray-700"[m
+[32m+[m[32m} as const;[m
+[1mdiff --git a/app/(anon)/mypage/page.tsx b/app/(anon)/mypage/page.tsx[m
+[1mindex 2c9069b..78520ba 100644[m
+[1m--- a/app/(anon)/mypage/page.tsx[m
+[1m+++ b/app/(anon)/mypage/page.tsx[m
+[36m@@ -1,4 +1,10 @@[m
+ import GuideResultSummary from './_components/GuideResultSummary';[m
+[32m+[

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import styles from '@/page.module.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Splash from '@/(anon)/_components/onboarding/Splash';
 import PWAInstallPrompt from '@/(anon)/_components/common/PWAInstallPrompt';
 import ModelPreloader from '@/(anon)/_components/common/ModelPreloader';

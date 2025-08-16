@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 
 interface DragState {
   isDragging: boolean;
@@ -67,7 +67,7 @@ export const useDragToClose = (isOpen: boolean, onClose: () => void) => {
     }));
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragState.isDragging) return;
 
     const deltaY = e.clientY - dragState.startY;
@@ -80,9 +80,9 @@ export const useDragToClose = (isOpen: boolean, onClose: () => void) => {
         currentY: e.clientY,
       }));
     }
-  };
+  }, [dragState.isDragging, dragState.startY]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (!dragState.isDragging) return;
 
     setDragState((prev) => ({ ...prev, isDragging: false }));
@@ -95,7 +95,7 @@ export const useDragToClose = (isOpen: boolean, onClose: () => void) => {
       // 원래 위치로 복귀
       setDragState((prev) => ({ ...prev, translateY: 0 }));
     }
-  };
+  }, [dragState.isDragging, dragState.currentY, dragState.startY, onClose]);
 
   // 전역 마우스 이벤트 리스너
   useEffect(() => {
@@ -112,7 +112,7 @@ export const useDragToClose = (isOpen: boolean, onClose: () => void) => {
         document.removeEventListener('mouseup', handleGlobalMouseUp);
       };
     }
-  }, [dragState.isDragging]);
+  }, [dragState.isDragging, handleMouseMove, handleMouseUp]);
 
   // 모달이 열릴 때 translateY 초기화
   useEffect(() => {

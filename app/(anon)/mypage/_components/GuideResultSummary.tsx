@@ -12,7 +12,7 @@ import {
 
 import clsx from 'clsx';
 
-import CircularIconBadge from '@/(anon)/_components/common/circular-icon-badges/CircularIconBadge';
+import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { styles } from './GuideResultSummary.styles';
 
 // Chart.js 컴포넌트 등록
@@ -34,8 +34,6 @@ export default function GuideResultSummary({
   
   // 각 항목의 비율 계산 (퍼센트)
   const matchPercentage = total > 0 ? Math.round((match / total) * 100) : 0;
-  const mismatchPercentage = total > 0 ? Math.round((mismatch / total) * 100) : 0;
-  const uncheckedPercentage = total > 0 ? Math.round((unchecked / total) * 100) : 0;
 
   // Chart.js 데이터 설정
   const chartData = {

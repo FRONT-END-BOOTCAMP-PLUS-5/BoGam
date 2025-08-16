@@ -53,7 +53,7 @@ export default function RealEstateCopyTestPage() {
         err &&
         typeof err === 'object' &&
         'response' in err &&
-        (err as any).response?.status === 404
+        (err as { response?: { status?: number } }).response?.status === 404
       ) {
         setRealEstateCopy(null);
         setError('해당 사용자 주소의 등기부등본을 찾을 수 없습니다.');
