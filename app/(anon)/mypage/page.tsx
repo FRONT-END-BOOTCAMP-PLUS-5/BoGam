@@ -3,6 +3,7 @@ import ResultAccordion from './_components/ResultAccordion';
 import GuideStepItem from '@/(anon)/_components/common/guideStepItem/GuideStepItem';
 import GuideStepRow from '@/(anon)/_components/common/guideStepContent/GuideStepRow';
 import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideStepText';
+import GuideStepContent from '@/(anon)/_components/common/guideStepContent/GuideStepContent';
 import { styles } from './page.styles';
 
 export default function MyPage() {
@@ -54,14 +55,14 @@ export default function MyPage() {
             </GuideStepItem>
 
             <GuideStepItem stepNumber="3-3" title="공제증서 발급 안내">
-              <GuideStepRow iconType="mismatch">
-                <GuideStepText>
-                  공제증서 발급 요건이 불충족되었습니다.
-                </GuideStepText>
-              </GuideStepRow>
-              <GuideStepRow iconType="link" href="http://localhost:3000/">
-                온라인 서비스로 이동하기
-              </GuideStepRow>
+                <GuideStepRow iconType="mismatch">
+                  <GuideStepText>
+                    공제증서 발급 요건이 불충족되었습니다.
+                  </GuideStepText>
+                </GuideStepRow>
+                <GuideStepRow iconType="link" href="http://localhost:3000/">
+                  온라인 서비스로 이동하기
+                </GuideStepRow>
             </GuideStepItem>
           </ResultAccordion>
 
