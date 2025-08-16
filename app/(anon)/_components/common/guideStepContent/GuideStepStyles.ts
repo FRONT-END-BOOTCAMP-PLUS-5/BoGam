@@ -7,15 +7,16 @@ export const styles = {
   
   // Row 컴포넌트 (들여쓰기 포함)
   row: "flex items-center space-x-3 pl-6",
+  iconContainer: "flex-shrink-0",
   content: "flex-1",
   
   // Text 컴포넌트
-  text: "text-gray-700",
+  text: "text-sm text-gray-700",
   
   // MultiLineText 컴포넌트
-  multiLineText: "space-y-1",
+  multiLineText: "text-sm space-y-1",
   
   // Link 컴포넌트 (들여쓰기 포함)
   linkRow: "flex items-center space-x-2 underline cursor-pointer pl-6",
-  linkText: "text-brand underline cursor-pointer"
+  linkText: "text-sm text-brand underline cursor-pointer"
 } as const;

@@ -3,8 +3,6 @@ import ResultAccordion from './_components/ResultAccordion';
 import GuideStepItem from '@/(anon)/_components/common/guideStepItem/GuideStepItem';
 import GuideStepRow from '@/(anon)/_components/common/guideStepContent/GuideStepRow';
 import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideStepText';
-import GuideStepMultiLineText from '@/(anon)/_components/common/guideStepContent/GuideStepMultiLineText';
-import GuideStepLink from '@/(anon)/_components/common/guideStepContent/GuideStepLink';
 import { styles } from './page.styles';
 
 export default function MyPage() {
@@ -47,11 +45,11 @@ export default function MyPage() {
 
             <GuideStepItem stepNumber="3-2" title="최우선변제 금액 안내" showDivider={true}>
               <GuideStepRow iconType="unchecked">
-                <GuideStepMultiLineText>
+                <GuideStepText>
                   <p>서울특별시</p>
                   <p>소액보증금 범위 : 1억 5천만원 이하</p>
                   <p>최우선변제금액 : 5천만원</p>
-                </GuideStepMultiLineText>
+                </GuideStepText>
               </GuideStepRow>
             </GuideStepItem>
 
@@ -61,9 +59,9 @@ export default function MyPage() {
                   공제증서 발급 요건이 불충족되었습니다.
                 </GuideStepText>
               </GuideStepRow>
-              <GuideStepLink href="http://localhost:3000/">
+              <GuideStepRow iconType="link" href="http://localhost:3000/">
                 온라인 서비스로 이동하기
-              </GuideStepLink>
+              </GuideStepRow>
             </GuideStepItem>
           </ResultAccordion>
 

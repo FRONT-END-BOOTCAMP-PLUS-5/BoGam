@@ -6,14 +6,15 @@ import { styles } from './GuideStepStyles';
 
 type GuideStepTextProps = {
   children: ReactNode;
+  multiLine?: boolean;
   className?: string;
 };
 
-const GuideStepText = ({ children, className }: GuideStepTextProps) => {
+const GuideStepText = ({ children, multiLine = false, className }: GuideStepTextProps) => {
   return (
-    <span className={clsx(styles.text, className)}>
+    <div className={clsx(multiLine ? styles.multiLineText : styles.text, className)}>
       {children}
-    </span>
+    </div>
   );
 };
 
