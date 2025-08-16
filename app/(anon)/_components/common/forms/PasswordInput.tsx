@@ -10,29 +10,30 @@ type Props = {
   id: string;
   placeholder?: string;
   error?: boolean;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
 export default function PasswordInput({
   id,
   placeholder,
   error,
-  onChange,
+  ...rest
 }: Props) {
   const [show, setShow] = useState(false);
+
   return (
     <div className='relative'>
       <input
         id={id}
+        name={rest.name}
         type={show ? 'text' : 'password'}
         placeholder={placeholder}
-        onChange={onChange}
         className={[
           styles.inputBase,
           error ? styles.inputError : '',
           'pr-10',
         ].join(' ')}
         autoComplete='new-password'
+        {...rest} // ✅ register로 받은 속성들 전달
       />
       <button
         type='button'
