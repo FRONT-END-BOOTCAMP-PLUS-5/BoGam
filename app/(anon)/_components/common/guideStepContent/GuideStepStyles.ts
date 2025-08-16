@@ -11,7 +11,7 @@ export const styles = {
   content: "flex-1",
   
   // Text 컴포넌트
-  text: "text-sm text-gray-700",
+  text: "text-sm text-brand-black",
   
   // MultiLineText 컴포넌트
   multiLineText: "text-sm space-y-1",
