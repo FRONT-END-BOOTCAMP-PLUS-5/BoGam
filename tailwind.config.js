@@ -19,7 +19,7 @@ module.exports = {
           green: '#4fa373',
           gold: '#a68a56',
           shadow: '#4b72a659',
-          error: '#c24a4a'
+          error: '#c24a4a',
         },
       },
       keyframes: {

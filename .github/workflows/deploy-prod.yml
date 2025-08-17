@@ -1,84 +1,162 @@
-name: Deploy (Production)
+name: Deploy (Production - Single Instance, Stop→Start)
 
 on:
   push:
     branches: [main]
+  workflow_dispatch: {}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      # 0) SSH 접속 확인 + /BoGam 진입 체크 (별도 세션)
+      - name: SSH connectivity check (password) & cd /BoGam
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }} # 예: rland.co.kr
+          port: ${{ secrets.SSH_PORT }} # 예: 23
+          username: ${{ secrets.SSH_USER }} # 예: bogam123
+          password: ${{ secrets.SSH_PASSWORD }} # 비밀번호 로그인
+          script_stop: true
+          debug: true
+          command_timeout: 5m
+          script: |
+            set -e
+            echo "Connected as: $(whoami)"
+            cd /BoGam
+            echo "PWD: $(pwd)"
+            ls -la | head -n 30
 
-      - name: Deploy to Production via SSH
+      # 1) 실제 배포 (Stop→Start, 단일 인스턴스, HTTPS clone)
+      - name: Deploy via SSH (HTTPS clone, Stop→Start, single instance)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script_stop: true
           command_timeout: 30m
+          debug: true
           script: |
-            set -e
+            # 접속 직후: 새 세션이므로 다시 /BoGam 진입
+            cd /BoGam
+
+            set -euo pipefail
+
             APP_NAME=bogam-app
             PORT=3121
-            WORKDIR=${WORKDIR:-/home/${{ secrets.SSH_USER }}/BoGam}
+            BRANCH=main
 
-            cd "${WORKDIR}"
+            BASE=/home/${{ secrets.SSH_USER }}/bogam
+            RELEASES="$BASE/releases"
+            CURRENT="$BASE/current"
+            PROJECT_ENTRY="/home/${{ secrets.SSH_USER }}/BoGam"
+            ENV_SRC="$BASE/env/.env"
 
-            echo "[1/6] Git pull"
-            git fetch --all --prune
-            git checkout main
-            git pull origin main --ff-only
-
-            echo "[2/6] Install dependencies"
-            rm -rf node_modules
-            npm ci
-
-            echo "[3/6] Prisma"
-            npx prisma generate
-            npx prisma migrate deploy
-
-            echo "[4/6] Build"
-            rm -rf .next
-            npm run build
-
-            echo "[5/6] PM2 reload/start"
-            if pm2 describe "${APP_NAME}" > /dev/null; then
-              pm2 reload "${APP_NAME}"
+            # HTTPS clone (private이면 서버에 ~/.secrets/repo_token 파일로 PAT 보관)
+            REPO_OWNER=FRONT-END-BOOTCAMP-PLUS-5
+            REPO_NAME=BoGam
+            if [ -f ~/.secrets/repo_token ]; then
+              REPO_TOKEN=$(cat ~/.secrets/repo_token)
+              REPO_URL="https://${REPO_TOKEN}@github.com/${REPO_OWNER}/${REPO_NAME}.git"
             else
-              pm2 start npm --name "${APP_NAME}" -- start -- -p ${PORT} -H 0.0.0.0
+              REPO_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}.git"
             fi
+
+            mkdir -p "$RELEASES" "$BASE/env"
+            if [ ! -f "$ENV_SRC" ]; then
+              echo "❌ $ENV_SRC 없음(.env 먼저 준비)"; exit 1
+            fi
+
+            echo "[1/9] 최신 커밋 해시 조회"
+            SHA=$(git ls-remote "$REPO_URL" "$BRANCH" | awk '{print $1}')
+            if [ -z "${SHA:-}" ]; then
+              echo "❌ git ls-remote 실패(토큰/권한 확인)"; exit 1
+            fi
+            NEW="$RELEASES/$SHA"
+
+            if [ ! -d "$NEW" ]; then
+              echo "[2/9] 클론"
+              git clone -b "$BRANCH" --depth=1 "$REPO_URL" "$NEW"
+
+              echo "[3/9] .env 복사(프로젝트 루트 필수)"
+              cp "$ENV_SRC" "$NEW/.env"
+
+              echo "[4/9] 의존성 설치"
+              cd "$NEW"
+              npm ci
+
+              echo "[5/9] Prisma 마이그레이션"
+              npx prisma migrate deploy
+
+              echo "[6/9] 빌드 (package.json: prisma generate && next build)"
+              npm run build
+            fi
+
+            echo "[7/9] 링크 전환 (current -> 새 릴리즈, ~/BoGam -> current)"
+            ln -sfn "$NEW" "$CURRENT"
+            if [ -d "$PROJECT_ENTRY" ] && [ ! -L "$PROJECT_ENTRY" ]; then
+              mv "$PROJECT_ENTRY" "${PROJECT_ENTRY}.bak-$(date +%Y%m%d%H%M%S)"
+            fi
+            ln -sfn "$CURRENT" "$PROJECT_ENTRY"
+
+            echo "[8/9] 기존 PM2 앱 삭제 → 포트 해제 대기 → 단일(fork) 시작"
+            pm2 delete "$APP_NAME" || true
+
+            # 3121 포트 완전 해제 대기(최대 10초)
+            for i in $(seq 1 10); do
+              if ss -ltnp 2>/dev/null | grep -q ":${PORT} "; then
+                sleep 1
+              else
+                break
+              fi
+            done
+
+            export NODE_ENV=production
+            pm2 start npm \
+              --name "$APP_NAME" \
+              --cwd "$PROJECT_ENTRY" \
+              -- start -- -p ${PORT} -H 0.0.0.0
+
             pm2 save
 
-            echo "[6/6] Health check"
-            curl -fsS "http://127.0.0.1:${PORT}/" > /dev/null || (echo "❌ Health check failed" && exit 1)
+            echo "[9/9] 헬스체크(/) 60초 재시도"
+            for i in $(seq 1 60); do
+              if curl -fsS "http://127.0.0.1:${PORT}/" >/dev/null; then
+                echo "✅ 배포 완료 (fork / 1 instance)"
+                exit 0
+              fi
+              sleep 1
+            done
+            echo "❌ Health check failed after 60s"
+            exit 1
 
-      - name: Show PM2 status (always)
+      # 2) 상태 출력 (항상)
+      - name: PM2 status (always)
         if: always()
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             pm2 list
             pm2 describe bogam-app || true
 
-      - name: Tail PM2 logs on failure
+      # 3) 실패 시 로그
+      - name: PM2 logs on failure
         if: failure()
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             echo "=== STDOUT ==="
             pm2 logs bogam-app --lines 200 || true
-            echo "=== STDERR (err only) ==="
+            echo "=== STDERR ==="
             pm2 logs bogam-app --err --lines 200 || true
