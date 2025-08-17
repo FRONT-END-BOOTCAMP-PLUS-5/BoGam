@@ -25,33 +25,32 @@ export class GetTransactionDetailListUsecase {
   async getTransactionDetailList(
     request: GetTransactionDetailQueryDto & GetTransactionDetailRequestDto
   ): Promise<GetTransactionDetailResponseDto> {
-    if (request.type === 'apart') {
-      // Apart 타입 처리
-      if (!request.apartType || !request.buildingCode) {
-        throw new Error(
-          'Apart 타입 조회 시 apartType과 buildingCode는 필수입니다.'
-        );
+    if (request.category === 'apart') {
+      // Apart 카테고리 처리
+      if (!request.buildingCode) {
+        throw new Error('Apart 카테고리 조회 시 buildingCode는 필수입니다.');
       }
 
       const apartRequest = {
-        organization: '0010',
-        type: request.apartType,
+        organization: request.organization,
+        type: request.type,
         buildingCode: request.buildingCode,
         contractYear: request.contractYear,
         contractType: request.contractType,
       };
 
       return this.apartRepository.getTransactionDetailApartList(apartRequest);
-    } else if (request.type === 'single') {
-      // Single 타입 처리
+    } else if (request.category === 'single') {
+      // Single 카테고리 처리
       if (!request.addrSido || !request.addrSigungu || !request.addrDong) {
         throw new Error(
-          'Single 타입 조회 시 addrSido, addrSigungu, addrDong은 필수입니다.'
+          'Single 카테고리 조회 시 addrSido, addrSigungu, addrDong은 필수입니다.'
         );
       }
 
       const singleRequest = {
         organization: request.organization,
+        type: request.type,
         addrSido: request.addrSido,
         addrSigungu: request.addrSigungu,
         addrDong: request.addrDong,
@@ -63,7 +62,7 @@ export class GetTransactionDetailListUsecase {
         singleRequest
       );
     } else {
-      throw new Error('type은 "apart" 또는 "single"이어야 합니다.');
+      throw new Error('category는 "apart" 또는 "single"이어야 합니다.');
     }
   }
 
