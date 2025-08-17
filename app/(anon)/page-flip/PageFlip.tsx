@@ -184,7 +184,7 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
                     front.setAttribute('data-side', 'front');
                     const back = document.createElement('div');
                     back.setAttribute('data-side', 'back');
-                    back.style.background = 'white';
+                    back.setAttribute('style', 'background: red !important; color: red !important;');
 
                     container.insertBefore(wrapper, frontEl);
                     wrapper.appendChild(front);
