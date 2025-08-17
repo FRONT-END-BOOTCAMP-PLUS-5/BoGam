@@ -1,107 +1,83 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { GLTFLoader, GLTF } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { initializeCommonGLTFLoader, loadModelFromCache } from '@utils/gltfTextureLoaders';
-import axios from 'axios';
+import { GLTF } from 'three/addons/loaders/GLTFLoader.js';
+import { useLoaders } from '@utils/useLoaders';
+import type { ThreeEvent } from '@react-three/fiber';
 
 interface BookshelfProps {
-  position?: THREE.Vector3;
-  rotation?: THREE.Euler;
-  scale?: THREE.Vector3;
-  renderer?: THREE.WebGLRenderer; // WebGL 렌더러 (KTX2 지원 감지용)
+  position?: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number, number];
 }
 
-export const createBookshelf = (props: BookshelfProps = {}): Promise<THREE.Group> => {
-  const {
-    position = new THREE.Vector3(0, 0, 0),
-    rotation = new THREE.Euler(0, 0, 0),
-    scale = new THREE.Vector3(1, 1, 1),
-    renderer
-  } = props;
+export default function Bookshelf({
+  position = [0, 4, -5],
+  rotation = [0, 0, 0],
+  scale = [30, 30, 30]
+}: BookshelfProps) {
+  // KTX2 로더 초기화 (모델에 KTX2 텍스처가 포함되어 있음)
+  const { ktx2, gltf: gltfLoader } = useLoaders();
+  const modelRef = useRef<THREE.Group>(null);
 
-  const startTime = Date.now();
-  console.log(`[Bookshelf] 로딩 시작: ${new Date(startTime).toLocaleTimeString()}`);
+  const [scene, setScene] = useState<THREE.Group | null>(null);
 
-  return new Promise(async (resolve, reject) => {
-    try {
-      // 1. 공통 로더 초기화
-      const loader = initializeCommonGLTFLoader(renderer);
+  // 모델 로딩
+  useEffect(() => {
+    if (!gltfLoader || !ktx2) return;
+
+    gltfLoader.load(
+      '/models/optimized/bookshelf-draco-ktx.glb',
+      (loadedGltf: GLTF) => {
+        setScene(loadedGltf.scene);
+      },
+      undefined,
+      (error: unknown) => {
+        console.error('Bookshelf 모델 로딩 실패:', error);
+      }
+    );
+  }, [gltfLoader, ktx2]);
+
+  // 모델 로딩 완료 시 초기 설정
+  useEffect(() => {
+    if (scene && modelRef.current) {
+      // 모델 스케일과 위치, 회전 조정
+      modelRef.current.scale.set(...scale);
+      modelRef.current.position.set(...position);
+      modelRef.current.rotation.set(...rotation);
       
-             // 2. 캐시 우선 모델 로더 사용 (캐시에 있으면 캐시에서, 없으면 다운로드)
-       console.log('[Bookshelf] 모델 데이터 로드 시작');
-       const modelData = await loadModelFromCache('/models/optimized/bookshelf-draco-ktx.glb');
-       console.log('[Bookshelf] 모델 데이터 로드 완료');
-      
-      console.log('[Bookshelf] 모델 파싱 시작:', '/models/optimized/bookshelf-draco-ktx.glb');
-      
-      // 3. Blob URL 생성 (모델별로 새로 생성)
-      const blob = new Blob([modelData], { type: 'model/gltf-binary' });
-      const blobUrl = URL.createObjectURL(blob);
-      
-      loader.load(
-        blobUrl,
-        (gltf: GLTF) => {
-          try {
-            // Blob URL 정리
-            URL.revokeObjectURL(blobUrl);
-            
-            const bookshelfGroup = new THREE.Group();
-            const bookshelfModel = gltf.scene;
-            
-            // 모델 스케일 조정
-            bookshelfModel.scale.copy(scale);
-            
-            // 모델에 그림자 설정
-            bookshelfModel.traverse((child: THREE.Object3D) => {
-              if (child instanceof THREE.Mesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-                
-                // 재질이 있는 경우에만 처리
-                if (child.material && Array.isArray(child.material)) {
-                  child.material.forEach((material: THREE.Material) => {
-                    if (material instanceof THREE.MeshStandardMaterial) {
-                      material.needsUpdate = true;
-                    }
-                  });
-                } else if (child.material && child.material instanceof THREE.MeshStandardMaterial) {
-                  child.material.needsUpdate = true;
-                }
+      // 모델에 그림자 설정
+      scene.traverse((child: THREE.Object3D) => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+          
+          // 재질이 있는 경우에만 처리
+          if (child.material && Array.isArray(child.material)) {
+            child.material.forEach((material: THREE.Material) => {
+              if (material instanceof THREE.MeshStandardMaterial) {
+                material.needsUpdate = true;
               }
             });
-            
-            // 위치와 회전 설정
-            bookshelfGroup.position.copy(position);
-            bookshelfGroup.rotation.copy(rotation);
-            bookshelfGroup.add(bookshelfModel);
-            
-            const endTime = Date.now();
-            const totalTime = endTime - startTime;
-            console.log(`[Bookshelf] 로딩 완료: ${totalTime}ms`);
-            
-            resolve(bookshelfGroup);
-          } catch (error) {
-            // Blob URL 정리
-            URL.revokeObjectURL(blobUrl);
-            console.error('Error processing bookshelf model:', error);
-            reject(error);
+          } else if (child.material && child.material instanceof THREE.MeshStandardMaterial) {
+            child.material.needsUpdate = true;
           }
-        },
-        (progress: ProgressEvent) => {
-          // 로딩 진행률 로그 (필요시 활성화)
-          // console.log('Loading progress:', (progress.loaded / progress.total) * 100, '%');
-        },
-        (error: unknown) => {
-          // Blob URL 정리
-          URL.revokeObjectURL(blobUrl);
-          console.error('Error loading bookshelf model:', error);
-          reject(error);
         }
-      );
-    } catch (error) {
-      console.error('[Bookshelf] 모델 로딩 중 오류:', error);
-      reject(error);
+      });
     }
-  });
-};
+  }, [scene, position, rotation, scale]);
+
+  if (!scene) {
+    return null;
+  }
+
+  return (
+    <primitive 
+      object={scene} 
+      ref={modelRef}
+      onPointerOver={(e: ThreeEvent<MouseEvent>) => {
+           // 이벤트 전파 중단
+           e.stopPropagation();
+      }}
+    />
+  );
+}

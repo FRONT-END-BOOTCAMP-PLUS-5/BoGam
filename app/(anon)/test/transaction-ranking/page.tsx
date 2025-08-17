@@ -6,7 +6,7 @@ import styles from './page.module.css';
 interface ApiResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
   sortedData?: Array<{
     item: {
       aptNm?: string;
