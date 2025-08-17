@@ -8,9 +8,7 @@ export default function Steps() {
   const [isAllBooksLoaded, setIsAllBooksLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
 
-  const handleBookClick = (bookId: number) => {
-    console.log(`📚 ${bookId}단계 클릭됨!`);
-  };
+
 
   const handleAllBooksLoaded = () => {
     setIsAllBooksLoaded(true);
@@ -27,7 +25,6 @@ export default function Steps() {
       {/* 메인 콘텐츠 */}
       <div className={stepsStyles.mainContent}>
         <BookLayout 
-          onBookClick={handleBookClick} 
           onAllBooksLoaded={handleAllBooksLoaded}
           onLoadingProgress={handleLoadingProgress}
         />

@@ -5,12 +5,11 @@ import BookCanvas from './BookCanvas';
 import { styles, getTextBoxClass } from './BookLayout.styles';
 
 interface BookLayoutProps {
-  onBookClick?: (bookId: number) => void;
   onAllBooksLoaded?: () => void;
   onLoadingProgress?: (progress: number) => void;
 }
 
-export default function BookLayout({ onBookClick, onAllBooksLoaded, onLoadingProgress }: BookLayoutProps) {
+export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: BookLayoutProps) {
   const [loadedBooks, setLoadedBooks] = useState<Set<number>>(new Set());
   const [ , setIsAllBooksLoaded] = useState(false);
 
@@ -103,7 +102,6 @@ export default function BookLayout({ onBookClick, onAllBooksLoaded, onLoadingPro
             <div key={book.id} className={styles.bookItem}>
               <BookCanvas 
                 bookId={book.id}
-                onBookClick={onBookClick}
                 onLoadingComplete={() => handleBookLoad(book.id)}
               />
               <div className={getTextBoxClass(isOdd)}>
@@ -132,7 +130,6 @@ export default function BookLayout({ onBookClick, onAllBooksLoaded, onLoadingPro
             <div key={book.id} className={styles.bookItem}>
               <BookCanvas 
                 bookId={book.id}
-                onBookClick={onBookClick}
                 onLoadingComplete={() => handleBookLoad(book.id)}
               />
               <div className={getTextBoxClass(isOdd)}>

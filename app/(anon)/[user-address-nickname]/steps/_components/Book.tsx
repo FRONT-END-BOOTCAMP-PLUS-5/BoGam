@@ -9,13 +9,11 @@ import type { ThreeEvent } from '@react-three/fiber';
 
 interface BookProps {
   bookId: number;
-  onBookClick?: (bookId: number) => void;
   onLoad?: () => void;
 }
 
 export default function Book({ 
   bookId,
-  onBookClick,
   onLoad
 }: BookProps) {
   const router = useRouter(); // Next.js 라우터 추가
@@ -159,10 +157,7 @@ export default function Book({
             action.stop();
             setIsOpen(true); // 열린 상태로 변경
             
-            // 애니메이션 완료 후 콜백 호출
-            if (onBookClick) {
-              onBookClick(bookId);
-            }
+            
             
             // 해당 step 페이지로 이동
             navigateToStep();

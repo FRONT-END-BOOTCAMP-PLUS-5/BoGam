@@ -7,13 +7,11 @@ import { disposeAllLoaders } from '@utils/useLoaders';
 
 interface BookCanvasProps {
   bookId: number;
-  onBookClick?: (bookId: number) => void;
   onLoadingComplete?: () => void;
 }
 
 export default function BookCanvas({ 
   bookId, 
-  onBookClick,
   onLoadingComplete
 }: BookCanvasProps) {
   // 고정된 크기 설정
@@ -116,10 +114,9 @@ export default function BookCanvas({
             
             {/* 책 렌더링 */}
             <Book
-              bookId={bookId}
-              onBookClick={onBookClick}
-              onLoad={handleBookLoad}
-            />
+               bookId={bookId}
+               onLoad={handleBookLoad}
+             />
             
           </Suspense>
         </Canvas>
