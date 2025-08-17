@@ -1,21 +1,24 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Book from './Book';
 import { disposeAllLoaders } from '@utils/useLoaders';
 
 interface BookCanvasProps {
   bookId: number;
   onBookClick?: (bookId: number) => void;
+  onLoadingComplete?: () => void;
 }
 
 export default function BookCanvas({ 
   bookId, 
-  onBookClick
+  onBookClick,
+  onLoadingComplete
 }: BookCanvasProps) {
   // 고정된 크기 설정
   const height = 150;
+  const [ , setIsBookLoaded] = useState(false);
 
   // 컴포넌트 언마운트 시 모든 로더 정리
   useEffect(() => {
@@ -23,6 +26,14 @@ export default function BookCanvas({
       disposeAllLoaders();
     };
   }, []);
+
+  // 책 로딩 완료 시 콜백 호출
+  const handleBookLoad = () => {
+    setIsBookLoaded(true);
+    if (onLoadingComplete) {
+      onLoadingComplete();
+    }
+  };
 
   return (
     <div className="w-full">
@@ -107,6 +118,7 @@ export default function BookCanvas({
             <Book
               bookId={bookId}
               onBookClick={onBookClick}
+              onLoad={handleBookLoad}
             />
             
           </Suspense>

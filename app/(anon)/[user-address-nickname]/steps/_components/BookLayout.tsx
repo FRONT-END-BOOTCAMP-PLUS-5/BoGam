@@ -1,13 +1,19 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import BookCanvas from './BookCanvas';
 import { styles, getTextBoxClass } from './BookLayout.styles';
 
 interface BookLayoutProps {
   onBookClick?: (bookId: number) => void;
+  onAllBooksLoaded?: () => void;
+  onLoadingProgress?: (progress: number) => void;
 }
 
-export default function BookLayout({ onBookClick }: BookLayoutProps) {
+export default function BookLayout({ onBookClick, onAllBooksLoaded, onLoadingProgress }: BookLayoutProps) {
+  const [loadedBooks, setLoadedBooks] = useState<Set<number>>(new Set());
+  const [ , setIsAllBooksLoaded] = useState(false);
+
   // 7개 책 데이터 정의 - 모든 책을 medium 크기로 고정
   const books = [
     {
@@ -54,9 +60,37 @@ export default function BookLayout({ onBookClick }: BookLayoutProps) {
     }
   ];
 
+  // 책 로딩 완료 핸들러
+  const handleBookLoad = (bookId: number) => {
+    setLoadedBooks(prev => {
+      const newSet = new Set(prev);
+      newSet.add(bookId);
+      return newSet;
+    });
+  };
+
+  // 진행률을 상위 컴포넌트로 전달하는 useEffect
+  useEffect(() => {
+    if (onLoadingProgress && loadedBooks.size > 0) {
+      onLoadingProgress(loadedBooks.size);
+    }
+  }, [loadedBooks.size, onLoadingProgress]);
+
+  // 모든 책이 로딩되었는지 확인
+  useEffect(() => {
+    if (loadedBooks.size === books.length) {
+      setIsAllBooksLoaded(true);
+      if (onAllBooksLoaded) {
+        onAllBooksLoaded();
+      }
+    }
+  }, [loadedBooks, books.length, onAllBooksLoaded]);
+
   // 고정된 크기 설정
   return (
     <div className={styles.container}>
+
+
       {/* 계약전 섹션 */}
       <div className={styles.sectionLabel}>계약전</div>
       
@@ -70,6 +104,7 @@ export default function BookLayout({ onBookClick }: BookLayoutProps) {
               <BookCanvas 
                 bookId={book.id}
                 onBookClick={onBookClick}
+                onLoadingComplete={() => handleBookLoad(book.id)}
               />
               <div className={getTextBoxClass(isOdd)}>
                 <div className={styles.bookTitle}>{book.title}</div>
@@ -98,6 +133,7 @@ export default function BookLayout({ onBookClick }: BookLayoutProps) {
               <BookCanvas 
                 bookId={book.id}
                 onBookClick={onBookClick}
+                onLoadingComplete={() => handleBookLoad(book.id)}
               />
               <div className={getTextBoxClass(isOdd)}>
                 <div className={styles.bookTitle}>{book.title}</div>

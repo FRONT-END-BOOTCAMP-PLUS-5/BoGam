@@ -5,15 +5,18 @@ import * as THREE from 'three';
 import { GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import gsap from 'gsap';
 import { useLoaders } from '@utils/useLoaders';
+import type { ThreeEvent } from '@react-three/fiber';
 
 interface BookProps {
   bookId: number;
   onBookClick?: (bookId: number) => void;
+  onLoad?: () => void;
 }
 
 export default function Book({ 
   bookId,
-  onBookClick
+  onBookClick,
+  onLoad
 }: BookProps) {
   const router = useRouter(); // Next.js 라우터 추가
   
@@ -76,12 +79,17 @@ export default function Book({
               }
             });
             
-            // 텍스처 로딩 완료 상태 설정
-            setIsTextureLoaded(true);
-          }
-          
-          setGltf(loadedGltf);
-          setIsLoading(false);
+                      // 텍스처 로딩 완료 상태 설정
+          setIsTextureLoaded(true);
+        }
+        
+        setGltf(loadedGltf);
+        setIsLoading(false);
+        
+        // 로딩 완료 시 콜백 호출
+        if (onLoad) {
+          onLoad();
+        }
         } catch (error) {
           console.error('텍스처 변경 중 오류:', error);
           setIsTextureLoaded(false);
@@ -97,7 +105,7 @@ export default function Book({
         setIsLoading(false);
       }
     );
-  }, [gltfLoader, bookId, ktx2, textureNumber]);
+  }, [gltfLoader, bookId, ktx2, textureNumber, onLoad]);
 
   // 애니메이션 완료 후 해당 step 페이지로 이동
   const navigateToStep = () => {
@@ -196,7 +204,10 @@ export default function Book({
   };
 
   // GSAP 클릭 핸들러 - 토글 방식
-  const handleClick = () => {
+  const handleClick = (event: ThreeEvent<MouseEvent>) => {
+    // 이벤트 전파 완전 차단 - 뒤에 있는 책으로 이벤트 전파 안됨
+    event.stopPropagation();
+    
     if (isAnimating || !modelRef.current) return;
     
     setIsAnimating(true);
@@ -252,10 +263,45 @@ export default function Book({
   }
 
   return (
-    <primitive 
-      object={gltf.scene} 
-      ref={modelRef}
-      onClick={handleClick}
-    />
+    <group ref={modelRef}>
+      <primitive 
+        object={gltf.scene} 
+        onClick={handleClick}
+        onPointerOver={(e: ThreeEvent<MouseEvent>) => {
+          // 이벤트 전파 완전 차단 - 뒤에 있는 책으로 호버 이벤트 전파 안됨
+          e.stopPropagation();
+          
+          // 호버된 메시만 효과 적용 (자식들에 전파하지 않음)
+          if (e.object instanceof THREE.Mesh && e.object.material) {
+            if (Array.isArray(e.object.material)) {
+              e.object.material.forEach((mat: THREE.Material) => {
+                if (mat instanceof THREE.MeshStandardMaterial) {
+                  mat.emissive = new THREE.Color(0x333333);
+                }
+              });
+            } else if (e.object.material instanceof THREE.MeshStandardMaterial) {
+              e.object.material.emissive = new THREE.Color(0x333333);
+            }
+          }
+        }}
+        onPointerOut={(e: ThreeEvent<MouseEvent>) => {
+          // 이벤트 전파 완전 차단
+          e.stopPropagation();
+          
+          // 호버 효과 제거 - 호버된 메시만
+          if (e.object instanceof THREE.Mesh && e.object.material) {
+            if (Array.isArray(e.object.material)) {
+              e.object.material.forEach((mat: THREE.Material) => {
+                if (mat instanceof THREE.MeshStandardMaterial) {
+                  mat.emissive = new THREE.Color(0x000000);
+                }
+              });
+            } else if (e.object.material instanceof THREE.MeshStandardMaterial) {
+              e.object.material.emissive = new THREE.Color(0x000000);
+            }
+          }
+        }}
+      />
+    </group>
   );
 }
