@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import ApiResultDisplay from '@/(anon)/_components/common/ApiResultDisplay';
 import styles from './page.module.css';
 
 interface TaxCert {
@@ -41,7 +40,7 @@ export default function TaxCertCopyTestPage() {
         setError(data.message || '조회에 실패했습니다.');
       }
     } catch (err) {
-      if (err && typeof err === 'object' && 'response' in err && (err as any).response?.status === 404) {
+      if (err && typeof err === 'object' && 'response' in err && (err as { response?: { status?: number } }).response?.status === 404) {
         setTaxCert(null);
         setError('해당 사용자 주소의 납세증명서를 찾을 수 없습니다.');
       } else {
@@ -126,7 +125,7 @@ export default function TaxCertCopyTestPage() {
               {(() => {
                 const certInfo = extractTaxCertInfo(taxCert.taxCertJson);
                 return (
-                  <Fragment key="certInfo">
+                  <React.Fragment key="certInfo">
                                          <div className={styles.infoItem}>
                        <strong>결과 코드:</strong>
                        <span>{String(certInfo.resultCode)}</span>
@@ -155,7 +154,7 @@ export default function TaxCertCopyTestPage() {
                        <strong>발급일:</strong>
                        <span>{String(certInfo.issueDate)}</span>
                      </div>
-                  </Fragment>
+                  </React.Fragment>
                 );
               })()}
             </div>
