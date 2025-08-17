@@ -2,27 +2,29 @@
 
 import styles from '../PageFlip.module.css';
 
-interface numAndText {
+interface pageType {
     title: string,
-    children: React.ReactNode
+    category: string,
+    content: string
 }
 
-export default function GeneralPage({ title, children }: numAndText) {
+export default function GeneralPage({ title, category, content }: pageType) {
     return (
-        <div className={`${styles['general-page']}`}>
-            <h1 className={styles['general-page-title']}> {title} </h1>
-            <div className={styles['inside-box']}>
-                <div className={styles['danger-div']}>
-                    <p className={styles.danger}> 위험 요소 </p>
+        <div className={`${styles['general-white-page']}`}>
+            <div>
+                <div className={styles['small-font-div']}>
+                    <h3 className={styles['small-font']}> {title} </h3>
                 </div>
-                <div className={styles.text}>
-                    <p> {children} </p>
+                <div className={styles['border-bottom-div']}>
+                    <h5 className={styles.danger}> {category} </h5>
+                    <p className={styles.content}>
+                        {content}
+                    </p>
                 </div>
-                <div className={styles['go-div']}>
-                    <button className={styles.go}> 바로가기 </button>
+                <div className={styles['go-inside-div']}>
+                    <button className={styles['go-inside']}> 바로가기 </button>
                 </div>
             </div>
-            <div className={styles.blue}></div>
         </div>
     )
 }
