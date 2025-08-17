@@ -48,12 +48,12 @@ export default function PageFlipPage() {
                 </div>
                 <div className={styles['white-paper']}>
                   <h6 className={styles.topic}> 전세 계약 시 사기를 당하는 경우는 크게 2가지입니다. </h6>
-                  <p className={styles.content}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
-                  <p className={styles.content}> 사용자님 말고 다른 세입자와 이중계약 </p>
+                  <p className={styles['intro-content']}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
+                  <p className={styles['intro-content']}> 사용자님 말고 다른 세입자와 이중계약 </p>
                   <h6 className={styles.topic}> 전세보감은 이러한 피해를 막기 위해 다음을 제공합니다. </h6>
-                  <p className={styles.content}> 공인중개사 자격증 유무 조회 </p>
-                  <p className={styles.content}> 최우선 변제 기준 데이터 제공 </p>
-                  <p className={styles.content}> 공제 증서 안내 </p>
+                  <p className={styles['intro-content']}> 공인중개사 자격증 유무 조회 </p>
+                  <p className={styles['intro-content']}> 최우선 변제 기준 데이터 제공 </p>
+                  <p className={styles['intro-content']}> 공제 증서 안내 </p>
                 </div>
               </div>
             </div>
@@ -64,15 +64,32 @@ export default function PageFlipPage() {
 
           <div></div>
 
-          <GeneralPage title='3-1단계 공인중개사 자격증 유무 조회'>
-            무자격자가 중개업 등록증이나 자격증을 빌려서
-            중개사무소를 차리는 경우가 많아지고 있습니다.
-            이런 경우 공식적인 중개업 등록증이나 자격증을
-            소지하고 일하는 중개사무소보다 사기 위험이
-            더 높을 수 밖에 없습니다.
-            사업자상호(부동산 이름)과 중개업자 이름을 입력하면
-            전세보감이 증명된 중개업자인지 확인해드리겠습니다.
-          </GeneralPage>
+          <div className={styles.flex}>
+            <div className={`${styles['general-white-page']}`}>
+              <div>
+                <div className={styles['small-font-div']}>
+                  <h3 className={styles['small-font']}> 3-1단계 가짜 임대인 구분하기 </h3>
+                </div>
+                <div className={styles['border-bottom-div']}>
+                  <h5 className={styles.danger}> 위험 요소 </h5>
+                  <p className={styles.content}>
+                    무자격자가 중개업 등록증이나 자격증을 빌려서
+                    중개사무소를 차리는 경우가 많아지고 있습니다.
+                    이런 경우 공식적인 중개업 등록증이나 자격증을
+                    소지하고 일하는 중개사무소보다 사기 위험이
+                    더 높을 수 밖에 없습니다.
+                    사업자상호(부동산 이름)과 중개업자 이름을 입력하면
+                    전세보감이 증명된 중개업자인지 확인해드리겠습니다.
+                  </p>
+                </div>
+                <div className={styles['go-inside-div']}>
+                  <button className={styles['go-inside']}> 바로가기 </button>
+                </div>
+              </div>
+            </div>
+            <div className={styles['back-page']}></div>
+            <div className={styles['back-page']}></div>
+          </div>
 
           <div></div>
 
