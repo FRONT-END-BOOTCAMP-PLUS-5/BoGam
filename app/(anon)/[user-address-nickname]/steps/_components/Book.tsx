@@ -120,7 +120,6 @@ export default function Book({
       const userAddressNickname = pathParts[1];
       const stepUrl = `/${userAddressNickname}/steps/${bookId}`;
       
-      console.log(`📚 Book ${bookId} 애니메이션 완료! ${stepUrl}로 이동`);
       router.push(stepUrl);
     } else {
       console.error('❌ URL에서 user-address-nickname을 찾을 수 없음');
