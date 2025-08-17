@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGeolocation } from './useGeolocation';
 import { useKakaoMarker } from './useKakaoMarker';
 import { useKakaoMapMarkers } from './useKakaoMapMarkers';
@@ -45,43 +45,53 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapInstanceRef = useRef<any>(null);
 
   // 모든 마커가 보이도록 지도 영역 조정 함수
-  const adjustMapBounds = (markersData: Array<{ location: Location }>) => {
-    if (
-      !window.kakao ||
-      !window.kakao.maps ||
-      !mapInstanceRef.current ||
-      markersData.length === 0
-    ) {
-      return;
-    }
-
-    try {
-      const bounds = new window.kakao.maps.LatLngBounds();
-
-      markersData.forEach((marker) => {
-        bounds.extend(
-          new window.kakao.maps.LatLng(marker.location.lat, marker.location.lng)
-        );
-      });
-
-      if (searchLocationMarker) {
-        bounds.extend(
-          new window.kakao.maps.LatLng(
-            searchLocationMarker.lat,
-            searchLocationMarker.lng
-          )
-        );
+  const adjustMapBounds = useCallback(
+    (markersData: Array<{ location: Location }>) => {
+      if (
+        !window.kakao ||
+        !window.kakao.maps ||
+        !mapInstanceRef.current ||
+        markersData.length === 0
+      ) {
+        return;
       }
 
-      mapInstanceRef.current.setBounds(bounds, 50);
-      console.log('지도 영역이 모든 마커를 포함하도록 조정되었습니다.');
-    } catch (error) {
-      console.error('지도 영역 조정 실패:', error);
-    }
-  };
+      try {
+        const bounds = new window.kakao.maps.LatLngBounds();
+
+        markersData.forEach((marker) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (bounds as any).extend(
+            new window.kakao.maps.LatLng(
+              marker.location.lat,
+              marker.location.lng
+            )
+          );
+        });
+
+        if (searchLocationMarker) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (bounds as any).extend(
+            new window.kakao.maps.LatLng(
+              searchLocationMarker.lat,
+              searchLocationMarker.lng
+            )
+          );
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (mapInstanceRef.current as any).setBounds(bounds, 50);
+        console.log('지도 영역이 모든 마커를 포함하도록 조정되었습니다.');
+      } catch (error) {
+        console.error('지도 영역 조정 실패:', error);
+      }
+    },
+    [searchLocationMarker]
+  );
 
   // GPS 위치 정보 hook 사용
   const {
@@ -227,7 +237,8 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
 
         if (showCurrentLocationMarker) {
           setTimeout(() => {
-            createMarker(currentLocation, map);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            createMarker(currentLocation, map as any);
           }, 100);
         }
       } catch (err) {
@@ -317,6 +328,7 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
     removeAllMarkers,
     adjustBounds,
     searchLocationMarker,
+    adjustMapBounds,
   ]);
 
   // 검색한 주소 마커 관리

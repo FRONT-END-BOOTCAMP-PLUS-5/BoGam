@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { SearchSection } from '@/(anon)/main/_components/searchSection/SearchSection';
 import { TransactionList } from '@/(anon)/main/_components/transactionList/TransactionList';
@@ -24,8 +24,6 @@ const MainPageModule: React.FC<MainPageModuleProps> = ({ state }) => {
     detailAddress,
     dong,
     ho,
-    fullAddress,
-    savedLawdCode,
     buildingType,
     mapCenter,
     transactionData,
@@ -40,11 +38,8 @@ const MainPageModule: React.FC<MainPageModuleProps> = ({ state }) => {
     setDong,
     setHo,
     setBuildingType,
-    setMapCenter,
-    setSearchLocationMarker,
     setSelectedYear,
     setSelectedMonth,
-    setIsLoading,
     setShowPostcode,
 
     // 액션 함수

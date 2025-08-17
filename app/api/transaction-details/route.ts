@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetTransactionDetailListUsecase } from '@be/applications/transactionDetails/usecases/GetTransactionDetailListUsecase';
-import {
-  GetTransactionDetailRequestDto,
-  GetTransactionDetailQueryDto,
-} from '@be/applications/transactionDetails/dtos/GetTransactionDetailRequestDto';
+import { GetTransactionDetailRequestDto } from '@be/applications/transactionDetails/dtos/GetTransactionDetailRequestDto';
 
 export async function POST(request: NextRequest) {
   try {

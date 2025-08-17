@@ -1,11 +1,12 @@
+import { useCallback } from 'react';
 import { useKakaoMapMarkers } from './useKakaoMapMarkers';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 
 interface UseKakaoMarkerOptions {
   showInfoWindow?: boolean;
   infoWindowContent?: string | ((location: Location) => string);
-  markerOptions?: any;
-  infoWindowOptions?: any;
+  markerOptions?: Record<string, unknown>;
+  infoWindowOptions?: Record<string, unknown>;
 }
 
 export const useKakaoMarker = (options: UseKakaoMarkerOptions = {}) => {
@@ -26,12 +27,13 @@ export const useKakaoMarker = (options: UseKakaoMarkerOptions = {}) => {
     infoWindowOptions,
   });
 
-  const createMarker = (location: Location, map: any) => {
-    const content =
-      typeof infoWindowContent === 'function'
-        ? infoWindowContent(location)
-        : infoWindowContent ||
-          `
+  const createMarker = useCallback(
+    (location: Location, map: Record<string, unknown>) => {
+      const content =
+        typeof infoWindowContent === 'function'
+          ? infoWindowContent(location)
+          : infoWindowContent ||
+            `
             <div style="padding: 10px; text-align: center;">
               <div style="font-weight: bold; margin-bottom: 5px;">현재 위치</div>
               <div style="font-size: 12px; color: #666;">
@@ -41,22 +43,27 @@ export const useKakaoMarker = (options: UseKakaoMarkerOptions = {}) => {
             </div>
           `;
 
-    return createMarkerBase(
-      'current-location',
-      location,
-      map,
-      '현재 위치',
-      content
-    );
-  };
+      return createMarkerBase(
+        'current-location',
+        location,
+        map,
+        '현재 위치',
+        content
+      );
+    },
+    [createMarkerBase, infoWindowContent]
+  );
 
-  const removeMarker = () => {
+  const removeMarker = useCallback(() => {
     removeMarkerBase('current-location');
-  };
+  }, [removeMarkerBase]);
 
-  const updateMarkerPosition = (location: Location, map: any) => {
-    updateMarkerPositionBase('current-location', location);
-  };
+  const updateMarkerPosition = useCallback(
+    (location: Location, _map: Record<string, unknown>) => {
+      updateMarkerPositionBase('current-location', location);
+    },
+    [updateMarkerPositionBase]
+  );
 
   return {
     createMarker,

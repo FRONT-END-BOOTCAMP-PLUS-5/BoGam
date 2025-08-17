@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 interface Location {
   lat: number;
@@ -73,7 +73,7 @@ export const useGeolocation = (options: UseGeolocationOptions = {}) => {
     });
   };
 
-  const refreshLocation = async () => {
+  const refreshLocation = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -94,11 +94,11 @@ export const useGeolocation = (options: UseGeolocationOptions = {}) => {
             : '알 수 없는 오류가 발생했습니다.',
       });
     }
-  };
+  }, [mergedOptions.fallbackLocation]);
 
   useEffect(() => {
     refreshLocation();
-  }, []);
+  }, [refreshLocation]);
 
   return {
     ...state,

@@ -29,14 +29,14 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
     infoWindowOptions = {},
   } = options;
 
-  const markersRef = useRef<Map<string, any>>(new Map());
-  const infoWindowsRef = useRef<Map<string, any>>(new Map());
+  const markersRef = useRef<Map<string, unknown>>(new Map());
+  const infoWindowsRef = useRef<Map<string, unknown>>(new Map());
 
   const createMarker = useCallback(
     (
       id: string,
       location: Location,
-      map: any,
+      map: Record<string, unknown>,
       title?: string,
       content?: string
     ) => {
@@ -77,7 +77,8 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
 
         // 마커 클릭 이벤트
         window.kakao.maps.event.addListener(marker, 'click', function () {
-          infoWindow.open(map, marker);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (infoWindow as any).open(map, marker);
         });
       }
 
@@ -87,7 +88,7 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
   );
 
   const createMultipleMarkers = useCallback(
-    (markersData: MarkerData[], map: any) => {
+    (markersData: MarkerData[], map: Record<string, unknown>) => {
       console.log('createMultipleMarkers 호출됨:', markersData);
       markersData.forEach(({ id, location, title, content }) => {
         console.log('마커 생성:', { id, location, title });
@@ -102,12 +103,14 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
     const infoWindow = infoWindowsRef.current.get(id);
 
     if (marker) {
-      marker.setMap(null);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (marker as any).setMap(null);
       markersRef.current.delete(id);
     }
 
     if (infoWindow) {
-      infoWindow.close();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (infoWindow as any).close();
       infoWindowsRef.current.delete(id);
     }
   }, []);
@@ -122,7 +125,8 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
     const marker = markersRef.current.get(id);
     if (marker) {
       const position = new window.kakao.maps.LatLng(location.lat, location.lng);
-      marker.setPosition(position);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (marker as any).setPosition(position);
     }
   }, []);
 
