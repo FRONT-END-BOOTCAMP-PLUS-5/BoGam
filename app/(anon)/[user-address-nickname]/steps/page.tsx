@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import BookLayout from './_components/BookLayout';
+import { stepsStyles } from './page.styles';
 
 export default function Steps() {
   const [isAllBooksLoaded, setIsAllBooksLoaded] = useState(false);
@@ -20,11 +21,11 @@ export default function Steps() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-transparent">
+    <div className={stepsStyles.container}>
       {/* header */}
 
       {/* 메인 콘텐츠 */}
-      <div className="p-4">
+      <div className={stepsStyles.mainContent}>
         <BookLayout 
           onBookClick={handleBookClick} 
           onAllBooksLoaded={handleAllBooksLoaded}
@@ -34,23 +35,22 @@ export default function Steps() {
 
       {/* 로딩 오버레이 */}
       {!isAllBooksLoaded && (
-        <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
-          <div className="text-center">
+        <div className={stepsStyles.loadingOverlay}>
+          <div className={stepsStyles.loadingContent}>
             <div className="mb-6">
-              <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">책을 불러오는 중...</h2>
-              <p className="text-gray-600 mb-4">3D 모델과 텍스처를 준비하고 있습니다</p>
+              <div className={stepsStyles.loadingSpinner}></div>
+              <h2 className={stepsStyles.loadingTitle}>책 가져오는 중...</h2>
               
               {/* 진행률 바 */}
-              <div className="w-64 bg-gray-200 rounded-full h-3 mx-auto mb-2">
+              <div className={stepsStyles.progressBarContainer}>
                 <div 
-                  className="bg-blue-600 h-3 rounded-full transition-all duration-300 ease-out"
+                  className={stepsStyles.progressBar}
                   style={{ width: `${(loadingProgress / 7) * 100}%` }}
                 ></div>
               </div>
               
               {/* 진행률 텍스트 */}
-              <p className="text-sm text-gray-500">{loadingProgress}/7 완료</p>
+              <p className={stepsStyles.progressText}>{loadingProgress}/7 완료</p>
             </div>
           </div>
         </div>
