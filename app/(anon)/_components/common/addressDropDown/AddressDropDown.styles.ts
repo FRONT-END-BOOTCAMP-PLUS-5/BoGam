@@ -1,7 +1,7 @@
 export const styles = {
   // 메인 컨테이너
   container:
-    'bg-brand-white rounded-lg border border-brand-light-gray shadow-lg relative w-full max-w-[400px]',
+    'bg-brand-white rounded-lg border border-brand-light-gray shadow-lg relative w-full',
 
   // 헤더 영역
   header: 'flex items-start justify-between px-4 py-3 cursor-pointer',
