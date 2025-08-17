@@ -93,27 +93,59 @@ export default function PageFlipPage() {
 
           <div></div>
 
-          <GeneralPage title='3-2단계 최우선변제 금액 안내'>
-            주택임대차보호법 제8조를 따라 사용자님이 가장 <br />
-            늦게 입주 세입자이더라도 최우선으로 <br />
-            보증금을 변제 받을 수 있습니다. <br />
-            이 기준은 지역마다 다릅니다. <br />
-            전세보감이 초기 설정 때 작성한 매물 지역의 <br />
-            최우선변제 금액을 안내해드리겠습니다
-          </GeneralPage>
+          <div className={styles.flex}>
+            <div className={`${styles['general-white-page']}`}>
+              <div>
+                <div className={styles['small-font-div']}>
+                  <h3 className={styles['small-font']}> 3-2단계 최우선변제 금액 안내 </h3>
+                </div>
+                <div className={styles['border-bottom-div']}>
+                  <h5 className={styles.danger}> 안내 사항 </h5>
+                  <p className={styles.content}>
+                    주택임대차보호법 제8조를 따라 사용자님이 가장
+                    늦게 입주 세입자이더라도 최우선으로
+                    보증금을 변제 받을 수 있습니다.
+                    이 기준은 지역마다 다릅니다.
+                    전세보감이 초기 설정 때 작성한 매물 지역의
+                    최우선변제 금액을 안내해드리겠습니다
+                  </p>
+                </div>
+                <div className={styles['go-inside-div']}>
+                  <button className={styles['go-inside']}> 바로가기 </button>
+                </div>
+              </div>
+            </div>
+            <div className={styles['back-page']}></div>
+          </div>
 
           <div></div>
 
-          <GeneralPage title='3-3단계 공제증서 발급 링크 안내'>
-            공인중개사와의 중개 과정에서 발생할 수 있는 사고로
-            사용자님에게 손해를 입힐 수 있으므로
-            공제증서를 발급받는 것이 좋습니다.
-            현재 공제증서를 받는 방법으로는 구청이나
-            시청에 방문하시거나 한국공인중개사협회
-            온라인 서비스를 이용하셔야 됩니다.
-            전세보감이 해당 온라인 서비스 링크를
-            제공해드리곘습니다.
-          </GeneralPage>
+          <div className={styles.flex}>
+            <div className={`${styles['general-white-page']}`}>
+              <div>
+                <div className={styles['small-font-div']}>
+                  <h3 className={styles['small-font']}> 3-3단계 공제증서 발급 링크 안내 </h3>
+                </div>
+                <div className={styles['border-bottom-div']}>
+                  <h5 className={styles.danger}> 안내 사항 </h5>
+                  <p className={styles.content}>
+                    공인중개사와의 중개 과정에서 발생할 수 있는 사고로
+                    사용자님에게 손해를 입힐 수 있으므로
+                    공제증서를 발급받는 것이 좋습니다.
+                    현재 공제증서를 받는 방법으로는 구청이나
+                    시청에 방문하시거나 한국공인중개사협회
+                    온라인 서비스를 이용하셔야 됩니다.
+                    전세보감이 해당 온라인 서비스 링크를
+                    제공해드리곘습니다.
+                  </p>
+                </div>
+                <div className={styles['go-inside-div']}>
+                  <button className={styles['go-inside']}> 바로가기 </button>
+                </div>
+              </div>
+            </div>
+            <div className={styles['back-page']}></div>
+          </div>
 
         </HTMLFlipBook>
       </div>
