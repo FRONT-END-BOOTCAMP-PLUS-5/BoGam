@@ -3,7 +3,6 @@ import ResultAccordion from './_components/ResultAccordion';
 import GuideStepItem from '@/(anon)/_components/common/guideStepItem/GuideStepItem';
 import GuideStepRow from '@/(anon)/_components/common/guideStepContent/GuideStepRow';
 import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideStepText';
-import GuideStepContent from '@/(anon)/_components/common/guideStepContent/GuideStepContent';
 import { styles } from './page.styles';
 
 export default function MyPage() {
