@@ -42,6 +42,10 @@ export default function Book({
     return [isOdd ? 2.2 : -2.2, 0, 0];
   }, [textureNumber]);
 
+  // onLoad 함수를 useRef로 참조하여 최신 값 유지
+  const onLoadRef = useRef(onLoad);
+  onLoadRef.current = onLoad;
+
   // 모델 로딩
   useEffect(() => {
     if (!gltfLoader || !ktx2) return;
@@ -86,9 +90,9 @@ export default function Book({
         setGltf(loadedGltf);
         setIsLoading(false);
         
-        // 로딩 완료 시 콜백 호출
-        if (onLoad) {
-          onLoad();
+        // 로딩 완료 시 콜백 호출 (useRef로 최신 값 참조)
+        if (onLoadRef.current) {
+          onLoadRef.current();
         }
         } catch (error) {
           console.error('텍스처 변경 중 오류:', error);
@@ -105,7 +109,7 @@ export default function Book({
         setIsLoading(false);
       }
     );
-  }, [gltfLoader, bookId, ktx2, textureNumber, onLoad]);
+  }, [gltfLoader, bookId, ktx2, textureNumber]);
 
   // 애니메이션 완료 후 해당 step 페이지로 이동
   const navigateToStep = () => {
