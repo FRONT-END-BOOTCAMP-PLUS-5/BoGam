@@ -5,7 +5,7 @@ import { useTransactionData } from './useTransactionData';
 import { useDaumPostcode } from './useDaumPostcode';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
-import { placesApi } from '@libs/api_front';
+import { placesApi } from '@libs/api_front/places.api';
 
 export const useMainPageModule = () => {
   // 상태 관리

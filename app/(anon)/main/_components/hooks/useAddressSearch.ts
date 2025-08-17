@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { DaumPostcodeData } from '@/(anon)/main/_components/types/mainPage.types';
-import { placesApi } from '@libs/api_front';
+import { placesApi } from '@libs/api_front/places.api';
 
 export const useAddressSearch = (
   setMapCenter: (center: Location) => void,

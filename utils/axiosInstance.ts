@@ -6,10 +6,16 @@ interface AxiosInstanceType {
   post: (url: string, data?: unknown, config?: unknown) => Promise<unknown>;
   interceptors: {
     request: {
-      use: (onFulfilled: (config: AxiosConfigType) => AxiosConfigType, onRejected: (error: AxiosErrorType) => Promise<AxiosErrorType>) => void;
+      use: (
+        onFulfilled: (config: AxiosConfigType) => AxiosConfigType,
+        onRejected: (error: AxiosErrorType) => Promise<AxiosErrorType>
+      ) => void;
     };
     response: {
-      use: (onFulfilled: (response: AxiosResponseType) => AxiosResponseType, onRejected: (error: AxiosErrorType) => Promise<AxiosErrorType>) => void;
+      use: (
+        onFulfilled: (response: AxiosResponseType) => AxiosResponseType,
+        onRejected: (error: AxiosErrorType) => Promise<AxiosErrorType>
+      ) => void;
     };
   };
 }
@@ -23,7 +29,6 @@ interface AxiosResponseType {
   status: number;
   config: AxiosConfigType;
 }
-
 interface AxiosErrorType {
   response?: {
     status?: number;
@@ -52,20 +57,24 @@ class PublicDataAxiosInstance {
       PublicDataAxiosInstance.instance = axios.create({
         timeout: PublicDataAxiosInstance.timeout,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
           'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
           'Accept-Encoding': 'gzip, deflate, br',
-          'Connection': 'keep-alive',
-          'Referer': 'https://www.data.go.kr/',
-          'Origin': 'https://www.data.go.kr',
+          Connection: 'keep-alive',
+          Referer: 'https://www.data.go.kr/',
+          Origin: 'https://www.data.go.kr',
         },
       }) as unknown as AxiosInstanceType;
 
       // 요청 인터셉터 추가 (로깅용)
       PublicDataAxiosInstance.instance.interceptors.request.use(
         (config: AxiosConfigType) => {
-          console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+          console.log(
+            `[API Request] ${config.method?.toUpperCase()} ${config.url}`
+          );
           return config;
         },
         (error: AxiosErrorType) => {
@@ -77,7 +86,9 @@ class PublicDataAxiosInstance {
       // 응답 인터셉터 추가 (로깅용)
       PublicDataAxiosInstance.instance.interceptors.response.use(
         (response: AxiosResponseType) => {
-          console.log(`[API Response] ${response.status} ${response.config.url}`);
+          console.log(
+            `[API Response] ${response.status} ${response.config.url}`
+          );
           return response;
         },
         (error: AxiosErrorType) => {
@@ -99,8 +110,9 @@ class PublicDataAxiosInstance {
    * 인스턴스 재설정 (테스트용)
    */
   public static resetInstance(): void {
-    PublicDataAxiosInstance.instance = undefined as unknown as AxiosInstanceType;
+    PublicDataAxiosInstance.instance =
+      undefined as unknown as AxiosInstanceType;
   }
 }
 
-export default PublicDataAxiosInstance; 
+export default PublicDataAxiosInstance;

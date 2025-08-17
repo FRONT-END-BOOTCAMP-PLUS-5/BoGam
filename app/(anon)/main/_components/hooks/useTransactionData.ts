@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
-import { placesApi, transactionsApi } from '@libs/api_front';
+import { placesApi } from '@libs/api_front/places.api';
+import { transactionsApi } from '@libs/api_front/transactions.api';
 
 interface TransactionItem {
   aptNm: string;

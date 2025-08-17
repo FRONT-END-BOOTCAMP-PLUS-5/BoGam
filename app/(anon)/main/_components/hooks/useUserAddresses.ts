@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
-import { userAddressApi } from '@libs/api_front';
+import { userAddressApi } from '@libs/api_front/userAddress.api';
 
 export const useUserAddresses = (
   setUserAddresses: (addresses: UserAddress[]) => void,
