@@ -6,9 +6,9 @@ import { InputHTMLAttributes, ReactNode, useId, useState } from 'react';
 import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
-  rightAddon?: ReactNode; // 버튼/아이콘
+  rightAddon?: ReactNode; // 중복확인 버튼
   error?: boolean;
-  mask?: 'phone'; // ⬅️ 추가: 전화번호 마스킹
+  mask?: 'phone'; // 전화번호 입력시 자동 '-' 삽입
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
