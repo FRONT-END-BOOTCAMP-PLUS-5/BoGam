@@ -6,14 +6,7 @@ import { useState } from 'react';
 // 동적 렌더링 설정
 export const dynamic = 'force-dynamic';
 
-interface AddressData {
-  latitude: number;
-  longitude: number;
-  legalDistrictCode: string;
-  dong: string;
-  ho: string;
-  addressNickname: string;
-}
+
 
 interface UserAddress {
   id: number;
@@ -41,18 +34,16 @@ export default function UserAddressTestPage() {
   const isAuthenticated = !!session?.user?.nickname;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [addressData, setAddressData] = useState<AddressData>({
+  const [addressData, setAddressData] = useState({
+    address: '서울특별시 강남구 테헤란로 123',
+    dong: '101',
+    ho: '1503',
     latitude: 37.5665,
-    longitude: 126.978,
-    legalDistrictCode: '11680',
-    dong: '서초동',
-    ho: '123-45',
+    longitude: 126.9780,
+    prefArea: 84.95,
     addressNickname: '집',
   });
   const [userAddresses, setUserAddresses] = useState<UserAddress[]>([]);
-  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
-    null
-  );
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -301,15 +292,15 @@ export default function UserAddressTestPage() {
                 </div>
                 <div>
                   <label className='block text-sm font-medium mb-2'>
-                    법정동코드
+                    주소
                   </label>
                   <input
                     type='text'
-                    value={addressData.legalDistrictCode}
+                    value={addressData.address}
                     onChange={(e) =>
                       setAddressData({
                         ...addressData,
-                        legalDistrictCode: e.target.value,
+                        address: e.target.value,
                       })
                     }
                     className='w-full px-3 py-2 border border-gray-300 rounded-md'

@@ -1,369 +1,269 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Suspense, useState, useEffect, useCallback } from 'react';
+import { OrbitControls, Environment, useEnvironment } from '@react-three/drei';
 import * as THREE from 'three';
-import { createBook, BookController } from './Book';
-import { createBookshelf } from './Bookshelf';
+import Book from './Book';
+import Bookshelf from './Bookshelf';
 
 interface Scene3DProps {
   className?: string;
 }
 
-export default function Scene3D({ className }: Scene3DProps) {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const bookControllersRef = useRef<{ [key: string]: BookController }>({});
-  const raycasterRef = useRef<THREE.Raycaster | null>(null);
-  const mouseRef = useRef<THREE.Vector2 | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStartTime, setLoadingStartTime] = useState<number>(0);
-  const [totalLoadingTime, setTotalLoadingTime] = useState<number>(0);
-  const [currentLoadingObject, setCurrentLoadingObject] = useState<string>('');
+// HDR 환경맵을 로드하는 컴포넌트
+function HDREnvironment({ onEnvironmentLoaded }: { onEnvironmentLoaded: () => void }) {
+  const envMap = useEnvironment({ files: '/models/hdr/lilienstein_4k.hdr' });
   
-  // 렌더러와 씬 참조를 위한 ref 추가
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
-
-  const isInitializedRef = useRef(false);
-
+  // 환경맵이 로딩되면 콜백 호출
   useEffect(() => {
-    if (!mountRef.current || isInitializedRef.current) return;
-    
-    isInitializedRef.current = true;
-
-    // WebGL 지원 확인
-    if (!window.WebGLRenderingContext) {
-      console.error('WebGL is not supported in this browser');
-      return;
+    if (envMap) {
+      console.log('🌍 HDR 환경맵 로딩 완료');
+      onEnvironmentLoaded();
     }
+  }, [envMap, onEnvironmentLoaded]);
+  
+  return (
+    <Environment 
+      map={envMap} 
+      background={true}
+      resolution={4096}
+      blur={0.1}
+    />
+  );
+}
 
-    // Scene 설정
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    scene.background = new THREE.Color(0xFFFFFF); // 흰색 배경
+export default function Scene3D({ className }: Scene3DProps) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [openBookId, setOpenBookId] = useState<number | null>(null);
+  const [aspectRatio, setAspectRatio] = useState(16 / 9); // 기본값 설정
 
-    // Camera 설정
-    const camera = new THREE.PerspectiveCamera(
-      60, // FOV를 60으로 설정하여 자연스러운 시야각
-      300 / 400, // 고정된 비율 사용
-      0.1,
-      1000
-    );
-    cameraRef.current = camera;
-    camera.position.set(0, 6.8, 7);
-    camera.lookAt(0, 6.8, -10);
-    camera.updateProjectionMatrix();
-
-    // Renderer 설정
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: true,
-      powerPreference: "high-performance",
-      failIfMajorPerformanceCaveat: false,
-      preserveDrawingBuffer: false,
-      stencil: false,
-      depth: true,
-      alpha: false
-    });
-    rendererRef.current = renderer;
-    renderer.setSize(300, 400);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.shadowMap.autoUpdate = true; // TypeScript 오류 해결을 위해 다시 활성화
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-
-    
-    // WebGL 컨텍스트 설정 및 에러 처리
-    try {
-      const gl = renderer.getContext();
-      gl.getExtension('WEBGL_debug_renderer_info');
-      
-      // 텍스처 관련 설정
-      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    } catch (error) {
-      console.warn('WebGL context setup warning:', error);
-    }
-    
-    // 로딩 중에는 DOM에 추가하지 않음
-    // mountRef.current.appendChild(renderer.domElement);
-
-    // 조명 설정
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    directionalLight.position.set(10, 20, 10);
-    directionalLight.castShadow = true;
-    directionalLight.shadow.mapSize.width = 512; // 4096에서 1024로 축소
-    directionalLight.shadow.mapSize.height = 512; // 4096에서 1024로 축소
-    directionalLight.shadow.camera.near = 0.1;
-    directionalLight.shadow.camera.far = 50;
-    directionalLight.shadow.camera.left = -20;
-    directionalLight.shadow.camera.right = 20;
-    directionalLight.shadow.camera.top = 20;
-    directionalLight.shadow.camera.bottom = -20;
-    directionalLight.shadow.bias = -0.0001;
-    directionalLight.shadow.normalBias = 0.02;
-    scene.add(directionalLight);
-
-    const pointLight = new THREE.PointLight(0xffffff, 0.5);
-    pointLight.position.set(0, 15, 0);
-    scene.add(pointLight);
-
-    
-
-    // 로딩 시작 시간 설정
-    const startTime = Date.now();
-    setLoadingStartTime(startTime);
-    
-         // 로딩 진행률 추적
-     let loadedObjects = 0;
-     const totalObjects = 8; // 책꽂이 1개 + 책 7개
-
-    const updateLoadingProgress = () => {
-      loadedObjects++;
-      const progress = (loadedObjects / totalObjects) * 100;
-      setLoadingProgress(progress);
-      
-      if (loadedObjects === totalObjects) {
-        // 모든 오브젝트가 로딩 완료
-        const endTime = Date.now();
-        const totalTime = endTime - startTime;
-        setTotalLoadingTime(totalTime);
-        setIsLoading(false);
-        // 이제 DOM에 렌더러 추가
-        if (rendererRef.current && mountRef.current) {
-          mountRef.current.appendChild(rendererRef.current.domElement);
-        }
-        
-        // Raycaster 초기화
-        raycasterRef.current = new THREE.Raycaster();
-        mouseRef.current = new THREE.Vector2();
-
-        // 마우스 클릭 이벤트 핸들러
-        const handleMouseClick = (event: MouseEvent) => {
-          if (!raycasterRef.current || !mouseRef.current || !cameraRef.current) {
-            return;
-          }
-
-          event.preventDefault();
-
-          mouseRef.current.x = (event.offsetX / 300) * 2 - 1;
-          mouseRef.current.y = -(event.offsetY / 400) * 2 + 1;
-
-          raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
-
-          for (const bookId in bookControllersRef.current) {
-            const bookController = bookControllersRef.current[bookId];
-            const book = bookController.getGroup();
-            
-            const intersects = raycasterRef.current.intersectObject(book, true);
-
-            if (intersects.length > 0) {
-              bookController.handleClick();
-              break;
-            }
-          }
-        };
-
-        if (rendererRef.current) {
-          rendererRef.current.domElement.addEventListener('click', handleMouseClick);
-        }
-
-        // 애니메이션 루프 시작
-        const clock = new THREE.Clock();
-        let animationId: number;
-        
-                 const animateLoop = () => {
-           animationId = requestAnimationFrame(animateLoop);
-           
-           const deltaTime = clock.getDelta();
-           
-
-           
-           for (const bookId in bookControllersRef.current) {
-             const bookController = bookControllersRef.current[bookId];
-             bookController.update(deltaTime);
-           }
-           
-           if (rendererRef.current && sceneRef.current && cameraRef.current) {
-             rendererRef.current.render(sceneRef.current, cameraRef.current);
-           }
-         };
-
-        animateLoop();
-
-        // 클린업 함수에 이벤트 리스너 제거 추가
-        return () => {
-          if (rendererRef.current) {
-            rendererRef.current.domElement.removeEventListener('click', handleMouseClick);
-          }
-          if (animationId) {
-            cancelAnimationFrame(animationId);
-          }
-        };
-      }
+  // 클라이언트 사이드에서 화면 비율 계산
+  useEffect(() => {
+    const updateAspectRatio = () => {
+      setAspectRatio(window.innerWidth / window.innerHeight);
     };
 
-    // 책꽂이 생성 및 추가
-    const loadBookshelf = async () => {
-      try {
-        setCurrentLoadingObject('책꽂이 로딩 중...');
-        const bookshelf = await createBookshelf({
-          position: new THREE.Vector3(0, 4, -5),
-          rotation: new THREE.Euler(0, 0, 0),
-          scale: new THREE.Vector3(30, 30, 30),
-          renderer: renderer
-        });
-        scene.add(bookshelf);
-        updateLoadingProgress();
-      } catch (error) {
-        console.error('Error loading bookshelf:', error);
-        updateLoadingProgress(); // 에러가 발생해도 진행률 업데이트
-      }
-    };
+    // 초기 설정
+    updateAspectRatio();
 
-    // 책 생성 및 추가
-    const loadBooks = async () => {
-      try {
-
-       const bookPositions = [
-          // 윗층 (3개) - 왼쪽부터 1, 2, 3
-          { id: 'book1', position: new THREE.Vector3(-1.5, 10.4, -5) },
-          { id: 'book2', position: new THREE.Vector3(0, 10.4, -5) },
-          { id: 'book3', position: new THREE.Vector3(1.5, 10.4, -5) },
-          // 아래층 (4개) - 왼쪽부터 4, 5, 6, 7
-          { id: 'book4', position: new THREE.Vector3(-2, 5.8, -5) },
-          { id: 'book5', position: new THREE.Vector3(-0.5, 5.8, -5) },
-          { id: 'book6', position: new THREE.Vector3(1, 5.8, -5) },
-          { id: 'book7', position: new THREE.Vector3(2.5, 5.8, -5) },
-        ];
-
-        await Promise.all(
-          bookPositions.map(async (bookConfig) => {
-            try {
-              setCurrentLoadingObject(`${bookConfig.id} 로딩 중...`);
-              const { group: book, mixer } = await createBook({
-                 position: bookConfig.position,
-                  rotation: new THREE.Euler(Math.PI / 2, 0, -Math.PI / 2),
-                  scale: new THREE.Vector3(1, 1, 1),
-                  id: bookConfig.id,
-                  renderer: renderer,
-                  bookId: bookConfig.id
-               });
-               book.position.copy(bookConfig.position);
-               
-               // 각 책마다 다른 링크 URL 설정
-               const linkUrl = `/step${bookConfig.id.replace('book', '')}`;
-               const bookController = new BookController(bookConfig.id, book, mixer, linkUrl);
-               
-               bookControllersRef.current[bookConfig.id] = bookController;
-               scene.add(book);
-               updateLoadingProgress();
-             } catch (error) {
-               console.error(`Error loading book ${bookConfig.id}:`, error);
-               updateLoadingProgress(); // 개별 책 로딩 실패 시에도 진행률 업데이트
-             }
-           })
-         );
-             } catch (error) {
-         console.error('Error loading books:', error);
-         // 에러가 발생한 경우에도 진행률 업데이트
-         for (let i = 0; i < 7; i++) {
-           updateLoadingProgress();
-         }
-       }
-    };
-
-    // 모든 오브젝트 로딩 시작
-    const loadScene = async () => {
-      await loadBookshelf();
-      await loadBooks();
-    };
-
-    loadScene();
+    // 리사이즈 이벤트 리스너
+    window.addEventListener('resize', updateAspectRatio);
 
     // 클린업
     return () => {
-      // 애니메이션 루프 정리
-      if (rendererRef.current) {
-        // DOM에서 렌더러 제거
-        if (mountRef.current && rendererRef.current.domElement.parentNode === mountRef.current) {
-          mountRef.current.removeChild(rendererRef.current.domElement);
-        }
-        
-        // 렌더러 정리
-        rendererRef.current.dispose();
-        rendererRef.current = null;
-      }
-      
-      // 씬과 카메라 정리
-      if (sceneRef.current) {
-        sceneRef.current.clear();
-        sceneRef.current = null;
-      }
-      
-      if (cameraRef.current) {
-        cameraRef.current = null;
-      }
-      
-      // 컨트롤러 정리
-      bookControllersRef.current = {};
-      
-
-      
-      // 초기화 플래그 리셋
-      isInitializedRef.current = false;
+      window.removeEventListener('resize', updateAspectRatio);
     };
   }, []);
 
+  // Canvas 초기 설정 완료 후 로딩 상태 관리
+  useEffect(() => {
+    // 약간의 지연을 두어 Canvas 초기화 완료 확인
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      console.log('🎉 전체 씬 로딩 완료');
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // 환경맵 로딩 완료 콜백을 메모이제이션
+  const handleEnvironmentLoaded = useCallback(() => {
+    // 환경맵 로딩이 완료된 후 1ms 지연 후 책 렌더링 시작
+    setTimeout(() => {
+      setIsLoading(false);
+      console.log('🎉 책 렌더링 시작');
+    }, 1);
+  }, []);
+
+  const handleBookClick = (bookId: number) => {
+    console.log(`📚 ${bookId}단계 클릭됨!`);
+    
+    // 책 상태 토글
+    if (openBookId === bookId) {
+      console.log(`📚 ${bookId}단계 닫기`);
+      setOpenBookId(null); // 닫기
+    } else {
+      console.log(`📚 ${bookId}단계 열기`);
+      setOpenBookId(bookId); // 열기
+    }
+    
+    // 필요시 페이지 이동 로직 추가
+    // window.location.href = `/step${bookId}`;
+  };
+
+  const handleBookClose = (bookId: number) => {
+    console.log(`📚 ${bookId}단계 닫힘!`);
+    setOpenBookId(null); // 열린 책 ID 초기화
+  };
+
   return (
     <div 
-      ref={mountRef} 
-      className={className || "w-72 h-72"}
+      className={className || "w-full h-screen"}
       style={{ position: 'relative' }}
     >
+      <Canvas
+        camera={{
+          fov: 75,
+          aspect: aspectRatio, // 동적으로 계산된 화면 비율 사용
+          near: 0.1,
+          far: 1000,
+          position: [0, 7.5, 4]
+        }}
+        gl={{
+          antialias: true,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: false,
+          stencil: false,
+          depth: true,
+          alpha: false,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.2,
+          outputColorSpace: THREE.SRGBColorSpace
+        }}
+        raycaster={{
+          firstHitOnly: true
+        }}
+        shadows
+        onCreated={({ gl, scene, camera }) => {
+          gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          // gl.setSize는 제거 - R3F가 자동으로 처리
+          gl.shadowMap.enabled = true;
+          gl.shadowMap.type = THREE.PCFSoftShadowMap;
+          
+          // HDR 환경맵을 위한 설정
+          gl.toneMapping = THREE.ACESFilmicToneMapping;
+          gl.toneMappingExposure = 1.2;
+          gl.outputColorSpace = THREE.SRGBColorSpace;
+          
+          // 배경색 제거 (HDR 환경맵이 배경이 됨)
+          scene.background = null;
+          camera.lookAt(0, 7.5, -10);
+          camera.updateProjectionMatrix();
+          
+          console.log('🎬 Canvas 초기 설정 완료');
+        }}
+      >
+        <Suspense fallback={null}>
+          {/* OrbitControls - 마우스로 화면 이동 및 회전 */}
+          <OrbitControls 
+            enablePan={true}           // 마우스 우클릭 드래그로 이동
+            enableZoom={true}          // 마우스 휠로 줌
+            enableRotate={true}        // 마우스 좌클릭 드래그로 회전
+            minDistance={2}            // 최소 줌 거리
+            maxDistance={50}           // 최대 줌 거리
+            minPolarAngle={0}          // 최소 수직 각도 (0도)
+            maxPolarAngle={Math.PI}    // 최대 수직 각도 (180도)
+            target={[0, 7.5, -10]}    // 회전 중심점
+            dampingFactor={0.05}       // 관성 감쇠
+            enableDamping={true}       // 관성 활성화
+          />
+          
+          {/* 조명 - HDR 환경맵과 함께 사용 */}
+          {/* 환경광 - HDR 환경맵에서 제공하는 간접 조명 보강 */}
+          <ambientLight intensity={0.3} />
+          
+          {/* 주 방향광 - 그림자와 주요 조명 */}
+          <directionalLight 
+            position={[10, 20, 10]} 
+            intensity={0.8} 
+            castShadow 
+            shadow-mapSize-width={2048}
+            shadow-mapSize-height={2048}
+            shadow-camera-near={0.1}
+            shadow-camera-far={50}
+            shadow-camera-left={-20}
+            shadow-camera-right={20}
+            shadow-camera-top={20}
+            shadow-camera-bottom={-20}
+            shadow-bias={-0.0001}
+            shadow-normalBias={0.02}
+          />
+          
+          {/* 보조 방향광 - 반대편에서 부드러운 조명 */}
+          <directionalLight 
+            position={[-8, 15, -8]} 
+            intensity={0.3} 
+            color={0xffffff}
+          />
+          
+          {/* 중앙 상단 포인트 조명 - 책꽂이 중앙 조명 */}
+          <pointLight 
+            position={[0, 15, 0]} 
+            intensity={0.5} 
+            distance={20}
+            decay={2}
+          />
+          
+          {/* 왼쪽 포인트 조명 - 윗층 책들 조명 */}
+          <pointLight 
+            position={[-2, 12, -3]} 
+            intensity={0.4} 
+            distance={15}
+            decay={2}
+            color={0xfff8e1}
+          />
+          
+          {/* 오른쪽 포인트 조명 - 아래층 책들 조명 */}
+          <pointLight 
+            position={[2, 8, -3]} 
+            intensity={0.4} 
+            distance={15}
+            decay={2}
+            color={0xe3f2fd}
+          />
+          
+          {/* 후면 스포트라이트 - 책꽂이 배경 조명 */}
+          <spotLight
+            position={[0, 12, -8]}
+            target-position={[0, 7.5, -5]}
+            angle={0.3}
+            penumbra={0.5}
+            intensity={0.3}
+            distance={25}
+            castShadow
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
+          />
+
+          {/* 책꽂이 */}
+          <Bookshelf />
+
+          {/* 책들 */}
+          {[
+            // 윗층 (3개)
+            { bookId: 1, position: [-1.5, 10.4, -5] },
+            { bookId: 2, position: [0, 10.4, -5] },
+            { bookId: 3, position: [1.5, 10.4, -5] },
+            // 아래층 (4개)
+            { bookId: 4, position: [-2, 5.8, -5] },
+            { bookId: 5, position: [-0.5, 5.8, -5] },
+            { bookId: 6, position: [1, 5.8, -5] },
+            { bookId: 7, position: [2.5, 5.8, -5] }
+          ].map((book) => (
+            <Book 
+              key={book.bookId}
+              position={book.position as [number, number, number]} 
+              bookId={book.bookId} 
+              onBookClick={handleBookClick}
+              onBookClose={handleBookClose}
+              isAnyBookOpen={openBookId !== null}
+              isEnvironmentLoaded={!isLoading}
+            />
+          ))}
+        </Suspense>
+        
+        {/* HDR 환경맵을 Suspense 밖으로 이동 - Suspense 블로킹 방지 */}
+        <HDREnvironment onEnvironmentLoaded={handleEnvironmentLoaded} />
+      </Canvas>
+
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-90">
           <div className="text-center">
-            <div className="text-lg font-semibold mb-2">3D 모델 로딩 중...</div>
-            {currentLoadingObject && (
-              <div className="text-sm text-blue-600 mb-3 font-medium">
-                {currentLoadingObject}
-              </div>
-            )}
-            <div className="w-48 bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${loadingProgress}%` }}
-              ></div>
-            </div>
-            <div className="text-sm text-gray-600 mt-1">{Math.round(loadingProgress)}%</div>
-            {loadingStartTime > 0 && (
-              <div className="text-xs text-gray-500 mt-2">
-                로딩 시작: {new Date(loadingStartTime).toLocaleTimeString()}
-              </div>
-            )}
+            <div className="text-lg font-semibold mb-2">환경맵 로딩 중...</div>
           </div>
         </div>
       )}
-      
-             {!isLoading && totalLoadingTime > 0 && (
-         <div className="mt-4 bg-green-100 border border-green-300 rounded-lg px-3 py-2 text-sm shadow-lg">
-           <div className="font-semibold text-green-800">✅ 로딩 완료!</div>
-           <div className="text-green-600">총 로딩 시간: {totalLoadingTime}ms</div>
-           <div className="text-green-500 text-xs mt-1">
-             시작: {new Date(loadingStartTime).toLocaleTimeString()}
-           </div>
-           <div className="text-green-500 text-xs">
-             완료: {new Date(loadingStartTime + totalLoadingTime).toLocaleTimeString()}
-           </div>
-         </div>
-       )}
     </div>
   );
 }
