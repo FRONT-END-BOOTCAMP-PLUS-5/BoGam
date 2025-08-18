@@ -1,4 +1,4 @@
-import { Location } from './map.types';
+import { Location as MapLocation } from './map.types';
 
 export interface DaumPostcodeData {
   zonecode: string;
@@ -31,11 +31,20 @@ export interface DaumPostcode {
 
 export interface UserAddress {
   id: number;
-  address: string;
-  nickname: string;
-  x: number;
-  y: number;
-  isPrimary: boolean;
+  nickname: string; // 자동 생성된 닉네임
+  x: number; // longitude
+  y: number; // latitude
+  isPrimary: boolean; // 즐겨찾기
+  legalDistrictCode?: string;
+
+  // 주소 정보들
+  lotAddress: string; // 지번 주소
+  roadAddress: string; // 도로명 주소
+  completeAddress: string; // 완전한 주소 (동/호 포함)
+
+  // 동/호 정보 (별도 필드)
+  dong?: string; // 동
+  ho?: string; // 호
 }
 
 export interface TransactionData {
@@ -50,7 +59,7 @@ export interface TransactionData {
   일: string;
   법정동: string;
   지번: string;
-  location: Location;
+  location: MapLocation;
 }
 
 export interface BuildingType {
@@ -62,17 +71,13 @@ export interface MainPageState {
   userAddresses: UserAddress[];
   selectedAddress: UserAddress | null;
   searchQuery: string;
-  detailAddress: string;
+  roadAddress: string;
   dong: string;
   ho: string;
-  fullAddress: string;
   savedLawdCode: string;
   buildingType: BuildingType;
-  mapCenter: Location;
   transactionData: TransactionData[];
-  searchLocationMarker: Location | null;
   selectedYear: string;
   selectedMonth: string;
-  isLoading: boolean;
   showPostcode: boolean;
 }

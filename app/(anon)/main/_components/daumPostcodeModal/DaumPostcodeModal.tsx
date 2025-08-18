@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import { styles } from '@/(anon)/main/_components/daumPostcodeModal/DaumPostcodeModal.styles';
 
 interface DaumPostcodeModalProps {
+  postcodeRef: RefObject<HTMLDivElement | null>;
   showPostcode: boolean;
-  postcodeRef: React.RefObject<HTMLDivElement | null>;
   onClose: () => void;
 }
 
 export const DaumPostcodeModal: React.FC<DaumPostcodeModalProps> = ({
-  showPostcode,
   postcodeRef,
+  showPostcode,
   onClose,
 }) => {
   if (!showPostcode) {
