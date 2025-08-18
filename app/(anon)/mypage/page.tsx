@@ -1,91 +1,96 @@
+'use client';
+
+import { useState } from 'react';
+import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
-import ResultAccordion from './_components/ResultAccordion';
-import GuideStepItem from '@/(anon)/_components/common/guideStepItem/GuideStepItem';
-import GuideStepRow from '@/(anon)/_components/common/guideStepContent/GuideStepRow';
-import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideStepText';
+import GuideResultView from './_components/GuideResultView';
 import { styles } from './page.styles';
+import { mockData } from './_data/mockData';
 
 export default function MyPage() {
-  // 랜덤 데이터 생성 (0~100 사이)
-  const generateRandomValue = () => Math.floor(Math.random() * 101);
-  
-  const match = generateRandomValue();        // 안전
-  const mismatch = generateRandomValue();      // 경고
-  const unchecked = generateRandomValue();     // 미확인
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('1');
+  const [addresses, setAddresses] = useState(mockData.addresses);
+
+  const selectedAddress = addresses.find(
+    (addr) => addr.id === selectedAddressId
+  );
+
+  const handleAddressSelect = (id: string) => {
+    setSelectedAddressId(id);
+  };
+
+  const handleAddressToggleFavorite = (id: string) => {
+    setAddresses((prev) =>
+      prev.map((addr) =>
+        addr.id === id ? { ...addr, isFavorite: !addr.isFavorite } : addr
+      )
+    );
+  };
+
+  const handleAddressDelete = (id: string) => {
+    setAddresses((prev) => prev.filter((addr) => addr.id !== id));
+    // 삭제된 주소가 선택된 주소였다면 첫 번째 주소로 변경
+    if (id === selectedAddressId) {
+      const remainingAddresses = addresses.filter((addr) => addr.id !== id);
+      if (remainingAddresses.length > 0) {
+        setSelectedAddressId(remainingAddresses[0].id);
+      }
+    }
+  };
 
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.container}>
-        <h1 className={styles.title}>마이페이지</h1>
-        
-        {/* 가이드 결과 요약 컴포넌트 */}
-        <GuideResultSummary 
-          match={match}
-          mismatch={mismatch}
-          unchecked={unchecked}
+    <div className={styles.container}>
+      {/* 그라데이션 배경 */}
+      <div className={styles.gradientBackground}></div>
+      
+      {/* 프로필 헤더 (임시) */}
+      <div className={styles.profileHeader}>
+        <div className={styles.profileContent}>
+          <div className={styles.avatar}>
+            {mockData.profile.avatar}
+          </div>
+          <div className={styles.profileInfo}>
+            <span className={styles.profileName}>{mockData.profile.name}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.content}>
+        {/* 주소 */}
+        <AddressDropDown
+          addresses={addresses}
+          selectedAddress={selectedAddress}
+          onDelete={handleAddressDelete}
+          onToggleFavorite={handleAddressToggleFavorite}
+          onSelect={handleAddressSelect}
         />
 
-        {/* 결과 아코디언 섹션 */}
-        <div className={styles.accordionSection}>
-          <h2 className={styles.accordionTitle}>가이드 결과 상세</h2>
-          
-          <ResultAccordion 
-            stageNumber="1단계" 
-            subtitle="임대인 확인할 때" 
-            defaultOpen={true}
-            numbers={["1", "10", "9"]}
-          >
-            <GuideStepItem stepNumber="3-1" title="가짜 임대인 구분하기" showDivider={true}>
-              <GuideStepRow iconType="match">
-                <GuideStepText>
-                  신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!
-                </GuideStepText>
-              </GuideStepRow>
-            </GuideStepItem>
+        {/* 문서 카드 */}
+        <div className={styles.card}>
+          <div className={styles.cardTitle}>문서</div>
+          <div className={styles.documentButtons}>
+            <span className={styles.documentButton}>등기부등본</span>
+            <span className={styles.documentButton}>납세증명서</span>
+          </div>
+        </div>
 
-            <GuideStepItem stepNumber="3-2" title="최우선변제 금액 안내" showDivider={true}>
-              <GuideStepRow iconType="unchecked">
-                <GuideStepText>
-                  <p>서울특별시</p>
-                  <p>소액보증금 범위 : 1억 5천만원 이하</p>
-                  <p>최우선변제금액 : 5천만원</p>
-                </GuideStepText>
-              </GuideStepRow>
-            </GuideStepItem>
+        {/* 가이드 결과 요약 */}
+        <GuideResultSummary
+          match={mockData.guideSummary.match}
+          mismatch={mockData.guideSummary.mismatch}
+          unchecked={mockData.guideSummary.unchecked}
+        />
 
-            <GuideStepItem stepNumber="3-3" title="공제증서 발급 안내">
-                <GuideStepRow iconType="mismatch">
-                  <GuideStepText>
-                    공제증서 발급 요건이 불충족되었습니다.
-                  </GuideStepText>
-                </GuideStepRow>
-                <GuideStepRow iconType="link" href="http://localhost:3000/">
-                  온라인 서비스로 이동하기
-                </GuideStepRow>
-            </GuideStepItem>
-          </ResultAccordion>
+        {/* 가이드 결과 보기 */}
+        <GuideResultView
+          guideSteps={mockData.guideSteps}
+        />
 
-          <ResultAccordion 
-            stageNumber="2단계" 
-            subtitle="계약서 확인할 때"
-            numbers={["2", "8", "7"]}
-          >
-            <div className={styles.tempContent}>
-              <p className={styles.tempText}>계약서 관련 상세 내용이 여기에 표시됩니다.</p>
-              <p className={styles.tempText}>각 항목별로 확인해야 할 사항들을 정리해드립니다.</p>
-            </div>
-          </ResultAccordion>
-
-          <ResultAccordion 
-            stageNumber="3단계" 
-            subtitle="입주 전 확인할 때"
-            numbers={["3", "6", "5"]}
-          >
-            <div className={styles.tempContent}>
-              <p className={styles.tempText}>입주 전 체크리스트가 여기에 표시됩니다.</p>
-              <p className={styles.tempText}>안전하고 만족스러운 입주를 위한 가이드입니다.</p>
-            </div>
-          </ResultAccordion>
+        {/* 회원탈퇴 버튼 */}
+        <div className={styles.withdrawButton}>
+          <button className={styles.withdrawBtn}>
+            회원탈퇴
+          </button>
         </div>
       </div>
     </div>

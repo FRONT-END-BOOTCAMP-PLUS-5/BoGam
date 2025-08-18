@@ -9,6 +9,7 @@ import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapMod
 import { useMainPageModule } from '@/(anon)/main/_components/hooks/useMainPageModule';
 import { styles } from './main.styles';
 import { useMainPageState } from '@/(anon)/main/_components/hooks/useMainPageState';
+import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 
 export default function MainPage() {
   const {
@@ -124,6 +125,7 @@ export default function MainPage() {
           />
         </div>
       </div>
+      <AuthLanding />
     </div>
   );
 }

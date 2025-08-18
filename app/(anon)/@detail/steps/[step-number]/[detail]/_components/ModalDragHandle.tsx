@@ -29,7 +29,7 @@ export default function ModalDragHandle({
       </div>
 
       {/* Divider */}
-      <div className={styles.divider}></div>
+      {/* <div className={styles.divider}></div> */}
     </>
   );
 }

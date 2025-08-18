@@ -1,8 +1,20 @@
-import { ChevronLeft } from 'lucide-react';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useRootStep } from '@libs/store/rootStepStore';
 import SignupForm from '@/(anon)/signup/_components/SignupForm';
 import styles from '@/(anon)/signup/Signup.module.css';
+import { ChevronLeft } from 'lucide-react';
 
 export default function Signup() {
+  const router = useRouter();
+  const setStep = useRootStep((state) => state.setStep);
+
+  const handleBack = () => {
+    setStep('auth');
+    sessionStorage.setItem('step', 'auth');
+    router.push('/');
+  };
   return (
     <>
       <section className={styles.intro}>
@@ -13,13 +25,14 @@ export default function Signup() {
               아래의 정보를 기입하여 회원가입을 완료해주세요!
             </p>
           </div>
-          <ChevronLeft
-            className={`${styles.icon} ${styles.arrow}`}
-            aria-hidden
-          />
+          <button onClick={handleBack} aria-label='이전'>
+            <ChevronLeft
+              className={`${styles.icon} ${styles.arrow}`}
+              aria-hidden
+            />
+          </button>
         </div>
       </section>
-
       <SignupForm />
     </>
   );
