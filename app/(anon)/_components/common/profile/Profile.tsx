@@ -4,7 +4,7 @@ import { useUserStore } from '@libs/store/userStore';
 import { getProfileClassName } from '@/(anon)/_components/common/profile/Profile.style';
 
 interface ProfileProps {
-  size: 'small' | 'medium';
+  size: 'sm' | 'md';
 }
 
 export default function Profile({ size }: ProfileProps) {

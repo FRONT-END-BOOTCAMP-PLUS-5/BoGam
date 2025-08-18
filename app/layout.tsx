@@ -1,7 +1,7 @@
 import './globals.css';
 import { Providers } from './providers';
 import { ConfirmModal } from './(anon)/_components/common/modal/ConfirmModal';
-import Header from '@/(anon)/_components/common/header /Header';
+import Header from '@/(anon)/_components/common/header/Header';
 
 export default function RootLayout({
   children,
