@@ -45,7 +45,6 @@ export default function TaxCertForm() {
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isCheckingExisting, setIsCheckingExisting] = useState(false);
   const [response, setResponse] = useState<CodefResponse | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
@@ -54,6 +53,7 @@ export default function TaxCertForm() {
     exists: boolean;
     updatedAt?: string;
   } | null>(null);
+
 
   // loginTypeLevel에 따른 telecom 필드 자동 관리
   useEffect(() => {
@@ -219,7 +219,6 @@ export default function TaxCertForm() {
   // 기존 데이터 확인
   const checkExistingData = async (): Promise<boolean> => {
     try {
-      setIsCheckingExisting(true);
       const response = await axios.get(
         `/api/tax-cert/exists?nickname=채원강남집`
       );
@@ -237,7 +236,6 @@ export default function TaxCertForm() {
       // 에러가 발생해도 진행 (최악의 경우 백엔드에서 upsert 처리)
       return true;
     } finally {
-      setIsCheckingExisting(false);
     }
   };
 

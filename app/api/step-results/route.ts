@@ -6,21 +6,13 @@ import { StepResultRepositoryImpl } from '@be/infrastructure/repository/StepResu
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userAddressId = searchParams.get('userAddressId');
-    const mainNum = searchParams.get('mainNum');
-    const subNum = searchParams.get('subNum');
+    const userAddressNickname = searchParams.get('userAddressNickname');
+    const mainNum = searchParams.get('stepNumber');
+    const subNum = searchParams.get('detail');
 
-    if (!userAddressId) {
+    if (!userAddressNickname) {
       return NextResponse.json(
-        { success: false, error: 'userAddressId는 필수입니다.' },
-        { status: 400 }
-      );
-    }
-
-    const userAddressIdNum = parseInt(userAddressId);
-    if (isNaN(userAddressIdNum)) {
-      return NextResponse.json(
-        { success: false, error: 'userAddressId는 숫자여야 합니다.' },
+        { success: false, error: 'userAddressNickname는 필수입니다.' },
         { status: 400 }
       );
     }
@@ -47,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await usecase.getStepResults(
-      userAddressIdNum,
+      userAddressNickname,
       mainNumInt,
       subNumInt
     );

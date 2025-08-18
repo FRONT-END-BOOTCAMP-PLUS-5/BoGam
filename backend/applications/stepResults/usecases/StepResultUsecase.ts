@@ -5,16 +5,19 @@ import {
   StepResultResponseDto,
   StepResultSummaryDto,
 } from '@be/applications/stepResults/dtos/StepResultDto';
+import { getUserAddressId } from '@utils/userAddress';
 
 export class StepResultUsecase {
   constructor(private stepResultRepository: StepResultRepository) {}
 
   async getStepResults(
-    userAddressId: number,
+    userAddressNickname: string,
     mainNum?: number,
     subNum?: number
   ): Promise<StepResultResponseDto> {
     try {
+      const userAddressId = 1; //await getUserAddressId(userAddressNickname);
+
       const params: Record<string, unknown> = { userAddressId };
 
       if (mainNum) {
@@ -24,6 +27,8 @@ export class StepResultUsecase {
       if (subNum) {
         params.subNum = subNum;
       }
+
+      console.log('params', params);
 
       const stepResults = await this.stepResultRepository.findByParams(params);
 

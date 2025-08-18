@@ -1,5 +1,6 @@
-import { SessionProvider } from 'next-auth/react';
 import './globals.css';
+import { Providers } from './providers';
+import { ConfirmModal } from './(anon)/_components/common/modal/ConfirmModal';
 
 export default function RootLayout({
   children,
@@ -18,7 +19,10 @@ export default function RootLayout({
         <link rel='icon' href='/icons/icon-192x192.svg' />
       </head>
       <body className='font-sans'>
-        <main className='app-shell'>{children}</main>
+        <Providers>
+          {children}
+          <ConfirmModal />
+        </Providers>
       </body>
     </html>
   );

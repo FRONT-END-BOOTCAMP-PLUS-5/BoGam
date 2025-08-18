@@ -77,7 +77,11 @@ export default function RealEstateSearchTestPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingExisting, setIsCheckingExisting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{
+    success: boolean;
+    data?: Record<string, unknown>;
+    message?: string;
+  } | null>(null);
   const [showExistenceWarning, setShowExistenceWarning] = useState(false);
   const [existenceWarningData, setExistenceWarningData] = useState<{
     exists: boolean;
@@ -182,7 +186,7 @@ export default function RealEstateSearchTestPage() {
       console.log('=== 등기부등본 조회 응답 ===');
       console.log('응답 데이터:', response.data);
 
-      const responseData = response.data as { success: boolean; message?: string; data?: any };
+      const responseData = response.data as { success: boolean; message?: string; data?: Record<string, unknown> };
       if (responseData.success) {
         setResult(responseData);
       } else {

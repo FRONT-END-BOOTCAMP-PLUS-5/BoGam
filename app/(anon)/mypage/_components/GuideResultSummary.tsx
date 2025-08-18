@@ -12,6 +12,7 @@ import {
 
 import clsx from 'clsx';
 
+import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { styles } from './GuideResultSummary.styles';
 
 // Chart.js 컴포넌트 등록
@@ -33,8 +34,6 @@ export default function GuideResultSummary({
   
   // 각 항목의 비율 계산 (퍼센트)
   const matchPercentage = total > 0 ? Math.round((match / total) * 100) : 0;
-  const mismatchPercentage = total > 0 ? Math.round((mismatch / total) * 100) : 0;
-  const uncheckedPercentage = total > 0 ? Math.round((unchecked / total) * 100) : 0;
 
   // Chart.js 데이터 설정
   const chartData = {
@@ -126,9 +125,7 @@ export default function GuideResultSummary({
       {/* 통계 카드들 */}
       <div className={styles.statsContainer}>
         <div className={styles.statCard}>
-          <div className={styles.statIconSafe}>
-            <span className={styles.checkmark}>✓</span>
-          </div>
+          <CircularIconBadge type="match-light-green" size="lg" weight="thick" />
           <div className={styles.statLabel}>안전</div>
           <div className={styles.statValue}>{match}건</div>
         </div>
@@ -136,9 +133,7 @@ export default function GuideResultSummary({
         <div className={styles.statDivider}></div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIconWarning}>
-            <span className={styles.emoji}>😮</span>
-          </div>
+          <CircularIconBadge type="mismatch-emoji" size="lg" weight="thick" />
           <div className={styles.statLabel}>경고</div>
           <div className={styles.statValue}>{mismatch}건</div>
         </div>
@@ -146,9 +141,7 @@ export default function GuideResultSummary({
         <div className={styles.statDivider}></div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIconUnchecked}>
-            <span className={styles.xmark}>✗</span>
-          </div>
+          <CircularIconBadge type="unchecked" size="lg" weight="thick" />
           <div className={styles.statLabel}>미확인</div>
           <div className={styles.statValue}>{unchecked}건</div>
         </div>
