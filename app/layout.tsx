@@ -1,6 +1,7 @@
 import './globals.css';
 import { Providers } from './providers';
 import { ConfirmModal } from './(anon)/_components/common/modal/ConfirmModal';
+import Header from '@/(anon)/_components/common/header /Header';
 
 export default function RootLayout({
   children,
@@ -20,6 +21,7 @@ export default function RootLayout({
       </head>
       <body className='font-sans'>
         <Providers>
+          <Header />
           <div className='app-shell'>{children}</div>
           <ConfirmModal />
         </Providers>

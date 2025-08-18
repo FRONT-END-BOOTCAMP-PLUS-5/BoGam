@@ -2,40 +2,42 @@
 
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import Profile from '@/(anon)/_components/common/profile/Profile';
+import { headerStyles } from './Header.style';
+import { ChevronLeft } from 'lucide-react';
 
-type HeaderProps = {
-  nickname: string;
-};
-
-export default function Header({ nickname }: HeaderProps) {
+export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-
   const isMainPage = pathname === '/main';
-  const initial = nickname?.charAt(0)?.toUpperCase() || '';
+  const hiddenRoutes = ['/', '/signin', '/signup'];
+
+  if (hiddenRoutes.includes(pathname)) return null;
 
   return (
-    <header className='w-full h-16 flex items-center justify-between border-b px-4'>
-      {/* 왼쪽 영역 */}
-      <div className='text-xl font-serif'>
-        {isMainPage ? (
-          <Image
-            src='/images/Logo.png'
-            alt='전세보감 로고'
-            width={30}
-            height={30}
-          />
-        ) : (
-          <button onClick={() => router.back()} className='text-base'>
-            ← 뒤로
-          </button>
-        )}
-      </div>
-
-      {/* 오른쪽 이니셜 */}
-      <div className='w-10 h-10 bg-[#A38652] text-white rounded-full flex items-center justify-center font-bold'>
-        {initial}
-      </div>
+    <header
+      className={headerStyles.wrapper}
+      style={{
+        paddingLeft: 'max(var(--page-x), env(safe-area-inset-left))',
+        paddingRight: 'max(var(--page-x), env(safe-area-inset-right))',
+      }}
+    >
+      {isMainPage ? (
+        <Image
+          src='/images/Logo.png'
+          alt='전세보감 로고'
+          width={30}
+          height={30}
+        />
+      ) : (
+        <button
+          onClick={() => router.back()}
+          className={headerStyles.backButton}
+        >
+          <ChevronLeft />
+        </button>
+      )}
+      <Profile size='small' />
     </header>
   );
 }
