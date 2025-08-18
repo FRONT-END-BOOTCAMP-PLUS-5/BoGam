@@ -1,7 +1,6 @@
 export const styles = {
   // 기존 스타일
-  mainContainer: "min-h-screen bg-gray-50 py-8",
-  container: "min-h-screen bg-gray-50 relative",
+  container: "min-h-screen bg-brand-light-gray/30 relative",
   title: "text-2xl font-bold text-brand-black mb-8 text-center",
   accordionSection: "mt-8",
   accordionTitle: "text-xl font-semibold text-brand-black mb-4",
@@ -39,25 +38,7 @@ export const styles = {
   statLabel: "text-sm text-brand-dark-gray",
   statCount: "text-lg font-semibold text-brand-black",
   
-  lastModified: "text-xs text-brand-dark-gray text-right",
-  
-  guideSteps: "space-y-0",
-  guideStep: "border border-brand-light-gray rounded-lg overflow-hidden",
-  stepHeader: "flex items-center justify-between p-4 bg-brand-light-gray cursor-pointer hover:bg-brand-light-gray/80 transition-colors",
-  stepInfo: "flex-1",
-  stepTitle: "text-base font-medium text-brand-black",
-  stepCounts: "flex items-center space-x-3 mt-2",
-  countItem: "text-sm text-brand-dark-gray",
-  chevronIcon: "text-brand-dark-gray transition-transform",
-  expanded: "rotate-180",
-  
   stepContent: "p-4",
   withdrawButton: "flex justify-center pt-6",
-  withdrawBtn: "px-6 py-2 text-sm text-brand-dark-gray hover:text-brand-black transition-colors underline",
-  
-  // CircularIconBadge 컨테이너
-  iconBadgeContainer: "flex justify-end space-x-2 mb-4 mr-14",
-  
-  // 가이드 결과 보기 헤더
-  guideResultHeader: "flex justify-between items-center mb-4"
+  withdrawBtn: "px-6 py-2 text-sm text-brand-dark-gray hover:text-brand-black transition-colors underline"
 };
