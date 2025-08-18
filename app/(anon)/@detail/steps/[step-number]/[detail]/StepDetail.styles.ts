@@ -6,6 +6,18 @@ export const styles = {
   // Modal Content
   modalContent:
     'bg-brand-light-blue w-full max-w-[480px] h-[calc(100vh-200px)] rounded-t-[20px] overflow-y-auto animate-slideUp mx-4',
+  
+  // Modal Content with Transform
+  modalContentWithTransform: (translateY: number, isDragging: boolean) => ({
+    transform: `translateY(${translateY}px)`,
+    transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+  }),
+
+  // Loading and Error States
+  loadingContainer: 'flex items-center justify-center h-32',
+  loadingText: 'text-brand-dark-gray',
+  errorContainer: 'flex items-center justify-center h-32',
+  errorText: 'text-brand-error',
 
   // Drag Handle
   dragHandle: 'flex justify-center py-2 cursor-grab active:cursor-grabbing',
