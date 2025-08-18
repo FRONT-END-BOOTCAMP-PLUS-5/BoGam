@@ -1,6 +1,6 @@
 'use client';
 
-import TextBadge from '@/(anon)/[user-address-nickname]/steps/[step-number]/_components/TextBadge';
+import TextBadge from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/TextBadge';
 
 export default function StyleTextBadgesPage() {
   return (
@@ -24,7 +24,7 @@ export default function StyleTextBadgesPage() {
       {/* Mismatch 타입 */}
       <section className='space-y-4'>
         <h2 className='text-xl font-semibold text-brand-error'>
-          Mismatch 타입 (경고고)
+          Mismatch 타입 (경고)
         </h2>
         <div className='flex flex-wrap gap-4'>
           <TextBadge type='mismatch' size='sm' />
