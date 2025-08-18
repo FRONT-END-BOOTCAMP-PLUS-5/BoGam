@@ -94,7 +94,7 @@ export const useGeolocation = (options: UseGeolocationOptions = {}) => {
             : '알 수 없는 오류가 발생했습니다.',
       });
     }
-  }, [mergedOptions.fallbackLocation]);
+  }, []); // 의존성 배열을 비워서 한 번만 생성되도록 함
 
   useEffect(() => {
     refreshLocation();
