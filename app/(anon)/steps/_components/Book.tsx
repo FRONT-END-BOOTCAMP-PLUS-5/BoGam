@@ -111,20 +111,9 @@ export default function Book({
 
   // 애니메이션 완료 후 해당 step 페이지로 이동
   const navigateToStep = () => {
-    // 현재 URL에서 user-address-nickname 부분을 추출
-    const currentPath = window.location.pathname;
-    const pathParts = currentPath.split('/');
-    
-    // /[user-address-nickname]/steps/ 형태에서 user-address-nickname 추출
-    if (pathParts.length >= 2) {
-      const userAddressNickname = pathParts[1];
-      const stepUrl = `/${userAddressNickname}/steps/${bookId}`;
-      
-      console.log(`📚 Book ${bookId} 애니메이션 완료! ${stepUrl}로 이동`);
-      router.push(stepUrl);
-    } else {
-      console.error('❌ URL에서 user-address-nickname을 찾을 수 없음');
-    }
+    // /steps/${bookId} 로 이동
+    const stepUrl = `/steps/${bookId}`;
+    router.push(stepUrl);
   };
 
   // 책 열기 애니메이션 (이동 + 0% → 40%)
