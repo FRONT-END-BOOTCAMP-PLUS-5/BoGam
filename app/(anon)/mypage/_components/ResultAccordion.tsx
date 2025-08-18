@@ -41,7 +41,12 @@ const ResultAccordion = ({
       >
         <div className={styles.title}>
           <span className={styles.stageNumber}>{stageNumber}</span>
-          <span className={styles.subtitle}>{subtitle}</span>
+          {/* 
+            아코디언 상태에 따라 제목 스타일 변경:
+            - 닫힌 상태: subtitle (truncate 적용, 긴 텍스트는 "..."으로 표시)
+            - 펼쳐진 상태: subtitleExpanded (truncate 없음, 전체 텍스트 표시)
+          */}
+          <span className={isOpen ? styles.subtitleExpanded : styles.subtitle}>{subtitle}</span>
         </div>
         
         <div className="flex items-center space-x-6">
