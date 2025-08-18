@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import BookCanvas from './BookCanvas';
-import { styles, getTextBoxClass } from './BookLayout.styles';
+import { styles } from './BookLayout.styles';
 
 interface BookLayoutProps {
   onAllBooksLoaded?: () => void;
@@ -95,25 +95,21 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
       
       {/* 7개 책을 array.map으로 렌더링 */}
       <div className={styles.grid}>
-        {books.slice(0, 3).map((book) => {
-          const isOdd = book.id % 2 === 1;
-          
-          return (
-            <div key={book.id} className={styles.bookItem}>
-              <BookCanvas 
-                bookId={book.id}
-                onLoadingComplete={() => handleBookLoad(book.id)}
-              />
-              <div className={getTextBoxClass(isOdd)}>
-                <div className={styles.bookTitle}>{book.title}</div>
-                <div className={styles.bookSubtitle}>{book.subtitle}</div>
-                {book.description && (
-                  <div className={styles.bookDescription}>{book.description}</div>
-                )}
-              </div>
+        {books.slice(0, 3).map((book) => (
+          <div key={book.id} className={styles.bookItem}>
+            <BookCanvas 
+              bookId={book.id}
+              onLoadingComplete={() => handleBookLoad(book.id)}
+            />
+            <div className={styles.textBox}>
+              <div className={styles.bookTitle}>{book.title}</div>
+              <div className={styles.bookSubtitle}>{book.subtitle}</div>
+              {book.description && (
+                <div className={styles.bookDescription}>{book.description}</div>
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
         
         {/* 구분선 */}
         <div className={styles.divider}></div>
@@ -123,25 +119,21 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
       <div className={styles.sectionLabel}>계약후</div>
       
       <div className={styles.grid}>
-        {books.slice(3).map((book) => {
-          const isOdd = book.id % 2 === 1;
-          
-          return (
-            <div key={book.id} className={styles.bookItem}>
-              <BookCanvas 
-                bookId={book.id}
-                onLoadingComplete={() => handleBookLoad(book.id)}
-              />
-              <div className={getTextBoxClass(isOdd)}>
-                <div className={styles.bookTitle}>{book.title}</div>
-                <div className={styles.bookSubtitle}>{book.subtitle}</div>
-                {book.description && (
-                  <div className={styles.bookDescription}>{book.description}</div>
-                )}
-              </div>
+        {books.slice(3).map((book) => (
+          <div key={book.id} className={styles.bookItem}>
+            <BookCanvas 
+              bookId={book.id}
+              onLoadingComplete={() => handleBookLoad(book.id)}
+            />
+            <div className={styles.textBox}>
+              <div className={styles.bookTitle}>{book.title}</div>
+              <div className={styles.bookSubtitle}>{book.subtitle}</div>
+              {book.description && (
+                <div className={styles.bookDescription}>{book.description}</div>
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </div>
   );
