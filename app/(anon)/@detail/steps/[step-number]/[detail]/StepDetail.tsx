@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { useDragToClose } from './hooks/useDragToClose';
 import { useGetStepDetail } from './hooks/useGetStepDetail';
 import { styles } from './StepDetail.styles';
-import ModalDragHandle from './components/ModalDragHandle';
-import ModalContent from './components/ModalContent';
+import ModalDragHandle from './_components/ModalDragHandle';
+import ModalContent from './_components/ModalContent';
 
 interface StepDetailProps {
   userAddressNickname: string;
