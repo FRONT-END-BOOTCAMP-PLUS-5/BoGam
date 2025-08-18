@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { useDragToClose } from './hooks/useDragToClose';
 import { useGetStepDetail } from './hooks/useGetStepDetail';
 import { styles } from './StepDetail.styles';
-import ModalDragHandle from './components/ModalDragHandle';
-import ModalContent from './components/ModalContent';
+import ModalDragHandle from './_components/ModalDragHandle';
+import ModalContent from './_components/ModalContent';
 
 interface StepDetailProps {
   userAddressNickname: string;
@@ -69,8 +69,8 @@ export default function StepDetailPage({
     return (
       <div className={styles.modalOverlay}>
         <div className={styles.modalContent}>
-          <div className='flex items-center justify-center h-32'>
-            <div className='text-gray-500'>로딩 중...</div>
+          <div className={styles.loadingContainer}>
+            <div className={styles.loadingText}>로딩 중...</div>
           </div>
         </div>
       </div>
@@ -84,8 +84,8 @@ export default function StepDetailPage({
           className={styles.modalContent}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className='flex items-center justify-center h-32'>
-            <div className='text-red-500'>
+          <div className={styles.errorContainer}>
+            <div className={styles.errorText}>
               데이터를 불러오는 중 오류가 발생했습니다.
             </div>
           </div>
@@ -99,10 +99,7 @@ export default function StepDetailPage({
       <div
         ref={modalRef}
         className={styles.modalContent}
-        style={{
-          transform: `translateY(${dragState.translateY}px)`,
-          transition: dragState.isDragging ? 'none' : 'transform 0.3s ease-out',
-        }}
+        style={styles.modalContentWithTransform(dragState.translateY, dragState.isDragging)}
         onClick={(e) => e.stopPropagation()}
       >
         <ModalDragHandle

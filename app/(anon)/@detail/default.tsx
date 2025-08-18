@@ -1,6 +1,6 @@
 'use client';
 
-import StepDetailPage from './[user-address-nickname]/steps/[step-number]/[detail]/StepDetail';
+import StepDetailPage from './steps/[step-number]/[detail]/StepDetail';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -13,15 +13,15 @@ export default function DetailSlot() {
   const [detail, setDetail] = useState<string>('');
 
   useEffect(() => {
-    // URL 패턴 확인: /[user-address-nickname]/steps/[step-number]/[detail]
-    const stepPattern = /^\/([^\/]+)\/steps\/(\d+)\/(\d+)$/;
+    // URL 패턴 확인: /steps/[step-number]/[detail]
+    const stepPattern = /^\/steps\/(\d+)\/(\d+)$/;
     const match = pathname.match(stepPattern);
     const isStepDetailUrl = !!match;
 
     if (isStepDetailUrl && match) {
-      const [, userAddressNickname, step, detailParam] = match;
+      const [, step, detailParam] = match;
       setStepNumber(step);
-      setUserAddressNickname(userAddressNickname);
+      setUserAddressNickname(''); // user-address-nickname이 제거되어 빈 문자열로 설정
       setDetail(detailParam);
 
       // 세션스토리지에서 프로그래밍 라우팅 플래그와 타임스탬프 확인
