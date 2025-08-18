@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { PlaceEntity } from '@be/domain/entities/Place';
-import {
-  PlaceRepository,
-  KakaoApiResponse,
-} from '@be/domain/repository/PlaceRepository';
+import { PlaceRepository } from '@be/domain/repository/PlaceRepository';
+import { KakaoApiResponseDto } from '@be/applications/places/dtos/KakaoApiResponseDto';
 import { PlaceSearchApiResponseDto } from '@be/applications/places/dtos/PlaceSearchApiResponseDto';
 import {
   PlaceApiDto,
@@ -67,8 +65,6 @@ export class PlaceRepositoryImpl implements PlaceRepository {
         }
       );
 
-      console.log('keywordRes', keywordRes);
-
       const keywordDocs = keywordRes.data.documents || [];
 
       const places = keywordDocs.map(
@@ -93,13 +89,13 @@ export class PlaceRepositoryImpl implements PlaceRepository {
     }
   }
 
-  async addressToCoord(query: string): Promise<KakaoApiResponse> {
+  async addressToCoord(query: string): Promise<KakaoApiResponseDto> {
     const headers = {
       Authorization: `KakaoAK ${this.API_KEY}`,
     };
 
     try {
-      const response = await axios.get<KakaoApiResponse>(
+      const response = await axios.get<KakaoApiResponseDto>(
         `${this.BASE_URL}/search/address.json`,
         {
           headers,
@@ -114,13 +110,13 @@ export class PlaceRepositoryImpl implements PlaceRepository {
     }
   }
 
-  async coordToAddress(x: string, y: string): Promise<KakaoApiResponse> {
+  async coordToAddress(x: string, y: string): Promise<KakaoApiResponseDto> {
     const headers = {
       Authorization: `KakaoAK ${this.API_KEY}`,
     };
 
     try {
-      const response = await axios.get<KakaoApiResponse>(
+      const response = await axios.get<KakaoApiResponseDto>(
         `${this.BASE_URL}/geo/coord2address.json`,
         {
           headers,

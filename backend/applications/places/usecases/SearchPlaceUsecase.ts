@@ -1,8 +1,8 @@
-import {
-  PlaceRepository,
-  KakaoApiResponse,
-} from '@be/domain/repository/PlaceRepository';
+import { PlaceRepository } from '@be/domain/repository/PlaceRepository';
 import { PlaceSearchApiResponseDto } from '@be/applications/places/dtos/PlaceSearchApiResponseDto';
+import { CoordinateResponseDto } from '@be/applications/places/dtos/CoordinateResponseDto';
+import { AddressResponseDto } from '@be/applications/places/dtos/AddressResponseDto';
+import { KakaoApiResponseDto } from '@be/applications/places/dtos/KakaoApiResponseDto';
 
 export class SearchPlaceUsecase {
   constructor(private readonly repository: PlaceRepository) {}
@@ -27,11 +27,27 @@ export class SearchPlaceUsecase {
     }));
   }
 
-  async addressToCoord(query: string): Promise<KakaoApiResponse> {
-    return await this.repository.addressToCoord(query);
+  async addressToCoord(query: string): Promise<CoordinateResponseDto | null> {
+    const response = await this.repository.addressToCoord(query);
+    if (response.documents && response.documents.length > 0) {
+      return {
+        x: parseFloat(response.documents[0].x),
+        y: parseFloat(response.documents[0].y),
+      };
+    }
+    return null;
   }
 
-  async coordToAddress(x: string, y: string): Promise<KakaoApiResponse> {
-    return await this.repository.coordToAddress(x, y);
+  async coordToAddress(
+    x: string,
+    y: string
+  ): Promise<AddressResponseDto | null> {
+    const response = await this.repository.coordToAddress(x, y);
+    if (response.documents && response.documents.length > 0) {
+      return {
+        address: response.documents[0].address.address_name,
+      };
+    }
+    return null;
   }
 }
