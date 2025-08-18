@@ -2,13 +2,17 @@ import { frontendAxiosInstance } from './axiosInstance';
 
 // Step Detail 데이터 타입 정의
 export interface StepDetailData {
-  detailTitle: string;
-  isSafe: boolean;
-  expandableTitle: string;
-  details: Array<{
-    key: string;
-    value: string;
-  }>;
+  id: number;
+  userAddressId: number;
+  stepId: number;
+  mismatch: number;
+  match: number;
+  unchecked: number;
+  details: Record<string, string>;
+  createdAt: string;
+  updatedAt: string;
+  mainNum: number;
+  subNum: number;
 }
 
 // API 응답 타입 정의
@@ -22,7 +26,6 @@ interface StepDetailApiResponse {
 interface GetStepDetailParams {
   stepNumber: string;
   detail: string;
-  userAddressNickname: string;
 }
 
 /**
@@ -50,9 +53,8 @@ class StepDetailApi {
 
     // 쿼리 파라미터 구성
     const queryParams = new URLSearchParams({
-      stepNumber: params.stepNumber,
-      detail: params.detail,
-      userAddressNickname: params.userAddressNickname,
+      stepNumber: params.stepNumber.toString(),
+      detail: params.detail.toString(),
     });
 
     const response = await axiosInstance.get<StepDetailApiResponse>(

@@ -17,7 +17,7 @@ export default function StepNumberPage({ params }: StepNumberPageProps) {
     sessionStorage.setItem('navigation-timestamp', Date.now().toString());
 
     // 페이지 이동 없이 URL만 변경 (슬롯만 표시)
-    const newUrl = `/steps/${step}/4`;
+    const newUrl = `/steps/${step}/1`;
     window.history.pushState({}, '', newUrl);
 
     // Next.js router의 pathname 업데이트를 위해 강제로 리렌더링 트리거
