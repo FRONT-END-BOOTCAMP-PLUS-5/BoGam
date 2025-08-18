@@ -2,20 +2,26 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { styles } from './TopSection.styles';
-import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown';
+import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
+import { useMainPageModule } from '../hooks/useMainPageModule';
 
-interface TopSectionProps {
-  userAddresses: UserAddress[];
-  selectedAddress: UserAddress | null;
-  onAddressChange: (address: UserAddress) => void;
-}
-
-export const TopSection: React.FC<TopSectionProps> = ({
-  userAddresses,
-  selectedAddress,
-  onAddressChange,
-}) => {
+export const TopSection: React.FC = () => {
   const { data: session } = useSession();
+  const { userAddresses, handleAddressChangeWithTransaction } =
+    useMainPageModule();
+
+  // 주소 선택 핸들러
+  const handleAddressSelect = (id: number) => {
+    const selectedAddress = userAddresses.find((addr) => addr.id === id);
+    if (selectedAddress) {
+      handleAddressChangeWithTransaction(selectedAddress);
+    } else {
+      console.error('📍 TopSection - 주소를 찾을 수 없음:', {
+        id,
+        userAddresses,
+      });
+    }
+  };
 
   return (
     <div className={styles.topSection}>
@@ -26,41 +32,13 @@ export const TopSection: React.FC<TopSectionProps> = ({
         </span>
       </div>
 
+      {/* props 전달 없이 Store에서 직접 데이터 사용 */}
       <AddressDropDown
         title='과거의 집'
-        addresses={userAddresses.map((addr) => ({
-          id: addr.id.toString(),
-          address: addr.address,
-          isFavorite: addr.isPrimary || false,
-        }))}
-        selectedAddress={
-          selectedAddress
-            ? {
-                id: selectedAddress.id.toString(),
-                address: selectedAddress.address,
-                isFavorite: selectedAddress.isPrimary || false,
-              }
-            : undefined
-        }
-        onSelect={(id) => {
-          const address = userAddresses?.find(
-            (addr) => addr.id.toString() === id
-          );
-          if (address) {
-            onAddressChange(address);
-          }
-        }}
-        onToggleFavorite={(id) => {
-          // 즐겨찾기 토글 로직 (필요시 구현)
-          console.log('즐겨찾기 토글:', id);
-        }}
-        onDelete={(id) => {
-          // 삭제 로직 (필요시 구현)
-          console.log('주소 삭제:', id);
-        }}
         showFavoriteToggle={true}
         showDeleteButton={true}
         placeholder='주소를 선택해주세요'
+        onSelect={handleAddressSelect}
       />
     </div>
   );

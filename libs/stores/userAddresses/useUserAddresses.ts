@@ -30,7 +30,9 @@ export const useUserAddresses = () => {
           // 완전한 주소 생성 (동/호 포함)
           const dongPart = item.address.dong ? ` ${item.address.dong}동` : '';
           const hoPart = item.address.ho ? ` ${item.address.ho}호` : '';
-          const completeAddress = `${item.address.lotAddress}${dongPart}${hoPart}`;
+          const completeAddress = item.address.roadAddress
+            ? `${item.address.roadAddress}${dongPart}${hoPart}`
+            : `${item.address.lotAddress}${dongPart}${hoPart}`;
 
           return {
             id: item.id,
@@ -40,7 +42,7 @@ export const useUserAddresses = () => {
             isPrimary: item.isPrimary,
             legalDistrictCode: item.address.legalDistrictCode,
             lotAddress: item.address.lotAddress,
-            roadAddress: item.address.roadAddress || item.address.lotAddress,
+            roadAddress: item.address.roadAddress || '',
             dong: item.address.dong,
             ho: item.address.ho,
             completeAddress: completeAddress,

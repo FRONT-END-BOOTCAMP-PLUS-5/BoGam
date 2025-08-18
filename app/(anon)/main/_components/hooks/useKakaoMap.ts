@@ -3,30 +3,16 @@ import { useGeolocation } from './useGeolocation';
 import { useKakaoMarker } from './useKakaoMarker';
 import { useKakaoMapMarkers } from './useKakaoMapMarkers';
 import { useAddressInfo } from './useAddressInfo';
+import { useMapStore } from '@libs/stores/map/mapStore';
+import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 
 import {
-  Location,
+  Location as MapLocation,
   KakaoMapOptions,
 } from '@/(anon)/main/_components/types/map.types';
 
 interface KakaoMapHookProps extends KakaoMapOptions {
   showTransactionMarkers?: boolean;
-  transactionData?: Array<{
-    id: string;
-    아파트?: string;
-    거래금액: string;
-    전용면적: string;
-    층: string;
-    건축년도: string;
-    년: string;
-    월: string;
-    일: string;
-    법정동: string;
-    지번: string;
-    location?: Location;
-  }>;
-  searchLocationMarker?: Location | null;
-  adjustBounds?: boolean;
 }
 
 export const useKakaoMap = (props: KakaoMapHookProps) => {
@@ -37,20 +23,23 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
     showCurrentLocationMarker = true,
     showAddressInfo = true,
     markerOptions = {},
-    transactionData = [],
-    searchLocationMarker = null,
-    adjustBounds = false,
   } = props;
 
   const mapRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<MapLocation | null>(
+    null
+  );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapInstanceRef = useRef<any>(null);
 
+  // Store에서 데이터 가져오기
+  const { searchLocationMarker, adjustBounds } = useMapStore();
+  const { transactionData } = useTransactionDataStore();
+
   // 모든 마커가 보이도록 지도 영역 조정 함수
   const adjustMapBounds = useCallback(
-    (markersData: Array<{ location: Location }>) => {
+    (markersData: Array<{ location: MapLocation }>) => {
       if (
         !window.kakao ||
         !window.kakao.maps ||
@@ -211,7 +200,11 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
     if (!currentLocation) return;
 
     const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY;
+
     if (!apiKey) {
+      console.error(
+        '카카오맵 API 키가 설정되지 않았습니다. NEXT_PUBLIC_KAKAO_MAP_API_KEY 환경 변수를 설정해주세요.'
+      );
       setIsLoading(false);
       return;
     }
@@ -268,6 +261,7 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
       };
 
       script.onerror = () => {
+        console.error('카카오맵 스크립트 로드 실패');
         setIsLoading(false);
       };
 
