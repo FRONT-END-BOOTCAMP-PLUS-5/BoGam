@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { axiosInstance } from '@utils/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signupSchema, SignupInput } from './schema';
+import { signupSchema, SignupInput } from '@/(anon)/signup/_components/schema';
 import { useRouter } from 'next/navigation';
 
 import Field from '@/(anon)/_components/common/forms/Field';

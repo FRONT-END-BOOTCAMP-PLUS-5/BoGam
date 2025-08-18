@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
-import SignupForm from '@/(anon)/signup/SignupForm';
+import SignupForm from '@/(anon)/signup/_components/SignupForm';
 import styles from '@/(anon)/signup/Signup.module.css';
 
 export default function Signup() {
