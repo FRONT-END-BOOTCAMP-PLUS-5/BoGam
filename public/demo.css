@@ -1,0 +1,36 @@
+/* react-pageflip 공식 데모 스타일 복사본 */
+.demo-book {
+  margin: 0 auto;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.2);
+}
+.page {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+.page-cover {
+  background: #f5f5f5;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page-content {
+  padding: 32px;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.page-header {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+}
+.page-footer {
+  margin-top: 32px;
+  font-size: 1rem;
+  color: #aaa;
+}

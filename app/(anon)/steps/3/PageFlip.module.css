@@ -298,12 +298,12 @@ body {
     position: relative;
     padding-bottom: 2vh;
     padding-top: 2vh;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #e5e7eb;
     width: 100%;
 }
 
-.border-bottom-div {
-    border-bottom: 1px solid black;
+ .border-bottom-div {
+    border-bottom: 1px solid #e5e7eb;
     padding: 4vh 10% 4vh 10%;
     height: 38vh;
 }
@@ -359,7 +359,7 @@ body {
     .danger-div {
         position: absolute;
         width: 45%;
-        border: 0.5px solid black;
+        border: 0.5px solid #e5e7eb;
         padding-top: 0.5vh;
         padding-bottom: 0.5vh;
         border-radius: var(--radius-lg);
@@ -369,7 +369,7 @@ body {
     }
 
     .border-bottom-div {
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid #e5e7eb;
         padding: 4vh 10% 4vh 10%;
         height: 34vh;
     }
@@ -383,7 +383,7 @@ body {
 
 @media (min-height: 900px) {
     .border-bottom-div {
-        border-bottom: 1px solid black;
+        border-bottom: 1px solid #e5e7eb;
         padding: 4vh 10% 4vh 10%;
         height: 31vh;
     }

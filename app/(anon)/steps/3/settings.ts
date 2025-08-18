@@ -17,7 +17,7 @@ export interface IFlipSetting {
     flippingTime: number;
 
     usePortrait: boolean;
-    startZIndex: number;
+    startZIndex: number; 
     autoSize: boolean;
     maxShadowOpacity: number;
 
