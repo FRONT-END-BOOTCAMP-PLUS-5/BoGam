@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { styles, getDropdownContainerStyle } from './AddressDropDown.styles';
-import { AddressItem } from './types';
+import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { AddressDropDownItem } from './AddressDropDownItem';
 
 interface AddressDropDownListProps {
-  addresses: AddressItem[];
-  selectedAddress?: AddressItem;
-  onDelete?: (id: string) => void;
-  onToggleFavorite?: (id: string) => void;
-  onSelect?: (id: string) => void;
+  addresses: UserAddress[];
+  selectedAddress?: UserAddress | null;
+  onDelete?: (id: number) => void;
+  onToggleFavorite?: (id: number) => void;
+  onSelect?: (id: number) => void;
   showFavoriteToggle?: boolean;
   showDeleteButton?: boolean;
   isExpanded: boolean;
