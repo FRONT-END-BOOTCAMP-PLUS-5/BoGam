@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
-import SigninForm from '@/(anon)/signin/SigninForm';
+import SigninForm from '@/(anon)/signin/_components/SigninForm';
 import styles from '@/(anon)/signin/Signin.module.css';
 
 export default function SignIn() {
