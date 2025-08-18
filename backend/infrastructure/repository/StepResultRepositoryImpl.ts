@@ -56,7 +56,7 @@ export class StepResultRepositoryImpl implements StepResultRepository {
             result.unchecked,
             result.details,
             result.createdAt,
-            undefined,
+            result.updatedAt,
             result.step?.mainNum,
             result.step?.subNum
           )
