@@ -90,7 +90,6 @@ export default function PageFlipPage() {
                 전세보감이 초기 설정 때 작성한 매물 지역의
                 최우선변제 금액을 안내해드리겠습니다'></GeneralPage>
             <div className={styles['back-page']}></div>
-            <div className={styles['back-page']}></div>
           </div>
 
           <div></div>
@@ -106,8 +105,6 @@ export default function PageFlipPage() {
                     온라인 서비스를 이용하셔야 됩니다.
                     전세보감이 해당 온라인 서비스 링크를
                     제공해드리곘습니다.'></GeneralPage>
-            <div className={styles['back-page']}></div>
-            <div className={styles['back-page']}></div>
           </div>
 
         </HTMLFlipBook>
