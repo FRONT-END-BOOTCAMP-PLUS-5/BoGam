@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const results = await usecase.coordToAddress(x, y);
-    return NextResponse.json(results);
+    return NextResponse.json({ success: true, data: results });
   } catch (err) {
     console.error('[Coord2AddressError]', err);
     return NextResponse.json(

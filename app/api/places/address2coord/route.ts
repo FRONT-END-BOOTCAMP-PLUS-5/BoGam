@@ -14,14 +14,13 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  console.log('query', query);
-
   const repository = new PlaceRepositoryImpl();
   const usecase = new SearchPlaceUsecase(repository);
 
   try {
     const results = await usecase.addressToCoord(query);
-    return NextResponse.json(results);
+
+    return NextResponse.json({ success: true, data: results });
   } catch (err) {
     console.error('[Address2CoordError]', err);
     return NextResponse.json(

@@ -10,6 +10,28 @@ export interface UserAddress {
   isPrimary: boolean;
 }
 
+// 백엔드 API 응답 타입 정의
+export interface AddressInfo {
+  id: number;
+  latitude?: number;
+  longitude?: number;
+  legalDistrictCode?: string;
+  dong?: string;
+  ho?: string;
+  lotAddress: string;
+  roadAddress?: string;
+}
+
+export interface UserAddressWithAddressInfo {
+  id: number;
+  userId: string;
+  addressId: number;
+  nickname: string;
+  createdAt: Date;
+  isPrimary: boolean;
+  address: AddressInfo;
+}
+
 /**
  * 사용자 주소 API 클래스
  */
@@ -28,34 +50,46 @@ class UserAddressApi {
   /**
    * 사용자 주소 목록 조회
    */
-  public async getMyAddressList(): Promise<UserAddress[]> {
+  public async getMyAddressList(): Promise<{
+    success: boolean;
+    message: string;
+    data?: UserAddressWithAddressInfo[];
+  }> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
-    const response = await axiosInstance.get<UserAddress[]>(
+    const response = await axiosInstance.get(
       '/api/user-address/my-address-list'
     );
 
-    return response.data;
+    return response.data as {
+      success: boolean;
+      message: string;
+      data?: UserAddressWithAddressInfo[];
+    };
   }
 
   /**
    * 주소 추가
    */
   public async addAddress(addressData: {
-    address: string;
-    nickname: string;
-    x: number;
-    y: number;
-    isPrimary?: boolean;
-  }): Promise<UserAddress> {
+    addressNickname?: string;
+    latitude: number;
+    longitude: number;
+    legalDistrictCode: string;
+    dong: string;
+    ho?: string;
+    lotAddress: string;
+    roadAddress: string;
+  }): Promise<{ success: boolean; message: string; data?: unknown }> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
-    const response = await axiosInstance.post<UserAddress>(
-      '/api/user-address',
-      addressData
-    );
+    const response = await axiosInstance.post('/api/user-address', addressData);
 
-    return response.data;
+    return response.data as {
+      success: boolean;
+      message: string;
+      data?: unknown;
+    };
   }
 
   /**
