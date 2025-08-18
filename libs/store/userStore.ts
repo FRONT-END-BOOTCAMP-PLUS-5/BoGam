@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 
 interface UserStore {
   nickname?: string;
@@ -8,9 +8,17 @@ interface UserStore {
 }
 
 export const useUserStore = create<UserStore>()(
-  devtools((set) => ({
-    nickname: undefined,
-    setNickname: (nickname) => set({ nickname }, false, 'setNickname'),
-    clearUser: () => set({ nickname: undefined }, false, 'clearUser'),
-  }))
+  devtools(
+    persist(
+      (set) => ({
+        nickname: undefined,
+        setNickname: (nickname) => set({ nickname }, false, 'setNickname'),
+        clearUser: () => set({ nickname: undefined }, false, 'clearUser'),
+      }),
+      {
+        name: 'user-store',
+        storage: createJSONStorage(() => sessionStorage),
+      }
+    )
+  )
 );

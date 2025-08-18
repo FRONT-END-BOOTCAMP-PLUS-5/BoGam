@@ -9,6 +9,7 @@ interface ProfileProps {
 
 export default function Profile({ size }: ProfileProps) {
   const nickname = useUserStore((state) => state.nickname);
+  console.log(nickname);
   const initial = nickname?.charAt(0);
 
   return <div className={getProfileClassName(size)}>{initial}</div>;

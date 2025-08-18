@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from '@/(anon)/_components/onboarding/AuthLanding.module.css';
+import Button from '@/(anon)/_components/common/button/Button';
 
 export default function AuthLanding() {
   return (
@@ -21,14 +22,12 @@ export default function AuthLanding() {
         </div>
 
         {/* 버튼들 */}
-        <div className={styles.btns}>
-          <Link href='/signin' className={styles.primary}>
-            로그인
-          </Link>
-          <Link href='/signup' className={styles.outline}>
-            회원가입
-          </Link>
-        </div>
+        <Button variant='primary' href='/signup' fullWidth>
+          회원가입
+        </Button>
+        <Button variant='secondary' href='/signup' fullWidth>
+          로그인
+        </Button>
 
         {/* 소셜 로그인 */}
         <div className={styles.socialRow}>
