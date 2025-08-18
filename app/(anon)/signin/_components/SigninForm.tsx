@@ -42,7 +42,7 @@ export default function SigninForm() {
         message: '아이디 또는 비밀번호가 올바르지 않습니다.',
       });
     } else {
-      router.push('/'); // 로그인 후 메인 페이지로 이동
+      router.push('/main'); // 로그인 후 메인 페이지로 이동
     }
   };
 
