@@ -20,7 +20,7 @@ export default function RootLayout({
       </head>
       <body className='font-sans'>
         <Providers>
-          {children}
+          <div className='app-shell'>{children}</div>
           <ConfirmModal />
         </Providers>
       </body>
