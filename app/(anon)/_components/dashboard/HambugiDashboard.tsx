@@ -12,7 +12,7 @@ interface StepDetail {
   id: string;
   title: string;
   content: string;
-  status: 'success' | 'warning' | 'error';
+  status: 'match' | 'mismatch' | 'unchecked';
   actionLink?: string;
   actionText?: string;
 }
@@ -43,7 +43,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
           id: "1-1",
           title: "개인정보 확인",
           content: "개인정보가 정확하게 입력되었습니다.",
-          status: "success"
+          status: "match"
         }
       ]
     },
@@ -54,7 +54,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
           id: "2-1",
           title: "주소 유효성 검증",
           content: "입력된 주소가 유효합니다.",
-          status: "success"
+          status: "match"
         }
       ]
     },
@@ -65,19 +65,19 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
           id: "3-1",
           title: "중개사 자격 확인",
           content: "신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!",
-          status: "success"
+          status: "match"
         },
         {
           id: "3-2",
           title: "최우선변제 금액 안내",
           content: "서울특별시 소액보증금 범위 : 1억 5천만원 이하 최우선변제금액 : 5천만원",
-          status: "success"
+          status: "match"
         },
         {
           id: "3-3",
           title: "공제증서 발급 안내",
           content: "공제증서 발급 요건이 불충족되었습니다.",
-          status: "error",
+          status: "mismatch",
           actionLink: "/online-service",
           actionText: "온라인 서비스로 이동하기"
         }

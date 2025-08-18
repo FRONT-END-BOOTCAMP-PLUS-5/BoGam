@@ -11,7 +11,7 @@ interface StepDetail {
   id: string;
   title: string;
   content: string;
-  status: 'success' | 'warning' | 'error';
+  status: 'match' | 'mismatch' | 'unchecked';
   actionLink?: string;
   actionText?: string;
 }
@@ -23,19 +23,6 @@ interface StepDetailContentProps {
 }
 
 export default function StepDetailContent({ details, onActionClick }: StepDetailContentProps) {
-  const getIconType = (status: string) => {
-    switch (status) {
-      case 'success':
-        return 'match';
-      case 'warning':
-        return 'mismatch';
-      case 'error':
-        return 'mismatch';
-      default:
-        return 'unchecked';
-    }
-  };
-
   return (
     <div className={styles.container}>      
       {details.map((detail, index) => (
@@ -46,7 +33,7 @@ export default function StepDetailContent({ details, onActionClick }: StepDetail
           showDivider={index < details.length - 1}
         >
           <GuideStepContent>
-            <GuideStepRow iconType={getIconType(detail.status)}>
+            <GuideStepRow iconType={detail.status}>
               <GuideStepText multiLine={detail.content.length > 50}>
                 {detail.content}
               </GuideStepText>
