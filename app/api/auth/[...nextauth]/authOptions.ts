@@ -28,6 +28,9 @@ export const authOptions: AuthOptions = {
         if (!isValid) return null;
 
         return {
+          id: user.id,
+          name: user.name,
+          email: user.username,
           nickname: user.nickname,
         };
       },
