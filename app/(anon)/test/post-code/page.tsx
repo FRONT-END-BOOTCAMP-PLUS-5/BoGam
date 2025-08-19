@@ -32,14 +32,6 @@ interface DaumPostcode {
   };
 }
 
-declare global {
-  interface Window {
-    daum: {
-      Postcode: DaumPostcode;
-    };
-  }
-}
-
 export default function PostCodePage() {
   const [postcode, setPostcode] = useState('');
   const [address, setAddress] = useState('');
@@ -48,13 +40,14 @@ export default function PostCodePage() {
   const [sigunguCode, setSigunguCode] = useState('');
   const [bcode, setBcode] = useState('');
   const [showPostcode, setShowPostcode] = useState(false);
-  
+
   const postcodeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Daum Postcode 스크립트 로드
     const script = document.createElement('script');
-    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.src =
+      '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
     script.async = true;
     document.head.appendChild(script);
 
@@ -72,12 +65,12 @@ export default function PostCodePage() {
     }
 
     setShowPostcode(true);
-    
+
     // 약간의 지연을 두어 DOM이 업데이트된 후 실행
     setTimeout(() => {
       if (postcodeRef.current) {
         new window.daum.Postcode({
-          oncomplete: function(data: DaumPostcodeData) {
+          oncomplete: function (data: DaumPostcodeData) {
             let addr = '';
             let extraAddr = '';
 
@@ -92,7 +85,10 @@ export default function PostCodePage() {
                 extraAddr += data.bname;
               }
               if (data.buildingName !== '' && data.apartment === 'Y') {
-                extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                extraAddr +=
+                  extraAddr !== ''
+                    ? ', ' + data.buildingName
+                    : data.buildingName;
               }
               if (extraAddr !== '') {
                 extraAddr = ' (' + extraAddr + ')';
@@ -108,13 +104,13 @@ export default function PostCodePage() {
             setBcode(data.bcode || '');
             setShowPostcode(false);
           },
-          onresize: function(size: DaumPostcodeSize) {
+          onresize: function (size: DaumPostcodeSize) {
             if (postcodeRef.current) {
               postcodeRef.current.style.height = size.height + 'px';
             }
           },
           width: '100%',
-          height: '100%'
+          height: '100%',
         }).embed(postcodeRef.current);
       }
     }, 100);
@@ -123,7 +119,7 @@ export default function PostCodePage() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Daum 우편번호 검색</h1>
-      
+
       <div className={styles.formContainer}>
         <div className={styles.inputGroup}>
           <input
@@ -142,7 +138,7 @@ export default function PostCodePage() {
             우편번호 찾기
           </button>
         </div>
-        
+
         <input
           type='text'
           id='sample3_address'
@@ -151,7 +147,7 @@ export default function PostCodePage() {
           readOnly
           className={styles.input}
         />
-        
+
         <input
           type='text'
           id='sample3_detailAddress'
@@ -160,7 +156,7 @@ export default function PostCodePage() {
           onChange={(e) => setDetailAddress(e.target.value)}
           className={styles.input}
         />
-        
+
         <input
           type='text'
           id='sample3_extraAddress'
@@ -182,10 +178,7 @@ export default function PostCodePage() {
               ✕
             </button>
           </div>
-          <div
-            ref={postcodeRef}
-            className={styles.postcodeFrame}
-          />
+          <div ref={postcodeRef} className={styles.postcodeFrame} />
         </div>
       )}
 

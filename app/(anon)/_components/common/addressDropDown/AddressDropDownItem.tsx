@@ -6,16 +6,16 @@ import {
   getListItemStyle,
   getAddressTextStyle,
 } from './AddressDropDown.styles';
-import { AddressItem } from './types';
+import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { formatAddress } from '@utils/addressUtils';
 import { StarIcon } from './AddressDropDown';
 
 interface AddressDropDownItemProps {
-  address: AddressItem;
+  address: UserAddress;
   isSelected?: boolean;
-  onDelete?: (id: string) => void;
-  onToggleFavorite?: (id: string) => void;
-  onSelect?: (id: string) => void;
+  onDelete?: (id: number) => void;
+  onToggleFavorite?: (id: number) => void;
+  onSelect?: (id: number) => void;
   showFavoriteToggle?: boolean;
   showDeleteButton?: boolean;
   animationDelay?: number;
@@ -44,7 +44,7 @@ export function AddressDropDownItem({
     onSelect?.(address.id);
   };
 
-  const { firstPart, secondPart } = formatAddress(address.address);
+  const { firstPart, secondPart } = formatAddress(address.completeAddress);
 
   return (
     <div
@@ -71,9 +71,9 @@ export function AddressDropDownItem({
               handleToggleFavorite();
             }}
             className={styles.starButton}
-            aria-label={address.isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+            aria-label={address.isPrimary ? '즐겨찾기 해제' : '즐겨찾기 추가'}
           >
-            <StarIcon filled={address.isFavorite} />
+            <StarIcon filled={address.isPrimary || false} />
           </button>
         )}
         <div className={styles.addressTextContainer}>
@@ -102,7 +102,7 @@ export function AddressDropDownItem({
             handleDelete();
           }}
           className={styles.deleteButton}
-          aria-label={`${address.address} 삭제`}
+          aria-label={`${address.completeAddress} 삭제`}
         >
           삭제하기
         </button>

@@ -20,7 +20,7 @@ export class GetUserAddressesRepositoryImpl
       id: userAddress.id,
       userId: userAddress.userId,
       addressId: userAddress.addressId,
-      nickname: userAddress.nickname || undefined,
+      nickname: userAddress.nickname,
       createdAt: userAddress.createdAt,
       address: {
         id: userAddress.address.id,
@@ -30,6 +30,7 @@ export class GetUserAddressesRepositoryImpl
         dong: userAddress.address.dong || undefined,
         ho: userAddress.address.ho || undefined,
         lotAddress: userAddress.address.lotAddress || '',
+        roadAddress: userAddress.address.roadAddress || '',
       },
       isPrimary: userAddress.isPrimary,
     }));
