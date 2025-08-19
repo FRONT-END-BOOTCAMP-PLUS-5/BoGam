@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       'type',
       'searchGbn',
       'addrSido',
-      'addrSigun',
+      'addrSigungu',
       'addrDong',
     ];
 
@@ -62,13 +62,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Usecase 인스턴스 생성 및 API 호출
-    const usecase = new DanjiSerialNumberUsecase(new DanjiSerialNumberRepositoryImpl());
+    const usecase = new DanjiSerialNumberUsecase(
+      new DanjiSerialNumberRepositoryImpl()
+    );
     const response = await usecase.getDanjiSerialNumber(body);
-
-    console.log('✅ 단지 일련번호 조회 API 성공:', {
-      resultCode: response.result?.code,
-      resultMessage: response.result?.message,
-    });
 
     return NextResponse.json(response);
   } catch (error: unknown) {

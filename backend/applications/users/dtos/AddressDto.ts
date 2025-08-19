@@ -14,7 +14,7 @@ export interface AddressLocationParams {
   longitude: number;
   legalDistrictCode: string;
   dong: string;
-  ho: string;
+  ho: string | null;
   lotAddress: string;
   roadAddress?: string;
 }

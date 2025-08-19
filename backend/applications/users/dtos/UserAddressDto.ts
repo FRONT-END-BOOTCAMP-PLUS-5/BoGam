@@ -4,16 +4,36 @@ export interface UserAddressInfo {
   id: number;
   userId: string;
   addressId: number;
-  nickname?: string;
+  nickname: string;
   createdAt: Date;
+  isPrimary: boolean;
+  address: {
+    id: number;
+    latitude?: number;
+    longitude?: number;
+    legalDistrictCode?: string;
+    dong?: string;
+    ho?: string;
+    lotAddress: string;
+    roadAddress?: string;
+  };
 }
 
 export interface UserAddressWithAddressInfo {
   id: number;
   userId: string;
   addressId: number;
-  nickname?: string;
+  nickname: string;
   createdAt: Date;
-  address: AddressInfo;
   isPrimary: boolean;
+  address: {
+    id: number;
+    latitude?: number;
+    longitude?: number;
+    legalDistrictCode?: string;
+    dong?: string;
+    ho?: string;
+    lotAddress: string;
+    roadAddress?: string;
+  };
 }

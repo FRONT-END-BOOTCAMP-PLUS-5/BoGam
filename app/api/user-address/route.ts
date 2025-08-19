@@ -24,8 +24,7 @@ export async function POST(request: NextRequest) {
       !body.latitude ||
       !body.longitude ||
       !body.legalDistrictCode ||
-      !body.dong ||
-      !body.ho
+      !body.dong
     ) {
       return NextResponse.json(
         { success: false, message: '주소 정보가 불완전합니다.' },

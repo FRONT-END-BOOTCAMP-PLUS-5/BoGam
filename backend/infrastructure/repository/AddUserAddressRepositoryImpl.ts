@@ -52,6 +52,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         userId,
         addressId,
       },
+      include: {
+        address: true,
+      },
     });
 
     return userAddress ? mapUserAddressToUserAddressInfo(userAddress) : null;
@@ -68,6 +71,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         userId,
         addressId,
       },
+      include: {
+        address: true,
+      },
     });
 
     if (existingUserAddress) {
@@ -77,13 +83,22 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
       };
     }
 
+    // 자동 생성된 닉네임 생성
+    const userAddressCount = await prisma.userAddress.count({
+      where: { userId },
+    });
+    const autoNickname = `주소_${userAddressCount + 1}`;
+
     // 새 사용자 주소 생성
     const userAddress = await prisma.userAddress.create({
       data: {
         userId,
         addressId,
-        nickname: addressNickname || `주소_${Date.now()}`, // nickname이 필수이므로 기본값 제공
+        nickname: addressNickname || autoNickname,
         isPrimary: false,
+      },
+      include: {
+        address: true,
       },
     });
 

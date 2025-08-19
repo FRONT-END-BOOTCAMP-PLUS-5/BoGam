@@ -36,15 +36,37 @@ export function mapUserAddressToUserAddressInfo(userAddress: {
   id: number;
   userId: string;
   addressId: number;
-  nickname: string | null;
+  nickname: string;
   createdAt: Date;
+  isPrimary: boolean;
+  address: {
+    id: number;
+    latitude: number | null;
+    longitude: number | null;
+    legalDistrictCode: string | null;
+    dong: string | null;
+    ho: string | null;
+    lotAddress: string | null;
+    roadAddress: string | null;
+  };
 }): UserAddressInfo {
   return {
     id: userAddress.id,
     userId: userAddress.userId,
     addressId: userAddress.addressId,
-    nickname: userAddress.nickname || undefined,
+    nickname: userAddress.nickname,
     createdAt: userAddress.createdAt,
+    isPrimary: userAddress.isPrimary,
+    address: {
+      id: userAddress.address.id,
+      latitude: userAddress.address.latitude || undefined,
+      longitude: userAddress.address.longitude || undefined,
+      legalDistrictCode: userAddress.address.legalDistrictCode || undefined,
+      dong: userAddress.address.dong || undefined,
+      ho: userAddress.address.ho || undefined,
+      lotAddress: userAddress.address.lotAddress || '',
+      roadAddress: userAddress.address.roadAddress || undefined,
+    },
   };
 }
 
