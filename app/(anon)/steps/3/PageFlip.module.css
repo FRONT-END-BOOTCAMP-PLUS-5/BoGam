@@ -345,6 +345,13 @@ body {
     flex: 1;
 }
 
+.book {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+}
+
 @media (min-height: 800px) {
     .blue {
         position: absolute;
