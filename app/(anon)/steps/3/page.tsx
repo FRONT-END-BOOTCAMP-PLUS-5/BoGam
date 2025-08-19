@@ -264,11 +264,6 @@ export default function Steps3Page() {
                 </div>
             </HTMLFlipBook>
             <div className={styles.dots} aria-label="slides" style={{ marginTop: 24 }}>
-                <button
-                    style={{ background: 'none', border: 'none', padding: 0, marginRight: 8, fontSize: 18, color: '#222', cursor: 'pointer' }}
-                    onClick={() => bookRef.current?.pageFlip?.flipPrev()}>
-                    &#60;
-                </button>
                 {Array.from({ length: totalPages }).map((_, j) => (
                     <button
                         key={j}
@@ -278,11 +273,6 @@ export default function Steps3Page() {
                         style={{ background: j === currentPage ? '#000000' : '#A7A8A9' }}
                     />
                 ))}
-                <button
-                    style={{ background: 'none', border: 'none', padding: 0, marginLeft: 8, fontSize: 18, color: '#222', cursor: 'pointer' }}
-                    onClick={() => bookRef.current?.pageFlip?.flipNext()}>
-                    &#62;
-                </button>
             </div>
         </div>
     );
