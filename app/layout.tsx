@@ -22,7 +22,9 @@ export default function RootLayout({
       <body className='font-sans'>
         <Providers>
           <Header />
-          <div className='app-shell'>{children}</div>
+          {/* <div className='app-shell'>{children}</div> */}
+          <div >{children}</div>
+
           <ConfirmModal />
         </Providers>
       </body>

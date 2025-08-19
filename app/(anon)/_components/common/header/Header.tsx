@@ -1,43 +1,60 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Profile from '@/(anon)/_components/common/profile/Profile';
-import { headerStyles } from '@/(anon)/_components/common/header/Header.styles';
+import { styles } from '@/(anon)/_components/common/header/Header.styles';
 import { ChevronLeft } from 'lucide-react';
+import HambugiDashboard from '@/(anon)/_components/dashboard/HambugiDashboard';
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const isMainPage = pathname === '/main';
   const hiddenRoutes = ['/', '/signin', '/signup'];
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   if (hiddenRoutes.includes(pathname)) return null;
 
   return (
-    <header
-      className={headerStyles.wrapper}
-      style={{
-        paddingLeft: 'max(var(--page-x), env(safe-area-inset-left))',
-        paddingRight: 'max(var(--page-x), env(safe-area-inset-right))',
-      }}
-    >
-      {isMainPage ? (
-        <Image
-          src='/images/Logo.png'
-          alt='전세보감 로고'
-          width={30}
-          height={30}
-        />
-      ) : (
+    <>
+      <header
+        className={styles.wrapper}
+        style={{
+          paddingLeft: 'max(var(--page-x), env(safe-area-inset-left))',
+          paddingRight: 'max(var(--page-x), env(safe-area-inset-right))',
+        }}
+      >
+        {isMainPage ? (
+          <Image
+            src='/images/Logo.png'
+            alt='전세보감 로고'
+            width={30}
+            height={30}
+          />
+        ) : (
+          <button
+            onClick={() => router.back()}
+            className={styles.backButton}
+          >
+            <ChevronLeft />
+          </button>
+        )}
         <button
-          onClick={() => router.back()}
-          className={headerStyles.backButton}
+          type='button'
+          onClick={() => setIsDashboardOpen(true)}
+          aria-label='대시보드 열기'
         >
-          <ChevronLeft />
+          <Profile size='sm' />
         </button>
-      )}
-      <Profile size='sm' />
-    </header>
+      </header>
+
+      <div className={`${styles.slidePanel} ${
+          isDashboardOpen ? styles.slideIn : styles.slideOut
+        }`}>
+          <HambugiDashboard onClose={() => setIsDashboardOpen(false)} />
+        </div>
+    </>
   );
 }
