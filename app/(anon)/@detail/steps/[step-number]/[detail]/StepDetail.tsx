@@ -8,7 +8,6 @@ import ModalDragHandle from './_components/ModalDragHandle';
 import ModalContent from './_components/ModalContent';
 
 interface StepDetailProps {
-  userAddressNickname: string;
   stepNumber: string;
   detail: string;
   isOpen: boolean;
@@ -16,7 +15,6 @@ interface StepDetailProps {
 }
 
 export default function StepDetailPage({
-  userAddressNickname,
   stepNumber,
   detail,
   isOpen,
@@ -29,7 +27,6 @@ export default function StepDetailPage({
   } = useGetStepDetail({
     stepNumber,
     detail,
-    userAddressNickname,
   });
   const {
     dragState,
@@ -39,7 +36,6 @@ export default function StepDetailPage({
     handleTouchEnd,
     handleMouseDown,
   } = useDragToClose(isOpen, onClose);
-
   // 모달이 열릴 때 배경 스크롤 차단
   useEffect(() => {
     if (isOpen) {
@@ -107,9 +103,10 @@ export default function StepDetailPage({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onMouseDown={handleMouseDown}
+          onClose={onClose}
         />
 
-        <ModalContent stepData={stepData} onClose={onClose} />
+        <ModalContent stepData={stepData} />
       </div>
     </div>
   );

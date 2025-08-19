@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import clsx from 'clsx';
-import { styles } from './GuideStepStyles';
+import { styles } from './GuideStepText.styles';
 
 type GuideStepTextProps = {
   children: ReactNode;

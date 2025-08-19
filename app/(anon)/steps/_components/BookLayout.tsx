@@ -100,6 +100,7 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
           
           return (
             <div key={book.id} className={styles.bookItem}>
+              <div className={styles.bookBox}></div>
               <BookCanvas 
                 bookId={book.id}
                 onLoadingComplete={() => handleBookLoad(book.id)}
@@ -128,6 +129,7 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
           
           return (
             <div key={book.id} className={styles.bookItem}>
+              <div className={styles.bookBox}></div>
               <BookCanvas 
                 bookId={book.id}
                 onLoadingComplete={() => handleBookLoad(book.id)}

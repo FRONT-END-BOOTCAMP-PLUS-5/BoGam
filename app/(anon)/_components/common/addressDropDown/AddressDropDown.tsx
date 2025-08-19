@@ -17,7 +17,7 @@ import { LoadingState } from './_components/LoadingState';
 import { AuthRequiredState } from './_components/AuthRequiredState';
 
 const DEFAULT_PROPS = {
-  title: '최근 열람',
+  title: '현재 열람',
   showFavoriteToggle: true,
   showDeleteButton: true,
   maxHeight: '300px',

@@ -8,7 +8,6 @@ export default function DetailSlot() {
   const router = useRouter();
   const pathname = usePathname();
   const [shouldShow, setShouldShow] = useState(false);
-  const [userAddressNickname, setUserAddressNickname] = useState<string>(''); // 유저 닉네임
   const [stepNumber, setStepNumber] = useState<string>('');
   const [detail, setDetail] = useState<string>('');
 
@@ -21,7 +20,6 @@ export default function DetailSlot() {
     if (isStepDetailUrl && match) {
       const [, step, detailParam] = match;
       setStepNumber(step);
-      setUserAddressNickname(''); // user-address-nickname이 제거되어 빈 문자열로 설정
       setDetail(detailParam);
 
       // 세션스토리지에서 프로그래밍 라우팅 플래그와 타임스탬프 확인
@@ -60,7 +58,6 @@ export default function DetailSlot() {
 
   return (
     <StepDetailPage
-      userAddressNickname={userAddressNickname}
       stepNumber={stepNumber}
       detail={detail}
       isOpen={shouldShow}

@@ -40,7 +40,6 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// 👇 두 matcher 경로 모두 포함
 export const config = {
   matcher: ['/api/:path*', '/signin', '/signup'],
 };

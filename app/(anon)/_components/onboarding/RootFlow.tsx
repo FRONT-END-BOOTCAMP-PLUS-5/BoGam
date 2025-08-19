@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useRootStep } from '@libs/store/rootStepStore';
+import { useRootStep } from '@libs/stores/rootStepStore';
 
 import Splash from '@/(anon)/_components/onboarding/Splash';
 import Onboarding from '@/(anon)/_components/onboarding/Onboarding';
@@ -17,7 +17,7 @@ export default function RootFlow() {
   // 1. 초기화
   useEffect(() => {
     initStepFromSession();
-  }, []);
+  }, [initStepFromSession]);
 
   // 2. 인증된 사용자는 메인으로 이동
   useEffect(() => {
