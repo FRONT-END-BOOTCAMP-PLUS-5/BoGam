@@ -1,7 +1,7 @@
 'use client';
 
 import { X } from 'lucide-react';
-import { modalDragHandleStyles } from './ModalDragHandle.styles';
+import { styles } from './ModalDragHandle.styles';
 
 interface ModalDragHandleProps {
   onTouchStart: (e: React.TouchEvent) => void;
@@ -22,24 +22,24 @@ export default function ModalDragHandle({
     <>
       {/* Drag Handle */}
       <div
-        className={modalDragHandleStyles.dragHandle}
+        className={styles.dragHandle}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         onMouseDown={onMouseDown}
       >
-        <div className={modalDragHandleStyles.dragIndicator}></div>
+        <div className={styles.dragIndicator}></div>
       </div>
 
       {/* Modal Header */}
-      <div className={modalDragHandleStyles.modalHeader}>
-        <button className={modalDragHandleStyles.closeButton} onClick={onClose}>
+      <div className={styles.modalHeader}>
+        <button className={styles.closeButton} onClick={onClose}>
           <X size={24} />
         </button>
       </div>
 
       {/* Divider */}
-      {/* <div className={modalDragHandleStyles.divider}></div> */}
+      {/* <div className={styles.divider}></div> */}
     </>
   );
 }

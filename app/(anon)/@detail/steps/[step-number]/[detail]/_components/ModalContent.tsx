@@ -1,6 +1,6 @@
 'use client';
 
-import { modalContentStyles } from './ModalContent.styles';
+import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
@@ -59,8 +59,8 @@ export default function ModalContent({ stepData }: ModalContentProps) {
   return (
     <>
       {/* 스텝 번호 표시 */}
-      <div className={modalContentStyles.stepHeader}>
-        <h2 className={modalContentStyles.stepTitle}>
+      <div className={styles.stepHeader}>
+        <h2 className={styles.stepTitle}>
           {stepData.mainNum}-{stepData.subNum}단계 상세 보기
         </h2>
       </div>
@@ -69,7 +69,7 @@ export default function ModalContent({ stepData }: ModalContentProps) {
       <Swiper 
         spaceBetween={50} 
         slidesPerView={1} 
-        className={modalContentStyles.swiperContainer}
+        className={styles.swiperContainer}
         onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
@@ -77,13 +77,13 @@ export default function ModalContent({ stepData }: ModalContentProps) {
       >
         {groupedEntries.map((group, groupIndex) => (
           <SwiperSlide key={groupIndex}>
-            <div className={modalContentStyles.mainContent}>
+            <div className={styles.mainContent}>
               {group.map(([key, value]) => (
-                <div key={key} className={modalContentStyles.detailItem}>
-                  <span className={modalContentStyles.detailKey}>
+                <div key={key} className={styles.detailItem}>
+                  <span className={styles.detailKey}>
                     {key}:
                   </span>
-                  <div className={modalContentStyles.detailValue}>
+                  <div className={styles.detailValue}>
                     {renderValue(value)}
                   </div>
                 </div>
@@ -95,12 +95,12 @@ export default function ModalContent({ stepData }: ModalContentProps) {
 
       {/* 페이지 인디케이터 */}
       {groupedEntries.length > 1 && (
-        <div className={modalContentStyles.pageIndicator} aria-label="페이지 인디케이터">
+        <div className={styles.pageIndicator} aria-label="페이지 인디케이터">
           {groupedEntries.map((_, index) => (
             <button
               key={index}
-              className={`${modalContentStyles.pageDot} ${
-                index === currentPage ? modalContentStyles.pageDotActive : modalContentStyles.pageDotInactive
+              className={`${styles.pageDot} ${
+                index === currentPage ? styles.pageDotActive : styles.pageDotInactive
               }`}
               aria-label={`페이지 ${index + 1}${index === currentPage ? ' (현재)' : ''}`}
               onClick={() => handlePageChange(index)}

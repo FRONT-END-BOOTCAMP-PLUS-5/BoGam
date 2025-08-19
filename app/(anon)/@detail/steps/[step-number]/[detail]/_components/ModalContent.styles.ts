@@ -1,4 +1,4 @@
-export const modalContentStyles = {
+export const styles = {
   // 메인 콘텐츠
   mainContent: 'bg-brand-white p-6 h-full relative overflow-y-auto',
 
