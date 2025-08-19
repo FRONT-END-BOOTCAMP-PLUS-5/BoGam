@@ -20,7 +20,8 @@ export default function UserInfo({ userName, onUserClick }: UserInfoProps) {
         <div className={styles.userText}>
           <span className={styles.greeting}>안녕하세요,</span>
           <div className={styles.nameAndArrow}>
-            <span className={styles.userName}>{userName} 님!</span>
+            <span className={styles.userName}>{userName}</span>
+            <span className={styles.honorific}>님!</span>
             <button 
               onClick={onUserClick}
               className={styles.arrowButton}

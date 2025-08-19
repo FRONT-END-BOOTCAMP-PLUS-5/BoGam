@@ -5,5 +5,6 @@ export const styles = {
   greeting: "text-sm text-brand-dark-gray",
   nameAndArrow: "flex items-center gap-1",
   userName: "text-base font-semibold text-brand-gold",
+  honorific: "text-base font-semibold text-brand-black",
   arrowButton: "p-2 hover:bg-brand-light-gray rounded-full transition-colors text-brand-dark-gray hover:text-brand-dark-blue"
 };
