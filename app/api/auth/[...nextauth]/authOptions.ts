@@ -35,10 +35,10 @@ export const authOptions: AuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 60 * 1, // 3시간 로그인 상태 유지
+    maxAge: 60 * 180, // 3시간 로그인 상태 유지
   },
   jwt: {
-    maxAge: 60 * 1, //jwt 토큰 3시간 유지
+    maxAge: 60 * 180, //jwt 토큰 3시간 유지
   },
   callbacks: {
     async jwt({ token, user }) {
