@@ -16,6 +16,8 @@ import { pageStyles } from './pageStyles';
 import GeneralPage from './components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
 import styles from '@/(anon)/_components/onboarding/Onboarding.module.css';
+import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface IProps extends IFlipSetting, IEventProps {
     className: string;
@@ -117,6 +119,7 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 
 
 export default function Steps3Page() {
+    const router = useRouter();
     const bookRef = React.useRef<any>(null);
     const [marginLeft, setMarginLeft] = React.useState('-48%');
     const [currentPage, setCurrentPage] = React.useState(0);
@@ -263,16 +266,40 @@ export default function Steps3Page() {
                                 제공해드리곘습니다.'></GeneralPage>
                 </div>
             </HTMLFlipBook>
-            <div className={styles.dots} aria-label="slides" style={{ marginTop: 24 }}>
-                {Array.from({ length: totalPages }).map((_, j) => (
-                    <button
-                        key={j}
-                        className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''}`}
-                        aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
-                        onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
-                        style={{ background: j === currentPage ? '#000000' : '#A7A8A9' }}
-                    />
-                ))}
+            <div style={{ width: 180, marginTop: 32, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+                <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', display: 'flex', alignItems: 'center' }}>
+                    {currentPage === 0 && (
+                        <button
+                            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', height: 24, display: 'flex', alignItems: 'center' }}
+                            aria-label="이전 단계로 이동"
+                            onClick={() => router.push('/steps/2')}
+                        >
+                            <ChevronLeft size={22} color="#222" />
+                        </button>
+                    )}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                    {Array.from({ length: totalPages }).map((_, j) => (
+                        <button
+                            key={j}
+                            className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''}`}
+                            aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
+                            onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
+                            style={{ background: j === currentPage ? '#000000' : '#A7A8A9', margin: '0 6px' }}
+                        />
+                    ))}
+                </div>
+                <div style={{ position: 'absolute', right: 0, top: 0, height: '100%', display: 'flex', alignItems: 'center' }}>
+                    {currentPage === totalPages - 1 && (
+                        <button
+                            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', height: 24, display: 'flex', alignItems: 'center' }}
+                            aria-label="다음 단계로 이동"
+                            onClick={() => router.push('/steps/4')}
+                        >
+                            <ChevronRight size={22} color="#222" />
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
