@@ -72,8 +72,3 @@
 .formRow {
   @apply grid grid-cols-1 gap-6;
 }
-@media (min-width: 768px) {
-  .formRow {
-    @apply grid-cols-2;
-  }
-}
