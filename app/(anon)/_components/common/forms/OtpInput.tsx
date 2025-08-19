@@ -47,6 +47,7 @@ export default function OtpInput({
         <input
           key={i}
           ref={setRef(i)}
+          type='password'
           inputMode='numeric'
           pattern='\d*'
           maxLength={1}

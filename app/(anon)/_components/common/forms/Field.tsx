@@ -8,6 +8,7 @@ import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 type FieldProps = {
   id: string;
   label?: string;
+  required?: boolean; //필수값인가
   hint?: string; // 헬퍼 문구
   error?: string; // 오류 문구
   actionSlot?: ReactNode; // 레이블 우측 작은 액션(예: "가이드")
@@ -17,6 +18,7 @@ type FieldProps = {
 export default function Field({
   id,
   label,
+  required = true, // ✅ 기본값 true
   hint,
   error,
   actionSlot,
@@ -29,6 +31,7 @@ export default function Field({
           {label && (
             <label htmlFor={id} className={styles.label}>
               {label}
+              {required && <span className={styles.require}>*</span>}
             </label>
           )}
           {actionSlot && <div className={styles.action}>{actionSlot}</div>}

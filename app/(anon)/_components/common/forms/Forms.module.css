@@ -6,10 +6,13 @@
   @apply mb-2 flex items-center justify-between;
 }
 .label {
-  @apply text-sm text-gray-700 font-semibold;
+  @apply text-sm text-brand-dark-gray font-semibold;
+}
+.require {
+  @apply text-brand-error ml-1;
 }
 .action {
-  @apply text-sm text-blue-600;
+  @apply text-sm text-brand;
 } /* 우측 작은 액션 링크가 필요할 때 */
 .control {
   @apply relative;
@@ -21,7 +24,7 @@
   border-color: var(--brand-light-gray);
 }
 .inputBase::placeholder {
-  @apply text-gray-400;
+  @apply text-brand-light-gray;
 }
 
 .inputFocus {
@@ -32,30 +35,24 @@
   /* @apply border-red-400; */
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }
-
+.input {
+  @apply relative;
+}
 .addonRight {
-  @apply absolute inset-y-0 right-2 flex items-center;
-}
-.addonButton {
-  @apply h-8 px-3 rounded-lg text-xs border;
-  border-color: var(--brand);
+  @apply absolute top-1/2 -translate-y-1/2 right-2 px-3 py-1 text-xs rounded-md flex items-center justify-center;
   color: var(--brand);
-  background: var(--background);
-}
-.addonButton:disabled {
-  @apply opacity-50 cursor-not-allowed;
 }
 
 .helper {
-  @apply mt-2 text-xs text-gray-500;
+  @apply mt-2 text-xs text-brand-dark-gray;
 }
 .error {
-  @apply mt-2 text-xs text-red-600;
+  @apply mt-2 text-xs text-brand-error;
 }
 
 /* 비밀번호 보기 토글 */
 .eyeBtn {
-  @apply absolute inset-y-0 right-2 flex items-center text-gray-400 w-10;
+  @apply absolute inset-y-0 right-2 flex items-center text-brand-dark-gray w-10;
 }
 
 /* OTP */

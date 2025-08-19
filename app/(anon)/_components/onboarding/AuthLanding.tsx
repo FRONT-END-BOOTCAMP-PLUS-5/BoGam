@@ -25,7 +25,7 @@ export default function AuthLanding() {
         <Button variant='primary' href='/signup' fullWidth>
           회원가입
         </Button>
-        <Button variant='secondary' href='/signup' fullWidth>
+        <Button variant='secondary' href='/signin' fullWidth>
           로그인
         </Button>
 

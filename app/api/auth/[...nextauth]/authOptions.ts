@@ -1,7 +1,7 @@
+import bcrypt from 'bcrypt';
+import { prisma } from '@utils/prisma';
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { prisma } from '@utils/prisma';
-import bcrypt from 'bcrypt';
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -28,31 +28,28 @@ export const authOptions: AuthOptions = {
         if (!isValid) return null;
 
         return {
-          id: user.id,
-          name: user.name,
           nickname: user.nickname,
-          username: user.username,
         };
       },
     }),
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 60 * 1, // 3시간 로그인 상태 유지
+  },
+  jwt: {
+    maxAge: 60 * 1, //jwt 토큰 3시간 유지
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
         token.nickname = user.nickname;
-        token.username = user.username;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
         session.user.nickname = token.nickname as string;
-        session.user.username = token.username as string;
       }
       return session;
     },

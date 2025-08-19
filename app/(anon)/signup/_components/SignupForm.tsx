@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { axiosInstance } from '@utils/axios';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,13 +16,16 @@ import styles from '@/(anon)/_components/common/forms/Forms.module.css';
 
 export default function SignupForm() {
   const router = useRouter();
+  const [nicknameChecked, setNicknameChecked] = useState(false);
+  const [nicknameCheckMessage, setNicknameCheckMessage] = useState('');
+  const [checking, setChecking] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
     setValue,
     trigger,
+    watch,
   } = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -74,6 +78,35 @@ export default function SignupForm() {
       }
     }
   };
+
+  const checkNickname = async (nickname: string) => {
+    if (!nickname) {
+      setNicknameCheckMessage('닉네임을 입력하세요.');
+      return;
+    }
+
+    setChecking(true);
+    try {
+      const res = await axiosInstance.get('/auth/check-nickname', {
+        params: { nickname },
+      });
+
+      const data = res.data as { available: boolean };
+
+      if (data.available) {
+        setNicknameChecked(true);
+        setNicknameCheckMessage('사용 가능한 닉네임입니다.');
+      } else {
+        setNicknameChecked(false);
+        setNicknameCheckMessage('이미 사용 중인 닉네임입니다.');
+      }
+    } catch (err) {
+      setNicknameChecked(false);
+      setNicknameCheckMessage('중복 확인 중 오류 발생');
+    } finally {
+      setChecking(false);
+    }
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.formRow}>
       <Field id='name' label='이름'>
@@ -81,8 +114,32 @@ export default function SignupForm() {
         {errors.name && <p className={styles.error}>{errors.name.message}</p>}
       </Field>
 
-      <Field id='nickname' label='닉네임' hint='2~12자, 특수문자 제외'>
-        <TextInput id='nickname' {...register('nickname')} placeholder='별명' />
+      <Field
+        id='nickname'
+        label='닉네임'
+        hint='2~12자, 특수문자 제외'
+        required={false}
+      >
+        <TextInput
+          id='nickname'
+          {...register('nickname')}
+          placeholder='별명'
+          rightAddon={
+            <button
+              type='button'
+              className={styles.addonRight}
+              onClick={() => checkNickname(watch('nickname'))}
+              disabled={checking}
+            >
+              {checking ? '확인 중' : '중복확인'}
+            </button>
+          }
+        />
+        {nicknameCheckMessage && (
+          <p className={nicknameChecked ? styles.helper : styles.error}>
+            {nicknameCheckMessage}
+          </p>
+        )}
         {errors.nickname && (
           <p className={styles.error}>{errors.nickname.message}</p>
         )}
@@ -156,7 +213,7 @@ export default function SignupForm() {
         <p className={styles.error}>{errors.root.message}</p>
       )}
 
-      <Button type='submit' fullWidth disabled={isSubmitting}>
+      <Button variant='primary' type='submit' fullWidth disabled={isSubmitting}>
         {isSubmitting ? '가입 중...' : '회원가입'}
       </Button>
 

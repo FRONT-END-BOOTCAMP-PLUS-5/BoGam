@@ -61,7 +61,7 @@ export default function TextInput({
         type={type ?? (mask === 'phone' ? 'tel' : 'text')}
         inputMode={inputMode ?? (mask === 'phone' ? 'numeric' : undefined)}
         maxLength={maxLength ?? (mask === 'phone' ? 13 : undefined)} // 010-1234-5678
-        className={finalClass}
+        className={`${finalClass} ${styles.input}`}
         onChange={handleChange}
         onFocus={(e) => {
           setFocus(true);
@@ -72,7 +72,7 @@ export default function TextInput({
           rest.onBlur?.(e);
         }}
       />
-      {rightAddon && <div className={styles.addonRight}>{rightAddon}</div>}
+      {rightAddon ?? null}
     </>
   );
 }
