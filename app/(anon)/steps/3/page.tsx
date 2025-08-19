@@ -117,13 +117,13 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 export default function Steps3Page() {
     const router = useRouter();
     const bookRef = React.useRef<any>(null);
-    const [marginLeft, setMarginLeft] = React.useState('-55%');
+    const [marginLeft, setMarginLeft] = React.useState('-73%');
     const [currentPage, setCurrentPage] = React.useState(0);
     const totalPages = 4;
 
     React.useEffect(() => {
         const width = window.innerWidth;
-        setMarginLeft(width <= 400 ? '-70%' : '-55%');
+        setMarginLeft(width <= 400 ? '-99%' : '-73%');
     }, []);
     return (
         <div
