@@ -1,11 +1,12 @@
 export const styles = {
+  leftClickArea: 'absolute left-0 top-0 w-[30%] h-full z-[10] cursor-pointer',
   indicatorWrapper: 'w-[180px] mt-8 flex items-center justify-between relative',
   indicatorLeft: 'absolute left-0 top-0 h-full flex items-center',
   indicatorRight: 'absolute right-0 top-0 h-full flex items-center',
   indicatorDots: 'flex justify-center items-center w-full',
   indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
   indicatorDotBtn: 'mx-[6px]',
-  book: 'flex flex-col justify-center min-h-screen mx-auto max-w-[480px] w-full bg-gray-300 relative overflow-hidden box-border items-center border-none',
+  book: 'max-w-[480px] w-full mx-auto bg-brand-light-gray relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
   flipBook: 'flex items-center justify-center w-fit h-fit overflow-visible relative border-none',
   flex: 'flex h-full',
   introPage: 'bg-white mx-auto w-full h-[300px] flex items-center justify-center box-border',

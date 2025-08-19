@@ -126,24 +126,7 @@ export default function Steps3Page() {
         setMarginLeft(width <= 400 ? '-99%' : '-73%');
     }, []);
     return (
-        <div
-            className={styles.book}
-            style={{
-                maxWidth: '480px',
-                width: '100%',
-                margin: '0 auto',
-                background: '#EFF0F2',
-                position: 'relative',
-                overflow: 'hidden',
-                minHeight: '100vh',
-                boxSizing: 'border-box',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                border: '0px'
-            }}
-        >
+    <div className={styles.book}>
             <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
                 <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
             </div>
@@ -178,15 +161,7 @@ export default function Steps3Page() {
             >
                 <div className={styles.flex} style={{ position: "relative" }}>
                     <div
-                        style={{
-                            position: "absolute",
-                            left: 0,
-                            top: 0,
-                            width: "30%",
-                            height: "100%",
-                            zIndex: 10,
-                            cursor: "pointer",
-                        }}
+                        className={styles.leftClickArea}
                         onClick={() => bookRef.current && bookRef.current.pageFlip && bookRef.current.pageFlip.flipPrev()}
                     />
                     <div className={styles.generalPage}>
