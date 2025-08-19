@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '../PageFlip.module.css';
+import { pageStyles } from '../pageStyles';
 
 interface pageType {
     title: string,
@@ -10,19 +10,19 @@ interface pageType {
 
 export default function GeneralPage({ title, category, content }: pageType) {
     return (
-        <div className={`${styles['general-white-page']}`}>
+    <div className={pageStyles.generalWhitePage}>
             <div>
-                <div className={styles['small-font-div']}>
-                    <h3 className={styles['small-font']}> {title} </h3>
+                <div className={pageStyles.smallFontDiv}>
+                    <h3 className={pageStyles.smallFont}> {title} </h3>
                 </div>
-                <div className={styles['border-bottom-div']}>
-                    <h5 className={styles.danger}> {category} </h5>
-                    <p className={styles.content}>
+                <div className={pageStyles.borderBottomDiv}>
+                    <h5 className={pageStyles.danger}> {category} </h5>
+                    <p className={pageStyles.content}>
                         {content}
                     </p>
                 </div>
-                <div className={styles['go-inside-div']}>
-                    <button className={styles['go-inside']}> 바로가기 </button>
+                <div className={pageStyles.goInsideDiv}>
+                    <button className={pageStyles.goInside}> 바로가기 </button>
                 </div>
             </div>
         </div>
