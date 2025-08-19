@@ -37,11 +37,9 @@ export class DanjiSerialNumberRepositoryImpl
       // 액세스 토큰 획득
       const accessToken = await this.codefAuth.getAccessToken();
 
-      console.log('request', request);
-
       // API 요청 실행
       const response = await axios.post(
-        CODEF_API_CONFIG.DANJI_FULL_URL,
+        CODEF_API_CONFIG.DANJI_SERIAL_NUMBER_FULL_URL,
         request,
         {
           headers: {
@@ -56,14 +54,6 @@ export class DanjiSerialNumberRepositoryImpl
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
       const data: GetDanjiSerialNumberResponseDto =
         processResponse<GetDanjiSerialNumberResponseDto>(response.data);
-
-      console.log('✅ 단지 일련번호 조회 성공:', {
-        status: response.status,
-        resultCode: data?.result?.code,
-        resultMessage: data?.result?.message,
-        hasData: !!data?.data,
-        dataCount: data?.data?.danjiList?.length || 0,
-      });
 
       return data;
     } catch (error: unknown) {
