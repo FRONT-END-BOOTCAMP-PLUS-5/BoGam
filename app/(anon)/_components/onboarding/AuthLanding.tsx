@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import styles from '@/(anon)/_components/onboarding/AuthLanding.module.css';
+import { styles } from '@/(anon)/_components/onboarding/AuthLanding.styles';
 import Button from '@/(anon)/_components/common/button/Button';
 
 export default function AuthLanding() {

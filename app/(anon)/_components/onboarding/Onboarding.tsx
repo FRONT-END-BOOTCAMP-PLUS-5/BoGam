@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import styles from './Onboarding.module.css';
+import { styles } from './Onboarding.styles';
 
 type Props = {
   onSkipToAuth: () => void;
@@ -55,12 +55,12 @@ export default function Onboarding({ onSkipToAuth, onDoneToAuth }: Props) {
   const onTouchMove = (e: React.TouchEvent) => {
     if (!dragging) return;
     dx.current = e.touches[0].clientX - startX.current;
-    viewportRef.current?.classList.add(styles.dragging);
+    viewportRef.current?.classList.add(styles.draggingTrack);
   };
 
   const onTouchEnd = () => {
     setDragging(false);
-    viewportRef.current?.classList.remove(styles.dragging);
+    viewportRef.current?.classList.remove(styles.draggingTrack);
     const threshold = 60;
     if (dx.current < -threshold) go(i + 1);
     else if (dx.current > threshold) go(i - 1);
@@ -75,7 +75,7 @@ export default function Onboarding({ onSkipToAuth, onDoneToAuth }: Props) {
   const onMouseMove = (e: React.MouseEvent) => {
     if (!dragging) return;
     dx.current = e.clientX - startX.current;
-    viewportRef.current?.classList.add(styles.dragging);
+    viewportRef.current?.classList.add(styles.draggingTrack);
   };
   const onMouseUp = () => onTouchEnd();
   const onMouseLeave = () => dragging && onTouchEnd();
@@ -134,7 +134,7 @@ export default function Onboarding({ onSkipToAuth, onDoneToAuth }: Props) {
                     <button
                       key={j}
                       className={`${styles.dot} ${
-                        j === i ? styles.dotActive : ''
+                        j === i ? styles.dotActive : styles.dotInactive
                       }`}
                       onClick={() => go(j)}
                       aria-label={`slide ${j + 1}`}

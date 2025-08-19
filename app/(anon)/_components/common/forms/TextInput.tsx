@@ -3,7 +3,7 @@
 'use client';
 import '@/globals.css';
 import { InputHTMLAttributes, ReactNode, useId, useState } from 'react';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   rightAddon?: ReactNode; // 중복확인 버튼
@@ -54,14 +54,14 @@ export default function TextInput({
   ].join(' ');
 
   return (
-    <>
+    <div className={styles.input}>
       <input
         id={id}
         {...rest}
         type={type ?? (mask === 'phone' ? 'tel' : 'text')}
         inputMode={inputMode ?? (mask === 'phone' ? 'numeric' : undefined)}
         maxLength={maxLength ?? (mask === 'phone' ? 13 : undefined)} // 010-1234-5678
-        className={`${finalClass} ${styles.input}`}
+        className={finalClass}
         onChange={handleChange}
         onFocus={(e) => {
           setFocus(true);
@@ -73,6 +73,6 @@ export default function TextInput({
         }}
       />
       {rightAddon ?? null}
-    </>
+    </div>
   );
 }

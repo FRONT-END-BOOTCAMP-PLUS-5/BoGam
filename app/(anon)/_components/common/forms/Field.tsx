@@ -3,7 +3,7 @@
 'use client';
 import '@/globals.css';
 import { ReactNode } from 'react';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 type FieldProps = {
   id: string;

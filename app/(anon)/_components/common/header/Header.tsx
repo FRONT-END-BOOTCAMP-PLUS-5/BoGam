@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import Profile from '@/(anon)/_components/common/profile/Profile';
-import { headerStyles } from '@/(anon)/_components/common/header/Header.style';
+import { headerStyles } from '@/(anon)/_components/common/header/Header.styles';
 import { ChevronLeft } from 'lucide-react';
 
 export default function Header() {

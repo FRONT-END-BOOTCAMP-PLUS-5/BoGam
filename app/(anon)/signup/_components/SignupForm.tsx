@@ -12,7 +12,7 @@ import Button from '@/(anon)/_components/common/button/Button';
 import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import PasswordInput from '@/(anon)/_components/common/forms/PasswordInput';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 export default function SignupForm() {
   const router = useRouter();

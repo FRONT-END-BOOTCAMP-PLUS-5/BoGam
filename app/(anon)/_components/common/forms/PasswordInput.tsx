@@ -4,7 +4,7 @@
 import '@/globals.css';
 import { useState } from 'react';
 import { Eye, EyeClosed } from 'lucide-react';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 type Props = {
   id: string;

@@ -4,7 +4,7 @@
 
 import '@/globals.css';
 import { useRef, useCallback } from 'react';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 export default function OtpInput({
   length = 4,
