@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRootStep } from '@libs/store/rootStepStore';
+import React, { useEffect } from 'react';
+import { useRootStep } from '@libs/stores/rootStepStore';
 import Splash from '@/(anon)/_components/onboarding/Splash';
 import Onboarding from '@/(anon)/_components/onboarding/Onboarding';
 import AuthLanding from '@/(anon)/_components/onboarding/AuthLanding';
