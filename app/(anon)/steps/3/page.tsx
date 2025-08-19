@@ -12,10 +12,10 @@ import React, {
 import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
 import { IFlipSetting, IEventProps } from './settings';
-import { pageStyles } from './pageStyles';
+import { styles } from './pageStyles';
 import GeneralPage from './components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
-import styles from '@/(anon)/_components/onboarding/Onboarding.module.css';
+import onboardingStyles from '@/(anon)/_components/onboarding/Onboarding.module.css';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -127,7 +127,7 @@ export default function Steps3Page() {
     }, []);
     return (
         <div
-            className={pageStyles.book}
+            className={styles.book}
             style={{
                 maxWidth: '480px',
                 width: '100%',
@@ -176,7 +176,7 @@ export default function Steps3Page() {
                     setCurrentPage(Math.floor((e.data + 1) / 2));
                 }}
             >
-                <div className={pageStyles.flex} style={{ position: "relative" }}>
+                <div className={styles.flex} style={{ position: "relative" }}>
                     <div
                         style={{
                             position: "absolute",
@@ -189,28 +189,28 @@ export default function Steps3Page() {
                         }}
                         onClick={() => bookRef.current && bookRef.current.pageFlip && bookRef.current.pageFlip.flipPrev()}
                     />
-                    <div className={pageStyles.generalPage}>
-                        <div className={pageStyles.left}>
-                            <div className={pageStyles.firstLeftBox}></div>
-                            <div className={pageStyles.leftBox}></div>
-                            <div className={pageStyles.leftBox}></div>
-                            <div className={pageStyles.leftBox}></div>
-                            <div className={pageStyles.lastLeftBox}></div>
+                    <div className={styles.generalPage}>
+                        <div className={styles.left}>
+                            <div className={styles.firstLeftBox}></div>
+                            <div className={styles.leftBox}></div>
+                            <div className={styles.leftBox}></div>
+                            <div className={styles.leftBox}></div>
+                            <div className={styles.lastLeftBox}></div>
                         </div>
                         <div>
-                            <div className={pageStyles.rightFirstOutsideBox}>
-                                <div className={pageStyles.rightFirstInsideBox}>
-                                    <p className={pageStyles.smallFont}> 3-0단계 전체 요약 </p>
+                            <div className={styles.rightFirstOutsideBox}>
+                                <div className={styles.rightFirstInsideBox}>
+                                    <p className={styles.smallFont}> 3-0단계 전체 요약 </p>
                                 </div>
                             </div>
-                            <div className={pageStyles.whitePaper}>
-                                <h6 className={pageStyles.topic}> 전세 계약 시 사기를 당하는 경우는 크게 2가지입니다. </h6>
-                                <p className={pageStyles.introContent}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
-                                <p className={pageStyles.introContent}> 사용자님 말고 다른 세입자와 이중계약 </p>
-                                <h6 className={pageStyles.topic}> 전세보감은 이러한 피해를 막기 위해 다음을 제공합니다. </h6>
-                                <p className={pageStyles.introContent}> 공인중개사 자격증 유무 조회 </p>
-                                <p className={pageStyles.introContent}> 최우선 변제 기준 데이터 제공 </p>
-                                <p className={pageStyles.introContent}> 공제 증서 안내 </p>
+                            <div className={styles.whitePaper}>
+                                <h6 className={styles.topic}> 전세 계약 시 사기를 당하는 경우는 크게 2가지입니다. </h6>
+                                <p className={styles.introContent}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
+                                <p className={styles.introContent}> 사용자님 말고 다른 세입자와 이중계약 </p>
+                                <h6 className={styles.topic}> 전세보감은 이러한 피해를 막기 위해 다음을 제공합니다. </h6>
+                                <p className={styles.introContent}> 공인중개사 자격증 유무 조회 </p>
+                                <p className={styles.introContent}> 최우선 변제 기준 데이터 제공 </p>
+                                <p className={styles.introContent}> 공제 증서 안내 </p>
                             </div>
                         </div>
                     </div>
@@ -219,7 +219,7 @@ export default function Steps3Page() {
                     <div className="page-content" style={{ backgroundColor: '#e5e7eb' }}>
                     </div>
                 </div>
-                <div className={pageStyles.flex}>
+                <div className={styles.flex}>
                     <GeneralPage title='3-1단계 공인중개사 자격증 유무 조회'
                         category='위험 요소'
                         content='무자격자가 중개업 등록증이나 자격증을 빌려서
@@ -234,7 +234,7 @@ export default function Steps3Page() {
                     <div className="page-content" style={{ backgroundColor: '#e5e7eb' }}>
                     </div>
                 </div>
-                <div className={pageStyles.flex}>
+                <div className={styles.flex}>
                     <GeneralPage title='3-2단계 최우선변제 금액 안내'
                         category='안내 사항'
                         content='주택임대차보호법 제8조를 따라 사용자님이 가장
@@ -248,7 +248,7 @@ export default function Steps3Page() {
                     <div className="page-content" style={{ backgroundColor: '#e5e7eb' }}>
                     </div>
                 </div>
-                <div className={pageStyles.flex}>
+                <div className={styles.flex}>
                     <GeneralPage title='3-3단계 공제증서 발급 링크 안내'
                         category='안내 사항'
                         content='공인중개사와의 중개 과정에서 발생할 수 있는 사고로
@@ -261,11 +261,11 @@ export default function Steps3Page() {
                                 제공해드리곘습니다.'></GeneralPage>
                 </div>
             </HTMLFlipBook>
-            <div className={pageStyles.indicatorWrapper}>
-                <div className={pageStyles.indicatorLeft}>
+            <div className={styles.indicatorWrapper}>
+                <div className={styles.indicatorLeft}>
                     {currentPage === 0 && (
                         <button
-                            className={pageStyles.indicatorArrowBtn}
+                            className={styles.indicatorArrowBtn}
                             aria-label="이전 단계로 이동"
                             onClick={() => router.push('/steps/2')}
                         >
@@ -273,21 +273,21 @@ export default function Steps3Page() {
                         </button>
                     )}
                 </div>
-                <div className={pageStyles.indicatorDots}>
+                <div className={styles.indicatorDots}>
                     {Array.from({ length: totalPages }).map((_, j) => (
                         <button
                             key={j}
-                            className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''} ${pageStyles.indicatorDotBtn}`}
+                            className={`${onboardingStyles.dot} ${j === currentPage ? onboardingStyles.dotActive : ''} ${styles.indicatorDotBtn}`}
                             aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
                             onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
                             style={{ background: j === currentPage ? '#000000' : '#A7A8A9' }}
                         />
                     ))}
                 </div>
-                <div className={pageStyles.indicatorRight}>
+                <div className={styles.indicatorRight}>
                     {currentPage === totalPages - 1 && (
                         <button
-                            className={pageStyles.indicatorArrowBtn}
+                            className={styles.indicatorArrowBtn}
                             aria-label="다음 단계로 이동"
                             onClick={() => router.push('/steps/4')}
                         >

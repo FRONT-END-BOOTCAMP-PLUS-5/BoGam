@@ -1,4 +1,4 @@
-export const pageStyles = {
+export const styles = {
   indicatorWrapper: 'w-[180px] mt-8 flex items-center justify-between relative',
   indicatorLeft: 'absolute left-0 top-0 h-full flex items-center',
   indicatorRight: 'absolute right-0 top-0 h-full flex items-center',
