@@ -1,3 +1,5 @@
+import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
+
 export interface AddressItem {
   id: string;
   address: string;
@@ -8,11 +10,11 @@ export interface AddressItem {
 
 export interface AddressDropDownProps {
   title?: string;
-  addresses: AddressItem[];
-  selectedAddress?: AddressItem;
-  onDelete?: (id: string) => void;
-  onToggleFavorite?: (id: string) => void;
-  onSelect?: (id: string) => void;
+  addresses?: UserAddress[]; // UserAddress 타입으로 변경
+  selectedAddress?: UserAddress | null;
+  onDelete?: (id: number) => void; // number로 변경
+  onToggleFavorite?: (id: number) => void; // number로 변경
+  onSelect?: (id: number) => void; // number로 변경
   showFavoriteToggle?: boolean;
   showDeleteButton?: boolean;
   maxHeight?: string;

@@ -10,6 +10,11 @@ import {
 import { AddressDropDownProps } from './types';
 import { AddressDropDownList } from './AddressDropDownList';
 import { formatAddress } from '@utils/addressUtils';
+import { useUserAddresses } from '@libs/stores/userAddresses/useUserAddresses';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
+import { LoadingState } from './_components/LoadingState';
+import { AuthRequiredState } from './_components/AuthRequiredState';
 
 const DEFAULT_PROPS = {
   title: '최근 열람',
@@ -39,8 +44,8 @@ const ExpandIcon = ({ expanded }: { expanded: boolean }) => (
 export function AddressDropDown(props: AddressDropDownProps) {
   const {
     title = DEFAULT_PROPS.title,
-    addresses,
-    selectedAddress,
+    addresses: propAddresses,
+    selectedAddress: propSelectedAddress,
     onDelete,
     onToggleFavorite,
     onSelect,
@@ -53,12 +58,58 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // React Query로 초기 데이터 로드
+  const { isLoading, isAuthenticated } = useUserAddresses();
+
+  // Store에서 데이터 가져오기
+  const {
+    userAddresses,
+    selectedAddress: storeSelectedAddress,
+    selectAddress,
+    deleteAddress,
+    toggleFavorite,
+  } = useUserAddressStore();
+
+  // props로 전달된 주소가 있으면 그것을 우선 사용, 없으면 Store 데이터 사용
+  const addresses =
+    propAddresses && propAddresses.length > 0 ? propAddresses : userAddresses;
+  const selectedAddress = propSelectedAddress || storeSelectedAddress;
+
+  // Store 액션을 위한 래퍼 함수들
+  const handleSelect = (id: number) => {
+    const address = addresses.find((addr: UserAddress) => addr.id === id);
+    if (address) {
+      // Store의 selectAddress 호출
+      selectAddress(address);
+
+      // props로 전달된 onSelect가 있으면 호출 (useMainPageModule의 handleAddressChangeWithTransaction)
+      if (onSelect) {
+        onSelect(id);
+      }
+    } else {
+      console.error('📍 AddressDropDown - 주소를 찾을 수 없음:', {
+        id,
+        addresses,
+      });
+    }
+  };
+
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
   // 빈 상태 체크
   const isEmpty = !addresses || addresses.length === 0;
+
+  // 로딩 상태 표시
+  if (isLoading) {
+    return <LoadingState title={title} className={className} />;
+  }
+
+  // 인증되지 않은 상태 표시
+  if (!isAuthenticated) {
+    return <AuthRequiredState title={title} className={className} />;
+  }
 
   return (
     <div className={`${styles.container} ${className}`}>
@@ -69,12 +120,12 @@ export function AddressDropDown(props: AddressDropDownProps) {
           {selectedAddress ? (
             <div className={styles.selectedAddress}>
               {showFavoriteToggle && (
-                <StarIcon filled={selectedAddress.isFavorite} />
+                <StarIcon filled={selectedAddress.isPrimary || false} />
               )}
               <div className={styles.selectedAddressText}>
                 {(() => {
                   const { firstPart, secondPart } = formatAddress(
-                    selectedAddress.address
+                    selectedAddress.completeAddress
                   );
                   return (
                     <>
@@ -106,9 +157,9 @@ export function AddressDropDown(props: AddressDropDownProps) {
       <AddressDropDownList
         addresses={addresses}
         selectedAddress={selectedAddress}
-        onDelete={onDelete}
-        onToggleFavorite={onToggleFavorite}
-        onSelect={onSelect}
+        onDelete={onDelete || deleteAddress}
+        onToggleFavorite={onToggleFavorite || toggleFavorite}
+        onSelect={onSelect || handleSelect}
         showFavoriteToggle={showFavoriteToggle}
         showDeleteButton={showDeleteButton}
         isExpanded={isExpanded}

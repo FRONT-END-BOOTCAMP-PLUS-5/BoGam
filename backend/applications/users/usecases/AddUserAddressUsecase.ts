@@ -32,8 +32,9 @@ export class AddUserAddressUsecase {
           longitude: request.longitude,
           legalDistrictCode: request.legalDistrictCode,
           dong: request.dong,
-          ho: request.ho,
+          ho: request.ho || null,
           lotAddress: request.lotAddress,
+          roadAddress: request.roadAddress,
         });
 
       let addressId: number;
@@ -48,8 +49,9 @@ export class AddUserAddressUsecase {
           longitude: request.longitude,
           legalDistrictCode: request.legalDistrictCode,
           dong: request.dong,
-          ho: request.ho,
+          ho: request.ho || null,
           lotAddress: request.lotAddress,
+          roadAddress: request.roadAddress,
         });
         addressId = newAddress.id;
       }
@@ -62,10 +64,10 @@ export class AddUserAddressUsecase {
         );
 
       if (existingUserAddress) {
-        // 중복일 때는 조용히 실패 처리 (로그 데이터처럼)
+        // 중복 주소일 때 명확한 메시지 반환
         return {
           success: false,
-          message: '주소 추가에 실패했습니다.',
+          message: '이미 저장된 주소입니다.',
         };
       }
 
