@@ -12,7 +12,7 @@ import React, {
 import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
 import { IFlipSetting, IEventProps } from './settings';
-import styles from './PageFlip.module.css';
+import { pageStyles } from './pageStyles';
 import GeneralPage from './components/GeneralPage';
 
 interface IProps extends IFlipSetting, IEventProps {
@@ -141,7 +141,7 @@ export default function Steps3Page() {
     const bookRef = React.useRef<any>(null);
     return (
         <div
-            className={styles.book}
+            className={pageStyles.book}
             style={{
                 maxWidth: '480px',
                 width: '100%',
@@ -171,7 +171,7 @@ export default function Steps3Page() {
                 showCover={true}
                 mobileScrollSupport={true}
                 startPage={0}
-                drawShadow={false}
+                drawShadow={true}
                 flippingTime={1000}
                 usePortrait={false}
                 style={{ marginLeft: '-48%' }}
@@ -183,7 +183,7 @@ export default function Steps3Page() {
                 showPageCorners={false}
                 disableFlipByClick={true}
             >
-                <div className={styles.flex} style={{ position: "relative" }}>
+                <div className={pageStyles.flex} style={{ position: "relative" }}>
                     <div
                         style={{
                             position: "absolute",
@@ -196,28 +196,28 @@ export default function Steps3Page() {
                         }}
                         onClick={() => bookRef.current && bookRef.current.pageFlip && bookRef.current.pageFlip.flipPrev()}
                     />
-                    <div className={`${styles['general-page']}`}>
-                        <div className={styles.left}>
-                            <div className={styles['first-left-box']}></div>
-                            <div className={styles['left-box']}></div>
-                            <div className={styles['left-box']}></div>
-                            <div className={styles['left-box']}></div>
-                            <div className={styles['last-left-box']}></div>
+                    <div className={pageStyles.generalPage}>
+                        <div className={pageStyles.left}>
+                            <div className={pageStyles.firstLeftBox}></div>
+                            <div className={pageStyles.leftBox}></div>
+                            <div className={pageStyles.leftBox}></div>
+                            <div className={pageStyles.leftBox}></div>
+                            <div className={pageStyles.lastLeftBox}></div>
                         </div>
                         <div>
-                            <div className={styles['right-first-outside-box']}>
-                                <div className={styles['right-first-inside-box']}>
-                                    <p className={styles['small-font']}> 3-0단계 전체 요약 </p>
+                            <div className={pageStyles.rightFirstOutsideBox}>
+                                <div className={pageStyles.rightFirstInsideBox}>
+                                    <p className={pageStyles.smallFont}> 3-0단계 전체 요약 </p>
                                 </div>
                             </div>
-                            <div className={styles['white-paper']}>
-                                <h6 className={styles.topic}> 전세 계약 시 사기를 당하는 경우는 크게 2가지입니다. </h6>
-                                <p className={styles['intro-content']}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
-                                <p className={styles['intro-content']}> 사용자님 말고 다른 세입자와 이중계약 </p>
-                                <h6 className={styles.topic}> 전세보감은 이러한 피해를 막기 위해 다음을 제공합니다. </h6>
-                                <p className={styles['intro-content']}> 공인중개사 자격증 유무 조회 </p>
-                                <p className={styles['intro-content']}> 최우선 변제 기준 데이터 제공 </p>
-                                <p className={styles['intro-content']}> 공제 증서 안내 </p>
+                            <div className={pageStyles.whitePaper}>
+                                <h6 className={pageStyles.topic}> 전세 계약 시 사기를 당하는 경우는 크게 2가지입니다. </h6>
+                                <p className={pageStyles.introContent}> 월셋집을 전셋집으로 둔갑시킨 중개사 </p>
+                                <p className={pageStyles.introContent}> 사용자님 말고 다른 세입자와 이중계약 </p>
+                                <h6 className={pageStyles.topic}> 전세보감은 이러한 피해를 막기 위해 다음을 제공합니다. </h6>
+                                <p className={pageStyles.introContent}> 공인중개사 자격증 유무 조회 </p>
+                                <p className={pageStyles.introContent}> 최우선 변제 기준 데이터 제공 </p>
+                                <p className={pageStyles.introContent}> 공제 증서 안내 </p>
                             </div>
                         </div>
                     </div>
@@ -226,7 +226,7 @@ export default function Steps3Page() {
                     <div className="page-content" style={{ backgroundColor: '#e5e7eb'}}>
                     </div>
                 </div>
-                <div className={styles.flex}>
+                <div className={pageStyles.flex}>
                     <GeneralPage title='3-1단계 공인중개사 자격증 유무 조회'
                         category='위험 요소'
                         content='무자격자가 중개업 등록증이나 자격증을 빌려서
@@ -241,7 +241,7 @@ export default function Steps3Page() {
                     <div className="page-content" style={{ backgroundColor: '#e5e7eb'}}>
                     </div>
                 </div>
-                <div className={styles.flex}>
+                <div className={pageStyles.flex}>
                     <GeneralPage title='3-2단계 최우선변제 금액 안내'
                         category='안내 사항'
                         content='주택임대차보호법 제8조를 따라 사용자님이 가장
@@ -255,7 +255,7 @@ export default function Steps3Page() {
                     <div className="page-content" style={{ backgroundColor: '#e5e7eb'}}>
                     </div>
                 </div>
-                <div className={styles.flex}>
+                <div className={pageStyles.flex}>
                     <GeneralPage title='3-3단계 공제증서 발급 링크 안내'
                         category='안내 사항'
                         content='공인중개사와의 중개 과정에서 발생할 수 있는 사고로
