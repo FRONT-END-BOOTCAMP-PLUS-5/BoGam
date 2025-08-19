@@ -1,27 +1,45 @@
+import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  // API 라우트에 대해서만 CORS 헤더 적용
-  if (request.nextUrl.pathname.startsWith('/api/')) {
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // 1. API 경로 처리 - CORS
+  if (pathname.startsWith('/api/')) {
     const response = NextResponse.next();
-    
-    // CORS 헤더 설정
     response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
-    // OPTIONS 요청 (preflight) 처리
-    if (request.method === 'OPTIONS') {
+    response.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, OPTIONS'
+    );
+    response.headers.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization'
+    );
+
+    // Preflight
+    if (req.method === 'OPTIONS') {
       return new NextResponse(null, { status: 200, headers: response.headers });
     }
-    
+
     return response;
   }
-  
+
+  // 2. 인증 상태 확인
+  const token = await getToken({ req });
+  const isAuthenticated = !!token;
+
+  // 3. 로그인 사용자가 /signin, /signup 접근 시 /main으로 리디렉트
+  if (isAuthenticated && (pathname === '/signin' || pathname === '/signup')) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/main';
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: '/api/:path*',
+  matcher: ['/api/:path*', '/signin', '/signup'],
 };

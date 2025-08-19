@@ -3,7 +3,7 @@
 'use client';
 import '@/globals.css';
 import { InputHTMLAttributes, ReactNode, useId, useState } from 'react';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 type Props = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
   rightAddon?: ReactNode; // 중복확인 버튼
@@ -54,7 +54,7 @@ export default function TextInput({
   ].join(' ');
 
   return (
-    <>
+    <div className={styles.input}>
       <input
         id={id}
         {...rest}
@@ -72,7 +72,7 @@ export default function TextInput({
           rest.onBlur?.(e);
         }}
       />
-      {rightAddon && <div className={styles.addonRight}>{rightAddon}</div>}
-    </>
+      {rightAddon ?? null}
+    </div>
   );
 }
