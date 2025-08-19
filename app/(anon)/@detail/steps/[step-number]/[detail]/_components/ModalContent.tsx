@@ -22,11 +22,13 @@ interface StepData {
 }
 
 interface ModalContentProps {
-  stepData: StepData;
+  stepData: StepData | undefined;
+  isLoading: boolean;
+  isError: boolean;
 }
 
-export default function ModalContent({ stepData }: ModalContentProps) {
-  const detailsEntries = Object.entries(stepData.details);
+export default function ModalContent({ stepData, isLoading, isError }: ModalContentProps) {
+  const detailsEntries = Object.entries(stepData?.details || {});
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -55,6 +57,42 @@ export default function ModalContent({ stepData }: ModalContentProps) {
       swiperRef.current.slideTo(page);
     }
   };
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <>
+        {/* 스텝 번호 헤더 */}
+        <div className={styles.stepHeader}>
+          <h2 className={styles.stepTitle}>단계 상세 보기</h2>
+        </div>
+        
+        {/* 로딩 콘텐츠 */}
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingText}>로딩 중...</div>
+        </div>
+      </>
+    );
+  }
+
+  // 에러 상태
+  if (isError || !stepData) {
+    return (
+      <>
+        {/* 스텝 번호 헤더 */}
+        <div className={styles.stepHeader}>
+          <h2 className={styles.stepTitle}>단계 상세 보기</h2>
+        </div>
+        
+        {/* 에러 콘텐츠 */}
+        <div className={styles.errorContainer}>
+          <div className={styles.errorText}>
+            데이터를 불러오는 중 오류가 발생했습니다.
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

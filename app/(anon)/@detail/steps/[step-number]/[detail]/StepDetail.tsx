@@ -36,6 +36,7 @@ export default function StepDetailPage({
     handleTouchEnd,
     handleMouseDown,
   } = useDragToClose(isOpen, onClose);
+  
   // 모달이 열릴 때 배경 스크롤 차단
   useEffect(() => {
     if (isOpen) {
@@ -61,35 +62,6 @@ export default function StepDetailPage({
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <div className={styles.modalOverlay}>
-        <div className={styles.modalContent}>
-          <div className={styles.loadingContainer}>
-            <div className={styles.loadingText}>로딩 중...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !stepData) {
-    return (
-      <div className={styles.modalOverlay} onClick={onClose}>
-        <div
-          className={styles.modalContent}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className={styles.errorContainer}>
-            <div className={styles.errorText}>
-              데이터를 불러오는 중 오류가 발생했습니다.
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div
@@ -106,7 +78,11 @@ export default function StepDetailPage({
           onClose={onClose}
         />
 
-        <ModalContent stepData={stepData} />
+        <ModalContent 
+          stepData={stepData} 
+          isLoading={isLoading}
+          isError={isError}
+        />
       </div>
     </div>
   );
