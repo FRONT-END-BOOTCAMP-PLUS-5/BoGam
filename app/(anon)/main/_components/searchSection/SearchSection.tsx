@@ -99,7 +99,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
     ? roadAddress
     : selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
   const displayLotAddress = hasNewSearchResult
-    ? ''
+    ? roadAddress && selectedAddress?.lotAddress
+      ? `${roadAddress} (${selectedAddress.lotAddress})`
+      : roadAddress || selectedAddress?.lotAddress || searchQuery
     : selectedAddress?.lotAddress || '';
   const displaySearchQuery = isNewAddressSearch
     ? searchQuery
@@ -132,7 +134,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               {displayAddress || roadAddress}
             </span>
           </div>
-          {selectedAddress && (
+          {(selectedAddress || hasNewSearchResult) && (
             <div className={styles.addressInfo}>
               <div className={styles.addressInfo}>
                 <span className={styles.addressLabel}>도로명 주소:</span>
