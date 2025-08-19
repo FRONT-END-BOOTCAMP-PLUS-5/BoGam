@@ -47,6 +47,7 @@ class FrontendAxiosInstance {
     this.axiosInstance = axios.create({
       baseURL: this.baseURL,
       timeout: this.timeout,
+      withCredentials: true, // 쿠키 기반 인증을 위해 설정
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
@@ -147,12 +148,16 @@ class FrontendAxiosInstance {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async addAuthHeaders(config: any): Promise<any> {
     try {
-      // next-auth 세션에서 토큰 가져오기
+      // next-auth 세션에서 사용자 정보 확인
       const session = await getSession();
-      if (session?.accessToken && config.headers) {
-        (
-          config.headers as Record<string, string>
-        ).Authorization = `Bearer ${session.accessToken}`;
+
+      if (session?.user && config.headers) {
+        // 쿠키 기반 인증을 위해 withCredentials 설정
+        config.withCredentials = true;
+
+        // 사용자 정보를 헤더에 포함 (선택사항)
+        (config.headers as Record<string, string>)['X-User-Nickname'] =
+          session.user.nickname || '';
       }
 
       // CSRF 토큰이 필요한 경우 (선택사항)

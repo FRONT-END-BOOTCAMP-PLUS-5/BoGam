@@ -20,6 +20,9 @@ module.exports = {
           gold: '#a68a56',
           shadow: '#4b72a659',
           error: '#c24a4a',
+          purple: '#8b5cf6',
+          blue: '#3b82f6',
+          red: '#ef4444',
         },
       },
       keyframes: {
