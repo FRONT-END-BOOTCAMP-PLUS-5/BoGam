@@ -1,6 +1,6 @@
 'use client';
 
-import { styles } from '../pageStyles';
+import { generalPageStyles } from './generalPage.style.ts';
 
 interface pageType {
     title: string,
@@ -10,19 +10,19 @@ interface pageType {
 
 export default function GeneralPage({ title, category, content }: pageType) {
     return (
-    <div className={styles.generalWhitePage}>
+    <div className={generalPageStyles.generalWhitePage}>
             <div>
-                <div className={styles.smallFontDiv}>
-                    <h3 className={styles.smallFont}> {title} </h3>
+                <div className={generalPageStyles.smallFontDiv}>
+                    <h3 className={generalPageStyles.smallFont}> {title} </h3>
                 </div>
-                <div className={styles.borderBottomDiv}>
-                    <h5 className={styles.danger}> {category}  </h5>
-                    <p className={styles.content}>
+                <div className={generalPageStyles.borderBottomDiv}>
+                    <h5 className={generalPageStyles.danger}> {category} </h5>
+                    <p className={generalPageStyles.content}>
                         {content}
                     </p>
                 </div>
-                <div className={styles.goInsideDiv}>
-                    <button className={styles.goInside}> 바로가기 </button>
+                <div className={generalPageStyles.goInsideDiv}>
+                    <button className={generalPageStyles.goInside}> 바로가기 </button>
                 </div>
             </div>
         </div>

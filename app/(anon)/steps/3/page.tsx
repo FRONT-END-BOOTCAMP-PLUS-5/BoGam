@@ -12,8 +12,7 @@ import React, {
 import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
 import { IFlipSetting, IEventProps } from './settings';
-import { styles } from './pageStyles';
-import { pageFlipStyles } from './pageFlipStyles';
+import { styles } from './page.styles';
 import GeneralPage from './_components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
 import onboardingStyles from '@/(anon)/_components/onboarding/Onboarding.module.css';
@@ -133,7 +132,7 @@ export default function Steps3Page() {
             </div>
             <HTMLFlipBook
                 ref={bookRef}
-                className={pageFlipStyles.demoBook}
+                className={styles.demoBook}
                 width={550}
                 height={733}
                 size="stretch"
@@ -191,8 +190,8 @@ export default function Steps3Page() {
                         </div>
                     </div>
                 </div>
-                <div className={pageFlipStyles.page}>
-                    <div className={pageFlipStyles.pageContent + ' bg-gray-200'}>
+                <div className={styles.page}>
+                    <div className={styles.pageContent + ' bg-gray-200'}>
                     </div>
                 </div>
                 <div className={styles.flex}>
@@ -206,8 +205,8 @@ export default function Steps3Page() {
                         사업자상호(부동산 이름)과 중개업자 이름을 입력하면
                         전세보감이 증명된 중개업자인지 확인해드리겠습니다.'></GeneralPage>
                 </div>
-                <div className={pageFlipStyles.page}>
-                    <div className={pageFlipStyles.pageContent + ' bg-gray-200'}>
+                <div className={styles.page}>
+                    <div className={styles.pageContent + ' bg-gray-200'}>
                     </div>
                 </div>
                 <div className={styles.flex}>
@@ -220,8 +219,8 @@ export default function Steps3Page() {
                             전세보감이 초기 설정 때 작성한 매물 지역의
                             최우선변제 금액을 안내해드리겠습니다'></GeneralPage>
                 </div>
-                <div className={pageFlipStyles.page}>
-                    <div className={pageFlipStyles.pageContent + ' bg-gray-200'}>
+                <div className={styles.page}>
+                    <div className={styles.pageContent + ' bg-gray-200'}>
                     </div>
                 </div>
                 <div className={styles.flex}>
