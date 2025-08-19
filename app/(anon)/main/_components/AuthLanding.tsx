@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useUserStore } from '@libs/store/userStore';
+import { useUserStore } from '@libs/stores/userStore';
 
 export default function AuthLanding() {
   const { data: session } = useSession();

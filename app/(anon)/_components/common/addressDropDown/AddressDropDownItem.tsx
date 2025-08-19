@@ -5,7 +5,7 @@ import {
   styles,
   getListItemStyle,
   getAddressTextStyle,
-} from './AddressDropDown.styles';
+} from './AddressDropDownItem.styles';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { formatAddress } from '@utils/addressUtils';
 import { StarIcon } from './AddressDropDown';
