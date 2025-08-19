@@ -26,7 +26,6 @@ interface IProps extends IFlipSetting, IEventProps {
     renderOnlyPageLengthChange?: boolean;
 }
 
-
 const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
     (props, ref) => {
         const htmlElementRef = useRef<HTMLDivElement>(null);
@@ -115,19 +114,16 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
     }
 );
 
-
-
-
 export default function Steps3Page() {
     const router = useRouter();
     const bookRef = React.useRef<any>(null);
-    const [marginLeft, setMarginLeft] = React.useState('-48%');
+    const [marginLeft, setMarginLeft] = React.useState('-55%');
     const [currentPage, setCurrentPage] = React.useState(0);
     const totalPages = 4;
 
     React.useEffect(() => {
         const width = window.innerWidth;
-        setMarginLeft(width <= 400 ? '-70%' : '-48%');
+        setMarginLeft(width <= 400 ? '-70%' : '-55%');
     }, []);
     return (
         <div
@@ -148,7 +144,7 @@ export default function Steps3Page() {
                 border: '0px'
             }}
         >
-            <div style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+            <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
                 <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
             </div>
             <HTMLFlipBook
@@ -177,7 +173,6 @@ export default function Steps3Page() {
                 showPageCorners={false}
                 disableFlipByClick={true}
                 onFlip={(e: any) => {
-                    console.log('onFlip e.data:', e.data);
                     setCurrentPage(Math.floor((e.data + 1) / 2));
                 }}
             >
@@ -266,11 +261,11 @@ export default function Steps3Page() {
                                 제공해드리곘습니다.'></GeneralPage>
                 </div>
             </HTMLFlipBook>
-            <div style={{ width: 180, marginTop: 32, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-                <div style={{ position: 'absolute', left: 0, top: 0, height: '100%', display: 'flex', alignItems: 'center' }}>
+            <div className={pageStyles.indicatorWrapper}>
+                <div className={pageStyles.indicatorLeft}>
                     {currentPage === 0 && (
                         <button
-                            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', height: 24, display: 'flex', alignItems: 'center' }}
+                            className={pageStyles.indicatorArrowBtn}
                             aria-label="이전 단계로 이동"
                             onClick={() => router.push('/steps/2')}
                         >
@@ -278,21 +273,21 @@ export default function Steps3Page() {
                         </button>
                     )}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                <div className={pageStyles.indicatorDots}>
                     {Array.from({ length: totalPages }).map((_, j) => (
                         <button
                             key={j}
-                            className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''}`}
+                            className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''} ${pageStyles.indicatorDotBtn}`}
                             aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
                             onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
-                            style={{ background: j === currentPage ? '#000000' : '#A7A8A9', margin: '0 6px' }}
+                            style={{ background: j === currentPage ? '#000000' : '#A7A8A9' }}
                         />
                     ))}
                 </div>
-                <div style={{ position: 'absolute', right: 0, top: 0, height: '100%', display: 'flex', alignItems: 'center' }}>
+                <div className={pageStyles.indicatorRight}>
                     {currentPage === totalPages - 1 && (
                         <button
-                            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', height: 24, display: 'flex', alignItems: 'center' }}
+                            className={pageStyles.indicatorArrowBtn}
                             aria-label="다음 단계로 이동"
                             onClick={() => router.push('/steps/4')}
                         >

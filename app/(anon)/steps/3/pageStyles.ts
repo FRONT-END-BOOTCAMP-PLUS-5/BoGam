@@ -1,4 +1,10 @@
 export const pageStyles = {
+  indicatorWrapper: 'w-[180px] mt-8 flex items-center justify-between relative',
+  indicatorLeft: 'absolute left-0 top-0 h-full flex items-center',
+  indicatorRight: 'absolute right-0 top-0 h-full flex items-center',
+  indicatorDots: 'flex justify-center items-center w-full',
+  indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
+  indicatorDotBtn: 'mx-[6px]',
   book: 'flex flex-col justify-center min-h-screen mx-auto max-w-[480px] w-full bg-gray-300 relative overflow-hidden box-border items-center border-none',
   flipBook: 'flex items-center justify-center w-fit h-fit overflow-visible relative border-none',
   flex: 'flex h-full',
