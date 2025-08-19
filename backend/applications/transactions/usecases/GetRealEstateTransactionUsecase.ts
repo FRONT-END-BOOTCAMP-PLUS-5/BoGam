@@ -8,6 +8,7 @@ import {
   generateDealYearMonthRange,
   getCurrentYearMonth,
 } from '@utils/dateUtils';
+import { groupTransactionsByDong } from '@utils/transactionGroupingUtils';
 
 /**
  * 실거래가 조회 유스케이스
@@ -694,6 +695,92 @@ export class GetRealEstateTransactionUsecase {
       };
     } catch (error) {
       console.error('연립다세대 범위 실거래가 수집 실패:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 모든 주택 유형의 실거래가를 통합 조회하고 동별로 그룹화
+   * @param lawdCd 지역코드 (법정동코드 5자리)
+   * @param startDealYmd 시작 계약년월 (YYYYMM 형식)
+   * @param options 추가 옵션
+   * @returns 통합된 응답 데이터 (동별 그룹화 포함)
+   */
+  async getAllTransactionsWithGrouping(
+    lawdCd: string,
+    startDealYmd: string,
+    options: {
+      maxItems?: number;
+      batchSize?: number;
+      serviceKey?: string;
+    } = {}
+  ): Promise<{
+    apartment: GetRealEstateTransactionResponse;
+    detachedHouse: GetRealEstateTransactionResponse;
+    officetel: GetRealEstateTransactionResponse;
+    rowHouse: GetRealEstateTransactionResponse;
+    allItems: GetRealEstateTransactionItem[];
+    groupedByDong: ReturnType<typeof groupTransactionsByDong>;
+  }> {
+    try {
+      console.log(
+        `🔍 ${lawdCd} 지역 ${startDealYmd}부터 모든 주택 유형 실거래가 통합 조회 시작...`
+      );
+
+      // 각 주택 유형별로 범위 데이터 수집 (병렬 처리)
+      const [apartment, detachedHouse, officetel, rowHouse] = await Promise.all(
+        [
+          this.getAllApartmentTransactionsByDateRange(
+            lawdCd,
+            startDealYmd,
+            options
+          ),
+          this.getAllDetachedHouseTransactionsByDateRange(
+            lawdCd,
+            startDealYmd,
+            options
+          ),
+          this.getAllOfficetelTransactionsByDateRange(
+            lawdCd,
+            startDealYmd,
+            options
+          ),
+          this.getAllRowHouseTransactionsByDateRange(
+            lawdCd,
+            startDealYmd,
+            options
+          ),
+        ]
+      );
+
+      // 모든 데이터 통합
+      const allItems = [
+        ...(apartment.body.items.item || []),
+        ...(detachedHouse.body.items.item || []),
+        ...(officetel.body.items.item || []),
+        ...(rowHouse.body.items.item || []),
+      ];
+
+      console.log(`📊 총 ${allItems.length}건의 실거래가 데이터 수집 완료`);
+
+      // 동별 그룹화
+      const groupedByDong = groupTransactionsByDong(allItems);
+
+      console.log(`🏘️ 동별 그룹화 완료: 총 ${groupedByDong.totalDongs}개 동`);
+      console.log(
+        `🔥 가장 활발한 동: ${groupedByDong.mostActiveDong.dongName} (${groupedByDong.mostActiveDong.transactionCount}건)`
+      );
+
+      return {
+        apartment,
+        detachedHouse,
+        officetel,
+        rowHouse,
+        allItems,
+        groupedByDong,
+      };
+    } catch (error) {
+      console.error('통합 실거래가 조회 및 그룹화 실패:', error);
       throw error;
     }
   }
