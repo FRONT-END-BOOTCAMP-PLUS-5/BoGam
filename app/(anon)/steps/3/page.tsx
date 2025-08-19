@@ -142,13 +142,13 @@ export default function Steps3Page() {
         const [marginLeft, setMarginLeft] = React.useState('-55%');
         React.useEffect(() => {
             const width = window.innerWidth;
-            setMarginLeft(width <= 400 ? '-70%' : '-55%');
+            setMarginLeft(width <= 400 ? '-70%' : '-53%');
         }, []);
     return (
         <div
             className={pageStyles.book}
             style={{
-                // maxWidth: '480px',
+                maxWidth: '480px',
                 width: '100%',
                 margin: '0 auto',
                 background: '#d1d5db',
@@ -165,8 +165,8 @@ export default function Steps3Page() {
             <HTMLFlipBook
                 ref={bookRef}
                 className="demo-book"
-                width={480}
-                height={633}
+                width={550}
+                height={733}
                 size="stretch"
                 minWidth={315}
                 maxWidth={1000}
@@ -179,7 +179,7 @@ export default function Steps3Page() {
                 drawShadow={true}
                 flippingTime={1000}
                 usePortrait={false}
-                style={{ marginLeft }}
+                    style={{ marginLeft }}
                 startZIndex={0}
                 autoSize={true}
                 clickEventForward={true}
