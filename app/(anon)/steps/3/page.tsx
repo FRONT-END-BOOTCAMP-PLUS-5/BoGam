@@ -15,6 +15,7 @@ import { IFlipSetting, IEventProps } from './settings';
 import { pageStyles } from './pageStyles';
 import GeneralPage from './components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
+import styles from '@/(anon)/_components/onboarding/Onboarding.module.css';
 
 interface IProps extends IFlipSetting, IEventProps {
     className: string;
@@ -262,23 +263,26 @@ export default function Steps3Page() {
                                 제공해드리곘습니다.'></GeneralPage>
                 </div>
             </HTMLFlipBook>
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 24, gap: 24 }}>
-                <span style={{ fontSize: 18, color: '#222', cursor: 'pointer' }} onClick={() => bookRef.current?.pageFlip?.flipPrev()}>&lt;</span>
-                {Array.from({ length: totalPages }).map((_, idx) => (
-                    <span
-                        key={idx}
-                        style={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: '50%',
-                            background: idx === currentPage ? '#222' : '#bbb',
-                            display: 'inline-block',
-                            margin: '0 4px',
-                            transition: 'background 0.2s',
-                        }}
+            <div className={styles.dots} aria-label="slides" style={{ marginTop: 24 }}>
+                <button
+                    style={{ background: 'none', border: 'none', padding: 0, marginRight: 8, fontSize: 18, color: '#222', cursor: 'pointer' }}
+                    onClick={() => bookRef.current?.pageFlip?.flipPrev()}>
+                    &#60;
+                </button>
+                {Array.from({ length: totalPages }).map((_, j) => (
+                    <button
+                        key={j}
+                        className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''}`}
+                        aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
+                        onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
+                        style={{ background: j === currentPage ? '#000000' : '#A7A8A9' }}
                     />
                 ))}
-                <span style={{ fontSize: 18, color: '#222', cursor: 'pointer' }} onClick={() => bookRef.current?.pageFlip?.flipNext()}>&gt;</span>
+                <button
+                    style={{ background: 'none', border: 'none', padding: 0, marginLeft: 8, fontSize: 18, color: '#222', cursor: 'pointer' }}
+                    onClick={() => bookRef.current?.pageFlip?.flipNext()}>
+                    &#62;
+                </button>
             </div>
         </div>
     );
