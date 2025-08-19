@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown';
+import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
 import { styles } from './page.styles';

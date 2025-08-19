@@ -19,7 +19,6 @@ export default function SignupForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setError,
     setValue,
     trigger,
   } = useForm<SignupInput>({

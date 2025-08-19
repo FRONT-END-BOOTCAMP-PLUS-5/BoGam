@@ -3,7 +3,7 @@
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import { styles } from './GuideStepStyles';
+import { styles } from './GuideStepRow.styles';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 
 type GuideStepRowProps = {
