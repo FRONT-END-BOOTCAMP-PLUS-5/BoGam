@@ -42,7 +42,11 @@ export const useUserAddressStore = create<UserAddressStore>()(
           // 대표 주소 자동 선택
           const primaryAddress = data.find((addr) => addr.isPrimary);
           if (primaryAddress) {
-            set({ selectedAddress: primaryAddress }, false, 'setPrimaryAddress');
+            set(
+              { selectedAddress: primaryAddress },
+              false,
+              'setPrimaryAddress'
+            );
           }
         },
 
@@ -55,9 +59,13 @@ export const useUserAddressStore = create<UserAddressStore>()(
           };
 
           // 즉시 UI 업데이트
-          set((state) => ({
-            userAddresses: [...state.userAddresses, newAddress],
-          }), false, 'addAddress');
+          set(
+            (state) => ({
+              userAddresses: [...state.userAddresses, newAddress],
+            }),
+            false,
+            'addAddress'
+          );
 
           try {
             // 서버에 저장
@@ -73,58 +81,87 @@ export const useUserAddressStore = create<UserAddressStore>()(
             });
 
             if (response.success) {
-              console.log('✅ 주소 추가 성공');
               // 서버에서 받은 실제 ID로 업데이트
               const newId = (response.data as { id?: number })?.id;
-              set((state) => ({
-                userAddresses: state.userAddresses.map((addr) =>
-                  addr.id === tempId
-                    ? { ...addr, id: newId || tempId }
-                    : addr
-                ),
-              }), false, 'updateAddressId');
+              set(
+                (state) => ({
+                  userAddresses: state.userAddresses.map((addr) =>
+                    addr.id === tempId ? { ...addr, id: newId || tempId } : addr
+                  ),
+                }),
+                false,
+                'updateAddressId'
+              );
             } else {
               throw new Error(response.message || '주소 추가 실패');
             }
           } catch (error) {
             console.error('❌ 주소 추가 실패:', error);
             // 롤백
-            set((state) => ({
-              userAddresses: state.userAddresses.filter((addr) => addr.id !== tempId),
-            }), false, 'rollbackAddAddress');
-            set({ error: error instanceof Error ? error.message : '주소 추가 실패' }, false, 'setError');
+            set(
+              (state) => ({
+                userAddresses: state.userAddresses.filter(
+                  (addr) => addr.id !== tempId
+                ),
+              }),
+              false,
+              'rollbackAddAddress'
+            );
+            set(
+              {
+                error:
+                  error instanceof Error ? error.message : '주소 추가 실패',
+              },
+              false,
+              'setError'
+            );
             throw error;
           }
         },
 
         // Optimistic Update로 주소 삭제
         deleteAddress: async (id) => {
-          const addressToDelete = get().userAddresses.find((addr) => addr.id === id);
+          const addressToDelete = get().userAddresses.find(
+            (addr) => addr.id === id
+          );
 
           // 즉시 UI에서 제거
-          set((state) => ({
-            userAddresses: state.userAddresses.filter((addr) => addr.id !== id),
-            // 삭제된 주소가 선택된 주소였다면 선택 해제
-            selectedAddress:
-              state.selectedAddress?.id === id ? null : state.selectedAddress,
-          }), false, 'deleteAddress');
-
-          console.log('🗑️ 주소 삭제 (Optimistic):', id);
+          set(
+            (state) => ({
+              userAddresses: state.userAddresses.filter(
+                (addr) => addr.id !== id
+              ),
+              // 삭제된 주소가 선택된 주소였다면 선택 해제
+              selectedAddress:
+                state.selectedAddress?.id === id ? null : state.selectedAddress,
+            }),
+            false,
+            'deleteAddress'
+          );
 
           try {
             // 서버에서 삭제
             await userAddressApi.deleteAddress(id);
-            console.log('✅ 주소 삭제 성공');
           } catch (error) {
-            console.error('❌ 주소 삭제 실패:', error);
             // 롤백
             if (addressToDelete) {
-              set((state) => ({
-                userAddresses: [...state.userAddresses, addressToDelete],
-                selectedAddress: state.selectedAddress || addressToDelete,
-              }), false, 'rollbackDeleteAddress');
+              set(
+                (state) => ({
+                  userAddresses: [...state.userAddresses, addressToDelete],
+                  selectedAddress: state.selectedAddress || addressToDelete,
+                }),
+                false,
+                'rollbackDeleteAddress'
+              );
             }
-            set({ error: error instanceof Error ? error.message : '주소 삭제 실패' }, false, 'setError');
+            set(
+              {
+                error:
+                  error instanceof Error ? error.message : '주소 삭제 실패',
+              },
+              false,
+              'setError'
+            );
             throw error;
           }
         },
@@ -132,45 +169,70 @@ export const useUserAddressStore = create<UserAddressStore>()(
         // Optimistic Update로 즐겨찾기 토글
         toggleFavorite: async (id) => {
           // 즉시 UI 업데이트
-          set((state) => {
-            const targetAddress = state.userAddresses.find((addr) => addr.id === id);
-            const isCurrentlyPrimary = targetAddress?.isPrimary || false;
+          set(
+            (state) => {
+              const targetAddress = state.userAddresses.find(
+                (addr) => addr.id === id
+              );
+              const isCurrentlyPrimary = targetAddress?.isPrimary || false;
 
-            // 대표 주소를 변경하는 경우 (현재 대표 주소가 아닌 주소를 대표로 설정)
-            if (!isCurrentlyPrimary) {
-              return {
-                userAddresses: state.userAddresses.map((addr) => ({
-                  ...addr,
-                  isPrimary: addr.id === id, // 클릭된 주소만 true, 나머지는 false
-                })),
-              };
-            } else {
-              // 대표 주소 해제하는 경우 (현재 대표 주소를 해제)
-              return {
-                userAddresses: state.userAddresses.map((addr) =>
-                  addr.id === id ? { ...addr, isPrimary: false } : addr
-                ),
-              };
-            }
-          }, false, 'toggleFavorite');
-
-          console.log('⭐ 즐겨찾기 토글 (Optimistic):', id);
+              // 대표 주소를 변경하는 경우 (현재 대표 주소가 아닌 주소를 대표로 설정)
+              if (!isCurrentlyPrimary) {
+                return {
+                  userAddresses: state.userAddresses.map((addr) => ({
+                    ...addr,
+                    isPrimary: addr.id === id, // 클릭된 주소만 true, 나머지는 false
+                  })),
+                };
+              } else {
+                // 대표 주소 해제하는 경우 (현재 대표 주소를 해제)
+                return {
+                  userAddresses: state.userAddresses.map((addr) =>
+                    addr.id === id ? { ...addr, isPrimary: false } : addr
+                  ),
+                };
+              }
+            },
+            false,
+            'toggleFavorite'
+          );
 
           try {
-            // 서버에 저장 (API 구현 필요)
-            // const response = await userAddressApi.toggleFavorite(id);
-            console.log('✅ 즐겨찾기 토글 성공');
+            // 서버에 저장
+            const response = await fetch('/api/user-address/toggle-primary', {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ userAddressId: id }),
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+              throw new Error(result.message || '즐겨찾기 토글 실패');
+            }
           } catch (error) {
-            console.error('❌ 즐겨찾기 토글 실패:', error);
             // 롤백
-            set((state) => ({
-              userAddresses: state.userAddresses.map((addr) =>
-                addr.id === id ? { ...addr, isPrimary: !addr.isPrimary } : addr
-              ),
-            }), false, 'rollbackToggleFavorite');
-            set({
-              error: error instanceof Error ? error.message : '즐겨찾기 토글 실패',
-            }, false, 'setError');
+            set(
+              (state) => ({
+                userAddresses: state.userAddresses.map((addr) =>
+                  addr.id === id
+                    ? { ...addr, isPrimary: !addr.isPrimary }
+                    : addr
+                ),
+              }),
+              false,
+              'rollbackToggleFavorite'
+            );
+            set(
+              {
+                error:
+                  error instanceof Error ? error.message : '즐겨찾기 토글 실패',
+              },
+              false,
+              'setError'
+            );
             throw error;
           }
         },
@@ -178,13 +240,11 @@ export const useUserAddressStore = create<UserAddressStore>()(
         // 즉시 업데이트 (서버 통신 없음)
         selectAddress: (address) => {
           set({ selectedAddress: address }, false, 'selectAddress');
-          console.log('📍 주소 선택:', address);
         },
 
         // 선택된 주소 초기화
         clearSelectedAddress: () => {
           set({ selectedAddress: null }, false, 'clearSelectedAddress');
-          console.log('🔄 선택된 주소 초기화');
         },
 
         // 에러 처리

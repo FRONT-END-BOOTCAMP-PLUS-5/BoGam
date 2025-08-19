@@ -92,10 +92,6 @@ class TransactionDetailApi {
       '/api/transaction-details?category=apart',
       params
     );
-
-    console.log('response', response);
-    console.log('params', params);
-
     return response.data;
   }
 

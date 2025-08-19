@@ -27,16 +27,13 @@ export const useTransactionDataStore = create<TransactionDataStore>((set) => ({
 
   clearTransactionData: () => {
     set({ transactionData: [] });
-    console.log('🗑️ 실거래가 데이터 초기화');
   },
 
   setLoading: (loading) => {
     set({ isLoading: loading });
-    console.log('⏳ 실거래가 로딩 상태:', loading);
   },
 
   setError: (error) => {
     set({ error });
-    console.log('❌ 실거래가 에러:', error);
   },
 }));

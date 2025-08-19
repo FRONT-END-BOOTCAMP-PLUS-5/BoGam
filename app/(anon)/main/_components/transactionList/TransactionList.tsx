@@ -13,10 +13,8 @@ export const TransactionList: React.FC = () => {
     if (!location) {
       return;
     }
-    console.log('🏠 실거래가 클릭 - 지도 이동 시작:', location);
     setAdjustBounds(false); // 자동 조정 비활성화
     setMapCenter(location);
-    console.log('🏠 실거래가 클릭 - 지도 이동 완료');
   };
 
   // 로딩 중일 때
@@ -61,10 +59,7 @@ export const TransactionList: React.FC = () => {
             className={styles.transactionItem}
             onClick={() => {
               if (item.location) {
-                console.log('실거래가 클릭 - 지도 이동:', item.location);
                 handleTransactionClick(item.location);
-              } else {
-                console.log('실거래가 클릭 - 좌표 정보 없음');
               }
             }}
             style={{ cursor: item.location ? 'pointer' : 'default' }}

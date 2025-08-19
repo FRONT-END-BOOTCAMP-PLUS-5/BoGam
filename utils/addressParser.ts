@@ -25,11 +25,6 @@ export function parseAddress(address: string): ParsedAddress {
   // 주소에서 공백 제거 및 정규화
   const normalizedAddress = address.trim().replace(/\s+/g, ' ');
 
-  console.log('🔍 주소 파싱 시작:', {
-    originalAddress: address,
-    normalizedAddress,
-  });
-
   // 주소 정규화 (축약형을 전체명으로 변환)
   const normalizedAddressWithFullNames = normalizedAddress
     .replace(/^서울\s/, '서울특별시 ')
@@ -49,8 +44,6 @@ export function parseAddress(address: string): ParsedAddress {
     .replace(/^전남\s/, '전라남도 ')
     .replace(/^경북\s/, '경상북도 ')
     .replace(/^경남\s/, '경상남도 ');
-
-  console.log('🔍 주소 정규화 완료:', { normalizedAddressWithFullNames });
 
   // 시도 목록 (가장 긴 것부터 매칭)
   const sidoList = [
@@ -115,7 +108,6 @@ export function parseAddress(address: string): ParsedAddress {
     addrDong,
   };
 
-  console.log('🔍 주소 파싱 결과:', result);
   return result;
 }
 

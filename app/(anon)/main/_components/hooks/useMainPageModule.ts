@@ -426,8 +426,6 @@ export const useMainPageModule = () => {
           ho: currentHo, // 호 정보 추가
         };
 
-        console.log('🔍 저장하기 - addAddress 호출 데이터:', addressData);
-
         await addAddress(addressData);
 
         alert('주소가 성공적으로 저장되었습니다!');
@@ -482,8 +480,6 @@ export const useMainPageModule = () => {
     buildingName: string
   ) => {
     try {
-      console.log('🏠 건물 선택됨:', { buildingCode, buildingName });
-
       // buildingType을 API type으로 매핑
       const getApiType = (buildingType: string): string => {
         switch (buildingType) {
@@ -503,15 +499,10 @@ export const useMainPageModule = () => {
       };
 
       const apiType = getApiType(buildingType.type);
-      console.log('🏗️ 건물 타입 매핑:', {
-        buildingType: buildingType.type,
-        apiType,
-      });
 
       // 건물 타입에 따라 적절한 API 호출
       if (buildingType.type === 'detached') {
         // 단독/다가구는 별도 API 사용
-        console.log('🏠 단독/다가구 실거래가 조회 시작');
 
         // 주소 파싱
         const address = storeSelectedAddress?.completeAddress || '';
@@ -527,7 +518,6 @@ export const useMainPageModule = () => {
         });
       } else {
         // 아파트, 연립, 오피스텔 등은 buildingCode 사용
-        console.log('🏠 아파트 계열 실거래가 조회 시작');
         await fetchTransactionDetailApart({
           buildingCode,
           type: apiType,
@@ -536,7 +526,6 @@ export const useMainPageModule = () => {
         });
       }
     } catch (error) {
-      console.error('실거래가 조회 실패:', error);
       alert('실거래가 조회 중 오류가 발생했습니다.');
     }
   };

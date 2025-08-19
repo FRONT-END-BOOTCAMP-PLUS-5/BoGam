@@ -151,49 +151,33 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
 
   // 위치 설정 로직
   useEffect(() => {
-    console.log('🗺️ useKakaoMap 위치 설정 로직:', {
-      useGPSFirst,
-      gpsLoading,
-      gpsError,
-      gpsLocation,
-      center,
-      currentLocation,
-    });
-
     if (useGPSFirst) {
       if (gpsLoading) return;
       if (gpsError) {
         const fallbackLocation = center || { lat: 37.5665, lng: 126.978 };
-        console.log('🗺️ GPS 오류 - fallback 위치 사용:', fallbackLocation);
         setCurrentLocation(fallbackLocation);
         return;
       }
       if (gpsLocation) {
-        console.log('🗺️ GPS 위치 설정:', gpsLocation);
         setCurrentLocation(gpsLocation);
         return;
       }
       const fallbackLocation = center || { lat: 37.5665, lng: 126.978 };
-      console.log('🗺️ GPS 없음 - fallback 위치 사용:', fallbackLocation);
       setCurrentLocation(fallbackLocation);
     } else {
       if (center) {
-        console.log('🗺️ center prop 위치 설정:', center);
         setCurrentLocation(center);
         return;
       }
       if (gpsError) {
         const fallbackLocation = { lat: 37.5665, lng: 126.978 };
-        console.log('🗺️ GPS 오류 - 기본 위치 사용:', fallbackLocation);
         setCurrentLocation(fallbackLocation);
         return;
       }
       if (gpsLocation) {
-        console.log('🗺️ GPS 위치 설정 (fallback):', gpsLocation);
         setCurrentLocation(gpsLocation);
         return;
       }
-      console.log('🗺️ 기본 위치 설정');
       setCurrentLocation({ lat: 37.5665, lng: 126.978 });
     }
   }, [center, gpsLocation, gpsError, gpsLoading, useGPSFirst]);
@@ -201,11 +185,9 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
   // center prop이 변경될 때 지도 중심 이동
   useEffect(() => {
     if (mapInstanceRef.current && center && window.kakao && window.kakao.maps) {
-      console.log('지도 중심 이동:', center);
       try {
         const position = new window.kakao.maps.LatLng(center.lat, center.lng);
         mapInstanceRef.current.setCenter(position);
-        console.log('지도 중심 이동 완료');
       } catch (error) {
         console.error('지도 중심 이동 실패:', error);
       }
@@ -281,7 +263,6 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
       if (window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {
         initMap();
       } else {
-        console.log('Kakao Maps API 로드 대기 중...');
         // API가 로드될 때까지 대기
         const checkKakaoMaps = () => {
           if (window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {

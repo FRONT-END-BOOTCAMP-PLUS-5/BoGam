@@ -15,7 +15,6 @@ export const useTransactionDetail = () => {
     onMutate: () => {
       setLoading(true);
       setError(null);
-      console.log('⏳ 실거래가 조회 시작...');
     },
     mutationFn: async ({
       buildingCode,
@@ -39,7 +38,6 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log('data', data);
       if (data.success && data.data) {
         // 매매 데이터와 전월세 데이터를 합쳐서 변환
         // API 응답에서 data가 중첩되어 있음: data.data.data.resSaleList
@@ -47,13 +45,6 @@ export const useTransactionDetail = () => {
           data.data.data?.resSaleList || data.data.resSaleList || [];
         const rentData =
           data.data.data?.resRentList || data.data.resRentList || [];
-
-        console.log('🔍 데이터 변환 시작:', {
-          saleDataLength: saleData.length,
-          rentDataLength: rentData.length,
-          saleDataSample: saleData.slice(0, 1),
-          rentDataSample: rentData.slice(0, 1),
-        });
 
         const transformedData = [...saleData, ...rentData].map(
           (
@@ -77,18 +68,10 @@ export const useTransactionDetail = () => {
           })
         );
 
-        console.log('🔍 변환된 데이터:', {
-          transformedDataLength: transformedData.length,
-          transformedDataSample: transformedData.slice(0, 2),
-        });
-
         setTransactionData(transformedData);
         setLoading(false);
 
         // 성공 알림
-        console.log(
-          `✅ 실거래가 데이터 로드 완료: ${transformedData.length}건`
-        );
       } else {
         setError('실거래가 데이터를 가져올 수 없습니다.');
         setLoading(false);
@@ -108,7 +91,6 @@ export const useTransactionDetail = () => {
     onMutate: () => {
       setLoading(true);
       setError(null);
-      console.log('⏳ 실거래가 조회 시작...');
     },
     mutationFn: async ({
       addrSido,
@@ -165,7 +147,6 @@ export const useTransactionDetail = () => {
       }
     },
     onError: (error) => {
-      console.error('실거래가 상세조회 실패:', error);
       setError(
         error instanceof Error ? error.message : '실거래가 상세조회 실패'
       );
