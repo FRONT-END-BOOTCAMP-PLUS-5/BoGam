@@ -49,33 +49,28 @@ export const useLocationManager = () => {
             '잘못된 주소 좌표로 인해 GPS 위치를 사용합니다:',
             targetAddress
           );
-          // 잘못된 좌표가 있으면 GPS 위치 사용
-          if (gpsLocation) {
-            setMapCenter(gpsLocation);
-          }
+          // 잘못된 좌표가 있으면 GPS 위치를 사용하되, 지도 중심점은 자동 설정하지 않음
+          console.warn(
+            '잘못된 주소 좌표 - GPS 위치를 대신 사용 (지도 중심점은 자동 설정하지 않음):',
+            gpsLocation
+          );
           return;
         }
 
         // Store의 selectAddress만 사용 (지도 중심점은 자동 설정하지 않음)
         selectAddress(targetAddress);
 
-        // 대표 주소가 변경된 경우 지도 중심점도 업데이트
-        if (targetAddress.isPrimary) {
-          setMapCenter({ lat: targetAddress.y, lng: targetAddress.x });
-          console.log('🗺️ 대표 주소 변경으로 지도 중심점 업데이트:', {
-            lat: targetAddress.y,
-            lng: targetAddress.x,
-          });
-        }
-        // 지도 중심점은 사용자가 명시적으로 요청할 때만 설정
+        console.log(
+          '📍 사용자 주소 선택 완료 - 지도 중심점은 자동 설정하지 않음:',
+          targetAddress.completeAddress
+        );
       }
     }
   }, [
     isAuthenticated,
     userAddresses.length,
     userAddresses.find((addr) => addr.isPrimary)?.id, // 대표 주소 ID 변경 감지
-    gpsLocation,
-    selectAddress,
+    // gpsLocation은 의존성에서 제거 (무한 루프 방지)
   ]);
 
   return {

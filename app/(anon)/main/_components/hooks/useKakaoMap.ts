@@ -38,33 +38,29 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
   const { transactionData } = useTransactionDataStore();
 
   // 모든 마커가 보이도록 지도 영역 조정 함수
-  const adjustMapBounds = useCallback(
+  const handleAdjustMapBounds = useCallback(
     (markersData: Array<{ location: MapLocation }>) => {
-      if (
-        !window.kakao ||
-        !window.kakao.maps ||
-        !mapInstanceRef.current ||
-        markersData.length === 0
-      ) {
+      if (!mapInstanceRef.current || !window.kakao?.maps) {
+        console.warn('지도 인스턴스 또는 카카오맵 SDK가 없습니다.');
         return;
       }
 
       try {
-        const bounds = new window.kakao.maps.LatLngBounds();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const bounds = new (window.kakao.maps as any).LatLngBounds();
 
-        markersData.forEach((marker) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (bounds as any).extend(
-            new window.kakao.maps.LatLng(
-              marker.location.lat,
-              marker.location.lng
-            )
-          );
+        // 모든 마커의 위치를 경계에 추가
+        markersData.forEach(({ location }) => {
+          if (isValidLocation(location)) {
+            bounds.extend(
+              new window.kakao.maps.LatLng(location.lat, location.lng)
+            );
+          }
         });
 
-        if (searchLocationMarker) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (bounds as any).extend(
+        // 검색 위치 마커가 있으면 추가
+        if (searchLocationMarker && isValidLocation(searchLocationMarker)) {
+          bounds.extend(
             new window.kakao.maps.LatLng(
               searchLocationMarker.lat,
               searchLocationMarker.lng
@@ -72,15 +68,29 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
           );
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (mapInstanceRef.current as any).setBounds(bounds, 50);
-        console.log('지도 영역이 모든 마커를 포함하도록 조정되었습니다.');
+        // 경계가 유효한 경우에만 지도 경계 설정
+        if (!bounds.isEmpty()) {
+          mapInstanceRef.current.setBounds(bounds);
+        }
       } catch (error) {
-        console.error('지도 영역 조정 실패:', error);
+        console.error('지도 경계 조정 실패:', error);
       }
     },
     [searchLocationMarker]
   );
+
+  // 위치 정보가 유효한지 확인하는 함수
+  const isValidLocation = (location: MapLocation): boolean => {
+    return (
+      location &&
+      typeof location.lat === 'number' &&
+      typeof location.lng === 'number' &&
+      !isNaN(location.lat) &&
+      !isNaN(location.lng) &&
+      location.lat !== 0 &&
+      location.lng !== 0
+    );
+  };
 
   // GPS 위치 정보 hook 사용
   const {
@@ -141,33 +151,49 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
 
   // 위치 설정 로직
   useEffect(() => {
+    console.log('🗺️ useKakaoMap 위치 설정 로직:', {
+      useGPSFirst,
+      gpsLoading,
+      gpsError,
+      gpsLocation,
+      center,
+      currentLocation,
+    });
+
     if (useGPSFirst) {
       if (gpsLoading) return;
       if (gpsError) {
         const fallbackLocation = center || { lat: 37.5665, lng: 126.978 };
+        console.log('🗺️ GPS 오류 - fallback 위치 사용:', fallbackLocation);
         setCurrentLocation(fallbackLocation);
         return;
       }
       if (gpsLocation) {
+        console.log('🗺️ GPS 위치 설정:', gpsLocation);
         setCurrentLocation(gpsLocation);
         return;
       }
       const fallbackLocation = center || { lat: 37.5665, lng: 126.978 };
+      console.log('🗺️ GPS 없음 - fallback 위치 사용:', fallbackLocation);
       setCurrentLocation(fallbackLocation);
     } else {
       if (center) {
+        console.log('🗺️ center prop 위치 설정:', center);
         setCurrentLocation(center);
         return;
       }
       if (gpsError) {
         const fallbackLocation = { lat: 37.5665, lng: 126.978 };
+        console.log('🗺️ GPS 오류 - 기본 위치 사용:', fallbackLocation);
         setCurrentLocation(fallbackLocation);
         return;
       }
       if (gpsLocation) {
+        console.log('🗺️ GPS 위치 설정 (fallback):', gpsLocation);
         setCurrentLocation(gpsLocation);
         return;
       }
+      console.log('🗺️ 기본 위치 설정');
       setCurrentLocation({ lat: 37.5665, lng: 126.978 });
     }
   }, [center, gpsLocation, gpsError, gpsLoading, useGPSFirst]);
@@ -215,6 +241,13 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
         return;
       }
 
+      // Kakao Maps API가 완전히 로드되었는지 확인
+      if (!window.kakao || !window.kakao.maps || !window.kakao.maps.LatLng) {
+        console.warn('Kakao Maps API가 아직 로드되지 않았습니다.');
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const options = {
           center: new window.kakao.maps.LatLng(
@@ -245,10 +278,19 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
     );
 
     if (existingScript) {
-      if (window.kakao && window.kakao.maps) {
+      if (window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {
         initMap();
       } else {
-        setIsLoading(false);
+        console.log('Kakao Maps API 로드 대기 중...');
+        // API가 로드될 때까지 대기
+        const checkKakaoMaps = () => {
+          if (window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {
+            initMap();
+          } else {
+            setTimeout(checkKakaoMaps, 100);
+          }
+        };
+        checkKakaoMaps();
       }
     } else {
       const script = document.createElement('script');
@@ -257,7 +299,19 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
       script.async = true;
 
       script.onload = () => {
-        window.kakao.maps.load(initMap);
+        window.kakao.maps.load(() => {
+          // API 로드 완료 후 약간의 지연을 두고 초기화
+          setTimeout(() => {
+            if (window.kakao && window.kakao.maps && window.kakao.maps.LatLng) {
+              initMap();
+            } else {
+              console.error(
+                'Kakao Maps API 로드 후에도 LatLng를 찾을 수 없습니다.'
+              );
+              setIsLoading(false);
+            }
+          }, 100);
+        });
       };
 
       script.onerror = () => {
@@ -267,7 +321,7 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
 
       document.head.appendChild(script);
     }
-  }, [currentLocation, level, showCurrentLocationMarker, createMarker]);
+  }, [currentLocation, level, showCurrentLocationMarker]);
 
   // 현재 위치가 변경될 때마다 마커 업데이트
   useEffect(() => {
@@ -312,17 +366,17 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
 
       if (adjustBounds && markersData.length > 0) {
         setTimeout(() => {
-          adjustMapBounds(markersData);
+          handleAdjustMapBounds(markersData);
         }, 500);
       }
     }
   }, [
     transactionData,
-    createMultipleMarkers,
-    removeAllMarkers,
     adjustBounds,
     searchLocationMarker,
-    adjustMapBounds,
+    removeAllMarkers,
+    createMultipleMarkers,
+    handleAdjustMapBounds,
   ]);
 
   // 검색한 주소 마커 관리
