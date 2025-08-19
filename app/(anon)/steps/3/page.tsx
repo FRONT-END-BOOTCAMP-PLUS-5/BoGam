@@ -13,7 +13,7 @@ import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
 import { IFlipSetting, IEventProps } from './settings';
 import { styles } from './pageStyles';
-import GeneralPage from './components/GeneralPage';
+import GeneralPage from './_components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
 import onboardingStyles from '@/(anon)/_components/onboarding/Onboarding.module.css';
 import { useRouter } from 'next/navigation';

@@ -16,7 +16,7 @@ export default function GeneralPage({ title, category, content }: pageType) {
                     <h3 className={styles.smallFont}> {title} </h3>
                 </div>
                 <div className={styles.borderBottomDiv}>
-                    <h5 className={styles.danger}> {category} </h5>
+                    <h5 className={styles.danger}> {category}  </h5>
                     <p className={styles.content}>
                         {content}
                     </p>
