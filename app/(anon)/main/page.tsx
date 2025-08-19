@@ -5,6 +5,7 @@ import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { SearchSection } from '@/(anon)/main/_components/searchSection/SearchSection';
 import { TransactionList } from '@/(anon)/main/_components/transactionList/TransactionList';
 import { DaumPostcodeModal } from '@/(anon)/main/_components/daumPostcodeModal/DaumPostcodeModal';
+import { TransactionSearchModal } from '@/(anon)/main/_components/transactionSearchModal/TransactionSearchModal';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
 import { useMainPageModule } from '@/(anon)/main/_components/hooks/useMainPageModule';
 import { styles } from './main.styles';
@@ -49,14 +50,19 @@ export default function MainPage() {
 
     // 주소 저장 함수
     saveAddressToUser,
+
+    // 실거래가 조회 모달 관련
+    showTransactionSearchModal,
+    setShowTransactionSearchModal,
+    handleBuildingSelect,
   } = useMainPageModule();
 
   // useMainPageState에서 setDong과 setHo를 직접 가져오기
   const { setDong, setHo } = useMainPageState();
 
   return (
-    <div className={styles.containerMobile}>
-      <div className={styles.container}>
+    <div>
+      <div>
         {/* 상단 섹션 - 사용자 정보 및 선택된 주소 */}
         <TopSection />
 
@@ -122,6 +128,14 @@ export default function MainPage() {
             postcodeRef={postcodeRef}
             showPostcode={showPostcode}
             onClose={() => setShowPostcode(false)}
+          />
+
+          {/* 실거래가 조회 모달 */}
+          <TransactionSearchModal
+            isOpen={showTransactionSearchModal}
+            onClose={() => setShowTransactionSearchModal(false)}
+            selectedAddress={selectedAddress}
+            onBuildingSelect={handleBuildingSelect}
           />
         </div>
       </div>

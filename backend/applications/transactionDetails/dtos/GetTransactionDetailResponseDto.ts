@@ -8,10 +8,11 @@ export interface GetTransactionDetailResponseDto {
   result: {
     code: string;
     message: string;
+    extraMessage?: string;
+    transactionId?: string;
   };
-  data:
-    | TransactionDetailApartEntity
-    | TransactionDetailSingleEntity
-    | TransactionDetailApartEntity[]
-    | TransactionDetailSingleEntity[];
+  data: {
+    resSaleList?: TransactionDetailApartEntity[];
+    resRentList?: TransactionDetailSingleEntity[];
+  };
 }

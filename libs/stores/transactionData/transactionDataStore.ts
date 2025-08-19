@@ -23,7 +23,6 @@ export const useTransactionDataStore = create<TransactionDataStore>((set) => ({
   // 액션
   setTransactionData: (data) => {
     set({ transactionData: data, error: null });
-    console.log('📊 실거래가 데이터 설정:', data.length, '개');
   },
 
   clearTransactionData: () => {

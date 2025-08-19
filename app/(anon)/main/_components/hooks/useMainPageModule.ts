@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMainPageState } from './useMainPageState';
 import { useAddressSearch } from './useAddressSearch';
 import { useTransactionData } from './useTransactionData';
+import { useTransactionDetail } from './useTransactionDetail';
 import { useDaumPostcode } from './useDaumPostcode';
 import { useLocationManager } from './useLocationManager';
 import { Location } from '@/(anon)/main/_components/types/map.types';
@@ -13,12 +14,17 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
 import { useUserAddresses } from '../../../../../hooks/useUserAddresses';
+import { parseAddress } from '@utils/addressParser';
 
 export const useMainPageModule = () => {
   const queryClient = useQueryClient();
 
   // 새로운 주소 검색인지 추적하는 상태 추가
   const [isNewAddressSearch, setIsNewAddressSearch] = useState(false);
+
+  // 실거래가 조회 모달 상태
+  const [showTransactionSearchModal, setShowTransactionSearchModal] =
+    useState(false);
 
   // 검색 관련 상태 관리
   const {
@@ -71,8 +77,12 @@ export const useMainPageModule = () => {
   } = useMapStore();
 
   // 실거래가 데이터 Store
-  const { transactionData, setTransactionData, clearTransactionData } =
-    useTransactionDataStore();
+  const {
+    transactionData,
+    setTransactionData,
+    clearTransactionData,
+    isLoading,
+  } = useTransactionDataStore();
 
   // 위치 관리 (GPS 또는 사용자 주소 기반)
   const {
@@ -88,17 +98,8 @@ export const useMainPageModule = () => {
 
   // 실거래가 데이터 관리
   const { fetchTransactionDataByCode } = useTransactionData();
-
-  // 주소에서 동/호 추출 헬퍼 함수
-  const extractDongFromAddress = (address: string): string => {
-    const dongMatch = address.match(/(\d+)동/);
-    return dongMatch ? dongMatch[1] : '';
-  };
-
-  const extractHoFromAddress = (address: string): string => {
-    const hoMatch = address.match(/(\d+)호/);
-    return hoMatch ? hoMatch[1] : '';
-  };
+  const { fetchTransactionDetailApart, fetchTransactionDetailSingle } =
+    useTransactionDetail();
 
   // API 호출 필요 여부 판단 기준
   const isNewAddressSearchRequired = () => {
@@ -117,8 +118,10 @@ export const useMainPageModule = () => {
     // 새로운 주소 검색 시 selectedAddress 초기화
     clearSelectedAddress();
 
-    // 새로운 주소 검색 시 실거래가 데이터 초기화
-    clearTransactionData();
+    // 새로운 주소 검색 시 실거래가 데이터 초기화 (단, 실거래가 조회 중이 아닐 때만)
+    if (!isLoading) {
+      clearTransactionData();
+    }
 
     // 새로운 주소 검색 상태로 설정
     setIsNewAddressSearch(true);
@@ -149,21 +152,15 @@ export const useMainPageModule = () => {
         storeUserAddresses[0];
 
       if (targetAddress) {
-        // 동/호 정보를 직접 사용 (정규식 추출 불필요)
         const extractedDong = targetAddress.dong || '';
         const extractedHo = targetAddress.ho || '';
 
-        // 도로명 주소가 있으면 도로명 주소 사용, 없으면 지번 주소 사용
         let baseAddress = '';
-        if (targetAddress.roadAddress && targetAddress.roadAddress.trim()) {
+        if (targetAddress.roadAddress?.trim()) {
           baseAddress = targetAddress.roadAddress.trim();
-        } else if (
-          targetAddress.lotAddress &&
-          targetAddress.lotAddress.trim()
-        ) {
+        } else if (targetAddress.lotAddress?.trim()) {
           baseAddress = targetAddress.lotAddress.trim();
         } else {
-          // 둘 다 없으면 completeAddress에서 동/호 제거한 값 사용
           let detailPart = targetAddress.completeAddress;
           if (extractedDong) {
             detailPart = detailPart.replace(extractedDong, '').trim();
@@ -174,31 +171,23 @@ export const useMainPageModule = () => {
           baseAddress = detailPart;
         }
 
-        // 상태 설정
         setRoadAddress(baseAddress);
         setDong(extractedDong);
         setHo(extractedHo);
-
         setSearchQuery(targetAddress.completeAddress);
-
-        // 사용자 주소에서 legalDistrictCode를 가져와서 savedLawdCode에 설정
         setSavedLawdCode(targetAddress.legalDistrictCode || '');
+      }
 
-        // 초기 상태 설정 시 실거래가 데이터 초기화
+      // 초기 상태 설정 시 실거래가 데이터 초기화 (단, 실거래가 조회 중이 아닐 때만)
+      if (!isLoading) {
         clearTransactionData();
       }
-    } else {
     }
   }, [
     isAuthenticated,
     storeUserAddresses.length,
     storeUserAddresses.find((addr) => addr.isPrimary)?.id, // 대표 주소 ID 변경 감지
-    setRoadAddress,
-    setDong,
-    setHo,
-    setSearchQuery,
-    setSavedLawdCode,
-    clearTransactionData,
+    // setter 함수들은 의존성에서 제거 (무한 루프 방지)
   ]);
 
   // 주소 변경 시 실거래가 데이터도 함께 가져오기
@@ -234,8 +223,10 @@ export const useMainPageModule = () => {
       setSearchQuery(address.completeAddress);
       setSavedLawdCode(address.legalDistrictCode || '');
 
-      // 주소 변경 시 실거래가 데이터 초기화
-      clearTransactionData();
+      // 주소 변경 시 실거래가 데이터 초기화 (단, 실거래가 조회 중이 아닐 때만)
+      if (!isLoading) {
+        clearTransactionData();
+      }
 
       // 선택된 주소의 좌표로 지도 이동
       if (address.x && address.y) {
@@ -479,83 +470,74 @@ export const useMainPageModule = () => {
     }
   };
 
-  // 실거래가 조회 (지도 이동 포함)
+  // 실거래가 조회 (새로운 API 사용)
   const handleMoveToAddress = async () => {
-    const isNewSearchRequired = isNewAddressSearchRequired();
+    // 실거래가 조회 모달 열기
+    setShowTransactionSearchModal(true);
+  };
 
-    if (isNewSearchRequired) {
-      // 새로운 주소 검색 - API 호출 필요
-      if (!roadAddress) {
-        alert('상세 주소를 입력해주세요.');
-        return;
-      }
+  // 건물 선택 시 호출되는 함수
+  const handleBuildingSelect = async (
+    buildingCode: string,
+    buildingName: string
+  ) => {
+    try {
+      console.log('🏠 건물 선택됨:', { buildingCode, buildingName });
 
-      // ref를 통해 동/호 값을 가져오기
-      const dongInput = document.querySelector(
-        'input[placeholder="동 (예: 101)"]'
-      ) as HTMLInputElement;
-      const hoInput = document.querySelector(
-        'input[placeholder="호 (선택사항)"]'
-      ) as HTMLInputElement;
-
-      const currentDong = dongInput ? dongInput.value.trim() : '';
-      const currentHo = hoInput ? hoInput.value.trim() : '';
-
-      if (!currentDong) {
-        alert('동을 입력해주세요.');
-        return;
-      }
-
-      setAdjustBounds(true); // 새로운 데이터 로드 시 자동 조정 활성화
-
-      try {
-        // API 호출로 좌표와 법정동코드 가져오기
-        const hoPart = currentHo ? ` ${currentHo}호` : '';
-        const completeAddress = `${roadAddress} ${currentDong}동${hoPart}`;
-        const searchData = await placesApi.searchByKeyword(completeAddress);
-
-        if (searchData && searchData.length > 0) {
-          const location = {
-            lat: parseFloat(searchData[0].latitude),
-            lng: parseFloat(searchData[0].longitude),
-          };
-          setMapCenter(location);
-          setSearchLocationMarker(location);
-
-          // 법정동코드로 실거래가 데이터 가져오기
-          if (savedLawdCode) {
-            await fetchTransactionDataByCode({
-              lawdCd: savedLawdCode,
-              selectedYear,
-              selectedMonth,
-            });
-          }
-        } else {
-          alert('해당 주소를 찾을 수 없습니다.');
+      // buildingType을 API type으로 매핑
+      const getApiType = (buildingType: string): string => {
+        switch (buildingType) {
+          case 'apartment':
+            return '0'; // 아파트
+          case 'villa':
+            return '1'; // 연립/다세대
+          case 'officetel':
+            return '2'; // 오피스텔
+          case 'detached':
+            return '1'; // 단독/다가구는 연립/다세대로 분류
+          case 'multi':
+            return '1'; // 다세대는 연립/다세대로 분류
+          default:
+            return '0'; // 기본값은 아파트
         }
-      } catch (error) {
-        console.error('키워드 검색 실패 (실거래가 조회):', error);
-        alert('키워드 검색 중 오류가 발생했습니다.');
-      }
-    } else {
-      // ✅ 기존 저장된 주소 사용 - API 호출 불필요
-      if (storeSelectedAddress) {
-        const location = {
-          lat: storeSelectedAddress.y,
-          lng: storeSelectedAddress.x,
-        };
-        setMapCenter(location);
-        setSearchLocationMarker(location);
+      };
 
-        // 이미 있는 법정동코드 사용
-        if (storeSelectedAddress.legalDistrictCode) {
-          await fetchTransactionDataByCode({
-            lawdCd: storeSelectedAddress.legalDistrictCode,
-            selectedYear,
-            selectedMonth,
-          });
-        }
+      const apiType = getApiType(buildingType.type);
+      console.log('🏗️ 건물 타입 매핑:', {
+        buildingType: buildingType.type,
+        apiType,
+      });
+
+      // 건물 타입에 따라 적절한 API 호출
+      if (buildingType.type === 'detached') {
+        // 단독/다가구는 별도 API 사용
+        console.log('🏠 단독/다가구 실거래가 조회 시작');
+
+        // 주소 파싱
+        const address = storeSelectedAddress?.completeAddress || '';
+        const parsedAddress = parseAddress(address);
+
+        await fetchTransactionDetailSingle({
+          addrSido: parsedAddress.addrSido,
+          addrSigungu: parsedAddress.addrSigungu,
+          addrDong: parsedAddress.addrDong,
+          type: apiType,
+          contractYear: selectedYear,
+          contractType: '0', // 전체
+        });
+      } else {
+        // 아파트, 연립, 오피스텔 등은 buildingCode 사용
+        console.log('🏠 아파트 계열 실거래가 조회 시작');
+        await fetchTransactionDetailApart({
+          buildingCode,
+          type: apiType,
+          contractYear: selectedYear,
+          contractType: '0', // 전체
+        });
       }
+    } catch (error) {
+      console.error('실거래가 조회 실패:', error);
+      alert('실거래가 조회 중 오류가 발생했습니다.');
     }
   };
 
@@ -601,5 +583,10 @@ export const useMainPageModule = () => {
 
     // 주소 저장 함수
     saveAddressToUser,
+
+    // 실거래가 조회 모달 관련
+    showTransactionSearchModal,
+    setShowTransactionSearchModal,
+    handleBuildingSelect,
   };
 };

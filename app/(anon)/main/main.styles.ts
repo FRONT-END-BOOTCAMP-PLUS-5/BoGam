@@ -1,6 +1,7 @@
 export const styles = {
-  // 메인 컨테이너
-  container: 'w-full max-w-7xl mx-auto p-4 space-y-6',
+  // 컨테이너
+  containerMobile: 'min-h-screen bg-brand-gray px-4 py-6',
+  container: 'max-w-4xl mx-auto space-y-6',
 
   // 하단 섹션
   bottomSection: 'bg-brand-white rounded-lg shadow-lg p-6 space-y-4',
@@ -24,7 +25,4 @@ export const styles = {
   // 지도 컨테이너
   mapContainer:
     'h-96 rounded-lg overflow-hidden border border-brand-light-gray',
-
-  // 반응형 디자인
-  containerMobile: 'max-w-7xl mx-auto p-4 font-sans',
 } as const;
