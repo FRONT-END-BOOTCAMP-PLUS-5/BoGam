@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import styles from '@/page.module.css';
+import { styles } from '@/page.styles';
 import { useState } from 'react';
 import Splash from '@/(anon)/_components/onboarding/Splash';
 import PWAInstallPrompt from '@/(anon)/_components/common/PWAInstallPrompt';
@@ -38,35 +38,35 @@ export default function Home() {
 
             <div className={styles.grid}>
               <Link href='/test/post-code' className={styles.card}>
-                <h2>🏠 우편번호 테스트</h2>
-                <p>우편번호 검색 및 주소 입력 기능을 테스트합니다.</p>
+                <h2 className={styles.cardTitle}>🏠 우편번호 테스트</h2>
+                <p className={styles.cardDescription}>우편번호 검색 및 주소 입력 기능을 테스트합니다.</p>
               </Link>
 
               <Link href='/test/transaction' className={styles.card}>
-                <h2>📊 거래내역 테스트</h2>
-                <p>부동산 거래내역 조회 기능을 테스트합니다. (실거래가)</p>
+                <h2 className={styles.cardTitle}>📊 거래내역 테스트</h2>
+                <p className={styles.cardDescription}>부동산 거래내역 조회 기능을 테스트합니다. (실거래가)</p>
               </Link>
 
               <Link href='/test/tax-cert' className={styles.card}>
-                <h2>📋 납세확인서 발급 테스트</h2>
-                <p>납세확인서 발급 및 CODEF API 연동을 테스트합니다.</p>
+                <h2 className={styles.cardTitle}>📋 납세확인서 발급 테스트</h2>
+                <p className={styles.cardDescription}>납세확인서 발급 및 CODEF API 연동을 테스트합니다.</p>
               </Link>
 
               <Link href='/test/real-estate-search' className={styles.card}>
-                <h2>🏢 등기부등본 조회 테스트</h2>
-                <p>고유번호, 지번, 도로명 주소로 등기부등본을 조회합니다.</p>
+                <h2 className={styles.cardTitle}>🏢 등기부등본 조회 테스트</h2>
+                <p className={styles.cardDescription}>고유번호, 지번, 도로명 주소로 등기부등본을 조회합니다.</p>
               </Link>
 
               <Link href='/test/copy-test' className={styles.card}>
-                <h2>📁 문서 조회 테스트 모음</h2>
-                <p>
+                <h2 className={styles.cardTitle}>📁 문서 조회 테스트 모음</h2>
+                <p className={styles.cardDescription}>
                   등기부등본과 납세확인서 조회 테스트를 한 곳에서 관리합니다.
                 </p>
               </Link>
 
               <Link href='/test/big-step' className={styles.card}>
-                <h2>📚 3D 책 애니메이션 테스트</h2>
-                <p>
+                <h2 className={styles.cardTitle}>📚 3D 책 애니메이션 테스트</h2>
+                <p className={styles.cardDescription}>
                   Three.js를 사용한 3D 책 애니메이션 및 상호작용을 테스트합니다.
                 </p>
               </Link>

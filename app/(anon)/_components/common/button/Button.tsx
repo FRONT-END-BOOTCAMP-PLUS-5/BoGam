@@ -3,7 +3,7 @@
 import Link, { LinkProps } from 'next/link';
 import { ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
 import clsx from 'clsx';
-import styles from '@/(anon)/_components/common/button/Button.module.css';
+import { styles } from '@/(anon)/_components/common/button/Button.styles';
 
 type CommonProps = {
   variant?: 'primary' | 'secondary' | 'ghost';

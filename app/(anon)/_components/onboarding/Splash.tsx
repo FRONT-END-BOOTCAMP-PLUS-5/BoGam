@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import styles from '@/(anon)/_components/onboarding/Splash.module.css';
+import { styles } from '@/(anon)/_components/onboarding/Splash.styles';
 
 export default function Splash({ onComplete }: { onComplete: () => void }) {
   const [exiting, setExiting] = useState(false);
