@@ -101,7 +101,7 @@ export default function AddressDropdownTestPage() {
     <div className='min-h-screen bg-gray-100 p-8'>
       <div className='max-w-md mx-auto'>
         <h1 className='text-2xl font-bold mb-6 text-gray-800'>
-          최근 열람 드롭다운 테스트
+          현재 열람 드롭다운 테스트
         </h1>
 
         <AddressDropDown

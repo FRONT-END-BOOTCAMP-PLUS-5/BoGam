@@ -3,7 +3,6 @@
 import React, { useState, useMemo } from 'react';
 import DashboardHeader from './DashboardHeader';
 import UserInfo from './UserInfo';
-import RecentAddress from './RecentAddress';
 import StepNavigation from './StepNavigation';
 import StepDetailContent from './StepDetailContent';
 import { styles } from './HambugiDashboard.styles';
@@ -94,11 +93,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     console.log('사용자 정보 클릭');
   };
 
-  const handleAddressClick = () => {
-    // 주소 상세 페이지로 이동
-    console.log('주소 클릭');
-  };
-
   const handleLogout = () => {
     // 로그아웃 처리
     console.log('로그아웃');
@@ -122,11 +116,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
       {/* 사용자 정보 */}
       <UserInfo 
         onUserClick={handleUserClick} 
-      />
-      
-      {/* 최근 열람 주소 */}
-      <RecentAddress 
-        onAddressClick={handleAddressClick}
       />
       
       {/* 메인 콘텐츠 */}
