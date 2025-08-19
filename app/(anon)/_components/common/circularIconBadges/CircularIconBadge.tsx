@@ -5,8 +5,8 @@ import clsx from 'clsx';
 import { styles } from './CircularIconBadge.styles';
 
 type CircularIconBadgeProps = {
-  type: 'match' | 'match-blue' | 'mismatch' | 'unchecked' | 'link' | 'match-light-green' | 'mismatch-emoji';
-  size?: 'sm' | 'md' | 'lg';
+  type: 'match' | 'match-blue' | 'mismatch' | 'unchecked' | 'unchecked-white' | 'link' | 'match-light-green' | 'mismatch-emoji';
+  size?: 'xsm' | 'sm' | 'md' | 'lg';
   weight?: 'thin' | 'normal' | 'thick';
   className?: string;
 };
@@ -23,6 +23,7 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
       case 'mismatch-emoji':
         return X;
       case 'unchecked':
+      case 'unchecked-white':
         return X;
       case 'link':
         return Link;
@@ -36,6 +37,8 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
   // 아이콘 크기 클래스 결정
   const getIconSizeClass = () => {
     switch (size) {
+      case 'xsm':
+        return styles.iconXsm;
       case 'sm':
         return styles.iconSm;
       case 'md':
@@ -50,6 +53,8 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
   // 이모지 크기 클래스 결정 - SVG 아이콘과 정확히 동일한 크기로 설정
   const getEmojiSizeClass = () => {
     switch (size) {
+      case 'xsm':
+        return 'w-2 h-2 text-xs'; // SVG iconSm과 정확히 동일한 크기
       case 'sm':
         return 'w-3 h-3 text-xs'; // SVG iconSm과 정확히 동일한 크기
       case 'md':

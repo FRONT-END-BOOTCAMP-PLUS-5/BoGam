@@ -16,7 +16,7 @@ export class StepResultUsecase {
     subNum?: number
   ): Promise<StepResultResponseDto> {
     try {
-      const userAddressId = 1; //await getUserAddressId(userAddressNickname);
+      const userAddressId = await getUserAddressId(userAddressNickname);
 
       const params: Record<string, unknown> = { userAddressId };
 

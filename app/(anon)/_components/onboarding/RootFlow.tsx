@@ -11,7 +11,7 @@ export default function RootFlow() {
 
   useEffect(() => {
     initStepFromSession();
-  }, []);
+  }, [initStepFromSession]);
 
   if (!initialized) return null;
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useModalStore } from '../../../../libs/store/modalStore';
+import { useModalStore } from '@libs/stores/modalStore';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
 
 export default function ModalTestPage() {

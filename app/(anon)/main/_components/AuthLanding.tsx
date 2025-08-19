@@ -12,7 +12,7 @@ export default function AuthLanding() {
     if (session?.user.nickname) {
       setNickname(session.user.nickname);
     }
-  }, [session]);
+  }, [session, setNickname]);
 
   return null;
 }
