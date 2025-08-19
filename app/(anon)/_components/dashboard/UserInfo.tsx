@@ -4,13 +4,18 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { styles } from './UserInfo.styles';
 import Profile from '@/(anon)/_components/common/profile/Profile';
+import { useUserStore } from '@libs/stores/userStore';
 
 interface UserInfoProps {
-  userName: string;
   onUserClick: () => void;
 }
 
-export default function UserInfo({ userName, onUserClick }: UserInfoProps) {
+export default function UserInfo({ onUserClick }: UserInfoProps) {
+  const { nickname } = useUserStore();
+  
+  // store의 nickname이 있으면 사용, 없으면 기본값 사용
+  const displayName = nickname || '사용자';
+
   return (
     <div className={styles.container}>
       <div className={styles.profileSection}>
@@ -20,7 +25,7 @@ export default function UserInfo({ userName, onUserClick }: UserInfoProps) {
         <div className={styles.userText}>
           <span className={styles.greeting}>안녕하세요,</span>
           <div className={styles.nameAndArrow}>
-            <span className={styles.userName}>{userName}</span>
+            <span className={styles.userName}>{displayName}</span>
             <span className={styles.honorific}>님!</span>
             <button 
               onClick={onUserClick}

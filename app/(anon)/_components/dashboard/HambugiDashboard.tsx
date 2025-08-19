@@ -121,13 +121,11 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
       
       {/* 사용자 정보 */}
       <UserInfo 
-        userName="노석준" 
         onUserClick={handleUserClick} 
       />
       
       {/* 최근 열람 주소 */}
       <RecentAddress 
-        address="경기도 고양시 일산동구 위시티 0로 000, B동 000호 (식사동, 전세보감아파트)"
         onAddressClick={handleAddressClick}
       />
       

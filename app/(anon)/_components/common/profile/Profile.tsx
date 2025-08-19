@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserStore } from '@libs/store/userStore';
+import { useUserStore } from '@libs/stores/userStore';
 import { getProfileClassName } from '@/(anon)/_components/common/profile/Profile.style';
 
 interface ProfileProps {
