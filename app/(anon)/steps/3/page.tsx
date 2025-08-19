@@ -118,6 +118,9 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 export default function Steps3Page() {
     const bookRef = React.useRef<any>(null);
     const [marginLeft, setMarginLeft] = React.useState('-48%');
+    const [currentPage, setCurrentPage] = React.useState(0);
+    const totalPages = 4;
+
     React.useEffect(() => {
         const width = window.innerWidth;
         setMarginLeft(width <= 400 ? '-70%' : '-48%');
@@ -161,7 +164,7 @@ export default function Steps3Page() {
                 drawShadow={true}
                 flippingTime={1000}
                 usePortrait={false}
-                style={{ marginLeft }}
+                style={{ marginLeft, marginTop: 48 }}
                 startZIndex={0}
                 autoSize={true}
                 clickEventForward={true}
@@ -169,6 +172,10 @@ export default function Steps3Page() {
                 swipeDistance={30}
                 showPageCorners={false}
                 disableFlipByClick={true}
+                onFlip={(e: any) => {
+                    console.log('onFlip e.data:', e.data);
+                    setCurrentPage(Math.floor((e.data + 1) / 2));
+                }}
             >
                 <div className={pageStyles.flex} style={{ position: "relative" }}>
                     <div
@@ -255,6 +262,24 @@ export default function Steps3Page() {
                                 제공해드리곘습니다.'></GeneralPage>
                 </div>
             </HTMLFlipBook>
+            <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 24, gap: 24 }}>
+                <span style={{ fontSize: 18, color: '#222', cursor: 'pointer' }} onClick={() => bookRef.current?.pageFlip?.flipPrev()}>&lt;</span>
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                    <span
+                        key={idx}
+                        style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: '50%',
+                            background: idx === currentPage ? '#222' : '#bbb',
+                            display: 'inline-block',
+                            margin: '0 4px',
+                            transition: 'background 0.2s',
+                        }}
+                    />
+                ))}
+                <span style={{ fontSize: 18, color: '#222', cursor: 'pointer' }} onClick={() => bookRef.current?.pageFlip?.flipNext()}>&gt;</span>
+            </div>
         </div>
     );
 }
