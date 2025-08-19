@@ -1,5 +1,4 @@
 import './globals.css';
-import '../public/demo.css';
 import { Providers } from './providers';
 import { ConfirmModal } from './(anon)/_components/common/modal/ConfirmModal';
 import Header from '@/(anon)/_components/common/header/Header';
