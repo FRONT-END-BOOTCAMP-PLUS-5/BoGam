@@ -3,6 +3,7 @@
 import { modalContentStyles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import CircularIconBadge from '../../../../../_components/common/circularIconBadges/CircularIconBadge';
 
 interface StepData {
   id: number;
@@ -31,6 +32,19 @@ export default function ModalContent({ stepData }: ModalContentProps) {
     groupedEntries.push(detailsEntries.slice(i, i + 20));
   }
 
+  // value 값에 따라 렌더링할 내용 결정
+  const renderValue = (value: string) => {
+    if (value === 'match') {
+      return <CircularIconBadge type="match" size="xsm" />;
+    }
+    if (value === 'mismatch') {
+      return <CircularIconBadge type="mismatch" size="xsm" />;
+    }
+    if (value === 'unchecked') {
+      return <CircularIconBadge type="unchecked-white" size="xsm" />;
+    }
+  };
+
   return (
     <>
       {/* 스텝 번호 표시 */}
@@ -51,7 +65,7 @@ export default function ModalContent({ stepData }: ModalContentProps) {
                     {key}:
                   </span>
                   <div className={modalContentStyles.detailValue}>
-                    {value === null || value === undefined ? '없음' : String(value)}
+                    {renderValue(value)}
                   </div>
                 </div>
               ))}
