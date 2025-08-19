@@ -21,7 +21,7 @@ export const pageStyles = {
   go: 'font-bold',
   goToLink: 'flex justify-center pt-[10vh] underline',
   goToNext: 'absolute w-[30%] h-[3vh] bg-white z-[5] bottom-[1.3vh] ml-[65%]',
-  left: 'w-[15%] h-full flex flex-col bg-transparent',
+  left: 'w-[15%] h-full flex flex-col bg-transparent border-none shadow-none',
   firstLeftBox: 'flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-[#D9D9D9] border-b-[3px] border-b-[#D9D9D9]',
   leftBox: 'flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-[#D9D9D9] border-r-[10px] border-r-[#D9D9D9] border-b-[3px] border-b-[#D9D9D9]',
   lastLeftBox: 'flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-[#D9D9D9] border-r-[10px] border-r-[#D9D9D9]',

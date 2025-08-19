@@ -114,36 +114,13 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 
 
 
-function PageCover({ children }: { children: React.ReactNode }) {
-    return (
-        <div className="page page-cover" data-density="hard">
-            <div className="page-content">
-                <h2>{children}</h2>
-            </div>
-        </div>
-    );
-}
-
-function Page({ number, children }: { number: number; children: React.ReactNode }) {
-    return (
-        <div className="page">
-            <div className="page-content">
-                <h2 className="page-header">Page header - {number}</h2>
-                <div className="page-image"></div>
-                <div className="page-text">{children}</div>
-                <div className="page-footer">{number + 1}</div>
-            </div>
-        </div>
-    );
-}
-
 export default function Steps3Page() {
     const bookRef = React.useRef<any>(null);
-        const [marginLeft, setMarginLeft] = React.useState('-55%');
-        React.useEffect(() => {
-            const width = window.innerWidth;
-            setMarginLeft(width <= 400 ? '-70%' : '-53%');
-        }, []);
+    const [marginLeft, setMarginLeft] = React.useState('-50%');
+    React.useEffect(() => {
+        const width = window.innerWidth;
+        setMarginLeft(width <= 400 ? '-70%' : '-50%');
+    }, []);
     return (
         <div
             className={pageStyles.book}
@@ -160,6 +137,7 @@ export default function Steps3Page() {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
+                border: '0px'
             }}
         >
             <HTMLFlipBook
@@ -179,7 +157,7 @@ export default function Steps3Page() {
                 drawShadow={true}
                 flippingTime={1000}
                 usePortrait={false}
-                    style={{ marginLeft }}
+                style={{ marginLeft }}
                 startZIndex={0}
                 autoSize={true}
                 clickEventForward={true}
@@ -228,7 +206,7 @@ export default function Steps3Page() {
                     </div>
                 </div>
                 <div className="page">
-                    <div className="page-content" style={{ backgroundColor: '#e5e7eb'}}>
+                    <div className="page-content" style={{ backgroundColor: '#e5e7eb' }}>
                     </div>
                 </div>
                 <div className={pageStyles.flex}>
@@ -243,7 +221,7 @@ export default function Steps3Page() {
                         전세보감이 증명된 중개업자인지 확인해드리겠습니다.'></GeneralPage>
                 </div>
                 <div className="page">
-                    <div className="page-content" style={{ backgroundColor: '#e5e7eb'}}>
+                    <div className="page-content" style={{ backgroundColor: '#e5e7eb' }}>
                     </div>
                 </div>
                 <div className={pageStyles.flex}>
@@ -257,7 +235,7 @@ export default function Steps3Page() {
                             최우선변제 금액을 안내해드리겠습니다'></GeneralPage>
                 </div>
                 <div className="page">
-                    <div className="page-content" style={{ backgroundColor: '#e5e7eb'}}>
+                    <div className="page-content" style={{ backgroundColor: '#e5e7eb' }}>
                     </div>
                 </div>
                 <div className={pageStyles.flex}>
