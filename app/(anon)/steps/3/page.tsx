@@ -14,6 +14,7 @@ import HTMLFlipBook from "react-pageflip";
 import { IFlipSetting, IEventProps } from './settings';
 import { pageStyles } from './pageStyles';
 import GeneralPage from './components/GeneralPage';
+import StateIcon from '../../_components/common/stateIcon/StateIcon';
 
 interface IProps extends IFlipSetting, IEventProps {
     className: string;
@@ -116,10 +117,10 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 
 export default function Steps3Page() {
     const bookRef = React.useRef<any>(null);
-    const [marginLeft, setMarginLeft] = React.useState('-50%');
+    const [marginLeft, setMarginLeft] = React.useState('-48%');
     React.useEffect(() => {
         const width = window.innerWidth;
-        setMarginLeft(width <= 400 ? '-70%' : '-50%');
+        setMarginLeft(width <= 400 ? '-70%' : '-48%');
     }, []);
     return (
         <div
@@ -128,7 +129,7 @@ export default function Steps3Page() {
                 maxWidth: '480px',
                 width: '100%',
                 margin: '0 auto',
-                background: '#d1d5db',
+                background: '#EFF0F2',
                 position: 'relative',
                 overflow: 'hidden',
                 minHeight: '100vh',
@@ -140,6 +141,9 @@ export default function Steps3Page() {
                 border: '0px'
             }}
         >
+            <div style={{ position: 'absolute', top: '15%', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+                <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
+            </div>
             <HTMLFlipBook
                 ref={bookRef}
                 className="demo-book"
