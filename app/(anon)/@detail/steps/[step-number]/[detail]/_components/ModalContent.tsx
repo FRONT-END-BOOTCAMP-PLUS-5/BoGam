@@ -3,7 +3,9 @@
 import { modalContentStyles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import CircularIconBadge from '../../../../../_components/common/circularIconBadges/CircularIconBadge';
+import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import { useState, useRef } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
 
 interface StepData {
   id: number;
@@ -25,6 +27,8 @@ interface ModalContentProps {
 
 export default function ModalContent({ stepData }: ModalContentProps) {
   const detailsEntries = Object.entries(stepData.details);
+  const [currentPage, setCurrentPage] = useState(0);
+  const swiperRef = useRef<SwiperType | null>(null);
 
   // 20개씩 그룹화
   const groupedEntries = [];
@@ -41,7 +45,14 @@ export default function ModalContent({ stepData }: ModalContentProps) {
       return <CircularIconBadge type="mismatch" size="xsm" />;
     }
     if (value === 'unchecked') {
-      return <CircularIconBadge type="unchecked-white" size="xsm" />;
+      return <CircularIconBadge type="unchecked" size="xsm" />;
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    if (swiperRef.current) {
+      swiperRef.current.slideTo(page);
     }
   };
 
@@ -55,7 +66,15 @@ export default function ModalContent({ stepData }: ModalContentProps) {
       </div>
 
       {/* Swiper로 20개씩 그룹화된 슬라이드 */}
-      <Swiper spaceBetween={50} slidesPerView={1} className={modalContentStyles.swiperContainer}>
+      <Swiper 
+        spaceBetween={50} 
+        slidesPerView={1} 
+        className={modalContentStyles.swiperContainer}
+        onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
+      >
         {groupedEntries.map((group, groupIndex) => (
           <SwiperSlide key={groupIndex}>
             <div className={modalContentStyles.mainContent}>
@@ -73,6 +92,22 @@ export default function ModalContent({ stepData }: ModalContentProps) {
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* 페이지 인디케이터 */}
+      {groupedEntries.length > 1 && (
+        <div className={modalContentStyles.pageIndicator} aria-label="페이지 인디케이터">
+          {groupedEntries.map((_, index) => (
+            <button
+              key={index}
+              className={`${modalContentStyles.pageDot} ${
+                index === currentPage ? modalContentStyles.pageDotActive : modalContentStyles.pageDotInactive
+              }`}
+              aria-label={`페이지 ${index + 1}${index === currentPage ? ' (현재)' : ''}`}
+              onClick={() => handlePageChange(index)}
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 }
