@@ -1,6 +1,11 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
+import { useUserStore } from '@libs/stores/userStore';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useRootStep } from '@libs/stores/rootStepStore';
 import DashboardHeader from './DashboardHeader';
 import UserInfo from './UserInfo';
 import StepNavigation from './StepNavigation';
@@ -21,7 +26,13 @@ interface HambugiDashboardProps {
 }
 
 export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
+  
+  // 스토어 초기화 함수들
+  const clearUser = useUserStore((state) => state.clearUser);
+  const clearUserAddressStore = useUserAddressStore((state) => state.clearAll);
+  const setStep = useRootStep((state) => state.setStep);
   
   // currentStep에 따라 isActive 동적 설정
   const steps = useMemo(() => [
@@ -94,8 +105,26 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   };
 
   const handleLogout = () => {
-    // 로그아웃 처리
-    console.log('로그아웃');
+    // 1. 클라이언트 상태 초기화
+    clearUser();
+    clearUserAddressStore();
+    
+    // 2. sessionStorage 정리 (step 제외)
+    sessionStorage.removeItem('user-store');
+    sessionStorage.removeItem('user-address-store');
+    
+    // 3. step을 auth로 설정하고 sessionStorage에 저장
+    setStep('auth');
+    sessionStorage.setItem('step', 'auth');
+    
+    // 4. NextAuth 로그아웃
+    signOut({ 
+      redirect: false,
+      callbackUrl: '/'
+    });
+    
+    // 5. 홈페이지로 리디렉트
+    router.push('/');
   };
 
   const handleActionClick = (actionLink: string) => {
