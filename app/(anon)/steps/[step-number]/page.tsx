@@ -119,12 +119,12 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 function SummaryPage({ title, contents }: { title: string; contents: { subtitle: string; items: string[] }[] }) {
   return (
     <div className={styles.generalPage}>
-      <div className={styles.left}>
-        <div className={styles.firstLeftBox}></div>
-        <div className={styles.leftBox}></div>
-        <div className={styles.leftBox}></div>
-        <div className={styles.leftBox}></div>
-        <div className={styles.lastLeftBox}></div>
+  <div className="w-[50px] h-full flex flex-col bg-transparent border-none shadow-none flex-shrink-0">
+        <div className="flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
+        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
+        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
+        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
+        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray"></div>
       </div>
       <div>
         <div className={styles.rightFirstOutsideBox}>
@@ -132,7 +132,7 @@ function SummaryPage({ title, contents }: { title: string; contents: { subtitle:
             <p className={styles.smallFont}> {title} </p>
           </div>
         </div>
-  <div className={styles.whitePaper + ' max-h-[340px] overflow-y-auto'}>
+        <div className={styles.whitePaper + ' max-h-[340px] overflow-y-auto'}>
           {contents.map((block, i) => (
             <div key={i}>
               <h6 className={styles.topic}>{block.subtitle}</h6>
