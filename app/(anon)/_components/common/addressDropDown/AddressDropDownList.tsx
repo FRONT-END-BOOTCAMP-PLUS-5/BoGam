@@ -34,6 +34,12 @@ export function AddressDropDownList({
   // 빈 상태 체크
   const isEmpty = !addresses || addresses.length === 0;
 
+  // 휘발성 주소를 최상단에 정렬
+  const sortedAddresses = [
+    ...addresses.filter((addr) => addr.isVolatile), // 휘발성 주소 최상단
+    ...addresses.filter((addr) => !addr.isVolatile), // 일반 주소
+  ];
+
   return (
     <div
       className={getDropdownContainerStyle(isExpanded)}
@@ -43,7 +49,7 @@ export function AddressDropDownList({
         {isEmpty ? (
           <div className={styles.emptyState}>표시할 주소가 없습니다.</div>
         ) : (
-          addresses.map((address, index) => (
+          sortedAddresses.map((address, index) => (
             <AddressDropDownItem
               key={address.id}
               address={address}
