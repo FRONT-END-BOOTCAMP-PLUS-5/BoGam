@@ -29,11 +29,6 @@ export const useUserAddresses = () => {
 
           // x와 y가 같은 값이면 잘못된 데이터로 간주
           if (x === y && x !== 0) {
-            console.warn('잘못된 좌표 데이터 발견:', {
-              x,
-              y,
-              address: item.address.lotAddress,
-            });
             // 기본값으로 설정 (서울 시청)
             x = 126.978;
             y = 37.5665;
@@ -60,21 +55,12 @@ export const useUserAddresses = () => {
             ho: item.address.ho || '', // 호 정보 직접 매핑
           };
 
-          console.log('📍 주소 변환 결과:', {
-            originalItem: item,
-            convertedAddress: convertedAddress,
-            dong: item.address.dong,
-            ho: item.address.ho,
-          });
-
           return convertedAddress;
         });
 
-        console.log('✅ 변환된 주소 데이터:', convertedAddresses);
         return convertedAddresses;
       }
 
-      console.log('❌ 주소 데이터 없음');
       return [];
     },
     enabled: status === 'authenticated' && !!session?.user?.nickname,
@@ -87,7 +73,6 @@ export const useUserAddresses = () => {
   // React Query에서 받은 데이터를 Zustand store에 동기화
   useEffect(() => {
     if (userAddressesData) {
-      console.log('🔄 React Query 데이터를 Store에 동기화:', userAddressesData);
       initializeFromQuery(userAddressesData);
     }
   }, [userAddressesData, initializeFromQuery]);

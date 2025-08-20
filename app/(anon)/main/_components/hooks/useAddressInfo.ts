@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 interface Location {
   lat: number;
@@ -50,7 +50,14 @@ export const useAddressInfo = () => {
     error: null,
   });
 
+  // ref를 사용하여 로딩 상태 추적 (의존성 배열 문제 해결)
+  const isLoadingRef = useRef(false);
+
   const getAddressInfo = useCallback(async (location: Location) => {
+    // 이미 로딩 중이면 중복 요청 방지
+    if (isLoadingRef.current) {
+      return null;
+    }
     const apiKey = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;
 
     if (!apiKey) {
@@ -61,6 +68,8 @@ export const useAddressInfo = () => {
       return null;
     }
 
+    // 로딩 상태 설정
+    isLoadingRef.current = true;
     setState((prev) => ({
       ...prev,
       loading: true,
@@ -90,6 +99,7 @@ export const useAddressInfo = () => {
           loading: false,
           error: null,
         });
+        isLoadingRef.current = false; // 로딩 완료
         return addressInfo;
       } else {
         throw new Error('주소 정보를 찾을 수 없습니다.');
@@ -104,11 +114,13 @@ export const useAddressInfo = () => {
         loading: false,
         error: errorMessage,
       });
+      isLoadingRef.current = false; // 로딩 완료 (에러 시에도)
       return null;
     }
   }, []);
 
   const clearAddressInfo = useCallback(() => {
+    isLoadingRef.current = false; // 로딩 상태도 초기화
     setState({
       addressInfo: null,
       loading: false,

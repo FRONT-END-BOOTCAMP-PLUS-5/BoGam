@@ -39,15 +39,23 @@ export const useAddressSearch = () => {
       latAddress: string;
       onTransactionDataFetch: () => Promise<void>;
     }) => {
-      if (!roadAddress || !dong.trim()) {
-        throw new Error('상세 주소와 동을 입력해주세요.');
+      // 주소 입력 유효성 검사
+      if (!roadAddress || !roadAddress.trim()) {
+        throw new Error('도로명 주소를 입력해주세요.');
       }
 
-      // 호는 옵션으로 처리
-      const hoPart = ho.trim() ? ` ${ho.trim()}호` : '';
-      const completeAddress = latAddress
-        ? `${latAddress} ${dong.trim()}동${hoPart}`
-        : `${roadAddress} ${dong.trim()}동${hoPart}`;
+      if (!dong || !dong.trim()) {
+        throw new Error('동을 입력해주세요.');
+      }
+
+      // 완전한 주소 문자열 생성
+      let completeAddress = latAddress || roadAddress;
+      if (dong) {
+        completeAddress += ` ${dong}동`;
+      }
+      if (ho) {
+        completeAddress += ` ${ho}호`;
+      }
 
       // 키워드 검색으로 지도 이동 (건물명, 장소명 등)
       const searchData = await placesApi.searchByKeyword(completeAddress);

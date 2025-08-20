@@ -22,22 +22,33 @@ export const useTransactionDataStore = create<TransactionDataStore>((set) => ({
 
   // 액션
   setTransactionData: (data) => {
-    set({ transactionData: data, error: null });
-    console.log('📊 실거래가 데이터 설정:', data.length, '개');
+    console.log('🔍 setTransactionData 호출됨:', {
+      dataLength: data.length,
+      data: data,
+    });
+
+    // 상태 업데이트를 안정적으로 처리
+    set((state) => {
+      console.log('🔍 이전 상태:', state.transactionData.length);
+      console.log('🔍 새 데이터:', data.length);
+
+      return {
+        ...state,
+        transactionData: data,
+        error: null,
+      };
+    });
   },
 
   clearTransactionData: () => {
     set({ transactionData: [] });
-    console.log('🗑️ 실거래가 데이터 초기화');
   },
 
   setLoading: (loading) => {
     set({ isLoading: loading });
-    console.log('⏳ 실거래가 로딩 상태:', loading);
   },
 
   setError: (error) => {
     set({ error });
-    console.log('❌ 실거래가 에러:', error);
   },
 }));

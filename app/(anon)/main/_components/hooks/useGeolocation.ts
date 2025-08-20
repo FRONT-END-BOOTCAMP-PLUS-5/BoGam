@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
 
 interface Location {
   lat: number;
@@ -32,52 +32,22 @@ export const useGeolocation = (options: UseGeolocationOptions = {}) => {
     error: null,
   });
 
-  const mergedOptions = { ...defaultOptions, ...options };
-
-  const getCurrentLocation = (): Promise<Location> => {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('브라우저가 GPS를 지원하지 않습니다.'));
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          resolve({ lat: latitude, lng: longitude });
-        },
-        (error) => {
-          console.error('GPS 위치 정보 가져오기 실패:', error);
-          let errorMessage = 'GPS 위치 정보를 가져올 수 없습니다.';
-
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage = '위치 정보 접근이 거부되었습니다.';
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMessage = '위치 정보를 사용할 수 없습니다.';
-              break;
-            case error.TIMEOUT:
-              errorMessage = '위치 정보 요청 시간이 초과되었습니다.';
-              break;
-          }
-
-          reject(new Error(errorMessage));
-        },
-        {
-          enableHighAccuracy: mergedOptions.enableHighAccuracy,
-          timeout: mergedOptions.timeout,
-          maximumAge: mergedOptions.maximumAge,
-        }
-      );
-    });
-  };
+  // useMemo를 사용하여 mergedOptions를 메모이제이션
+  const mergedOptions = useMemo(
+    () => ({ ...defaultOptions, ...options }),
+    [
+      options.enableHighAccuracy,
+      options.timeout,
+      options.maximumAge,
+      options.fallbackLocation,
+    ]
+  );
 
   const refreshLocation = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const location = await getCurrentLocation();
+      const location = await getCurrentLocation(mergedOptions);
       setState({
         location,
         loading: false,
@@ -94,11 +64,61 @@ export const useGeolocation = (options: UseGeolocationOptions = {}) => {
             : '알 수 없는 오류가 발생했습니다.',
       });
     }
-  }, []); // 의존성 배열을 비워서 한 번만 생성되도록 함
+  }, [mergedOptions]);
 
+  // 현재 위치를 가져오는 함수
+  const getCurrentLocation = async (
+    options: PositionOptions = {}
+  ): Promise<Location> => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('이 브라우저에서는 Geolocation을 지원하지 않습니다.'));
+        return;
+      }
+
+      const defaultOptions: PositionOptions = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // 5분
+      };
+
+      const mergedOptions = { ...defaultOptions, ...options };
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          reject(new Error(getGeolocationErrorMessage(error)));
+        },
+        mergedOptions
+      );
+    });
+  };
+
+  // Geolocation 에러 메시지를 가져오는 함수
+  const getGeolocationErrorMessage = (
+    error: GeolocationPositionError
+  ): string => {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        return '위치 정보 접근이 거부되었습니다. 브라우저 설정에서 위치 정보 접근을 허용해주세요.';
+      case error.POSITION_UNAVAILABLE:
+        return '위치 정보를 사용할 수 없습니다.';
+      case error.TIMEOUT:
+        return '위치 정보 요청 시간이 초과되었습니다.';
+      default:
+        return '위치 정보를 가져오는 중 오류가 발생했습니다.';
+    }
+  };
+
+  // 초기 로드 시에만 실행 (무한 루프 방지)
   useEffect(() => {
     refreshLocation();
-  }, [refreshLocation]);
+  }, []); // 빈 의존성 배열로 초기 로드 시에만 실행
 
   return {
     ...state,
