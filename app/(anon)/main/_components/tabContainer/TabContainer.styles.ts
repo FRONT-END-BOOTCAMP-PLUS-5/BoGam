@@ -3,10 +3,10 @@ export const styles = {
   container: 'w-full',
 
   // 탭 네비게이션
-  tabNavigation: 'flex mb-0',
+  tabNavigation: 'flex justify-between mb-0',
 
   // 탭 버튼 공통 스타일
-  tab: 'px-6 py-3 text-sm font-medium rounded-t-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-opacity-50',
+  tab: 'flex-1 px-6 py-3 text-sm font-medium rounded-t-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-opacity-50',
 
   // 활성 탭
   activeTab:
@@ -18,5 +18,5 @@ export const styles = {
 
   // 탭 컨텐츠
   tabContent:
-    'bg-brand-white border border-brand-light-gray rounded-b-lg p-6 min-h-[300px]',
+    'w-full bg-brand-white border border-brand-light-gray rounded-b-lg p-6 min-h-[300px]',
 } as const;

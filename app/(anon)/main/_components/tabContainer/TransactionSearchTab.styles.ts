@@ -1,6 +1,6 @@
 export const styles = {
   // 컨테이너
-  container: 'space-y-6',
+  container: 'w-full space-y-6',
 
   // 안내 메시지
   instruction: 'text-lg font-semibold text-brand-black mb-4',
@@ -17,9 +17,9 @@ export const styles = {
   formRow: 'flex flex-col space-y-2',
   label: 'text-sm font-medium text-brand-dark-gray',
   input:
-    'px-3 py-2 border border-brand-light-gray rounded-lg bg-brand-white text-brand-black placeholder-brand-dark-gray focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent',
+    'w-full px-3 py-2 border border-brand-light-gray rounded-lg bg-brand-white text-brand-black placeholder-brand-dark-gray focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent',
   select:
-    'px-3 py-2 border border-brand-light-gray rounded-lg bg-brand-white text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent',
+    'w-full px-3 py-2 border border-brand-light-gray rounded-lg bg-brand-white text-brand-black focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent',
 
   // 단지명 입력 그룹
   complexInputGroup: 'flex gap-2',

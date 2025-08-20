@@ -1,17 +1,14 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMainPageModule } from '@/(anon)/main/_components/hooks/useMainPageModule';
 import { useMainPageState } from '@/(anon)/main/_components/hooks/useMainPageState';
 import { DaumPostcodeModal } from '@/(anon)/main/_components/daumPostcodeModal/DaumPostcodeModal';
+import Button from '@/(anon)/_components/common/button/Button';
+import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
 
 export const AddressConfirmationTab: React.FC = () => {
-  const dongInputRef = useRef<HTMLInputElement>(null);
-  const hoInputRef = useRef<HTMLInputElement>(null);
-  const newDongInputRef = useRef<HTMLInputElement>(null);
-  const newHoInputRef = useRef<HTMLInputElement>(null);
-
   // useMainPageModule에서 필요한 함수들 가져오기
   const {
     selectedAddress,
@@ -64,14 +61,6 @@ export const AddressConfirmationTab: React.FC = () => {
       // React 상태 업데이트
       setDong(dongValue);
       setHo(hoValue);
-
-      // DOM 요소 값 업데이트
-      if (dongInputRef.current) {
-        dongInputRef.current.value = dongValue;
-      }
-      if (hoInputRef.current) {
-        hoInputRef.current.value = hoValue;
-      }
     }
   }, [selectedAddress, activeAddressType]); // setDong, setHo 의존성 제거
 
@@ -103,14 +92,6 @@ export const AddressConfirmationTab: React.FC = () => {
       });
       setNewDong('');
       setNewHo('');
-
-      // DOM 요소 값도 초기화
-      if (newDongInputRef.current) {
-        newDongInputRef.current.value = '';
-      }
-      if (newHoInputRef.current) {
-        newHoInputRef.current.value = '';
-      }
     }
   }, [activeAddressType, newAddressData.roadAddress]); // selectedAddress 의존성 제거
 
@@ -146,11 +127,15 @@ export const AddressConfirmationTab: React.FC = () => {
     <div className={styles.container}>
       {/* 첫 번째 줄: 버튼들 */}
       <div className={styles.buttonRow}>
-        <button onClick={handleAddressSearch} className={styles.searchButton}>
+        <Button
+          onClick={handleAddressSearch}
+          variant='primary'
+          className={styles.searchButton}
+        >
           주소 검색
-        </button>
+        </Button>
         <div className={styles.actionButtons}>
-          <button
+          <Button
             onClick={() => {
               if (activeAddressType === 'new') {
                 handleMoveToAddressOnly(newDong, newHo);
@@ -161,26 +146,27 @@ export const AddressConfirmationTab: React.FC = () => {
             disabled={
               activeAddressType === 'new' ? !newDong.trim() : !dong.trim()
             }
+            variant='primary'
             className={styles.confirmButton}
           >
             확인하기
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={saveAddressToUser}
             disabled={
               activeAddressType === 'new' ? !newDong.trim() : !dong.trim()
             }
+            variant='secondary'
             className={styles.saveButton}
           >
             저장하기
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* 두 번째 줄: 입력 필드들 */}
       <div className={styles.inputRow}>
-        <input
-          type='text'
+        <TextInput
           placeholder='주소 검색으로 주소를 검색 해주세요'
           value={displaySearchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -191,44 +177,40 @@ export const AddressConfirmationTab: React.FC = () => {
           {/* 기존 주소용 동/호 input (드롭다운 선택 시) */}
           {activeAddressType === 'dropdown' && (
             <>
-              <input
-                type='text'
+              <TextInput
                 placeholder='동'
+                value={dong}
                 onChange={(e) => setDong(e.target.value)}
                 className={styles.dongField}
-                ref={dongInputRef}
               />
-              <input
-                type='text'
+              <TextInput
                 placeholder='호'
+                value={ho}
                 onChange={(e) => setHo(e.target.value)}
                 className={styles.hoField}
-                ref={hoInputRef}
               />
             </>
           )}
           {/* 새로운 주소용 동/호 input (새 주소 검색 시) */}
           {activeAddressType === 'new' && (
             <>
-              <input
-                type='text'
+              <TextInput
                 placeholder='동'
+                value={newDong}
                 onChange={(e) => {
                   console.log('새로운 동 입력:', e.target.value);
                   setNewDong(e.target.value);
                 }}
                 className={styles.dongField}
-                ref={newDongInputRef}
               />
-              <input
-                type='text'
+              <TextInput
                 placeholder='호'
+                value={newHo}
                 onChange={(e) => {
                   console.log('새로운 호 입력:', e.target.value);
                   setNewHo(e.target.value);
                 }}
                 className={styles.hoField}
-                ref={newHoInputRef}
               />
             </>
           )}
