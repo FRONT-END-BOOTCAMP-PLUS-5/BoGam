@@ -20,7 +20,6 @@ import StateIcon from '../../_components/common/stateIcon/StateIcon';
 import onboardingStyles from '@/(anon)/_components/onboarding/Onboarding.module.css';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import stepData from './stepData.json';
 
 interface IProps extends IFlipSetting, IEventProps {
   className: string;
@@ -153,11 +152,39 @@ export function Steps3Page() {
   const bookRef = React.useRef<any>(null);
   const [marginLeft, setMarginLeft] = React.useState('-73%');
   const [currentPage, setCurrentPage] = React.useState(0);
-  const pages = Array.isArray(stepData) && stepData[0]?.pages ? stepData[0].pages : [];
+  const [pages, setPages] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const match = window.location.pathname.match(/\/steps\/(\d+)/);
+    const stepNumber = match ? match[1] : '1';
+    import(`./stepData/${stepNumber}.json`)
+      .then((data) => {
+        if (Array.isArray(data.default)) {
+          setPages(data.default[0]?.pages || []);
+        } else if (data.default?.pages) {
+          setPages(data.default.pages);
+        } else if (Array.isArray(data)) {
+          setPages(data[0]?.pages || []);
+        } else if (data.pages) {
+          setPages(data.pages);
+        } else {
+          setPages([]);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setPages([]);
+        setLoading(false);
+      });
+  }, []);
+
   const totalPages = pages.length;
+  const match = typeof window !== 'undefined' ? window.location.pathname.match(/\/steps\/(\d+)/) : null;
+  const stepNumber = match ? match[1] : '1';
 
   const flipPages: React.ReactNode[] = [];
-  pages.forEach((page, idx) => {
+  pages.forEach((page: any, idx: number) => {
     if (page.type === 'summary') {
       flipPages.push(
         <div key={`summary-${idx}`} className={styles.flex}>
@@ -178,12 +205,13 @@ export function Steps3Page() {
         </div>
       );
     }
-  })
+  });
 
   React.useEffect(() => {
     const width = window.innerWidth;
     setMarginLeft(width <= 400 ? '-99%' : '-73%');
   }, []);
+  if (loading) return <div>데이터를 불러오는 중...</div>;
   return (
     <div className={styles.book}>
       <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
@@ -226,7 +254,7 @@ export function Steps3Page() {
             <button
               className={styles.indicatorArrowBtn}
               aria-label="이전 단계로 이동"
-              onClick={() => router.push('/steps/2')}
+              onClick={() => router.push(`/steps/${Number(stepNumber) - 1}`)}
             >
               <ChevronLeft size={22} color="#222" />
             </button>
@@ -248,7 +276,7 @@ export function Steps3Page() {
             <button
               className={styles.indicatorArrowBtn}
               aria-label="다음 단계로 이동"
-              onClick={() => router.push('/steps/4')}
+              onClick={() => router.push(`/steps/${Number(stepNumber) + 1}`)}
             >
               <ChevronRight size={22} color="#222" />
             </button>

@@ -17,7 +17,7 @@ export default function GeneralPage({ title, category, content }: pageType) {
                 </div>
                 <div className={generalPageStyles.borderBottomDiv}>
                     <h5 className={generalPageStyles.danger}> {category} </h5>
-                    <p className={generalPageStyles.content}>
+                    <p className={generalPageStyles.content} style={{ whiteSpace: 'pre-line' }}>
                         {content}
                     </p>
                 </div>
