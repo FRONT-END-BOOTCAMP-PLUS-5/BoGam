@@ -21,6 +21,8 @@ interface ApiResponse {
 export default function BrokerTestPage() {
   const { userAddresses, selectedAddress } = useUserAddressStore();
   const [userAddressNickname, setUserAddressNickname] = useState<string>('');
+  const [brkrNm, setBrkrNm] = useState<string>('');
+  const [bsnmCmpnm, setBsnmCmpnm] = useState<string>('');
   const [brokerData, setBrokerData] = useState<string>('');
   const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -32,9 +34,23 @@ export default function BrokerTestPage() {
       return;
     }
 
+    if (!brkrNm) {
+      setApiResponse({ success: false, error: '중개업자명을 입력해주세요.' });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/brokers?userAddressNickname=${encodeURIComponent(userAddressNickname)}`);
+      const params = new URLSearchParams({
+        userAddressNickname,
+        brkrNm
+      });
+      
+      if (bsnmCmpnm) {
+        params.append('bsnmCmpnm', bsnmCmpnm);
+      }
+      
+      const response = await fetch(`/api/brokers?${params.toString()}`);
       const result: ApiResponse = await response.json();
       setApiResponse(result);
     } catch (error) {
@@ -56,7 +72,7 @@ export default function BrokerTestPage() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/brokers/exists?userAddressId=${selectedAddress?.id || ''}`);
+      const response = await fetch(`/api/brokers/exists?userAddressNickname=${encodeURIComponent(userAddressNickname)}`);
       const result: ApiResponse = await response.json();
       setApiResponse(result);
     } catch (error) {
@@ -100,6 +116,28 @@ export default function BrokerTestPage() {
     }
   };
 
+  // 중개사 복사본 DB 조회
+  const handleGetBrokerCopyFromDB = async () => {
+    if (!userAddressNickname) {
+      setApiResponse({ success: false, error: '사용자 주소 닉네임을 입력해주세요.' });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/copies/broker?userAddressNickname=${encodeURIComponent(userAddressNickname)}`);
+      const result: ApiResponse = await response.json();
+      setApiResponse(result);
+    } catch (error) {
+      setApiResponse({ 
+        success: false, 
+        error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>중개사 복사본 테스트 페이지</h1>
@@ -123,6 +161,20 @@ export default function BrokerTestPage() {
             placeholder="사용자 주소 닉네임을 입력하세요"
             className={styles.input}
           />
+          <input
+            type="text"
+            value={brkrNm}
+            onChange={(e) => setBrkrNm(e.target.value)}
+            placeholder="중개업자명을 입력하세요"
+            className={styles.input}
+          />
+          <input
+            type="text"
+            value={bsnmCmpnm}
+            onChange={(e) => setBsnmCmpnm(e.target.value)}
+            placeholder="사업자상호를 입력하세요 (선택사항)"
+            className={styles.input}
+          />
           <button 
             onClick={handleGetBrokerCopy}
             disabled={isLoading}
@@ -137,10 +189,21 @@ export default function BrokerTestPage() {
         <h2 className={styles.sectionTitle}>중개사 복사본 존재 여부 확인</h2>
         <button 
           onClick={handleCheckExists}
-          disabled={isLoading || !selectedAddress}
+          disabled={isLoading || !userAddressNickname}
           className={styles.button}
         >
           {isLoading ? '확인 중...' : '존재 여부 확인'}
+        </button>
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>중개사 복사본 DB 조회</h2>
+        <button 
+          onClick={handleGetBrokerCopyFromDB}
+          disabled={isLoading || !userAddressNickname}
+          className={styles.button}
+        >
+          {isLoading ? '조회 중...' : 'DB에서 중개사 복사본 조회'}
         </button>
       </div>
 

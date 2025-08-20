@@ -5,7 +5,7 @@ export interface GetBrokerCopyResponseDto {
   data?: {
     id: number;
     userAddressId: number;
-    brokerData: string;
+    brokerData: Record<string, unknown>;
     updatedAt: Date;
   };
 }

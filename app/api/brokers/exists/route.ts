@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CheckBrokerCopyExistsUsecase } from '@be/applications/brokerCopies/usecases/CheckBrokerCopyExistsUsecase';
 import { BrokerCopyRepositoryImpl } from '@be/infrastructure/repository/BrokerCopyRepositoryImpl';
-import { CheckBrokerCopyExistsRequestDto } from '@be/applications/brokerCopies/dtos/CheckBrokerCopyExistsRequestDto';
 import { getUserAddressId } from '@utils/userAddress';
 
 export async function GET(request: NextRequest) {
