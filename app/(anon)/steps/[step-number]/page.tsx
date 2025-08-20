@@ -13,7 +13,7 @@ import React, {
 
 import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
-import { IFlipSetting, IEventProps } from './settings'; 
+import { IFlipSetting, IEventProps } from './settings';
 import { styles } from './page.styles';
 import GeneralPage from '../_components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
@@ -119,7 +119,7 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 function SummaryPage({ title, contents }: { title: string; contents: { subtitle: string; items: string[] }[] }) {
   return (
     <div className={styles.generalPage}>
-  <div className="w-[50px] h-full flex flex-col bg-transparent border-none shadow-none flex-shrink-0">
+      <div className="w-[50px] h-full flex flex-col bg-transparent border-none shadow-none flex-shrink-0">
         <div className="flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
         <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
         <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
@@ -209,7 +209,13 @@ export function Steps3Page() {
 
   React.useEffect(() => {
     const width = window.innerWidth;
-    setMarginLeft(width <= 400 ? '-99%' : '-73%');
+    if (width <= 400) {
+      setMarginLeft('translateX(-45%)');
+    } else if (width <= 430) {
+      setMarginLeft('translateX(-42%)');
+    } else {
+      setMarginLeft('translateX(-37%)');
+    }
   }, []);
   if (loading) return <div>데이터를 불러오는 중...</div>;
   return (
@@ -234,7 +240,7 @@ export function Steps3Page() {
         drawShadow={true}
         flippingTime={1000}
         usePortrait={false}
-        style={{ marginLeft: '-50%', marginTop: 48 }}
+        style={marginLeft.startsWith('translateX') ? { transform: marginLeft, marginTop: 48 } : { marginLeft, marginTop: 48 }}
         startZIndex={0}
         autoSize={true}
         clickEventForward={true}
