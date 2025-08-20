@@ -1,16 +1,20 @@
 'use client';
 
 import { generalPageStyles } from './generalPage.style';
+import { useRouter } from 'next/navigation';
 
 interface pageType {
     title: string,
     category: string,
-    content: string
+    content: string,
+    pageIdx: number,
+    stepNumber: string
 }
 
-export default function GeneralPage({ title, category, content }: pageType) {
+export default function GeneralPage({ title, category, content, pageIdx, stepNumber }: pageType) {
+    const router = useRouter();
     return (
-    <div className={generalPageStyles.generalWhitePage}>
+        <div className={generalPageStyles.generalWhitePage}>
             <div>
                 <div className={generalPageStyles.smallFontDiv}>
                     <h3 className={generalPageStyles.smallFont}> {title} </h3>
@@ -22,7 +26,7 @@ export default function GeneralPage({ title, category, content }: pageType) {
                     </p>
                 </div>
                 <div className={generalPageStyles.goInsideDiv}>
-                    <button className={generalPageStyles.goInside}> 바로가기 </button>
+                    <button className={generalPageStyles.goInside} onClick={() => router.push(`/steps/${stepNumber}/${pageIdx}`)}> 바로가기 </button>
                 </div>
             </div>
         </div>

@@ -194,7 +194,7 @@ export function Steps3Page() {
     } else if (page.type === 'general') {
       flipPages.push(
         <div key={`general-${idx}`} className={styles.flex}>
-          <GeneralPage title={page.title ?? ''} category={page.category ?? ''} content={page.content ?? ''} />
+          <GeneralPage title={page.title ?? ''} category={page.category ?? ''} content={page.content ?? ''} pageIdx={idx} stepNumber={stepNumber} />
         </div>
       );
     }
