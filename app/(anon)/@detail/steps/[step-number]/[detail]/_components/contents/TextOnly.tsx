@@ -2,8 +2,9 @@
 
 import React from 'react';
 import styles from './TextOnly.styles';
-import { useGetStepDetail } from '@/(anon)/@detail/steps/[step-number]/[detail]/hooks/useGetStepDetail';
+import { useGetStepDetail } from '../../../../../../../../hooks/useGetStepDetail';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
 interface ContentSection {
   title?: string;
@@ -17,6 +18,9 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
+  // 전역 store에서 선택된 주소 가져오기
+  const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
+  
   // URL에서 stepNumber와 detail 가져오기 (3번째, 4번째 값)
   const pathname = window.location.pathname;
   const pathParts = pathname.split('/');
@@ -25,6 +29,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   
   // useGetStepDetail 훅 사용
   const { data: stepData, isLoading, isError } = useGetStepDetail({
+    userAddressNickname: selectedAddress?.nickname || '',
     stepNumber,
     detail
   });

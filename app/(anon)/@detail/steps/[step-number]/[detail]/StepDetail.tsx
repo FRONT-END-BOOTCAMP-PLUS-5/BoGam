@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useDragToClose } from './hooks/useDragToClose';
+import { useDragToClose } from './_components/useDragToClose';
 import { styles } from './StepDetail.styles';
 import ModalDragHandle from './_components/ModalDragHandle';
 import ModalContent from './_components/ModalContent';
