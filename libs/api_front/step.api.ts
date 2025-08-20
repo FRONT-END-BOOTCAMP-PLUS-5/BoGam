@@ -24,6 +24,7 @@ interface StepDetailApiResponse {
 
 // API 요청 파라미터 타입 정의
 interface GetStepDetailParams {
+  userAddressNickname: string;
   stepNumber: string;
   detail: string;
 }
@@ -53,6 +54,7 @@ class StepDetailApi {
 
     // 쿼리 파라미터 구성
     const queryParams = new URLSearchParams({
+      userAddressNickname: params.userAddressNickname,
       stepNumber: params.stepNumber.toString(),
       detail: params.detail.toString(),
     });
