@@ -2,32 +2,16 @@
 
 import { useEffect } from 'react';
 import { useDragToClose } from './hooks/useDragToClose';
-import { useGetStepDetail } from './hooks/useGetStepDetail';
 import { styles } from './StepDetail.styles';
 import ModalDragHandle from './_components/ModalDragHandle';
 import ModalContent from './_components/ModalContent';
 
 interface StepDetailProps {
-  stepNumber: string;
-  detail: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function StepDetailPage({
-  stepNumber,
-  detail,
-  isOpen,
-  onClose,
-}: StepDetailProps) {
-  const {
-    data: stepData,
-    isLoading,
-    isError,
-  } = useGetStepDetail({
-    stepNumber,
-    detail,
-  });
+export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
   const {
     dragState,
     modalRef,
@@ -78,11 +62,7 @@ export default function StepDetailPage({
           onClose={onClose}
         />
 
-        <ModalContent 
-          stepData={stepData} 
-          isLoading={isLoading}
-          isError={isError}
-        />
+        <ModalContent />
       </div>
     </div>
   );
