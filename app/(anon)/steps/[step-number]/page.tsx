@@ -242,7 +242,7 @@ export function Steps3Page() {
         swipeDistance={30}
         showPageCorners={false}
         disableFlipByClick={true}
-        onFlip={(e: any) => {
+        onFlip={(e: { data: number }) => {
           setCurrentPage(Math.floor((e.data + 1) / 2));
         }}
       >
