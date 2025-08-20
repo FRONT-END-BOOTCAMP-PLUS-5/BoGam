@@ -1,5 +1,11 @@
-import { TransactionDetailApartEntity } from '@be/domain/entities/TransactionDetailApart';
-import { TransactionDetailSingleEntity } from '@be/domain/entities/TransactionDetailSingle';
+import {
+  TransactionDetailApartSaleItem,
+  TransactionDetailApartRentItem,
+} from '@be/domain/entities/TransactionDetailApart';
+import {
+  TransactionDetailSingleSaleItem,
+  TransactionDetailSingleRentItem,
+} from '@be/domain/entities/TransactionDetailSingle';
 
 /**
  * 통합 실거래가 상세조회 응답 DTO
@@ -12,7 +18,7 @@ export interface GetTransactionDetailResponseDto {
     transactionId?: string;
   };
   data: {
-    resSaleList?: TransactionDetailApartEntity[];
-    resRentList?: TransactionDetailSingleEntity[];
+    resSaleList?: TransactionDetailApartSaleItem[];
+    resRentList?: TransactionDetailApartRentItem[];
   };
 }

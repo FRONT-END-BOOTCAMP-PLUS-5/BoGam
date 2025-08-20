@@ -63,13 +63,13 @@ export function sanitizeTransactionDetailApartResponse(
 ): GetTransactionDetailResponseDto {
   if (!response?.data) return response;
 
-  if (Array.isArray(response.data)) {
-    const mapped = response.data.map((d: unknown) =>
-      sanitizeOne(d as Record<string, unknown>)
-    );
-    return { ...response, data: mapped };
-  }
+  const sanitized = sanitizeOne(response.data as Record<string, unknown>);
 
-  const mappedOne = sanitizeOne(response.data as Record<string, unknown>);
-  return { ...response, data: mappedOne };
+  return {
+    ...response,
+    data: {
+      resSaleList: sanitized.resSaleList,
+      resRentList: sanitized.resRentList,
+    },
+  };
 }

@@ -138,16 +138,16 @@ export const useTransactionDetail = () => {
       if (data.success && data.data) {
         // 단독/다가구 데이터 변환 (아파트와 다른 구조일 수 있음)
         const transformedData = Array.isArray(data.data)
-          ? data.data.map((item: Record<string, any>, index: number) => ({
+          ? data.data.map((item: Record<string, unknown>, index: number) => ({
               id: `transaction-${index}`,
               아파트: '단독/다가구',
-              거래금액: item.resTranAmount || item.resDealAmount || '0',
-              전용면적: item.resArea || item.resExclusiveArea || '0',
-              층: item.resFloor || item.resFloorNum || '0',
+              거래금액: String(item.resTranAmount || item.resDealAmount || '0'),
+              전용면적: String(item.resArea || item.resExclusiveArea || '0'),
+              층: String(item.resFloor || item.resFloorNum || '0'),
               건축년도: '',
-              년: item.resYear || item.resContractYear || '',
-              월: item.resMonth || item.resContractMonth || '',
-              일: item.resDays || item.resContractDay || '',
+              년: String(item.resYear || item.resContractYear || ''),
+              월: String(item.resMonth || item.resContractMonth || ''),
+              일: String(item.resDays || item.resContractDay || ''),
               법정동: '',
               지번: '',
               location: null, // 좌표 정보 없음
