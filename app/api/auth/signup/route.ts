@@ -1,5 +1,5 @@
-import { prisma } from '@utils/prisma';
 import bcrypt from 'bcrypt';
+import { prisma } from '@utils/prisma';
 import { NextResponse } from 'next/server';
 
 function formatPhone(raw: string) {

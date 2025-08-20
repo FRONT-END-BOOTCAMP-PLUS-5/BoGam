@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserStore } from '@libs/store/userStore';
+import { useUserStore } from '@libs/stores/userStore';
 import { getProfileClassName } from '@/(anon)/_components/common/profile/Profile.style';
 
 interface ProfileProps {
@@ -9,6 +9,7 @@ interface ProfileProps {
 
 export default function Profile({ size }: ProfileProps) {
   const nickname = useUserStore((state) => state.nickname);
+  console.log(nickname);
   const initial = nickname?.charAt(0);
 
   return <div className={getProfileClassName(size)}>{initial}</div>;

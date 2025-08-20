@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRootStep } from '@libs/store/rootStepStore';
+import { useRootStep } from '@libs/stores/rootStepStore';
 import SigninForm from '@/(anon)/signin/_components/SigninForm';
-import styles from '@/(anon)/signin/Signin.module.css';
+import { styles } from '@/(anon)/signin/Signin.styles';
 import { ChevronLeft } from 'lucide-react';
 
 export default function SignIn() {

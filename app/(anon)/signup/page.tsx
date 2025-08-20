@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRootStep } from '@libs/store/rootStepStore';
+import { useRootStep } from '@libs/stores/rootStepStore';
 import SignupForm from '@/(anon)/signup/_components/SignupForm';
-import styles from '@/(anon)/signup/Signup.module.css';
+import { styles } from '@/(anon)/signup/Signup.styles';
 import { ChevronLeft } from 'lucide-react';
 
 export default function Signup() {

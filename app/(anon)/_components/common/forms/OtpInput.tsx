@@ -4,7 +4,7 @@
 
 import '@/globals.css';
 import { useRef, useCallback } from 'react';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 export default function OtpInput({
   length = 4,
@@ -47,6 +47,7 @@ export default function OtpInput({
         <input
           key={i}
           ref={setRef(i)}
+          type='password'
           inputMode='numeric'
           pattern='\d*'
           maxLength={1}

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useUserStore } from '@libs/store/userStore';
+import { useUserStore } from '@libs/stores/userStore';
 
 export default function AuthLanding() {
   const { data: session } = useSession();
@@ -12,7 +12,7 @@ export default function AuthLanding() {
     if (session?.user.nickname) {
       setNickname(session.user.nickname);
     }
-  }, [session]);
+  }, [session, setNickname]);
 
   return null;
 }

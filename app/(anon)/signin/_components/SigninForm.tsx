@@ -10,7 +10,7 @@ import Field from '@/(anon)/_components/common/forms/Field';
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import PasswordInput from '@/(anon)/_components/common/forms/PasswordInput';
-import styles from '@/(anon)/_components/common/forms/Forms.module.css';
+import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 const signinSchema = z.object({
   username: z.string().email('올바른 이메일을 입력해주세요.'),
