@@ -165,7 +165,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
           try {
             // 서버에 저장
-            const response = await userAddressApi.addAddress({
+            const apiRequestData = {
               addressNickname: newAddress.nickname,
               latitude: newAddress.y,
               longitude: newAddress.x,
@@ -174,7 +174,9 @@ export const useUserAddressStore = create<UserAddressStore>()(
               ho: newAddress.ho || '', // 직접 사용
               lotAddress: newAddress.lotAddress,
               roadAddress: newAddress.roadAddress,
-            });
+            };
+
+            const response = await userAddressApi.addAddress(apiRequestData);
 
             if (response.success) {
               // 서버에서 받은 실제 ID로 업데이트
