@@ -1,6 +1,6 @@
 'use client';
 
-import { generalPageStyles } from './generalPage.style.ts';
+import { generalPageStyles } from './generalPage.style';
 
 interface pageType {
     title: string,
