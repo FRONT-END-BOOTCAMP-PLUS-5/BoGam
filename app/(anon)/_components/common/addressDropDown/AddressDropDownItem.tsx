@@ -44,25 +44,10 @@ export function AddressDropDownItem({
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/user-address/toggle-primary', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userAddressId: address.id }),
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        // 성공 시 콜백 호출하여 UI 업데이트
-        onToggleFavorite?.(address.id);
-      } else {
-        console.error('즐겨찾기 토글 실패:', result.message);
-        alert(`즐겨찾기 토글 실패: ${result.message}`);
-      }
+      // Store의 toggleFavorite 함수 호출 (API 호출과 UI 업데이트를 모두 처리)
+      await onToggleFavorite?.(address.id);
     } catch (error) {
-      console.error('즐겨찾기 토글 API 호출 오류:', error);
+      console.error('즐겨찾기 토글 오류:', error);
       alert('즐겨찾기 토글 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);

@@ -37,16 +37,20 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
         // React Query에서 받은 데이터로 초기화
         initializeFromQuery: (data) => {
+          const currentState = get();
+
           set({ userAddresses: data }, false, 'initializeFromQuery');
 
-          // 대표 주소 자동 선택
-          const primaryAddress = data.find((addr) => addr.isPrimary);
-          if (primaryAddress) {
-            set(
-              { selectedAddress: primaryAddress },
-              false,
-              'setPrimaryAddress'
-            );
+          // 이미 선택된 주소가 있으면 그대로 유지, 없으면 대표 주소 선택
+          if (!currentState.selectedAddress) {
+            const primaryAddress = data.find((addr) => addr.isPrimary);
+            if (primaryAddress) {
+              set(
+                { selectedAddress: primaryAddress },
+                false,
+                'setPrimaryAddress'
+              );
+            }
           }
         },
 

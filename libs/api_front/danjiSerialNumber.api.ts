@@ -30,11 +30,13 @@ export interface DanjiInfo {
 
 // 단지 일련번호 API 응답 타입 정의
 export interface DanjiSerialNumberApiResponse {
-  success: boolean;
-  data: {
-    danjiList: DanjiInfo[];
+  result: {
+    code: string;
+    message: string;
+    extraMessage?: string;
+    transactionId?: string;
   };
-  message?: string;
+  data: DanjiInfo[]; // 직접 배열로 오는 구조
 }
 
 /**

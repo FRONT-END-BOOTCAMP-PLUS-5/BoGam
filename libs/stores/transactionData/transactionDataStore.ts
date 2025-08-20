@@ -22,7 +22,22 @@ export const useTransactionDataStore = create<TransactionDataStore>((set) => ({
 
   // 액션
   setTransactionData: (data) => {
-    set({ transactionData: data, error: null });
+    console.log('🔍 setTransactionData 호출됨:', {
+      dataLength: data.length,
+      data: data,
+    });
+
+    // 상태 업데이트를 안정적으로 처리
+    set((state) => {
+      console.log('🔍 이전 상태:', state.transactionData.length);
+      console.log('🔍 새 데이터:', data.length);
+
+      return {
+        ...state,
+        transactionData: data,
+        error: null,
+      };
+    });
   },
 
   clearTransactionData: () => {

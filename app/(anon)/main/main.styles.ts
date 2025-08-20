@@ -1,10 +1,11 @@
 export const styles = {
   // 컨테이너
-  containerMobile: 'min-h-screen bg-brand-gray px-4 py-6',
-  container: 'max-w-4xl mx-auto space-y-6',
+  containerMobile: 'h-screen bg-brand-gray px-4 py-6 flex flex-col',
+  container: 'max-w-4xl mx-auto space-y-6 h-full flex flex-col',
 
   // 하단 섹션
-  bottomSection: 'bg-brand-white rounded-lg shadow-lg p-6 space-y-4',
+  bottomSection:
+    'bg-brand-white rounded-lg shadow-lg p-6 space-y-6 flex-1 overflow-y-auto min-h-0',
 
   // 지도 헤더
   mapHeader: 'flex items-center gap-2 mb-4',

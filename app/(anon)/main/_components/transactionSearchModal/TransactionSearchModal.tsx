@@ -34,25 +34,54 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 선택된 주소가 변경되면 자동으로 주소 분해
+  // 선택된 주소가 변경되면 자동으로 주소 분해 및 조회 구분 설정
   useEffect(() => {
     if (selectedAddress && isOpen) {
-      const address =
-        selectedAddress.roadAddress ||
-        selectedAddress.lotAddress ||
-        selectedAddress.completeAddress;
-      const parsed = parseAddress(address);
+      // 주소 타입 판단: roadAddress가 있으면 도로명주소, 없으면 지번주소
+      const isRoadAddress = !!selectedAddress.roadAddress;
+      const addressType = isRoadAddress ? '도로명주소' : '지번주소';
+      const newSearchGbn = isRoadAddress ? '1' : '0'; // 1: 도로명주소, 0: 지번주소
 
-      setAddrSido(parsed.addrSido);
-      setAddrSigungu(parsed.addrSigungu);
-      setAddrDong(parsed.addrDong);
+      // 조회 구분 자동 설정 (주소 타입에 따라)
+      setSearchGbn(newSearchGbn);
 
-      // 검증
-      const validation = validateParsedAddress(parsed);
-      if (!validation.isValid) {
-        setError(`주소 분해 오류: ${validation.errors.join(', ')}`);
+      // 주소 분해 - 새 주소 검색 결과인 경우 roadAddress 우선 사용
+      let address = '';
+      if (
+        selectedAddress.roadAddress &&
+        selectedAddress.roadAddress.trim() !== ''
+      ) {
+        address = selectedAddress.roadAddress;
+      } else if (
+        selectedAddress.lotAddress &&
+        selectedAddress.lotAddress.trim() !== ''
+      ) {
+        address = selectedAddress.lotAddress;
+      } else if (
+        selectedAddress.completeAddress &&
+        selectedAddress.completeAddress.trim() !== ''
+      ) {
+        address = selectedAddress.completeAddress;
+      }
+
+      console.log('🔍 파싱할 주소:', address);
+
+      if (address) {
+        const parsed = parseAddress(address);
+
+        setAddrSido(parsed.addrSido);
+        setAddrSigungu(parsed.addrSigungu);
+        setAddrDong(parsed.addrDong);
+
+        // 검증
+        const validation = validateParsedAddress(parsed);
+        if (!validation.isValid) {
+          setError(`주소 분해 오류: ${validation.errors.join(', ')}`);
+        } else {
+          setError('');
+        }
       } else {
-        setError('');
+        setError('주소 정보를 찾을 수 없습니다.');
       }
     }
   }, [selectedAddress, isOpen]);
@@ -76,20 +105,22 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
     setError('');
 
     try {
-      const response = await danjiSerialNumberApi.getDanjiSerialNumber({
-        organization: '0010',
+      const requestParams = {
+        organization: '0010' as const,
         year,
-        type: '0',
-        searchGbn: '1',
+        type: buildingType, // 건물 유형: 0(아파트), 1(연립/다세대), 2(오피스텔)
+        searchGbn, // 조회 구분: 0(지번주소), 1(도로명주소)
         addrSido,
         addrSigungu,
         addrDong,
         complexName: buildingName || undefined,
-      });
+      };
 
-      console.log('response', response);
+      const response = await danjiSerialNumberApi.getDanjiSerialNumber(
+        requestParams
+      );
 
-      if (response.data && response.data) {
+      if (response.data && Array.isArray(response.data)) {
         setDanjiList(response.data);
         if (response.data.length === 0) {
           setError('해당 조건에 맞는 단지가 없습니다.');
@@ -98,7 +129,6 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
         setError('단지 검색에 실패했습니다.');
       }
     } catch (err) {
-      console.error('단지 검색 오류:', err);
       setError('단지 검색 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
@@ -186,6 +216,12 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
                 <option value='0'>지번주소</option>
                 <option value='1'>도로명주소</option>
               </select>
+              {selectedAddress && (
+                <div className={styles.autoSettingNote}>
+                  💡 선택된 주소 타입에 따라 조회 구분이 자동 설정되었습니다.
+                  필요시 수동으로 변경하세요.
+                </div>
+              )}
             </div>
 
             <div className={styles.inputGroup}>

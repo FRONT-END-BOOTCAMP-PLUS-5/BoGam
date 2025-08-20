@@ -13,6 +13,7 @@ export const useTransactionDetail = () => {
   // 아파트 계열 실거래가 상세조회
   const fetchTransactionDetailApartMutation = useMutation({
     onMutate: () => {
+      console.log('🔍 fetchTransactionDetailApart 시작');
       setLoading(true);
       setError(null);
     },
@@ -38,6 +39,8 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
+      console.log('🔍 fetchTransactionDetailApart 성공 - 원본 데이터:', data);
+
       if (data.success && data.data) {
         // 매매 데이터와 전월세 데이터를 합쳐서 변환
         // API 응답에서 data가 중첩되어 있음: data.data.data.resSaleList
@@ -45,6 +48,8 @@ export const useTransactionDetail = () => {
           data.data.data?.resSaleList || data.data.resSaleList || [];
         const rentData =
           data.data.data?.resRentList || data.data.resRentList || [];
+
+        console.log('🔍 파싱된 데이터:', { saleData, rentData });
 
         const transformedData = [...saleData, ...rentData].map(
           (
@@ -68,11 +73,18 @@ export const useTransactionDetail = () => {
           })
         );
 
-        setTransactionData(transformedData);
-        setLoading(false);
+        console.log('🔍 변환된 데이터:', transformedData);
+
+        // 상태 업데이트를 setTimeout으로 지연시켜 React의 상태 업데이트 순서 보장
+        setTimeout(() => {
+          setTransactionData(transformedData);
+          setLoading(false);
+          console.log('🔍 setTransactionData 완료');
+        }, 0);
 
         // 성공 알림
       } else {
+        console.error('❌ 실거래가 데이터 파싱 실패:', data);
         setError('실거래가 데이터를 가져올 수 없습니다.');
         setLoading(false);
       }
@@ -89,6 +101,7 @@ export const useTransactionDetail = () => {
   // 단독/다가구 실거래가 상세조회
   const fetchTransactionDetailSingleMutation = useMutation({
     onMutate: () => {
+      console.log('🔍 fetchTransactionDetailSingle 시작');
       setLoading(true);
       setError(null);
     },
@@ -120,6 +133,8 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
+      console.log('🔍 fetchTransactionDetailSingle 성공 - 원본 데이터:', data);
+
       if (data.success && data.data) {
         // 단독/다가구 데이터 변환 (아파트와 다른 구조일 수 있음)
         const transformedData = Array.isArray(data.data)
@@ -139,8 +154,14 @@ export const useTransactionDetail = () => {
             }))
           : [];
 
-        setTransactionData(transformedData);
-        setLoading(false);
+        console.log('🔍 변환된 데이터:', transformedData);
+
+        // 상태 업데이트를 setTimeout으로 지연시켜 React의 상태 업데이트 순서 보장
+        setTimeout(() => {
+          setTransactionData(transformedData);
+          setLoading(false);
+          console.log('🔍 setTransactionData 완료');
+        }, 0);
       } else {
         setError('실거래가 데이터를 가져올 수 없습니다.');
         setLoading(false);

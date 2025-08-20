@@ -54,7 +54,32 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
 
   // 드롭다운 선택 시 ref 업데이트
   useEffect(() => {
+    console.log('🔍 SearchSection useEffect 실행:', {
+      selectedAddress,
+      isNewAddressSearch,
+      roadAddress,
+      dong,
+      ho,
+      searchQuery,
+    });
+
+    // 주소 드롭다운에서 선택된 주소가 있고, 새 주소 검색이 아닌 경우
     if (!isNewAddressSearch && selectedAddress) {
+      if (dongInputRef.current) {
+        dongInputRef.current.value = selectedAddress.dong || '';
+      }
+      if (hoInputRef.current) {
+        hoInputRef.current.value = selectedAddress.ho || '';
+      }
+    }
+  }, [selectedAddress, isNewAddressSearch, roadAddress, dong, ho, searchQuery]);
+
+  // selectedAddress가 변경될 때마다 ref 업데이트
+  useEffect(() => {
+    console.log('🔍 SearchSection selectedAddress 변경 감지:', selectedAddress);
+
+    // selectedAddress가 있고, 새 주소 검색이 아닌 경우
+    if (selectedAddress && !isNewAddressSearch) {
       if (dongInputRef.current) {
         dongInputRef.current.value = selectedAddress.dong || '';
       }
@@ -82,32 +107,13 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   const hasNewSearchResult =
     isNewAddressSearch && roadAddress && roadAddress.trim() !== '';
 
-  // 주소 표시 로직
-  const displayAddress = selectedAddress?.roadAddress
-    ? selectedAddress.roadAddress
-    : selectedAddress?.lotAddress || roadAddress;
-
-  // 도로명 주소와 지번 주소 구분
-  const isRoadAddressFromRoad =
-    selectedAddress?.roadAddress &&
-    selectedAddress.roadAddress.trim() === roadAddress?.trim();
-  const isRoadAddressFromLot =
-    selectedAddress?.lotAddress &&
-    selectedAddress.lotAddress.trim() === roadAddress?.trim();
-
-  const displayRoadAddress = hasNewSearchResult
-    ? roadAddress
-    : selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
-  const displayLotAddress = hasNewSearchResult
-    ? roadAddress && selectedAddress?.lotAddress
-      ? `${roadAddress} (${selectedAddress.lotAddress})`
-      : roadAddress || selectedAddress?.lotAddress || searchQuery
-    : selectedAddress?.lotAddress || '';
-  const displaySearchQuery = isNewAddressSearch
-    ? searchQuery
-    : selectedAddress
-    ? selectedAddress.completeAddress
-    : searchQuery;
+  // 주소 표시 로직 - selectedAddress 우선
+  const displayAddress =
+    selectedAddress?.roadAddress || selectedAddress?.lotAddress || roadAddress;
+  const displayRoadAddress = selectedAddress?.roadAddress || roadAddress || '';
+  const displayLotAddress = selectedAddress?.lotAddress || '';
+  const displaySearchQuery =
+    selectedAddress?.completeAddress || searchQuery || '';
 
   return (
     <div className={styles.searchContainer}>
@@ -151,11 +157,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                 <div className={styles.addressInfo}>
                   <span className={styles.addressLabel}>현재 사용 중:</span>
                   <span className={styles.addressValue}>
-                    {isRoadAddressFromRoad
-                      ? '도로명 주소'
-                      : isRoadAddressFromLot
-                      ? '지번 주소'
-                      : '기본 주소'}
+                    {selectedAddress?.roadAddress ? '도로명 주소' : '지번 주소'}
                   </span>
                 </div>
               )}

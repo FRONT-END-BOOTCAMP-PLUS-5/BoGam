@@ -38,6 +38,8 @@ export const useMainPageModule = () => {
     selectedMonth,
     showPostcode,
     addressSaveData,
+    newAddressData,
+    activeAddressType,
 
     // 상태 설정 함수
     setSearchQuery,
@@ -50,6 +52,8 @@ export const useMainPageModule = () => {
     setSelectedMonth,
     setShowPostcode,
     setAddressSaveData,
+    setNewAddressData,
+    setActiveAddressType,
   } = useMainPageState();
 
   // React Query로 초기 데이터 로드
@@ -101,6 +105,77 @@ export const useMainPageModule = () => {
   const { fetchTransactionDetailApart, fetchTransactionDetailSingle } =
     useTransactionDetail();
 
+  // storeSelectedAddress가 변경될 때마다 상태 업데이트 (드롭다운 선택 시)
+  useEffect(() => {
+    if (storeSelectedAddress) {
+      console.log(
+        '🔍 storeSelectedAddress 변경 감지, 드롭다운 주소로 전환:',
+        storeSelectedAddress
+      );
+
+      // 이미 같은 주소가 선택되어 있다면 상태 업데이트하지 않음
+      const currentAddress = `${roadAddress} ${dong}동 ${ho}호`.trim();
+      const newAddress = storeSelectedAddress.completeAddress;
+
+      if (currentAddress === newAddress) {
+        console.log('🔍 같은 주소가 이미 선택되어 있음, 상태 업데이트 건너뜀');
+        return;
+      }
+
+      // 드롭다운 주소 타입으로 설정
+      setActiveAddressType('dropdown');
+
+      // 동/호 정보를 직접 사용
+      const extractedDong = storeSelectedAddress.dong || '';
+      const extractedHo = storeSelectedAddress.ho || '';
+
+      // 도로명 주소가 있으면 도로명 주소 사용, 없으면 지번 주소 사용
+      let baseAddress = '';
+      if (
+        storeSelectedAddress.roadAddress &&
+        storeSelectedAddress.roadAddress.trim()
+      ) {
+        baseAddress = storeSelectedAddress.roadAddress.trim();
+      } else if (
+        storeSelectedAddress.lotAddress &&
+        storeSelectedAddress.lotAddress.trim()
+      ) {
+        baseAddress = storeSelectedAddress.lotAddress.trim();
+      } else {
+        baseAddress = storeSelectedAddress.completeAddress;
+      }
+
+      // 드롭다운 주소로 메인 상태 업데이트
+      console.log('드롭다운 주소 선택 시 메인 상태 업데이트:', {
+        baseAddress,
+        extractedDong,
+        extractedHo,
+        completeAddress: storeSelectedAddress.completeAddress,
+      });
+      setRoadAddress(baseAddress);
+      setDong(extractedDong);
+      setHo(extractedHo);
+      setSearchQuery(storeSelectedAddress.completeAddress);
+      setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
+
+      // 주소 변경 시 실거래가 데이터 초기화는 제거
+      // 실거래가 조회 후에는 데이터를 유지하도록 함
+      if (!isLoading) {
+        clearTransactionData();
+      }
+
+      // 선택된 주소의 좌표로 지도 이동
+      if (storeSelectedAddress.x && storeSelectedAddress.y) {
+        const location = {
+          lat: storeSelectedAddress.y,
+          lng: storeSelectedAddress.x,
+        };
+        setMapCenter(location);
+        setSearchLocationMarker(location);
+      }
+    }
+  }, [storeSelectedAddress]); // 의존성을 다시 storeSelectedAddress만으로 제한
+
   // API 호출 필요 여부 판단 기준
   const isNewAddressSearchRequired = () => {
     // 1. 새로운 주소 검색 상태이면 API 호출 필요
@@ -115,26 +190,56 @@ export const useMainPageModule = () => {
 
   // Daum 우편번호 관리
   const { execDaumPostcode, postcodeRef } = useDaumPostcode((data) => {
+    console.log('🔍 새로운 주소 검색 시작:', data);
+
     // 새로운 주소 검색 시 selectedAddress 초기화
     clearSelectedAddress();
 
-    // 새로운 주소 검색 시 실거래가 데이터 초기화 (단, 실거래가 조회 중이 아닐 때만)
+    // 새로운 주소 검색 시 실거래가 데이터 초기화는 제거
+    // 사용자가 명시적으로 새로운 실거래가 조회를 요청할 때만 초기화
     if (!isLoading) {
       clearTransactionData();
     }
 
-    // 새로운 주소 검색 상태로 설정
+    // 새로운 주소 타입으로 설정
+    console.log('새로운 주소 검색 시 activeAddressType을 new로 설정');
+    setActiveAddressType('new');
     setIsNewAddressSearch(true);
 
-    handleDaumPostcodeResult(
-      data,
-      setRoadAddress,
-      setSavedLawdCode,
-      setDong,
-      setHo,
-      setSearchQuery,
-      setShowPostcode,
-      setAddressSaveData
+    // 새로운 주소 데이터를 별도로 저장
+    const newAddressData = {
+      roadAddress: data.roadAddress || '',
+      dong: '',
+      ho: '',
+      searchQuery: data.address || '',
+      savedLawdCode: data.bcode.substring(0, 5) || '',
+    };
+    setNewAddressData(newAddressData);
+
+    // 메인 상태도 새로운 주소로 초기화
+    console.log('새로운 주소 검색 시 메인 상태 초기화:', {
+      roadAddress: data.roadAddress || '',
+      dong: '',
+      ho: '',
+      searchQuery: data.address || '',
+    });
+    setRoadAddress(data.roadAddress || '');
+    setDong('');
+    setHo('');
+    setSearchQuery(data.address || '');
+    setSavedLawdCode(data.bcode.substring(0, 5) || '');
+
+    // 주소 저장 데이터 설정 (handleDaumPostcodeResult 대신 직접 설정)
+    const addressSaveData = {
+      roadAddress: data.roadAddress || '',
+      jibunAddress: data.jibunAddress || '',
+      legalDistrictCode: data.bcode.substring(0, 5) || '',
+    };
+    setAddressSaveData(addressSaveData);
+    setShowPostcode(false);
+
+    console.log(
+      'handleDaumPostcodeResult 호출 완료 후 activeAddressType 확인 필요'
     );
   }, setShowPostcode);
 
@@ -143,8 +248,10 @@ export const useMainPageModule = () => {
     if (
       isAuthenticated &&
       storeUserAddresses.length > 0 &&
+      !newAddressData.roadAddress &&
       !(roadAddress || '').trim() && // roadAddress가 비어있을 때만 초기화
-      !(dong || '').trim() // dong이 비어있을 때만 초기화
+      !(dong || '').trim() && // dong이 비어있을 때만 초기화
+      !storeSelectedAddress // 선택된 주소가 없을 때만 초기화
     ) {
       // 대표 주소 또는 첫 번째 주소 선택
       const targetAddress =
@@ -178,7 +285,8 @@ export const useMainPageModule = () => {
         setSavedLawdCode(targetAddress.legalDistrictCode || '');
       }
 
-      // 초기 상태 설정 시 실거래가 데이터 초기화 (단, 실거래가 조회 중이 아닐 때만)
+      // 초기 상태 설정 시 실거래가 데이터 초기화는 제거
+      // 앱 초기 로드 시에는 기존 데이터를 유지
       if (!isLoading) {
         clearTransactionData();
       }
@@ -186,89 +294,60 @@ export const useMainPageModule = () => {
   }, [
     isAuthenticated,
     storeUserAddresses.length,
-    storeUserAddresses.find((addr) => addr.isPrimary)?.id, // 대표 주소 ID 변경 감지
+    // storeUserAddresses.find((addr) => addr.isPrimary)?.id 제거 - 탭 변경 시 불필요한 실행 방지
     // setter 함수들은 의존성에서 제거 (무한 루프 방지)
   ]);
 
   // 주소 변경 시 실거래가 데이터도 함께 가져오기
   const handleAddressChangeWithTransaction = (address: UserAddress) => {
+    console.log('handleAddressChangeWithTransaction 호출됨:', {
+      address,
+      activeAddressType,
+    });
+
+    // 드롭다운 주소 타입으로 설정
+    setActiveAddressType('dropdown');
+
+    // 주소 선택 (상태 업데이트는 useEffect에서 처리)
     selectAddress(address);
-
-    // 기존 저장된 주소 선택 상태로 설정
-    setIsNewAddressSearch(false);
-
-    // 선택된 주소 정보를 파싱하여 상태 업데이트
-    if (address) {
-      // 동/호 정보를 직접 사용 (정규식 추출 불필요)
-      const extractedDong = address.dong || '';
-      const extractedHo = address.ho || '';
-
-      // 도로명 주소가 있으면 도로명 주소 사용, 없으면 지번 주소 사용
-      let baseAddress = '';
-      if (address.roadAddress && address.roadAddress.trim()) {
-        baseAddress = address.roadAddress.trim();
-      } else if (address.lotAddress && address.lotAddress.trim()) {
-        baseAddress = address.lotAddress.trim();
-      } else {
-        // 둘 다 없으면 completeAddress에서 동/호 제거한 값 사용
-        const detailPart = address.completeAddress;
-        baseAddress = detailPart;
-      }
-
-      // 상태 설정
-      setRoadAddress(baseAddress);
-      setDong(extractedDong);
-      setHo(extractedHo);
-
-      setSearchQuery(address.completeAddress);
-      setSavedLawdCode(address.legalDistrictCode || '');
-
-      // 주소 변경 시 실거래가 데이터 초기화 (단, 실거래가 조회 중이 아닐 때만)
-      if (!isLoading) {
-        clearTransactionData();
-      }
-
-      // 선택된 주소의 좌표로 지도 이동
-      if (address.x && address.y) {
-        const location = {
-          lat: address.y,
-          lng: address.x,
-        };
-        setMapCenter(location);
-        setSearchLocationMarker(location);
-      }
-    } else {
-      console.error(
-        '❌ handleAddressChangeWithTransaction - address가 null입니다.'
-      );
-    }
   };
 
   // 지도 이동 전용 (실거래가 데이터 없이)
-  const handleMoveToAddressOnly = async () => {
-    const isNewSearchRequired = isNewAddressSearchRequired();
+  const handleMoveToAddressOnly = async (
+    currentDong?: string,
+    currentHo?: string
+  ) => {
+    console.log('handleMoveToAddressOnly 호출됨:', { currentDong, currentHo });
 
-    // ✅ 새로운 주소 검색인지 판단
-    if (isNewSearchRequired) {
+    // 전달받은 동/호 값 사용 (없으면 DOM에서 가져오기)
+    const dongValue = currentDong || dong || '';
+    const hoValue = currentHo || ho || '';
+
+    console.log('동/호 값:', { dongValue, hoValue, roadAddress });
+
+    if (!dongValue) {
+      alert('동을 입력해주세요.');
+      return;
+    }
+
+    // 동/호가 변경되었는지 확인
+    const isDongChanged =
+      storeSelectedAddress && storeSelectedAddress.dong !== dongValue;
+    const isHoChanged =
+      storeSelectedAddress && storeSelectedAddress.ho !== hoValue;
+    const needsNewSearch = isNewAddressSearch || isDongChanged || isHoChanged;
+
+    console.log('검색 필요 여부:', {
+      isDongChanged,
+      isHoChanged,
+      needsNewSearch,
+    });
+
+    // ✅ 새로운 주소 검색이거나 동/호가 변경된 경우 API 호출
+    if (needsNewSearch) {
       // 새로운 주소 검색 - API 호출 필요
       if (!roadAddress) {
         alert('상세 주소를 입력해주세요.');
-        return;
-      }
-
-      // ref를 통해 동/호 값을 가져오기
-      const dongInput = document.querySelector(
-        'input[placeholder="동 (예: 101)"]'
-      ) as HTMLInputElement;
-      const hoInput = document.querySelector(
-        'input[placeholder="호 (선택사항)"]'
-      ) as HTMLInputElement;
-
-      const currentDong = dongInput ? dongInput.value.trim() : '';
-      const currentHo = hoInput ? hoInput.value.trim() : '';
-
-      if (!currentDong) {
-        alert('동을 입력해주세요.');
         return;
       }
 
@@ -276,15 +355,18 @@ export const useMainPageModule = () => {
 
       try {
         // API 호출로 좌표 가져오기
-        const hoPart = currentHo ? ` ${currentHo}호` : '';
-        const completeAddress = `${roadAddress} ${currentDong}동${hoPart}`;
+        const hoPart = hoValue ? ` ${hoValue}호` : '';
+        const completeAddress = `${roadAddress} ${dongValue}동${hoPart}`;
+        console.log('검색할 주소:', completeAddress);
         const searchData = await placesApi.searchByKeyword(completeAddress);
+        console.log('검색 결과:', searchData);
 
         if (searchData && searchData.length > 0) {
           const location = {
             lat: parseFloat(searchData[0].latitude),
             lng: parseFloat(searchData[0].longitude),
           };
+          console.log('지도 이동할 위치:', location);
           setMapCenter(location);
           setSearchLocationMarker(location);
         } else {
@@ -317,16 +399,9 @@ export const useMainPageModule = () => {
       return;
     }
 
-    // ref를 통해 동/호 값을 가져오기
-    const dongInput = document.querySelector(
-      'input[placeholder="동 (예: 101)"]'
-    ) as HTMLInputElement;
-    const hoInput = document.querySelector(
-      'input[placeholder="호 (선택사항)"]'
-    ) as HTMLInputElement;
-
-    const currentDong = dongInput ? dongInput.value.trim() : '';
-    const currentHo = hoInput ? hoInput.value.trim() : '';
+    // 현재 상태에서 동/호 값 가져오기
+    const currentDong = dong || '';
+    const currentHo = ho || '';
 
     if (!currentDong) {
       alert('동을 입력해주세요.');
@@ -469,9 +544,54 @@ export const useMainPageModule = () => {
   };
 
   // 실거래가 조회 (새로운 API 사용)
-  const handleMoveToAddress = async () => {
-    // 실거래가 조회 모달 열기
-    setShowTransactionSearchModal(true);
+  const handleMoveToAddress = (
+    selectedType: string = '0',
+    buildingCode?: string
+  ) => {
+    try {
+      console.log('🔍 실거래가 조회 시작 - 기존 데이터 초기화');
+
+      // 실거래가 조회 시작 시 기존 데이터 초기화
+      clearTransactionData();
+
+      // 주소 파싱
+      const address =
+        isNewAddressSearch && newAddressData.roadAddress
+          ? newAddressData.roadAddress
+          : storeSelectedAddress?.completeAddress || '';
+
+      const parsedAddress = parseAddress(address);
+
+      // 선택된 타입에 따라 API 타입 결정
+      // 0: 아파트, 1: 연립/다세대, 2: 오피스텔
+      const apiType = selectedType;
+
+      // 건물 코드가 있고 아파트/연립/오피스텔인 경우 fetchTransactionDetailApart 사용
+      if (
+        buildingCode &&
+        (apiType === '0' || apiType === '1' || apiType === '2')
+      ) {
+        fetchTransactionDetailApart({
+          buildingCode,
+          type: apiType,
+          contractYear: selectedYear,
+          contractType: '0', // 전체
+        });
+      } else {
+        // 건물 코드가 없거나 단독/다가구인 경우 fetchTransactionDetailSingle 사용
+        fetchTransactionDetailSingle({
+          addrSido: parsedAddress.addrSido,
+          addrSigungu: parsedAddress.addrSigungu,
+          addrDong: parsedAddress.addrDong,
+          type: apiType,
+          contractYear: selectedYear,
+          contractType: '0', // 전체
+        });
+      }
+    } catch (error) {
+      console.error('실거래가 조회 실패:', error);
+      alert('실거래가 조회 중 오류가 발생했습니다.');
+    }
   };
 
   // 건물 선택 시 호출되는 함수
@@ -480,6 +600,11 @@ export const useMainPageModule = () => {
     buildingName: string
   ) => {
     try {
+      console.log('🔍 건물 선택 - 실거래가 조회 시작 - 기존 데이터 초기화');
+
+      // 실거래가 조회 시작 시 기존 데이터 초기화
+      clearTransactionData();
+
       // buildingType을 API type으로 매핑
       const getApiType = (buildingType: string): string => {
         switch (buildingType) {
@@ -530,10 +655,28 @@ export const useMainPageModule = () => {
     }
   };
 
+  // 현재 검색된 주소 정보를 selectedAddress로 변환
+  // 새 주소 검색 중이면 새 주소 우선, 아니면 저장된 주소 사용
+  const currentSelectedAddress =
+    isNewAddressSearch && roadAddress
+      ? {
+          id: 0, // 임시 ID
+          nickname: '새 주소',
+          x: 0, // 임시 좌표
+          y: 0, // 임시 좌표
+          roadAddress: roadAddress,
+          lotAddress: roadAddress, // 임시로 roadAddress 사용
+          completeAddress: roadAddress,
+          dong: dong,
+          ho: ho,
+          isPrimary: false,
+        }
+      : storeSelectedAddress;
+
   return {
     // 상태
     userAddresses: storeUserAddresses,
-    selectedAddress: storeSelectedAddress,
+    selectedAddress: currentSelectedAddress,
     searchQuery,
     roadAddress,
     dong,
@@ -544,6 +687,8 @@ export const useMainPageModule = () => {
     selectedMonth,
     showPostcode,
     isNewAddressSearch,
+    newAddressData,
+    activeAddressType,
 
     // 위치 관리 상태
     gpsLocation,
@@ -559,6 +704,8 @@ export const useMainPageModule = () => {
     setSelectedYear,
     setSelectedMonth,
     setShowPostcode,
+    setNewAddressData,
+    setActiveAddressType,
 
     // 액션 함수
     handleAddressChangeWithTransaction,
