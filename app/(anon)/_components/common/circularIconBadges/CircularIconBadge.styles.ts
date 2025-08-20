@@ -13,6 +13,7 @@ export const styles = {
   "match-blue": "bg-brand text-white",
   mismatch: "bg-brand-error text-white",
   unchecked: "bg-brand-light-gray text-brand-dark-gray",
+  uncheck: "bg-brand-light-gray text-brand-dark-gray",
   "unchecked-white": "bg-brand-white text-brand-dark-gray",
   link: "bg-brand-gold text-white",
   "match-light-green": "bg-[color-mix(in_srgb,theme(colors.brand.green)_30%,transparent)] text-brand-green",

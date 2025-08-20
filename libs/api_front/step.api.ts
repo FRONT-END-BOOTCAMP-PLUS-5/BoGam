@@ -8,11 +8,11 @@ export interface StepDetailData {
   mismatch: number;
   match: number;
   unchecked: number;
-  details: Record<string, string>;
+  jsonDetails: Record<string, string>;
   createdAt: string;
   updatedAt: string;
-  mainNum: number;
-  subNum: number;
+  stepNumber: number;
+  detail: number;
 }
 
 // API 응답 타입 정의
