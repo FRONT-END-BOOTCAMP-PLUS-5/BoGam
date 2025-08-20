@@ -155,17 +155,17 @@ class FrontendAxiosInstance {
         // 쿠키 기반 인증을 위해 withCredentials 설정
         config.withCredentials = true;
 
-        // 사용자 정보를 헤더에 포함 (선택사항)
+        // 사용자 정보를 헤더에 포함 (선택사항) - 인코딩 처리
         (config.headers as Record<string, string>)['X-User-Nickname'] =
-          session.user.nickname || '';
+          encodeURIComponent(session.user.nickname || '');
       }
 
       // CSRF 토큰이 필요한 경우 (선택사항)
       if (config.method !== 'get' && config.headers) {
         const csrfToken = await this.getCsrfToken();
         if (csrfToken) {
-          (config.headers as Record<string, string>)['X-CSRF-Token'] =
-            csrfToken;
+                  (config.headers as Record<string, string>)['X-CSRF-Token'] =
+          encodeURIComponent(csrfToken);
         }
       }
     } catch (error) {

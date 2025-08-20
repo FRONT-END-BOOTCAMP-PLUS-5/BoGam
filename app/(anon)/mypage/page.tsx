@@ -8,26 +8,26 @@ import { styles } from './page.styles';
 import { mockData } from './_data/mockData';
 
 export default function MyPage() {
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('1');
+  const [selectedAddressId, setSelectedAddressId] = useState<number>(1);
   const [addresses, setAddresses] = useState(mockData.addresses);
 
   const selectedAddress = addresses.find(
     (addr) => addr.id === selectedAddressId
   );
 
-  const handleAddressSelect = (id: string) => {
+  const handleAddressSelect = (id: number) => {
     setSelectedAddressId(id);
   };
 
-  const handleAddressToggleFavorite = (id: string) => {
+  const handleAddressToggleFavorite = (id: number) => {
     setAddresses((prev) =>
       prev.map((addr) =>
-        addr.id === id ? { ...addr, isFavorite: !addr.isFavorite } : addr
+        addr.id === id ? { ...addr, isPrimary: !addr.isPrimary } : addr
       )
     );
   };
 
-  const handleAddressDelete = (id: string) => {
+  const handleAddressDelete = (id: number) => {
     setAddresses((prev) => prev.filter((addr) => addr.id !== id));
     // 삭제된 주소가 선택된 주소였다면 첫 번째 주소로 변경
     if (id === selectedAddressId) {

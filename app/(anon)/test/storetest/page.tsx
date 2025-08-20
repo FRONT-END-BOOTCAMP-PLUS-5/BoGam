@@ -3,6 +3,7 @@
 import React from 'react';
 import { useUserStore } from '@libs/stores/userStore';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 
 export default function StoreTestPage() {
   const nickname = useUserStore((state) => state.nickname);
@@ -73,7 +74,7 @@ export default function StoreTestPage() {
           <h2 className="text-xl font-semibold text-gray-800 mb-4">전체 주소 목록</h2>
           {userAddresses && userAddresses.length > 0 ? (
             <div className="space-y-4">
-              {userAddresses.map((address: any, index: number) => (
+              {userAddresses.map((address: UserAddress, index: number) => (
                 <div key={address.id} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-gray-800">

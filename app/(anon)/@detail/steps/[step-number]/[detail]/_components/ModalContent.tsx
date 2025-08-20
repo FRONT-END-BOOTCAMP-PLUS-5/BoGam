@@ -3,111 +3,150 @@
 import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
+import DataGrid from './contents/DataGrid';
+import TextOnly from './contents/TextOnly';
+import Table from './contents/Table';
+import List from './contents/List';
 
-interface StepData {
-  id: number;
-  userAddressId: number;
-  stepId: number;
-  mismatch: number;
-  match: number;
-  unchecked: number;
-  details: Record<string, string>;
-  createdAt: string;
-  updatedAt: string;
-  mainNum: number;
-  subNum: number;
+interface ContentSection {
+  title?: string;
+  subtitle?: string;
+  contents?: string[];
+  summary?: string;
 }
 
-interface ModalContentProps {
-  stepData: StepData;
+interface StepContentData {
+  dataType: string;
+  data: ContentSection[][];
 }
 
-export default function ModalContent({ stepData }: ModalContentProps) {
-  const detailsEntries = Object.entries(stepData.details);
+export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
+  const [stepContentData, setStepContentData] = useState<StepContentData | null>(null);
+  const [dataType, setDataType] = useState<string>('default');
+  
+  // URL에서 직접 stepNumber와 detail 가져오기
+  const pathname = window.location.pathname;
+  const pathParts = pathname.split('/');
+  const stepNumber = pathParts[2]; // /steps/4/2 에서 4
+  const detail = pathParts[3];     // /steps/4/2 에서 2
 
-  // 20개씩 그룹화
-  const groupedEntries = [];
-  for (let i = 0; i < detailsEntries.length; i += 20) {
-    groupedEntries.push(detailsEntries.slice(i, i + 20));
+  // JSON 파일에서 콘텐츠 데이터 가져오기
+  useEffect(() => {
+    const loadContentData = async () => {
+      try {
+        // 정적 import 방식으로 변경
+        if (stepNumber === '4' && detail === '2') {
+          const contentModule = await import('./contents/data/step-4-2-contents.json');
+          setStepContentData(contentModule.default);
+          setDataType(contentModule.default.dataType || 'default');
+        } else if (stepNumber === '4' && detail === '3') {
+          const contentModule = await import('./contents/data/step-4-3-contents.json');
+          setStepContentData(contentModule.default);
+          setDataType(contentModule.default.dataType || 'default');
+        } else if (stepNumber === '4' && detail === '4') {
+          const contentModule = await import('./contents/data/step-4-4-contents.json');
+          setStepContentData(contentModule.default);
+          setDataType(contentModule.default.dataType || 'default');
+        }
+      } catch {
+        console.log('Step content data not found, using default DataGrid');
+        setDataType('default');
+      }
+    };
+
+    loadContentData();
+  }, [stepNumber, detail]);
+
+  // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
+  const renderSwiperContent = (pageData: ContentSection[]) => {
+    switch (dataType) {
+      case 'TextOnly':
+        return <TextOnly data={pageData}/>;
+      case 'Table':
+        return <Table data={pageData as unknown as Record<string, string>} />;
+      case 'List':
+        return <List data={pageData as unknown as Record<string, string>} />;
+      case 'DataGrid':
+        return <DataGrid data={pageData as unknown as Record<string, string>} />;
+      default:
+        return null;
+    }
+  };
+
+  // JSON 데이터가 있는 경우 JSON의 data 배열을 페이지로 사용
+  if (stepContentData && stepContentData.dataType && stepContentData.data) {
+    const handlePageChange = (page: number) => {
+      setCurrentPage(page);
+      if (swiperRef.current) {
+        swiperRef.current.slideTo(page);
+      }
+    };
+
+    return (
+      <>
+        {/* 공통 헤더 렌더링 */}
+        <div className={styles.stepHeader}>
+          <h2 className={styles.stepTitle}>
+            {`${stepNumber}-${detail}단계 상세 보기`}
+          </h2>
+        </div>
+
+        {/* Swiper로 JSON의 data 배열 항목 하나당 한 페이지 */}
+        <Swiper 
+          spaceBetween={50} 
+          slidesPerView={1} 
+          className={styles.swiperContainer}
+          onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+        >
+          {stepContentData.data.map((pageData: ContentSection[], pageIndex: number) => (
+            <SwiperSlide key={pageIndex}>
+              <div className={styles.mainContent}>
+                {renderSwiperContent(pageData)}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        {/* 페이지 인디케이터 */}
+        {stepContentData.data.length > 1 && (
+          <div className={styles.pageIndicator} aria-label="페이지 인디케이터">
+            {stepContentData.data.map((_: unknown, index: number) => (
+              <button
+                key={index}
+                className={`${styles.pageDot} ${
+                  index === currentPage ? styles.pageDotActive : styles.pageDotInactive
+                }`}
+                aria-label={`페이지 ${index + 1}${index === currentPage ? ' (현재)' : ''}`}
+                onClick={() => handlePageChange(index)}
+              />
+            ))}
+          </div>
+        )}
+      </>
+    );
   }
 
-  // value 값에 따라 렌더링할 내용 결정
-  const renderValue = (value: string) => {
-    if (value === 'match') {
-      return <CircularIconBadge type="match" size="xsm" />;
-    }
-    if (value === 'mismatch') {
-      return <CircularIconBadge type="mismatch" size="xsm" />;
-    }
-    if (value === 'unchecked') {
-      return <CircularIconBadge type="unchecked" size="xsm" />;
-    }
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    if (swiperRef.current) {
-      swiperRef.current.slideTo(page);
-    }
-  };
-
+  // JSON 데이터가 없는 경우 기본 DataGrid 표시
   return (
     <>
-      {/* 스텝 번호 표시 */}
+      {/* 공통 헤더 렌더링 */}
       <div className={styles.stepHeader}>
         <h2 className={styles.stepTitle}>
-          {stepData.mainNum}-{stepData.subNum}단계 상세 보기
+          {`${stepNumber}-${detail}단계 상세 보기`}
         </h2>
       </div>
 
-      {/* Swiper로 20개씩 그룹화된 슬라이드 */}
-      <Swiper 
-        spaceBetween={50} 
-        slidesPerView={1} 
-        className={styles.swiperContainer}
-        onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper;
-        }}
-      >
-        {groupedEntries.map((group, groupIndex) => (
-          <SwiperSlide key={groupIndex}>
-            <div className={styles.mainContent}>
-              {group.map(([key, value]) => (
-                <div key={key} className={styles.detailItem}>
-                  <span className={styles.detailKey}>
-                    {key}:
-                  </span>
-                  <div className={styles.detailValue}>
-                    {renderValue(value)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-
-      {/* 페이지 인디케이터 */}
-      {groupedEntries.length > 1 && (
-        <div className={styles.pageIndicator} aria-label="페이지 인디케이터">
-          {groupedEntries.map((_, index) => (
-            <button
-              key={index}
-              className={`${styles.pageDot} ${
-                index === currentPage ? styles.pageDotActive : styles.pageDotInactive
-              }`}
-              aria-label={`페이지 ${index + 1}${index === currentPage ? ' (현재)' : ''}`}
-              onClick={() => handlePageChange(index)}
-            />
-          ))}
-        </div>
-      )}
+      {/* 기본 DataGrid 표시 */}
+      <div className={styles.mainContent}>
+        <DataGrid data={{}} />
+      </div>
     </>
   );
 }

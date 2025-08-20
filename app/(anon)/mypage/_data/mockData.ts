@@ -6,35 +6,69 @@ export const mockData = {
   },
   addresses: [
     {
-      id: '1',
-      address: '경기도 고양시 왕산동구 항시티 0로 000, B동 000호 (당사동, 전세보갑아파트)',
-      isFavorite: true,
-      isExpanded: true,
-      isActive: false
+      id: 1,
+      nickname: '고양시 항시티',
+      x: 127.123456,
+      y: 37.123456,
+      isPrimary: true,
+      legalDistrictCode: '4128500000',
+      lotAddress: '경기도 고양시 왕산동구 항시티 0로 000',
+      roadAddress: '경기도 고양시 왕산동구 항시티 0로 000',
+      completeAddress: '경기도 고양시 왕산동구 항시티 0로 000, B동 000호 (당사동, 전세보갑아파트)',
+      dong: 'B동',
+      ho: '000호'
     },
     {
-      id: '2',
-      address: '경기도 고양시 왕산동구 항시티 0로 000, B동 000호 (당사동, 전세보갑아파트)',
-      isFavorite: true,
-      isActive: true
+      id: 2,
+      nickname: '고양시 항시티 2',
+      x: 127.123457,
+      y: 37.123457,
+      isPrimary: false,
+      legalDistrictCode: '4128500000',
+      lotAddress: '경기도 고양시 왕산동구 항시티 0로 000',
+      roadAddress: '경기도 고양시 왕산동구 항시티 0로 000',
+      completeAddress: '경기도 고양시 왕산동구 항시티 0로 000, B동 000호 (당사동, 전세보갑아파트)',
+      dong: 'B동',
+      ho: '000호'
     },
     {
-      id: '3',
-      address: '서울특별시 강남구 강시티 0로 000, 100동 101호 (강남동, 전세보갑아파트)',
-      isFavorite: true,
-      isActive: false
+      id: 3,
+      nickname: '강남구 강시티',
+      x: 127.123458,
+      y: 37.123458,
+      isPrimary: false,
+      legalDistrictCode: '1168000000',
+      lotAddress: '서울특별시 강남구 강시티 0로 000',
+      roadAddress: '서울특별시 강남구 강시티 0로 000',
+      completeAddress: '서울특별시 강남구 강시티 0로 000, 100동 101호 (강남동, 전세보갑아파트)',
+      dong: '100동',
+      ho: '101호'
     },
     {
-      id: '4',
-      address: '서울특별시 강남구 강시티 0로 000, 100동 101호 (강남동, 전세보갑아파트)',
-      isFavorite: false,
-      isActive: false
+      id: 4,
+      nickname: '강남구 강시티 2',
+      x: 127.123459,
+      y: 37.123459,
+      isPrimary: false,
+      legalDistrictCode: '1168000000',
+      lotAddress: '서울특별시 강남구 강시티 0로 000',
+      roadAddress: '서울특별시 강남구 강시티 0로 000',
+      completeAddress: '서울특별시 강남구 강시티 0로 000, 100동 101호 (강남동, 전세보갑아파트)',
+      dong: '100동',
+      ho: '101호'
     },
     {
-      id: '5',
-      address: '서울특별시 강남구 강시티 0로 000, 100동 101호 (강남동, 전세보갑아파트)',
-      isFavorite: false,
-      isActive: false
+      id: 5,
+      nickname: '강남구 강시티 3',
+      x: 127.123460,
+      y: 37.123460,
+      isPrimary: false,
+      legalDistrictCode: '1168000000',
+      lotAddress: '서울특별시 강남구 강시티 0로 000',
+      roadAddress: '서울특별시 강남구 강시티 0로 000',
+      completeAddress: '서울특별시 강남구 강시티 0로 000, 100동 101호 (강남동, 전세보갑아파트)',
+      dong: '100동',
+      ho: '101호'
     }
   ],
   guideSummary: {

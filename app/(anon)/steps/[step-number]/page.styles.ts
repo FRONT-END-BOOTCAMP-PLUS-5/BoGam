@@ -8,6 +8,9 @@ export const styles = {
   // Title
   title: "text-2xl font-semibold text-gray-800 mb-8",
   
+  // Button Container
+  buttonContainer: "flex flex-col gap-4 items-center",
+  
   // Button
   clickButton: "bg-blue-500 text-white border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-blue-600 active:bg-blue-700"
 } as const;
