@@ -119,12 +119,12 @@ const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
 function SummaryPage({ title, contents }: { title: string; contents: { subtitle: string; items: string[] }[] }) {
   return (
     <div className={styles.generalPage}>
-      <div className="w-[50px] h-full flex flex-col bg-transparent border-none shadow-none flex-shrink-0">
-        <div className="flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
-        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
-        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
-        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray"></div>
-        <div className="flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray"></div>
+      <div className={styles.leftDiv}>
+        <div className={styles.leftFirst}></div>
+        <div className={styles.leftCenter}></div>
+        <div className={styles.leftCenter}></div>
+        <div className={styles.leftCenter}></div>
+        <div className={styles.leftLast}></div>
       </div>
       <div>
         <div className={styles.rightFirstOutsideBox}>
@@ -201,7 +201,7 @@ export function Steps3Page() {
     if (idx < pages.length - 1) {
       flipPages.push(
         <div key={`empty-${idx}`} className={styles.page}>
-    <div className={styles.pageContent} style={{backgroundColor:'var(--brand-light-gray)'}}></div>
+          <div className={styles.pageContent} style={{ backgroundColor: 'var(--brand-light-gray)' }}></div>
         </div>
       );
     }
@@ -220,7 +220,7 @@ export function Steps3Page() {
   if (loading) return <div>데이터를 불러오는 중...</div>;
   return (
     <div className={styles.book}>
-      <div style={{ position: 'absolute', top: '13%', left: '50%', transform: 'translateX(-50%)', zIndex: 100 }}>
+      <div className={styles.stateDiv}>
         <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
       </div>
       <HTMLFlipBook
@@ -270,10 +270,9 @@ export function Steps3Page() {
           {Array.from({ length: totalPages }).map((_, j) => (
             <button
               key={j}
-              className={`${onboardingStyles.dot} ${j === currentPage ? onboardingStyles.dotActive : ''} ${styles.indicatorDotBtn}`}
+              className={`${onboardingStyles.dot} ${j === currentPage ? onboardingStyles.dotActive : ''} ${styles.indicatorDotBtn} ${j === currentPage ? 'bg-black' : 'bg-[#A7A8A9]'}`}
               aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
               onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
-              style={{ background: j === currentPage ? '#000000' : '#A7A8A9' }}
             />
           ))}
         </div>
