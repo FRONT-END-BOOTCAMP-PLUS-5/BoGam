@@ -27,5 +27,8 @@ export const styles = {
   // Icon weights
   thin: "stroke-[1.5]",
   normal: "stroke-[2]",
-  thick: "stroke-[3]"
+  thick: "stroke-[3]",
+  
+  // Clickable state
+  clickable: "cursor-pointer hover:opacity-80 active:opacity-60"
 } as const;

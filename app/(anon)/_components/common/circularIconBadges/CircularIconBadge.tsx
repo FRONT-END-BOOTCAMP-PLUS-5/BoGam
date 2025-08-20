@@ -9,9 +9,11 @@ type CircularIconBadgeProps = {
   size?: 'xsm' | 'sm' | 'md' | 'lg';
   weight?: 'thin' | 'normal' | 'thick';
   className?: string;
+  onClick?: () => void;
+  clickable?: boolean;
 };
 
-const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: CircularIconBadgeProps) => {
+const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className, onClick, clickable = false }: CircularIconBadgeProps) => {
   // 아이콘 결정
   const getIcon = () => {
     switch (type) {
@@ -74,8 +76,12 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
           styles.badge,
           styles[size as keyof typeof styles], // 일반 아이콘과 동일한 size 클래스 사용
           styles[type as keyof typeof styles],
+          clickable && styles.clickable,
           className
         )}
+        onClick={onClick}
+        role={clickable ? 'button' : undefined}
+        tabIndex={clickable ? 0 : undefined}
       >
         <span className={clsx(getEmojiSizeClass(), 'leading-none flex items-center justify-center')}>😱</span>
       </div>
@@ -88,8 +94,12 @@ const CircularIconBadge = ({ type, size = 'md', weight = 'normal', className }: 
         styles.badge,
         styles[size as keyof typeof styles],
         styles[type as keyof typeof styles],
+        clickable && styles.clickable,
         className
       )}
+      onClick={onClick}
+      role={clickable ? 'button' : undefined}
+      tabIndex={clickable ? 0 : undefined}
     >
       <Icon className={clsx(getIconSizeClass(), styles[weight])} />
     </div>
