@@ -25,17 +25,14 @@ export const useMapStore = create<MapStore>((set) => ({
   // 지도 액션
   setMapCenter: (location) => {
     set({ mapCenter: location });
-    console.log('🗺️ 지도 중심점 설정:', location);
   },
 
   setSearchLocationMarker: (location) => {
     set({ searchLocationMarker: location });
-    console.log('📍 검색 위치 마커 설정:', location);
   },
 
   setAdjustBounds: (adjust) => {
     set({ adjustBounds: adjust });
-    console.log('🔧 지도 경계 조정 설정:', adjust);
   },
 
   // 지도 초기화
@@ -45,6 +42,5 @@ export const useMapStore = create<MapStore>((set) => ({
       searchLocationMarker: null,
       adjustBounds: true,
     });
-    console.log('🔄 지도 상태 초기화');
   },
 }));

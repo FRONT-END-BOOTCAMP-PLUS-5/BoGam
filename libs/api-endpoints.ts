@@ -111,6 +111,7 @@ export const API_ENDPOINTS = {
   TRANSACTION_OFFICETEL: '/api/transaction/officetel',
   ACTUAL_TRANSACTION: '/api/actual-transaction',
   ACTUAL_TRANSACTION_HOUSE: '/api/actual-transaction-house',
+  TRANSACTION_DETAILS: '/api/transaction-details',
 
   // 외부 API 엔드포인트 (CODEF)
   CODEF_TAX_CERT: CODEF_API_CONFIG.TAX_CERT_FULL_URL,

@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { StepResultUsecase } from '@be/applications/stepResults/usecases/StepResultUsecase';
 import { StepResultRepositoryImpl } from '@be/infrastructure/repository/StepResultRepositoryImpl';
 
-// GET /api/step-result?stepNumber=1&detail=2
+// GET /api/step-result?userAddressNickname=채원강남집&stepNumber=1&detail=2
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     // userAddressNickname은 전역에서 가져옴. 일단 임시로 설정
-    const userAddressNickname = '채원강남집';
+    const userAddressNickname = searchParams.get('userAddressNickname');
     const mainNum = searchParams.get('stepNumber');
     const subNum = searchParams.get('detail');
 
