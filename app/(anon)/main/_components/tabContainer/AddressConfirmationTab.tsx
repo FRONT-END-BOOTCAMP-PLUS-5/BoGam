@@ -40,11 +40,6 @@ export const AddressConfirmationTab: React.FC = () => {
       const dongValue = selectedAddress.dong || '';
       const hoValue = selectedAddress.ho || '';
 
-      console.log('주소 선택 시 동/호 업데이트:', {
-        dongValue,
-        hoValue,
-      });
-
       // React 상태 업데이트
       setDong(dongValue);
       setHo(hoValue);
@@ -55,13 +50,6 @@ export const AddressConfirmationTab: React.FC = () => {
   const displaySearchQuery = selectedAddress?.completeAddress || '';
 
   // 디버깅: 현재 상태 로그
-  console.log('AddressConfirmationTab 상태:', {
-    dong,
-    ho,
-    selectedAddress: selectedAddress?.completeAddress,
-    searchQuery,
-    displaySearchQuery,
-  });
 
   return (
     <div className={styles.container}>

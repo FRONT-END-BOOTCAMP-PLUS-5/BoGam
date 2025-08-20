@@ -64,8 +64,6 @@ export const useTransactionManagement = () => {
           console.warn('지원하지 않는 건물 타입입니다.');
           return;
       }
-
-      console.log('실거래가 데이터 조회 완료');
     } catch (error) {
       console.error('실거래가 데이터 조회 실패:', error);
     }
@@ -74,7 +72,6 @@ export const useTransactionManagement = () => {
   // 실거래가 데이터 초기화
   const handleClearTransactionData = () => {
     clearTransactionData();
-    console.log('실거래가 데이터가 초기화되었습니다.');
   };
 
   return {

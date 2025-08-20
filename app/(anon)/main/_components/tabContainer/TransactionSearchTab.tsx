@@ -46,17 +46,11 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
 
   // 선택된 주소가 변경될 때마다 주소 파싱
   useEffect(() => {
-    console.log('🔍 주소 파싱 useEffect 실행:', {
-      selectedAddressCompleteAddress: selectedAddress?.completeAddress,
-      roadAddress: selectedAddress?.roadAddress,
-    });
-
     if (selectedAddress) {
       const address =
         selectedAddress.completeAddress || selectedAddress.roadAddress || '';
       const parsed = parseAddressString(address);
       setParsedAddress(parsed);
-      console.log('주소 파싱 결과:', parsed);
     }
   }, [selectedAddress]);
 

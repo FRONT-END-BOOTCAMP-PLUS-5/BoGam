@@ -130,17 +130,11 @@ export const useMainPageModule = () => {
   // storeSelectedAddress가 변경될 때마다 상태 업데이트 (드롭다운 선택 시)
   useEffect(() => {
     if (storeSelectedAddress) {
-      console.log(
-        '🔍 storeSelectedAddress 변경 감지, 드롭다운 주소로 전환:',
-        storeSelectedAddress
-      );
-
       // 이미 같은 주소가 선택되어 있다면 상태 업데이트하지 않음
       const currentAddress = `${roadAddress} ${dong}동 ${ho}호`.trim();
       const newAddress = storeSelectedAddress.completeAddress;
 
       if (currentAddress === newAddress) {
-        console.log('🔍 같은 주소가 이미 선택되어 있음, 상태 업데이트 건너뜀');
         return;
       }
 
@@ -148,13 +142,10 @@ export const useMainPageModule = () => {
       const currentSelectedId = storeSelectedAddress.id;
 
       if (lastProcessedAddressId.current === currentSelectedId) {
-        console.log('🔍 이미 처리된 주소 ID, 상태 업데이트 건너뜀');
         return;
       }
 
       lastProcessedAddressId.current = currentSelectedId;
-
-      // 드롭다운 주소 선택
 
       // 동/호 정보를 직접 사용
       const extractedDong = storeSelectedAddress.dong || '';
@@ -177,12 +168,6 @@ export const useMainPageModule = () => {
       }
 
       // 드롭다운 주소로 메인 상태 업데이트
-      console.log('드롭다운 주소 선택 시 메인 상태 업데이트:', {
-        baseAddress,
-        extractedDong,
-        extractedHo,
-        completeAddress: storeSelectedAddress.completeAddress,
-      });
       setRoadAddress(baseAddress);
       setDong(extractedDong);
       setHo(extractedHo);
@@ -221,8 +206,6 @@ export const useMainPageModule = () => {
 
   // Daum 우편번호 관리
   const { execDaumPostcode, postcodeRef } = useDaumPostcode(async (data) => {
-    console.log('🔍 새로운 주소 검색 시작:', data);
-
     // 새로운 주소 검색 시 실거래가 데이터 초기화
     if (!isLoading) {
       clearTransactionData();
@@ -289,8 +272,6 @@ export const useMainPageModule = () => {
         };
         setAddressSaveData(addressSaveData);
         setShowPostcode(false);
-
-        console.log('새 주소가 성공적으로 저장되고 선택되었습니다.');
 
         // 새 주소 검색 완료 후 상태 초기화 (다음 검색을 위해)
         setTimeout(() => {
