@@ -234,7 +234,7 @@ export function Steps3Page() {
         drawShadow={true}
         flippingTime={1000}
         usePortrait={false}
-        style={{ marginLeft, marginTop: 48 }}
+        style={{ marginLeft: '-50%', marginTop: 48 }}
         startZIndex={0}
         autoSize={true}
         clickEventForward={true}
