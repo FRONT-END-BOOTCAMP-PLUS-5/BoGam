@@ -201,7 +201,7 @@ export function Steps3Page() {
     if (idx < pages.length - 1) {
       flipPages.push(
         <div key={`empty-${idx}`} className={styles.page}>
-          <div className={styles.pageContent}></div>
+    <div className={styles.pageContent} style={{backgroundColor:'var(--brand-light-gray)'}}></div>
         </div>
       );
     }
