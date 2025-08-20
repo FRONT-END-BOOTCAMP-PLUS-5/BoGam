@@ -1,5 +1,5 @@
 export const styles = {
-  container: "p-5 min-h-screen bg-white",
+  container: "p-5 min-h-screen bg-[rgba(229,231,235,0.3)]",
   content: "text-center py-10 px-5",
   title: "text-2xl font-semibold text-gray-800 mb-8",
   clickButton: "bg-blue-500 text-white border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-blue-600 active:bg-blue-700",
@@ -17,7 +17,7 @@ export const styles = {
   indicatorDots: 'flex justify-center items-center w-full',
   indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
   indicatorDotBtn: 'mx-[6px]',
-  book: 'max-w-[480px] w-full mx-auto bg-brand-light-gray relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
+  book: 'max-w-[480px] w-full mx-auto bg-[rgba(229,231,235,0.3)] relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
   flipBook: 'flex items-center justify-center w-fit h-fit overflow-visible relative border-none',
   flex: 'flex h-full',
   introPage: 'bg-white mx-auto w-full h-[300px] flex items-center justify-center box-border',
@@ -52,6 +52,6 @@ export const styles = {
   backPage: 'h-screen w-[1.5%] bg-gray-300 border-t border-t-gray-400 border-r border-r-gray-400 border-b border-b-gray-400 rounded-xl',
   generalWhitePage: 'bg-white w-full h-full flex items-start justify-start box-border relative',
   smallFontDiv: 'relative pb-[2vh] pt-[2vh] border-b border-b-brand-light-gray w-full',
-  borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh]',
+  borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
   danger: 'text-[0.8em] font-bold w-[22%] shadow-[inset_0px_-11px_0_#EDC9C9]'
 } as const;
