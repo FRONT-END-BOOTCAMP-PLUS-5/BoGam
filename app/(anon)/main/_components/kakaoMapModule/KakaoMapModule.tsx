@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useKakaoMap } from '@/(anon)/main/_components/hooks/useKakaoMap';
+import { useKakaoMap } from '@/hooks/main/useKakaoMap';
 import {
   Location,
   KakaoMapOptions,
@@ -9,7 +9,7 @@ import {
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
-import { useLocationManager } from '@/(anon)/main/_components/hooks/useLocationManager';
+import { useLocationManager } from '@/hooks/main/useLocationManager';
 
 interface KakaoMapModuleProps {
   showTransactionMarkers?: boolean;

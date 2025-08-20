@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useMainPageState } from './useMainPageState';
 import { useAddressSearch } from './useAddressSearch';
 import { useTransactionData } from './useTransactionData';
@@ -13,14 +13,38 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
-import { useUserAddresses } from '../../../../../hooks/useUserAddresses';
+import { useUserAddresses } from '../useUserAddresses';
 import { parseAddress } from '@utils/addressParser';
 
 export const useMainPageModule = () => {
   const queryClient = useQueryClient();
 
+  // 무한 루프 방지를 위한 ref
+  const lastProcessedAddressId = useRef<number | null>(null);
+
   // 새로운 주소 검색인지 추적하는 상태 추가
   const [isNewAddressSearch, setIsNewAddressSearch] = useState(false);
+
+  // 앱 초기화 완료 여부를 추적하는 플래그
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // 세션 종료 시 휘발성 주소 정리
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // 휘발성 주소들 삭제
+      const volatileAddresses = storeUserAddresses.filter(
+        (addr) => addr.isVolatile
+      );
+      volatileAddresses.forEach((addr) => {
+        deleteAddress(addr.id);
+      });
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   // 실거래가 조회 모달 상태
   const [showTransactionSearchModal, setShowTransactionSearchModal] =
@@ -38,8 +62,6 @@ export const useMainPageModule = () => {
     selectedMonth,
     showPostcode,
     addressSaveData,
-    newAddressData,
-    activeAddressType,
 
     // 상태 설정 함수
     setSearchQuery,
@@ -52,11 +74,9 @@ export const useMainPageModule = () => {
     setSelectedMonth,
     setShowPostcode,
     setAddressSaveData,
-    setNewAddressData,
-    setActiveAddressType,
   } = useMainPageState();
 
-  // React Query로 초기 데이터 로드
+  // React Query로 초기 데이터 로드 (useCallback으로 최적화됨)
   const { isLoading: userAddressesLoading, isAuthenticated } =
     useUserAddresses();
 
@@ -68,6 +88,8 @@ export const useMainPageModule = () => {
     addAddress,
     deleteAddress,
     clearSelectedAddress, // 추가
+    addVolatileAddress, // 휘발성 주소 추가
+    deleteVolatileAddress, // 휘발성 주소 삭제
   } = useUserAddressStore();
 
   // 지도 관련 Store
@@ -122,8 +144,17 @@ export const useMainPageModule = () => {
         return;
       }
 
-      // 드롭다운 주소 타입으로 설정
-      setActiveAddressType('dropdown');
+      // 무한 루프 방지를 위한 추가 검증
+      const currentSelectedId = storeSelectedAddress.id;
+
+      if (lastProcessedAddressId.current === currentSelectedId) {
+        console.log('🔍 이미 처리된 주소 ID, 상태 업데이트 건너뜀');
+        return;
+      }
+
+      lastProcessedAddressId.current = currentSelectedId;
+
+      // 드롭다운 주소 선택
 
       // 동/호 정보를 직접 사용
       const extractedDong = storeSelectedAddress.dong || '';
@@ -174,7 +205,7 @@ export const useMainPageModule = () => {
         setSearchLocationMarker(location);
       }
     }
-  }, [storeSelectedAddress]); // 의존성을 다시 storeSelectedAddress만으로 제한
+  }, [storeSelectedAddress?.id, clearTransactionData, isLoading]); // 필요한 의존성만 포함
 
   // API 호출 필요 여부 판단 기준
   const isNewAddressSearchRequired = () => {
@@ -189,70 +220,104 @@ export const useMainPageModule = () => {
   };
 
   // Daum 우편번호 관리
-  const { execDaumPostcode, postcodeRef } = useDaumPostcode((data) => {
+  const { execDaumPostcode, postcodeRef } = useDaumPostcode(async (data) => {
     console.log('🔍 새로운 주소 검색 시작:', data);
 
-    // 새로운 주소 검색 시 selectedAddress 초기화
-    clearSelectedAddress();
-
-    // 새로운 주소 검색 시 실거래가 데이터 초기화는 제거
-    // 사용자가 명시적으로 새로운 실거래가 조회를 요청할 때만 초기화
+    // 새로운 주소 검색 시 실거래가 데이터 초기화
     if (!isLoading) {
       clearTransactionData();
     }
 
-    // 새로운 주소 타입으로 설정
-    console.log('새로운 주소 검색 시 activeAddressType을 new로 설정');
-    setActiveAddressType('new');
-    setIsNewAddressSearch(true);
+    try {
+      // 키워드 검색으로 좌표 가져오기
+      const searchData = await placesApi.searchByKeyword(data.address);
+      if (searchData && searchData.length > 0) {
+        const location = {
+          lat: parseFloat(searchData[0].latitude),
+          lng: parseFloat(searchData[0].longitude),
+        };
 
-    // 새로운 주소 데이터를 별도로 저장
-    const newAddressData = {
-      roadAddress: data.roadAddress || '',
-      dong: '',
-      ho: '',
-      searchQuery: data.address || '',
-      savedLawdCode: data.bcode.substring(0, 5) || '',
-    };
-    setNewAddressData(newAddressData);
+        // 새 주소를 즉시 store에 저장 (휘발성)
+        const newAddressData = {
+          nickname: '새 주소',
+          x: location.lng,
+          y: location.lat,
+          isPrimary: false,
+          isVolatile: true, // 휘발성 플래그
+          legalDistrictCode: data.bcode.substring(0, 5) || '',
+          lotAddress: data.jibunAddress || '',
+          roadAddress: data.roadAddress || '',
+          completeAddress: data.address,
+          dong: '',
+          ho: '',
+        };
 
-    // 메인 상태도 새로운 주소로 초기화
-    console.log('새로운 주소 검색 시 메인 상태 초기화:', {
-      roadAddress: data.roadAddress || '',
-      dong: '',
-      ho: '',
-      searchQuery: data.address || '',
-    });
-    setRoadAddress(data.roadAddress || '');
-    setDong('');
-    setHo('');
-    setSearchQuery(data.address || '');
-    setSavedLawdCode(data.bcode.substring(0, 5) || '');
+        // 기존 휘발성 주소가 있으면 삭제 (최신 주소만 유지)
+        const existingVolatileAddress = storeUserAddresses.find(
+          (addr) => addr.isVolatile
+        );
+        if (existingVolatileAddress) {
+          deleteVolatileAddress(existingVolatileAddress.id);
+        }
 
-    // 주소 저장 데이터 설정 (handleDaumPostcodeResult 대신 직접 설정)
-    const addressSaveData = {
-      roadAddress: data.roadAddress || '',
-      jibunAddress: data.jibunAddress || '',
-      legalDistrictCode: data.bcode.substring(0, 5) || '',
-    };
-    setAddressSaveData(addressSaveData);
-    setShowPostcode(false);
+        // 새 주소를 store에만 저장 (DB 저장 없음)
+        const tempId = Date.now();
+        const newAddressWithId = {
+          ...newAddressData,
+          id: tempId,
+        };
+        addVolatileAddress(newAddressWithId);
 
-    console.log(
-      'handleDaumPostcodeResult 호출 완료 후 activeAddressType 확인 필요'
-    );
+        // 새로 저장된 주소를 자동으로 선택
+        selectAddress(newAddressWithId);
+
+        // 메인 상태 업데이트
+        setRoadAddress(data.roadAddress || '');
+        setDong('');
+        setHo('');
+        setSearchQuery(data.address || '');
+        setSavedLawdCode(data.bcode.substring(0, 5) || '');
+
+        // 새 주소 검색 상태 설정
+        setIsNewAddressSearch(true);
+
+        // 주소 저장 데이터 설정
+        const addressSaveData = {
+          roadAddress: data.roadAddress || '',
+          jibunAddress: data.jibunAddress || '',
+          legalDistrictCode: data.bcode.substring(0, 5) || '',
+        };
+        setAddressSaveData(addressSaveData);
+        setShowPostcode(false);
+
+        console.log('새 주소가 성공적으로 저장되고 선택되었습니다.');
+
+        // 새 주소 검색 완료 후 상태 초기화 (다음 검색을 위해)
+        setTimeout(() => {
+          setIsNewAddressSearch(false);
+        }, 100);
+      } else {
+        alert('주소를 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('주소 검색 실패:', error);
+      alert('주소 검색 중 오류가 발생했습니다.');
+    }
   }, setShowPostcode);
 
-  // 사용자 주소 데이터 로드 시 초기 상태 설정
+  // 사용자 주소 데이터 로드 시 초기 상태 설정 (앱 최초 로드 시에만)
   useEffect(() => {
-    if (
-      isAuthenticated &&
-      storeUserAddresses.length > 0 &&
-      !newAddressData.roadAddress &&
-      !(roadAddress || '').trim() && // roadAddress가 비어있을 때만 초기화
-      !(dong || '').trim() && // dong이 비어있을 때만 초기화
-      !storeSelectedAddress // 선택된 주소가 없을 때만 초기화
-    ) {
+    console.log('🔍 초기화 useEffect 조건 확인:', {
+      isAuthenticated,
+      storeUserAddressesLength: storeUserAddresses.length,
+      roadAddress: roadAddress || '',
+      dong: dong || '',
+      storeSelectedAddress: !!storeSelectedAddress,
+      userAddressesLoading,
+    });
+
+    // 초기화 로직 완전 비활성화 (탭 이동 시 문제 해결)
+    if (false) {
       // 대표 주소 또는 첫 번째 주소 선택
       const targetAddress =
         storeUserAddresses.find((addr) => addr.isPrimary) ||
@@ -283,6 +348,9 @@ export const useMainPageModule = () => {
         setHo(extractedHo);
         setSearchQuery(targetAddress.completeAddress);
         setSavedLawdCode(targetAddress.legalDistrictCode || '');
+
+        // 초기 주소 선택
+        selectAddress(targetAddress);
       }
 
       // 초기 상태 설정 시 실거래가 데이터 초기화는 제거
@@ -290,11 +358,15 @@ export const useMainPageModule = () => {
       if (!isLoading) {
         clearTransactionData();
       }
+
+      // 초기화 완료 플래그 설정
+      setIsInitialized(true);
     }
   }, [
     isAuthenticated,
-    storeUserAddresses.length,
-    // storeUserAddresses.find((addr) => addr.isPrimary)?.id 제거 - 탭 변경 시 불필요한 실행 방지
+    userAddressesLoading,
+    isInitialized, // 초기화 플래그 추가
+    // storeUserAddresses.length 제거 - 새 주소 추가 시 불필요한 초기화 방지
     // setter 함수들은 의존성에서 제거 (무한 루프 방지)
   ]);
 
@@ -302,11 +374,7 @@ export const useMainPageModule = () => {
   const handleAddressChangeWithTransaction = (address: UserAddress) => {
     console.log('handleAddressChangeWithTransaction 호출됨:', {
       address,
-      activeAddressType,
     });
-
-    // 드롭다운 주소 타입으로 설정
-    setActiveAddressType('dropdown');
 
     // 주소 선택 (상태 업데이트는 useEffect에서 처리)
     selectAddress(address);
@@ -389,13 +457,10 @@ export const useMainPageModule = () => {
     }
   };
 
-  // 주소 수동 저장 함수
+  // 주소 수동 저장 함수 (DB에 실제 저장)
   const saveAddressToUser = async () => {
-    if (!roadAddress) {
-      console.error('❌ 저장하기 실패 - 조건 불만족:', {
-        roadAddress: roadAddress || 'undefined',
-      });
-      alert('상세 주소를 입력해주세요.');
+    if (!storeSelectedAddress) {
+      alert('저장할 주소가 선택되지 않았습니다.');
       return;
     }
 
@@ -408,134 +473,64 @@ export const useMainPageModule = () => {
       return;
     }
 
-    // savedLawdCode가 없으면 현재 선택된 주소의 legalDistrictCode 사용
-    let lawdCode = savedLawdCode;
-    if (!lawdCode && storeSelectedAddress?.legalDistrictCode) {
-      lawdCode = storeSelectedAddress.legalDistrictCode;
-    } else if (!lawdCode) {
-      // legalDistrictCode도 없으면 좌표로 법정동 코드 가져오기 (임시)
-      try {
-        const coordData = await placesApi.coord2Address(
-          storeSelectedAddress?.x || 0,
-          storeSelectedAddress?.y || 0
-        );
-        if (coordData.success && coordData.data) {
-          // coord2Address는 주소만 반환하므로, 법정동 코드는 다른 방법으로 얻어야 함
-          // 임시로 기본값 사용 (실제로는 다른 API 호출 필요)
-          lawdCode = '1168010100'; // 강남구 기본값
-        }
-      } catch (error) {
-        console.error('좌표로 법정동 코드 변환 실패:', error);
-        alert('법정동 코드를 가져올 수 없습니다.');
-        return;
-      }
-    }
-
-    if (!lawdCode) {
-      alert('법정동 코드를 가져올 수 없습니다.');
-      return;
-    }
-
     try {
       // 호는 옵션으로 처리
       const hoPart = currentHo ? ` ${currentHo}호` : '';
-      const completeAddress = `${roadAddress} ${currentDong}동${hoPart}`;
+      const completeAddress = `${storeSelectedAddress.roadAddress} ${currentDong}동${hoPart}`;
 
-      // 키워드 검색으로 좌표 가져오기
-      const searchData = await placesApi.searchByKeyword(completeAddress);
-      if (searchData && searchData.length > 0) {
-        const rawLat = parseFloat(searchData[0].latitude);
-        const rawLng = parseFloat(searchData[0].longitude);
+      // 중복 주소 체크
+      const isDuplicate = storeUserAddresses.some(
+        (address) =>
+          address.id !== storeSelectedAddress.id &&
+          address.completeAddress === completeAddress
+      );
 
-        // 좌표 유효성 검사
-        if (rawLat === rawLng || isNaN(rawLat) || isNaN(rawLng)) {
-          console.error('잘못된 좌표 데이터:', { lat: rawLat, lng: rawLng });
-          alert('주소의 좌표를 가져올 수 없습니다. 다른 주소를 시도해주세요.');
-          return;
-        }
+      if (isDuplicate) {
+        alert('이미 저장된 주소입니다.');
+        return;
+      }
 
-        const location = {
-          lat: rawLat,
-          lng: rawLng,
-        };
-
-        // 도로명 주소와 지번 주소 준비
-        const roadAddressWithDetail = addressSaveData.roadAddress
-          ? `${addressSaveData.roadAddress} ${currentDong}동${hoPart}`
-          : completeAddress;
-        const lotAddressWithDetail = addressSaveData.jibunAddress
-          ? `${addressSaveData.jibunAddress} ${currentDong}동${hoPart}`
-          : completeAddress;
-
-        // 프론트엔드에서 중복 주소 체크 (선택적)
-        const isDuplicate = storeUserAddresses.some(
-          (address) =>
-            address.completeAddress === completeAddress ||
-            (address.x === location.lng && address.y === location.lat)
-        );
-
-        if (isDuplicate) {
-          alert('이미 저장된 주소입니다.');
-          return;
-        }
-
-        // 지번 주소 처리 개선: 비어있을 때 대체값 사용
-        const lotAddress =
-          addressSaveData.jibunAddress ||
-          (addressSaveData.roadAddress ? '' : roadAddress); // 도로명 주소가 없으면 현재 roadAddress 사용
-
-        // 임시 ID 생성 (addAddress에서 사용할 것과 동일)
-        const tempId = Date.now();
-
-        // 현재 주소 저장
+      // 휘발성 주소인 경우 DB에 실제 저장
+      if (storeSelectedAddress.isVolatile) {
         const addressData = {
-          nickname: `주소_${storeUserAddresses.length + 1}`, // 자동 생성
-          x: location.lng,
-          y: location.lat,
+          nickname: storeSelectedAddress.nickname,
+          x: storeSelectedAddress.x,
+          y: storeSelectedAddress.y,
           isPrimary: false,
-          legalDistrictCode: savedLawdCode,
-          lotAddress: lotAddress,
-          roadAddress: addressSaveData.roadAddress,
-          completeAddress: completeAddress,
-          dong: currentDong, // 동 정보 추가
-          ho: currentHo, // 호 정보 추가
+          legalDistrictCode: storeSelectedAddress.legalDistrictCode || '',
+          dong: currentDong,
+          ho: currentHo,
+          lotAddress: storeSelectedAddress.lotAddress,
+          roadAddress: storeSelectedAddress.roadAddress,
+          completeAddress,
         };
 
+        console.log('🔄 휘발성 주소를 DB에 저장:', addressData);
+
+        // DB에 저장
         await addAddress(addressData);
 
-        alert('주소가 성공적으로 저장되었습니다!');
+        // 휘발성 주소 삭제
+        deleteVolatileAddress(storeSelectedAddress.id);
 
-        // 주소 저장 성공 시 사용자 주소 리스트 캐시 무효화 (staleTime: 0으로 인해 즉시 refetch됨)
+        // 쿼리 무효화하여 최신 데이터 가져오기
         await queryClient.invalidateQueries({
           queryKey: ['userAddresses'],
         });
 
-        // 강제로 refetch하여 최신 데이터 가져오기
-        await queryClient.refetchQueries({
-          queryKey: ['userAddresses'],
-          exact: true,
-        });
-
-        // 새로 저장된 주소를 자동으로 선택 (임시 ID로 찾기)
-        const newAddress = {
-          id: tempId,
-          nickname: `주소_${storeUserAddresses.length + 1}`,
-          x: location.lng,
-          y: location.lat,
-          isPrimary: false,
-          legalDistrictCode: savedLawdCode,
-          lotAddress: lotAddress,
-          roadAddress: addressSaveData.roadAddress,
-          completeAddress: completeAddress,
-          dong: currentDong, // 동 정보 추가
-          ho: currentHo, // 호 정보 추가
+        alert('주소가 성공적으로 저장되었습니다!');
+      } else {
+        // 기존 주소의 동/호 정보만 업데이트하는 경우
+        // TODO: 기존 주소 업데이트 API 호출 필요
+        const updatedAddress = {
+          ...storeSelectedAddress,
+          completeAddress,
+          dong: currentDong,
+          ho: currentHo,
         };
 
-        // 새로 저장된 주소를 선택하고 새로운 주소 검색 상태 해제
-        selectAddress(newAddress);
-        setIsNewAddressSearch(false);
-      } else {
-        alert('주소를 찾을 수 없어 저장할 수 없습니다.');
+        selectAddress(updatedAddress);
+        alert('주소 정보가 업데이트되었습니다!');
       }
     } catch (error) {
       console.error('주소 저장 실패:', error);
@@ -555,10 +550,7 @@ export const useMainPageModule = () => {
       clearTransactionData();
 
       // 주소 파싱
-      const address =
-        isNewAddressSearch && newAddressData.roadAddress
-          ? newAddressData.roadAddress
-          : storeSelectedAddress?.completeAddress || '';
+      const address = storeSelectedAddress?.completeAddress || '';
 
       const parsedAddress = parseAddress(address);
 
@@ -655,23 +647,8 @@ export const useMainPageModule = () => {
     }
   };
 
-  // 현재 검색된 주소 정보를 selectedAddress로 변환
-  // 새 주소 검색 중이면 새 주소 우선, 아니면 저장된 주소 사용
-  const currentSelectedAddress =
-    isNewAddressSearch && roadAddress
-      ? {
-          id: 0, // 임시 ID
-          nickname: '새 주소',
-          x: 0, // 임시 좌표
-          y: 0, // 임시 좌표
-          roadAddress: roadAddress,
-          lotAddress: roadAddress, // 임시로 roadAddress 사용
-          completeAddress: roadAddress,
-          dong: dong,
-          ho: ho,
-          isPrimary: false,
-        }
-      : storeSelectedAddress;
+  // 현재 선택된 주소 (단순화된 로직)
+  const currentSelectedAddress = storeSelectedAddress;
 
   return {
     // 상태
@@ -687,8 +664,6 @@ export const useMainPageModule = () => {
     selectedMonth,
     showPostcode,
     isNewAddressSearch,
-    newAddressData,
-    activeAddressType,
 
     // 위치 관리 상태
     gpsLocation,
@@ -704,8 +679,6 @@ export const useMainPageModule = () => {
     setSelectedYear,
     setSelectedMonth,
     setShowPostcode,
-    setNewAddressData,
-    setActiveAddressType,
 
     // 액션 함수
     handleAddressChangeWithTransaction,

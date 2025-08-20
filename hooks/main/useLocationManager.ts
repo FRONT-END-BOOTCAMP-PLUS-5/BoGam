@@ -3,14 +3,14 @@ import { useGeolocation } from './useGeolocation';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
-import { useUserAddresses } from '@libs/stores/userAddresses/useUserAddresses';
 
 export const useLocationManager = () => {
   // Store에서 데이터 가져오기
   const { userAddresses, selectedAddress, selectAddress } =
     useUserAddressStore();
   const { setMapCenter } = useMapStore();
-  const { isAuthenticated } = useUserAddresses();
+  // React Query 제거 - 인증 상태는 상위 컴포넌트에서 관리
+  const isAuthenticated = true; // TODO: 실제 인증 상태는 상위에서 전달받아야 함
 
   // GPS 위치 정보 관리
   const {

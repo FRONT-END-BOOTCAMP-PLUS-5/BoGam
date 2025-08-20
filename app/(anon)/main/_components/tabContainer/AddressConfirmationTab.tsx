@@ -1,26 +1,26 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useMainPageModule } from '@/(anon)/main/_components/hooks/useMainPageModule';
-import { useMainPageState } from '@/(anon)/main/_components/hooks/useMainPageState';
+import { useMainPageModule } from '@/hooks/main/useMainPageModule';
+import { useMainPageState } from '@/hooks/main/useMainPageState';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { DaumPostcodeModal } from '@/(anon)/main/_components/daumPostcodeModal/DaumPostcodeModal';
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
 
 export const AddressConfirmationTab: React.FC = () => {
-  // useMainPageModule에서 필요한 함수들 가져오기
+  // Zustand store에서 직접 가져오기
+  const { selectedAddress } = useUserAddressStore();
+
+  // useMainPageModule에서 필요한 함수들만 가져오기
   const {
-    selectedAddress,
-    isNewAddressSearch,
     onSearch,
     postcodeRef,
     handleMoveToAddressOnly,
     saveAddressToUser,
     showPostcode,
     setShowPostcode,
-    activeAddressType,
-    setActiveAddressType,
   } = useMainPageModule();
 
   // Daum Postcode 실행 함수
@@ -31,29 +31,16 @@ export const AddressConfirmationTab: React.FC = () => {
   };
 
   // useMainPageState에서 상태와 setter 함수들 가져오기
-  const {
-    searchQuery,
-    roadAddress,
-    dong,
-    ho,
-    newAddressData,
-    setSearchQuery,
-    setDong,
-    setHo,
-    setNewAddressData,
-  } = useMainPageState();
+  const { searchQuery, dong, ho, setSearchQuery, setDong, setHo } =
+    useMainPageState();
 
-  // 새로운 주소용 동/호 상태
-  const [newDong, setNewDong] = useState('');
-  const [newHo, setNewHo] = useState('');
-
-  // 드롭다운 선택 시 동/호 데이터 업데이트
+  // 선택된 주소가 변경될 때 동/호 데이터 업데이트
   useEffect(() => {
-    if (activeAddressType === 'dropdown' && selectedAddress) {
+    if (selectedAddress) {
       const dongValue = selectedAddress.dong || '';
       const hoValue = selectedAddress.ho || '';
 
-      console.log('드롭다운 주소 선택 시 동/호 업데이트:', {
+      console.log('주소 선택 시 동/호 업데이트:', {
         dongValue,
         hoValue,
       });
@@ -62,64 +49,17 @@ export const AddressConfirmationTab: React.FC = () => {
       setDong(dongValue);
       setHo(hoValue);
     }
-  }, [selectedAddress, activeAddressType]); // setDong, setHo 의존성 제거
+  }, [selectedAddress, setDong, setHo]);
 
-  // 새로운 주소에서 동/호 수정 시 새로운 주소 데이터 업데이트
-  useEffect(() => {
-    if (activeAddressType === 'new') {
-      console.log('새로운 주소에서 동/호 수정:', {
-        newDong,
-        newHo,
-        activeAddressType,
-      });
-      setNewAddressData((prev) => ({
-        ...prev,
-        dong: newDong,
-        ho: newHo,
-      }));
-    }
-  }, [newDong, newHo, activeAddressType]); // setNewAddressData 의존성 제거
-
-  // 새로운 주소 검색 시 새로운 동/호 상태 초기화
-  useEffect(() => {
-    if (activeAddressType === 'new' && newAddressData.roadAddress) {
-      console.log('새로운 주소 검색 시 새로운 동/호 상태 초기화:', {
-        activeAddressType,
-        newAddressData: newAddressData.roadAddress,
-        currentNewDong: newDong,
-        currentNewHo: newHo,
-        newAddressDataFull: newAddressData,
-      });
-      setNewDong('');
-      setNewHo('');
-    }
-  }, [activeAddressType, newAddressData.roadAddress]); // selectedAddress 의존성 제거
-
-  // 주소 표시 로직 - 활성화된 주소 타입에 따라 표시
-  const displaySearchQuery = (() => {
-    if (activeAddressType === 'dropdown' && selectedAddress) {
-      return selectedAddress.completeAddress || '';
-    } else if (activeAddressType === 'new') {
-      return (
-        searchQuery ||
-        newAddressData.searchQuery ||
-        selectedAddress?.completeAddress ||
-        ''
-      );
-    }
-    return '';
-  })();
+  // 주소 표시 로직
+  const displaySearchQuery = selectedAddress?.completeAddress || '';
 
   // 디버깅: 현재 상태 로그
   console.log('AddressConfirmationTab 상태:', {
-    activeAddressType,
-    newDong,
-    newHo,
     dong,
     ho,
     selectedAddress: selectedAddress?.completeAddress,
     searchQuery,
-    newAddressData,
     displaySearchQuery,
   });
 
@@ -136,16 +76,8 @@ export const AddressConfirmationTab: React.FC = () => {
         </Button>
         <div className={styles.actionButtons}>
           <Button
-            onClick={() => {
-              if (activeAddressType === 'new') {
-                handleMoveToAddressOnly(newDong, newHo);
-              } else {
-                handleMoveToAddressOnly(dong, ho);
-              }
-            }}
-            disabled={
-              activeAddressType === 'new' ? !newDong.trim() : !dong.trim()
-            }
+            onClick={() => handleMoveToAddressOnly(dong, ho)}
+            disabled={!dong.trim()}
             variant='primary'
             className={styles.confirmButton}
           >
@@ -153,9 +85,7 @@ export const AddressConfirmationTab: React.FC = () => {
           </Button>
           <Button
             onClick={saveAddressToUser}
-            disabled={
-              activeAddressType === 'new' ? !newDong.trim() : !dong.trim()
-            }
+            disabled={!dong.trim()}
             variant='secondary'
             className={styles.saveButton}
           >
@@ -174,46 +104,18 @@ export const AddressConfirmationTab: React.FC = () => {
           readOnly
         />
         <div className={styles.dongHoInputs}>
-          {/* 기존 주소용 동/호 input (드롭다운 선택 시) */}
-          {activeAddressType === 'dropdown' && (
-            <>
-              <TextInput
-                placeholder='동'
-                value={dong}
-                onChange={(e) => setDong(e.target.value)}
-                className={styles.dongField}
-              />
-              <TextInput
-                placeholder='호'
-                value={ho}
-                onChange={(e) => setHo(e.target.value)}
-                className={styles.hoField}
-              />
-            </>
-          )}
-          {/* 새로운 주소용 동/호 input (새 주소 검색 시) */}
-          {activeAddressType === 'new' && (
-            <>
-              <TextInput
-                placeholder='동'
-                value={newDong}
-                onChange={(e) => {
-                  console.log('새로운 동 입력:', e.target.value);
-                  setNewDong(e.target.value);
-                }}
-                className={styles.dongField}
-              />
-              <TextInput
-                placeholder='호'
-                value={newHo}
-                onChange={(e) => {
-                  console.log('새로운 호 입력:', e.target.value);
-                  setNewHo(e.target.value);
-                }}
-                className={styles.hoField}
-              />
-            </>
-          )}
+          <TextInput
+            placeholder='동'
+            value={dong}
+            onChange={(e) => setDong(e.target.value)}
+            className={styles.dongField}
+          />
+          <TextInput
+            placeholder='호'
+            value={ho}
+            onChange={(e) => setHo(e.target.value)}
+            className={styles.hoField}
+          />
         </div>
       </div>
 
