@@ -13,7 +13,7 @@ import React, {
 
 import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
-import { IFlipSetting, IEventProps } from './settings';
+import { IFlipSetting, IEventProps } from './settings'; 
 import { styles } from './page.styles';
 import GeneralPage from '../_components/GeneralPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
