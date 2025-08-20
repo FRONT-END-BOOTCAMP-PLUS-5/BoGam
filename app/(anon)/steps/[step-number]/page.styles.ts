@@ -10,7 +10,7 @@ export const styles = {
   pageContent: 'p-8 min-h-[600px] flex flex-col justify-center items-center',
   pageHeader: 'text-[1.5rem] mb-4',
   pageFooter: 'mt-8 text-[1rem] text-[var(--brand-dark-gray)]',
-  leftClickArea: 'absolute left-0 top-0 w-[30%] h-full z-[10] cursor-pointer',
+  leftClickArea: 'absolute left-0 top-0 w-[30%] h-full z-[10] cursor-pointer', 
   indicatorWrapper: 'w-[180px] mt-8 flex items-center justify-between relative',
   indicatorLeft: 'absolute left-0 top-0 h-full flex items-center',
   indicatorRight: 'absolute right-0 top-0 h-full flex items-center',
