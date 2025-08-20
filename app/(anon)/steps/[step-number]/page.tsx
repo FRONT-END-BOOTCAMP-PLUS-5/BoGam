@@ -149,13 +149,13 @@ function SummaryPage({ title, contents }: { title: string; contents: { subtitle:
 
 export function Steps3Page() {
   const router = useRouter();
-  const bookRef = React.useRef<any>(null);
-  const [marginLeft, setMarginLeft] = React.useState('-73%');
-  const [currentPage, setCurrentPage] = React.useState(0);
-  const [pages, setPages] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const bookRef = useRef<any>(null);
+  const [marginLeft, setMarginLeft] = useState('-73%');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pages, setPages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const match = window.location.pathname.match(/\/steps\/(\d+)/);
     const stepNumber = match ? match[1] : '1';
     import(`./stepData/${stepNumber}.json`)
@@ -207,7 +207,7 @@ export function Steps3Page() {
     }
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     const width = window.innerWidth;
     if (width <= 400) {
       setMarginLeft('translateX(-45%)');
