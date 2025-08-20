@@ -13,19 +13,16 @@ import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 
 export default function MainPage() {
   const {
-    userAddresses,
     selectedAddress,
     searchQuery,
     roadAddress,
     dong,
     ho,
-    savedLawdCode,
     buildingType,
     selectedYear,
     selectedMonth,
     showPostcode,
     isNewAddressSearch,
-    gpsLocation,
     gpsLoading,
     gpsError,
     currentLocationType,
@@ -38,15 +35,10 @@ export default function MainPage() {
     setShowPostcode,
 
     // 액션 함수
-    handleAddressChangeWithTransaction,
     handleMoveToAddress,
     handleMoveToAddressOnly,
     onSearch,
     postcodeRef,
-
-    // 위치 관리 액션 함수
-    refreshGPSLocation,
-
     // 주소 저장 함수
     saveAddressToUser,
   } = useMainPageModule();
