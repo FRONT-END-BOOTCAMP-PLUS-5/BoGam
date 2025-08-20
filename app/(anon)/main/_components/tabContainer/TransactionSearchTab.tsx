@@ -204,7 +204,6 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
         onCancel={() => setShowDanjiModal(false)}
         title='단지 일련번호 조회'
         icon='info'
-        confirmText=''
         cancelText='닫기'
         onConfirm={() => {}} // 빈 함수로 설정 (확인 버튼 숨김)
       >

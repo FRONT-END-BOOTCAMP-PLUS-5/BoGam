@@ -39,7 +39,7 @@ export interface TransactionDetailApartRentItem {
   resMonth: string; // 월
   resDays: string; // 일
   resArea: string; // 면적
-  resTranAmount: string; // 거래금액
+  resTranAmount: string; // 거래금액 (전월세의 경우 보통 0 또는 빈 값)
   resFloor: string; // 층
   resArea1?: string; // 면적1
   resCancelYN?: string; // 취소여부
@@ -48,6 +48,26 @@ export interface TransactionDetailApartRentItem {
   resLocation?: string; // 위치
   resFloorNum?: string; // 층수
   resDong?: string; // 동
+
+  // 전월세 전용 필드들
+  commStartDate?: string; // 계약시작일자 (YYMM)
+  commEndDate?: string; // 계약종료일자 (YYMM)
+  resDeposit?: string; // 보증금 (단위: 만원)
+  resMonthlyRent?: string; // 월세 (단위: 만원)
+  resContractType?: string; // 계약구분 (ex. "갱신")
+  resRenewalUse?: string; // 갱신요구권사용 (ex. "사용")
+  resPrevDeposit?: string; // 종전계약보증금 (단위: 만원)
+  resPrevMonthlyRent?: string; // 종전계약월세 (단위: 만원)
+  resDesignationYN?: string; // 지역지구등 지정여부
+  resRoadCondition?: string; // 도로조건
+  resLandMoveDate?: string; // 토지이동일
+  resLandMoveReason?: string; // 토지이동사유
+  resMinBLR?: string; // 최저 건폐율 (단위: %)
+  resMaxBLR?: string; // 최고 건폐율 (단위: %)
+  resMinFAR?: string; // 최저 용적율 (단위: %)
+  resMaxFAR?: string; // 최고 용적율 (단위: %)
+  resStructure?: string; // 주구조 (ex. "철근콘크리트조")
+  resBuildYear?: string; // 건축년도
 }
 
 // 실거래가 상세 API 응답 타입 정의
