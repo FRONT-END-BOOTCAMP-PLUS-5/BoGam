@@ -2,7 +2,6 @@ import { BrokerCopyRepository } from '@be/domain/repository/BrokerCopyRepository
 import { GetBrokerCopyRequestDto } from '../dtos/GetBrokerCopyRequestDto';
 import { GetBrokerCopyResponseDto } from '../dtos/GetBrokerCopyResponseDto';
 import { decryptJson } from '@utils/encryption';
-import { BrokerApiResponse } from '@be/domain/entities/Broker';
 
 export class GetBrokerCopyUsecase {
   constructor(private brokerCopyRepository: BrokerCopyRepository) {}
@@ -27,7 +26,7 @@ export class GetBrokerCopyUsecase {
         data: {
           id: brokerCopy.id,
           userAddressId: brokerCopy.userAddressId,
-          brokerData: decryptJson(brokerCopy.brokerData) as BrokerApiResponse,
+          brokerData: decryptJson(brokerCopy.brokerData) as Record<string, unknown>,
           updatedAt: brokerCopy.updatedAt || new Date()
         }
       };

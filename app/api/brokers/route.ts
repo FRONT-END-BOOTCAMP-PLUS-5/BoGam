@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
       const createBrokerCopyUsecase = new CreateBrokerCopyUsecase(new BrokerCopyRepositoryImpl());
       const brokerCopyResult = await createBrokerCopyUsecase.execute({
         userAddressId: userAddressId,
-        brokerJson: Array.isArray(result) ? result.map(broker => Object.assign({}, broker)) : [Object.assign({}, result)] as any
+        brokerJson: JSON.stringify(Array.isArray(result) ? result.map(broker => Object.assign({}, broker)) : [Object.assign({}, result)])
       });
       
       if (!brokerCopyResult.success) {

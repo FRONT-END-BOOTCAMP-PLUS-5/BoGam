@@ -3,7 +3,5 @@
  */
 export interface CreateBrokerCopyRequestDto {
   userAddressId: number;
-  brokerJson: {
-    [key: string]: unknown;
-  };
+  brokerJson: string;
 }
