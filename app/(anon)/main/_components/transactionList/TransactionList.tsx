@@ -1,13 +1,13 @@
-import React, { useEffect, useCallback } from 'react';
-import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
+import React, { useEffect } from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { styles } from './TransactionList.styles';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
 
 export const TransactionList: React.FC = () => {
-  const { transactionData, isLoading, setTransactionData } =
-    useTransactionDataStore((state) => state);
+  const { transactionData, isLoading } = useTransactionDataStore(
+    (state) => state
+  );
   const { setMapCenter, setAdjustBounds } = useMapStore();
 
   // 디버깅을 위한 useEffect 추가
@@ -18,60 +18,6 @@ export const TransactionList: React.FC = () => {
       isLoading,
     });
   }, [transactionData, isLoading]);
-
-  // 테스트용 더미 데이터 추가 (개발 환경에서만)
-  const addDummyData = useCallback(() => {
-    // 더미 데이터 로직을 주석 처리하여 실제 API 호출만 테스트
-    /*
-    if (
-      process.env.NODE_ENV === 'development' &&
-      transactionData.length === 0 &&
-      !isLoading
-    ) {
-      console.log('🧪 개발 환경에서 더미 데이터 추가');
-      const dummyData: TransactionData[] = [
-        {
-          id: 'test-1',
-          아파트: '테스트 아파트',
-          거래금액: '50000',
-          전용면적: '84.95',
-          층: '15',
-          건축년도: '2020',
-          년: '2024',
-          월: '12',
-          일: '15',
-          법정동: '역삼동',
-          지번: '123-45',
-          location: { lat: 37.5665, lng: 126.978 },
-        },
-        {
-          id: 'test-2',
-          아파트: '샘플 빌라',
-          거래금액: '30000',
-          전용면적: '59.85',
-          층: '8',
-          건축년도: '2018',
-          년: '2024',
-          월: '11',
-          일: '20',
-          법정동: '역삼동',
-          지번: '123-46',
-          location: { lat: 37.5666, lng: 126.9781 },
-        },
-      ];
-      
-      // setTimeout으로 지연시켜 상태 업데이트 순서 보장
-      setTimeout(() => {
-        setTransactionData(dummyData);
-        console.log('🧪 더미 데이터 설정 완료');
-      }, 100);
-    }
-    */
-  }, [transactionData.length, isLoading, setTransactionData]);
-
-  useEffect(() => {
-    addDummyData();
-  }, [addDummyData]);
 
   const handleTransactionClick = (location: Location | null) => {
     if (!location) {
@@ -127,6 +73,8 @@ export const TransactionList: React.FC = () => {
             onClick={() => {
               if (item.location) {
                 handleTransactionClick(item.location);
+              } else {
+                console.log('실거래가 클릭 - 좌표 정보 없음');
               }
             }}
             style={{ cursor: item.location ? 'pointer' : 'default' }}
