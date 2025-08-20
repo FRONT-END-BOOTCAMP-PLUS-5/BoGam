@@ -132,7 +132,7 @@ function SummaryPage({ title, contents }: { title: string; contents: { subtitle:
             <p className={styles.smallFont}> {title} </p>
           </div>
         </div>
-        <div className={styles.whitePaper}>
+  <div className={styles.whitePaper + ' max-h-[340px] overflow-y-auto'}>
           {contents.map((block, i) => (
             <div key={i}>
               <h6 className={styles.topic}>{block.subtitle}</h6>
