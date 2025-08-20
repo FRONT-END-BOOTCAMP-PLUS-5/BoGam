@@ -30,20 +30,15 @@ export function urlDecode(encodedString: string): string {
  * @returns 파싱된 객체
  */
 export function processResponse<T = unknown>(responseData: unknown): T {
-  console.log('📥 응답 데이터 처리 시작:', typeof responseData);
-
   // 이미 객체인 경우 그대로 반환
   if (typeof responseData === 'object' && responseData !== null) {
-    console.log('✅ 응답이 이미 객체입니다.');
     return responseData as T;
   }
 
   // 문자열인 경우 디코딩 후 JSON 파싱
   if (typeof responseData === 'string') {
     try {
-      console.log('🔓 문자열 응답 디코딩 시도...');
       const decodedText = urlDecode(responseData);
-      console.log('🔓 디코딩된 응답:', decodedText);
 
       // 디코딩된 텍스트가 JSON 형태인지 확인
       if (
@@ -51,21 +46,16 @@ export function processResponse<T = unknown>(responseData: unknown): T {
         decodedText.trim().startsWith('[')
       ) {
         const parsed = JSON.parse(decodedText);
-        console.log('✅ JSON 파싱 성공');
         return parsed as T;
       } else {
-        console.log('⚠️ JSON 형태가 아님, 원본 텍스트 반환');
         return decodedText as T;
       }
     } catch (error) {
-      console.error('❌ 디코딩/파싱 실패:', error);
-      console.error('❌ 문제가 된 응답:', responseData);
       throw new Error(`응답 처리 실패: ${error}`);
     }
   }
 
   // 다른 타입인 경우 그대로 반환
-  console.log('⚠️ 예상치 못한 응답 타입, 원본 반환');
   return responseData as T;
 }
 

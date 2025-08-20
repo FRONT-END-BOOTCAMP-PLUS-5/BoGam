@@ -1,6 +1,6 @@
 export const styles = {
   // 거래 목록 컨테이너
-  transactionList: 'bg-brand-white rounded-lg shadow-lg p-6',
+  transactionList: 'w-full bg-brand-white rounded-lg shadow-lg p-6',
 
   // 제목
   title: 'text-lg font-semibold text-brand-black mb-4',

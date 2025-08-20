@@ -1,22 +1,30 @@
 import React, { useEffect } from 'react';
-import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { styles } from './TransactionList.styles';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
 
 export const TransactionList: React.FC = () => {
-  const { transactionData, isLoading } = useTransactionDataStore();
+  const { transactionData, isLoading } = useTransactionDataStore(
+    (state) => state
+  );
   const { setMapCenter, setAdjustBounds } = useMapStore();
+
+  // 디버깅을 위한 useEffect 추가
+  useEffect(() => {
+    console.log('🔍 TransactionList 렌더링 - transactionData:', {
+      length: transactionData.length,
+      data: transactionData,
+      isLoading,
+    });
+  }, [transactionData, isLoading]);
 
   const handleTransactionClick = (location: Location | null) => {
     if (!location) {
       return;
     }
-    console.log('🏠 실거래가 클릭 - 지도 이동 시작:', location);
     setAdjustBounds(false); // 자동 조정 비활성화
     setMapCenter(location);
-    console.log('🏠 실거래가 클릭 - 지도 이동 완료');
   };
 
   // 로딩 중일 때
@@ -33,8 +41,8 @@ export const TransactionList: React.FC = () => {
     );
   }
 
-  // 데이터가 없을 때
-  if (transactionData.length === 0) {
+  // 데이터가 없을 때 (로딩 중이 아닐 때만)
+  if (!isLoading && transactionData.length === 0) {
     return (
       <div className={styles.transactionList}>
         <h3>실거래가 정보</h3>
@@ -45,6 +53,9 @@ export const TransactionList: React.FC = () => {
       </div>
     );
   }
+
+  // 디버깅용 로그 (필요시 주석 해제)
+  console.log('렌더링 시작 - transactionData.length:', transactionData.length);
 
   return (
     <div className={styles.transactionList}>
@@ -61,7 +72,6 @@ export const TransactionList: React.FC = () => {
             className={styles.transactionItem}
             onClick={() => {
               if (item.location) {
-                console.log('실거래가 클릭 - 지도 이동:', item.location);
                 handleTransactionClick(item.location);
               } else {
                 console.log('실거래가 클릭 - 좌표 정보 없음');
