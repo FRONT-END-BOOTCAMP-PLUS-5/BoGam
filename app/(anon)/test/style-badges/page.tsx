@@ -1,19 +1,8 @@
 'use client';
 
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
-import { useState } from 'react';
 
 export default function StyleBadgesPage() {
-  const [clickCount, setClickCount] = useState(0);
-
-  const handleUncheckedClick = () => {
-    setClickCount(prev => prev + 1);
-    alert(`unchecked 뱃지를 클릭했습니다! (${clickCount + 1}번째 클릭)`);
-    
-    // 여기에 API 호출 로직을 추가할 수 있습니다
-    // 예: fetch('/api/update-status', { method: 'POST' })
-  };
-
   return (
     <div className="p-6 space-y-8">
       <h1 className="text-2xl font-bold text-center mb-8">뱃지 컴포넌트 스타일 가이드</h1>
@@ -128,55 +117,29 @@ export default function StyleBadgesPage() {
         </div>
       </section>
 
-             {/* 사용 예시 */}
-       <section className="space-y-4">
-         <h2 className="text-xl font-semibold">사용 예시</h2>
-         <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
-           <div className="flex items-center gap-2">
-             <span>상태:</span>
-             <CircularIconBadge type="match" size="sm" />
-           </div>
-           <div className="flex items-center gap-2">
-             <span>결과:</span>
-             <CircularIconBadge type="mismatch" size="md" />
-           </div>
-           <div className="flex items-center gap-2">
-             <span>확인:</span>
-             <CircularIconBadge type="unchecked" size="sm" />
-           </div>
-           <div className="flex items-center gap-2">
-             <span>새로운 타입:</span>
-             <CircularIconBadge type="match-light-green" size="sm" />
-             <CircularIconBadge type="mismatch-emoji" size="sm" />
-           </div>
-         </div>
-       </section>
-
-       {/* 클릭 가능한 unchecked 뱃지 예시 */}
-       <section className="space-y-4">
-         <h2 className="text-xl font-semibold text-brand">클릭 가능한 unchecked 뱃지 예시</h2>
-         <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-           <div className="flex items-center gap-4">
-             <span className="text-sm font-medium">클릭 가능:</span>
-             <CircularIconBadge 
-               type="unchecked" 
-               size="md" 
-               clickable={true}
-               onClick={handleUncheckedClick}
-             />
-             <span className="text-sm text-gray-600">클릭해보세요!</span>
-           </div>
-           <div className="flex items-center gap-4">
-             <span className="text-sm font-medium">클릭 횟수:</span>
-             <span className="text-sm font-bold text-brand">{clickCount}회</span>
-           </div>
-           <div className="flex items-center gap-4">
-             <span className="text-sm font-medium">기본 (클릭 불가):</span>
-             <CircularIconBadge type="unchecked" size="md" />
-             <span className="text-sm text-gray-600">기본값은 clickable=false</span>
-           </div>
-         </div>
-       </section>
+      {/* 사용 예시 */}
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">사용 예시</h2>
+        <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <span>상태:</span>
+            <CircularIconBadge type="match" size="sm" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span>결과:</span>
+            <CircularIconBadge type="mismatch" size="md" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span>확인:</span>
+            <CircularIconBadge type="unchecked" size="sm" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span>새로운 타입:</span>
+            <CircularIconBadge type="match-light-green" size="sm" />
+            <CircularIconBadge type="mismatch-emoji" size="sm" />
+          </div>
+        </div>
+      </section>
 
       {/* CSS 변수 정보 */}
       <section className="space-y-4">

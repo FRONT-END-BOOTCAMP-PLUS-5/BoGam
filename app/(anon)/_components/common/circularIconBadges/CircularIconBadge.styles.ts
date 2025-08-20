@@ -12,8 +12,8 @@ export const styles = {
   match: "bg-brand-green text-white",
   "match-blue": "bg-brand text-white",
   mismatch: "bg-brand-error text-white",
-  unchecked: "bg-brand-light-gray text-brand-dark-gray",
   uncheck: "bg-brand-light-gray text-brand-dark-gray",
+  unchecked: "bg-brand-light-gray text-brand-dark-gray",
   "unchecked-white": "bg-brand-white text-brand-dark-gray",
   link: "bg-brand-gold text-white",
   "match-light-green": "bg-[color-mix(in_srgb,theme(colors.brand.green)_30%,transparent)] text-brand-green",
@@ -30,6 +30,6 @@ export const styles = {
   normal: "stroke-[2]",
   thick: "stroke-[3]",
   
-  // Clickable state
-  clickable: "cursor-pointer hover:opacity-80 active:opacity-60"
+  // Interactive styles
+  clickable: "cursor-pointer hover:opacity-80 active:scale-95"
 } as const;

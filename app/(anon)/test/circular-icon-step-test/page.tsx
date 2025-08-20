@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
@@ -38,6 +38,7 @@ export default function CircularIconStepTestPage() {
         });
         
         const existingData = await stepDetailApi.getStepDetail({
+          userAddressNickname: selectedAddress?.nickname || '채원강남집',
           stepNumber: stepInfo.mainNum.toString(),
           detail: stepInfo.subNum.toString()
         });
@@ -73,16 +74,16 @@ export default function CircularIconStepTestPage() {
           });
           setApiResult('ℹ️ 기존 데이터 없음 - 기본 템플릿 사용');
         }
-      } catch (error) {
-        console.log('ℹ️ 기존 데이터 없음 (새로 생성할 예정):', error);
-        // 에러 발생 시에도 기본 템플릿 사용
-        setStepDetails({
-          '표제부': 'uncheck' as const,
-          '갑구': 'uncheck' as const,
-          '을구': 'uncheck' as const
-        });
-        setApiResult('ℹ️ 기존 데이터 없음 - 기본 템플릿 사용');
-      } finally {
+             } catch (error) {
+         console.log('❌ 기존 데이터 가져오기 실패:', error);
+         // 에러 발생 시에는 기본 템플릿 사용
+         setStepDetails({
+           '표제부': 'uncheck' as const,
+           '갑구': 'uncheck' as const,
+           '을구': 'uncheck' as const
+         });
+         setApiResult('❌ 기존 데이터 가져오기 실패');
+       } finally {
         setIsLoading(false);
       }
     };
@@ -164,7 +165,7 @@ export default function CircularIconStepTestPage() {
       <div className="bg-yellow-50 p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-3">Step Details 테스트</h2>
         
-        <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
           {Object.entries(stepDetails).map(([key, value]) => (
             <div key={key} className="flex items-center gap-3">
               <span className="text-sm font-medium">{key}:</span>
@@ -172,34 +173,37 @@ export default function CircularIconStepTestPage() {
                 type={value === 'match' ? 'match-blue' : value === 'mismatch' ? 'mismatch' : 'uncheck'}
                 size="md"
                 clickable={value === 'uncheck' || value === 'match'}
-                               stepData={stepInfo ? {
-                 stepNumber: stepInfo.mainNum,
-                 detail: stepInfo.subNum,
-                 userAddressId: selectedAddress?.id || 1,
-                 currentDetails: stepDetails,
-                 currentKey: key, // 현재 뱃지의 키 전달
-                 onStepResultUpdate: handleStepResultUpdate
-               } : undefined}
+                stepData={stepInfo ? {
+                  stepNumber: stepInfo.mainNum,
+                  detail: stepInfo.subNum,
+                  userAddressId: selectedAddress?.id || 1,
+                  currentDetails: stepDetails,
+                  currentKey: key, // 현재 뱃지의 키 전달
+                  onStepResultUpdate: handleStepResultUpdate
+                } : undefined}
               />
               <span className="text-xs">({value})</span>
             </div>
           ))}
         </div>
 
-        <div className="mt-4 flex gap-2">
-          <button
-            onClick={() => {
-              setStepDetails({
-                '표제부': 'uncheck',
-                '갑구': 'uncheck',
-                '을구': 'uncheck'
-              });
-              setApiResult('🔄 초기화됨');
-            }}
-            className="px-3 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 text-sm"
-          >
-            초기화
-          </button>
+        {/* 클릭 불가능한 뱃지 예시 */}
+        <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+          <h4 className="text-sm font-medium mb-3 text-gray-700">클릭 불가능한 뱃지 예시</h4>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <CircularIconBadge type="match" size="md" clickable={false} />
+              <span className="text-xs text-gray-600">클릭 불가능한 match</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CircularIconBadge type="unchecked" size="md" clickable={false} />
+              <span className="text-xs text-gray-600">클릭 불가능한 unchecked</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CircularIconBadge type="mismatch" size="md" clickable={false} />
+              <span className="text-xs text-gray-600">클릭 불가능한 mismatch</span>
+            </div>
+          </div>
         </div>
       </div>
 
