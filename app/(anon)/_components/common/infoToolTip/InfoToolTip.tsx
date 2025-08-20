@@ -6,13 +6,11 @@ import { styles } from './InfoToolTip.styles';
 interface InfoToolTipProps {
   term: string;
   definition: string | string[];
-  children?: React.ReactNode;
 }
 
 export default function InfoToolTip({
   term,
   definition,
-  children,
 }: InfoToolTipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({
@@ -211,8 +209,6 @@ export default function InfoToolTip({
           </div>
         )}
       </span>
-
-      {children}
     </div>
   );
 }
