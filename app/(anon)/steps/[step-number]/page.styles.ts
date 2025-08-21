@@ -17,7 +17,7 @@ export const styles = {
   indicatorDots: 'flex justify-center items-center w-full',
   indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
   indicatorDotBtn: 'mx-[6px]',
-  book: 'max-w-[480px] w-full mx-auto bg-[var(--brand-light-gray)] relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
+  book: 'max-w-[480px] w-full mx-auto bg-[rgba(229,231,235,0.3)] relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
   flipBook: 'flex items-center justify-center w-fit h-fit overflow-visible relative border-none',
   flex: 'flex h-full',
   introPage: 'bg-white mx-auto w-full h-[300px] flex items-center justify-center box-border',
@@ -49,6 +49,6 @@ export const styles = {
   borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
   danger: 'text-[0.8em] font-bold w-[22%] shadow-[inset_0px_-11px_0_#EDC9C9]',
   stateDiv: "absolute top-[13%] left-1/2 -translate-x-1/2 z-[100]",
-  dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-white)]',
+  dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-light-gray)]',
   dotActive: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-brand-black'
 } as const;
