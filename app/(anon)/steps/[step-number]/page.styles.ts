@@ -50,5 +50,5 @@ export const styles = {
   danger: 'text-[0.8em] font-bold w-[22%] shadow-[inset_0px_-11px_0_#EDC9C9]',
   stateDiv: "absolute top-[13%] left-1/2 -translate-x-1/2 z-[100]",
   dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-white)]',
-  dotActive: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-black)]'
+  dotActive: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-brand-black'
 } as const;
