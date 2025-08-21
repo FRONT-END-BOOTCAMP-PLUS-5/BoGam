@@ -16,12 +16,37 @@ import StateIcon from '../../_components/common/stateIcon/StateIcon';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+interface PageContent {
+  subtitle: string;
+  items: string[];
+}
+
+interface SummaryPageData {
+  type: 'summary';
+  title: string;
+  contents: PageContent[];
+}
+
+interface GeneralPageData {
+  type: 'general';
+  title: string;
+  category: string;
+  content: string;
+}
+
+type PageData = SummaryPageData | GeneralPageData;
+
+interface StepData {
+  step: number;
+  pages: PageData[];
+}
+
 export function Steps3Page() {
   const router = useRouter();
-  const bookRef = useRef<any>(null);
+  const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
   const [currentPage, setCurrentPage] = useState(0);
-  const [pages, setPages] = useState<any[]>([]);
+  const [pages, setPages] = useState<PageData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +78,7 @@ export function Steps3Page() {
   const stepNumber = match ? match[1] : '1';
 
   const flipPages: React.ReactNode[] = [];
-  pages.forEach((page: any, idx: number) => {
+  pages.forEach((page: PageData, idx: number) => {
     if (page.type === 'summary') {
       flipPages.push(
         <div key={`summary-${idx}`} className={styles.flex}>
@@ -143,7 +168,11 @@ export function Steps3Page() {
               key={j}
               className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''} ${styles.indicatorDotBtn}`}
               aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
-              onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
+              onClick={() => {
+                if (bookRef.current?.pageFlip?.flip) {
+                  bookRef.current.pageFlip.flip(j * 2);
+                }
+              }}
             />
           ))}
         </div>

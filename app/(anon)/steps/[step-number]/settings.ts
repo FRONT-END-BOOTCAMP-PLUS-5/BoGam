@@ -41,9 +41,9 @@ export interface IBookState {
 }
 
 export interface IEventProps {
-    onFlip?: (flipEvent: any) => void;
-    onChangeOrientation?: (flipEvent: any) => void;
-    onChangeState?: (flipEvent: any) => void;
-    onInit?: (flipEvent: any) => void;
-    onUpdate?: (flipEvent: any) => void;
+    onFlip?: (flipEvent: { data: number }) => void;
+    onChangeOrientation?: (flipEvent: { orientation: string }) => void;
+    onChangeState?: (flipEvent: { state: string }) => void;
+    onInit?: (flipEvent: { object: unknown }) => void;
+    onUpdate?: (flipEvent: { object: unknown }) => void;
 }
