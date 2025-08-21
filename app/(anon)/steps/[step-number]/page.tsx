@@ -1,7 +1,5 @@
 'use client';
 
-export default Steps3Page;
-
 import {
   useEffect,
   useRef,
@@ -41,7 +39,7 @@ interface StepData {
   pages: PageData[];
 }
 
-export function Steps3Page() {
+export default function Steps3Page() {
   const router = useRouter();
   const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');

@@ -141,27 +141,47 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     router.push('/mypage');
   };
 
-  const handleLogout = () => {
-    // 1. 클라이언트 상태 초기화
-    clearUser();
-    clearUserAddressStore();
+  const handleLogout = async () => {
+    console.log('로그아웃버튼 클릭');
+    
+    try {
+      // 1. 클라이언트 상태 초기화
+      console.log('handleLogout - 클라이언트 상태 초기화 시작');
+      clearUser();
+      clearUserAddressStore();
 
-    // 2. sessionStorage 정리 (step 제외)
-    sessionStorage.removeItem('user-store');
-    sessionStorage.removeItem('user-address-store');
+      // 2. sessionStorage 정리 (step 제외)
+      console.log('handleLogout - sessionStorage 정리');
+      sessionStorage.removeItem('user-store');
+      sessionStorage.removeItem('user-address-store');
 
-    // 3. step을 auth로 설정하고 sessionStorage에 저장
-    setStep('auth');
-    sessionStorage.setItem('step', 'auth');
+      // 3. step을 auth로 설정하고 sessionStorage에 저장
+      console.log('handleLogout - step을 auth로 설정');
+      setStep('auth');
+      sessionStorage.setItem('step', 'auth');
+      console.log('handleLogout - sessionStorage step 확인:', sessionStorage.getItem('step'));
 
-    // 4. NextAuth 로그아웃
-    signOut({
-      redirect: false,
-      callbackUrl: '/',
-    });
+      // 4. NextAuth 로그아웃
+      console.log('handleLogout - NextAuth signOut 시작');
+      await signOut({
+        redirect: false,
+        callbackUrl: '/',
+      });
+      console.log('handleLogout - NextAuth signOut 완료');
 
-    // 5. 홈페이지로 리디렉트
-    router.push('/');
+      // 5. 대시보드 닫기
+      console.log('handleLogout - 대시보드 닫기');
+      onClose();
+      
+      // 6. 홈페이지로 강제 리디렉트 (브라우저 새로고침)
+      console.log('handleLogout - 홈페이지로 리디렉트');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
+      // 오류가 발생해도 홈페이지로 이동
+      onClose();
+      window.location.href = '/';
+    }
   };
 
   const handleActionClick = (actionLink: string) => {
