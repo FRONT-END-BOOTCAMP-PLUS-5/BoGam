@@ -218,10 +218,10 @@ export default function CircularIconStepTestPage() {
         <h2 className="text-lg font-semibold mb-3">사용법</h2>
         <p className="text-sm">1. unchecked 뱃지를 클릭하면 match로 변경되고 API가 호출됩니다</p>
         <p className="text-sm">2. match 뱃지를 클릭하면 unchecked로 변경됩니다 (토글 기능)</p>
-        <p className="text-sm">3. 위의 "Steps X-Y" 버튼을 클릭하여 가상 URL을 변경하세요</p>
+        <p className="text-sm">3. 위의 &quot;Steps X-Y&quot; 버튼을 클릭하여 가상 URL을 변경하세요</p>
         <p className="text-sm">4. 가상 URL이 변경되면 자동으로 기존 데이터를 가져옵니다 (GET 요청)</p>
         <p className="text-sm">5. 가상 URL이 변경되면 mainNum, subNum이 자동으로 파싱됩니다</p>
-        <p className="text-sm">6. "테스트 페이지로 돌아가기" 버튼으로 원래 가상 경로로 돌아갈 수 있습니다</p>
+        <p className="text-sm">6. &quot;테스트 페이지로 돌아가기&quot; 버튼으로 원래 가상 경로로 돌아갈 수 있습니다</p>
         <p className="text-sm">7. 실제 페이지는 이동하지 않고 테스트 페이지 안에서 시뮬레이션됩니다</p>
       </div>
     </div>
