@@ -1,7 +1,7 @@
 export const styles = {
   // 모달 오버레이
   modalOverlay:
-    'fixed inset-0 bg-brand-black/50 flex items-end justify-center z-50 animate-fadeIn',
+    'fixed inset-0 bg-brand-black/50 flex items-end justify-center z-[9999] animate-fadeIn',
 
   // 모달 콘텐츠
   modalContent:
