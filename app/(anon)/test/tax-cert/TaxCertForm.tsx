@@ -145,10 +145,12 @@ export default function TaxCertForm() {
   };
 
   const handleSubmit = async (
-    e: React.FormEvent,
+    e: React.FormEvent | null,
     skipExistingCheck = false
   ) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     console.log('🚀 폼 제출 시작');
 
@@ -181,7 +183,7 @@ export default function TaxCertForm() {
         ...formData,
         userAddressNickname: '채원강남집',
       };
-
+      console.log("requestData@@@@@", requestData);
       const apiResponse = await axios.post(
         API_ENDPOINTS.TAX_CERT,
         requestData,
@@ -191,7 +193,7 @@ export default function TaxCertForm() {
           },
         }
       );
-
+      console.log("apiResponse@@@@@", apiResponse);
       const data = apiResponse.data as CodefResponse;
 
       if (data && typeof data === 'object' && 'error' in data) {
@@ -485,7 +487,7 @@ export default function TaxCertForm() {
     setShowExistenceWarning(false);
     setExistenceWarningData(null);
     // 실제 제출 로직 실행 (기존 데이터 확인 건너뛰기)
-    handleSubmit({} as React.FormEvent, true);
+    handleSubmit(null, true);
   };
 
   const handleExistenceWarningClose = () => {
