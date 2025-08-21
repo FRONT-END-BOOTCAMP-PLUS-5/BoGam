@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
-import { useMainPageModule } from '@/(anon)/main/_components/hooks/useMainPageModule';
+import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { styles } from './main.styles';
 import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 
@@ -12,7 +12,9 @@ export default function MainPage() {
   // 탭 상태 관리
   const [activeTab, setActiveTab] = useState(0);
 
-  const { gpsLoading, gpsError, currentLocationType } = useMainPageModule();
+  // useMainPageModule에서 모든 상태와 함수 가져오기 (React Query 포함)
+  const mainPageModule = useMainPageModule();
+  const { gpsLoading, gpsError, currentLocationType } = mainPageModule;
 
   // 탭 변경 핸들러
   const handleTabChange = (tabIndex: number) => {

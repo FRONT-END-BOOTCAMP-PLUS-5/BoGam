@@ -32,20 +32,6 @@ export const useMainPageState = () => {
     legalDistrictCode: '',
   });
 
-  // 새로운 주소 검색 데이터 (별도 관리)
-  const [newAddressData, setNewAddressData] = useState({
-    roadAddress: '',
-    dong: '',
-    ho: '',
-    searchQuery: '',
-    savedLawdCode: '',
-  });
-
-  // 현재 활성화된 주소 타입 ('new' | 'dropdown')
-  const [activeAddressType, setActiveAddressType] = useState<
-    'new' | 'dropdown'
-  >('dropdown');
-
   return {
     // 검색 관련 상태
     searchQuery,
@@ -70,11 +56,5 @@ export const useMainPageState = () => {
     setSelectedMonth,
     setShowPostcode,
     setAddressSaveData,
-
-    // 새로운 주소 관련 상태
-    newAddressData,
-    activeAddressType,
-    setNewAddressData,
-    setActiveAddressType,
   };
 };

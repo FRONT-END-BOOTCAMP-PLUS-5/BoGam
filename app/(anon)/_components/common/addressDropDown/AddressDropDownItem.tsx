@@ -61,7 +61,7 @@ export function AddressDropDownItem({
 
   return (
     <div
-      className={getListItemStyle(isSelected, false)}
+      className={getListItemStyle(isSelected, address.isVolatile || false)}
       style={{
         animationDelay: `${animationDelay}ms`,
       }}

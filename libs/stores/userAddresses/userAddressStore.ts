@@ -10,15 +10,25 @@ interface UserAddressStore {
   isLoading: boolean;
   error: string | null;
 
+  // 동/호 상태 (탭 간 유지)
+  dong: string;
+  ho: string;
+
   // 초기화 (React Query에서 받은 데이터로)
   initializeFromQuery: (data: UserAddress[]) => void;
 
   // Optimistic Updates
   addAddress: (address: Omit<UserAddress, 'id'>) => Promise<void>;
+  addVolatileAddress: (address: UserAddress) => void; // 휘발성 주소 추가 (DB 저장 없음)
   deleteAddress: (id: number) => Promise<void>;
+  deleteVolatileAddress: (id: number) => void; // 휘발성 주소 삭제 (DB 저장 없음)
   toggleFavorite: (id: number) => Promise<void>;
   selectAddress: (address: UserAddress) => void;
   clearSelectedAddress: () => void; // 추가
+
+  // 동/호 상태 관리
+  setDong: (dong: string) => void;
+  setHo: (ho: string) => void;
 
   // 전체 상태 초기화 (로그아웃/세션만료)
   clearAll: () => void;
@@ -37,24 +47,106 @@ export const useUserAddressStore = create<UserAddressStore>()(
         selectedAddress: null,
         isLoading: false,
         error: null,
+        dong: '',
+        ho: '',
 
         // React Query에서 받은 데이터로 초기화
         initializeFromQuery: (data) => {
           const currentState = get();
 
-          set({ userAddresses: data }, false, 'initializeFromQuery');
+          console.log('🔄 initializeFromQuery 호출:', {
+            dataLength: data.length,
+            currentUserAddressesLength: currentState.userAddresses.length,
+            currentSelectedAddress: currentState.selectedAddress?.nickname,
+            volatileAddressesCount: currentState.userAddresses.filter(
+              (addr) => addr.isVolatile
+            ).length,
+          });
+
+          // 기존 휘발성 주소들 보존
+          const volatileAddresses = currentState.userAddresses.filter(
+            (addr) => addr.isVolatile
+          );
+
+          console.log(
+            '💾 휘발성 주소 보존:',
+            volatileAddresses.map((addr) => addr.nickname)
+          );
+
+          // DB 데이터와 휘발성 주소를 합침
+          const mergedAddresses = [...data, ...volatileAddresses];
+
+          console.log(
+            '🔗 병합된 주소 목록:',
+            mergedAddresses.map(
+              (addr) => `${addr.nickname}${addr.isVolatile ? ' (휘발성)' : ''}`
+            )
+          );
+
+          // selectedAddress를 보존하면서 userAddresses만 업데이트
+          set(
+            (state) => ({
+              userAddresses: mergedAddresses,
+              // selectedAddress는 기존 상태 유지
+            }),
+            false,
+            'initializeFromQuery'
+          );
 
           // 이미 선택된 주소가 있으면 그대로 유지, 없으면 대표 주소 선택
           if (!currentState.selectedAddress) {
             const primaryAddress = data.find((addr) => addr.isPrimary);
             if (primaryAddress) {
+              console.log('⭐ 대표 주소 선택:', primaryAddress.nickname);
               set(
-                { selectedAddress: primaryAddress },
+                (state) => ({ selectedAddress: primaryAddress }),
                 false,
                 'setPrimaryAddress'
               );
             }
+          } else {
+            console.log(
+              '✅ 기존 선택된 주소 유지:',
+              currentState.selectedAddress.nickname
+            );
           }
+        },
+
+        // 휘발성 주소 추가 (DB 저장 없음)
+        addVolatileAddress: (newAddress: UserAddress) => {
+          console.log('🆕 휘발성 주소 추가 및 자동 선택:', newAddress.nickname);
+
+          // 즉시 UI 업데이트 및 자동 선택
+          set(
+            (state) => {
+              // 기존 휘발성 주소들 삭제
+              const nonVolatileAddresses = state.userAddresses.filter(
+                (addr) => !addr.isVolatile
+              );
+
+              return {
+                userAddresses: [...nonVolatileAddresses, newAddress],
+                selectedAddress: newAddress, // 새 주소를 자동으로 선택
+              };
+            },
+            false,
+            'addVolatileAddress'
+          );
+        },
+
+        // 휘발성 주소 삭제 (DB 저장 없음)
+        deleteVolatileAddress: (id: number) => {
+          set(
+            (state) => ({
+              userAddresses: state.userAddresses.filter(
+                (addr) => addr.id !== id
+              ),
+              selectedAddress:
+                state.selectedAddress?.id === id ? null : state.selectedAddress,
+            }),
+            false,
+            'deleteVolatileAddress'
+          );
         },
 
         // Optimistic Update로 주소 추가
@@ -76,7 +168,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
           try {
             // 서버에 저장
-            const response = await userAddressApi.addAddress({
+            const apiRequestData = {
               addressNickname: newAddress.nickname,
               latitude: newAddress.y,
               longitude: newAddress.x,
@@ -85,7 +177,9 @@ export const useUserAddressStore = create<UserAddressStore>()(
               ho: newAddress.ho || '', // 직접 사용
               lotAddress: newAddress.lotAddress,
               roadAddress: newAddress.roadAddress,
-            });
+            };
+
+            const response = await userAddressApi.addAddress(apiRequestData);
 
             if (response.success) {
               // 서버에서 받은 실제 ID로 업데이트
@@ -253,6 +347,10 @@ export const useUserAddressStore = create<UserAddressStore>()(
         clearSelectedAddress: () => {
           set({ selectedAddress: null }, false, 'clearSelectedAddress');
         },
+
+        // 동/호 상태 관리
+        setDong: (dong) => set({ dong }, false, 'setDong'),
+        setHo: (ho) => set({ ho }, false, 'setHo'),
 
         // 전체 상태 초기화 (로그아웃/세션만료)
         clearAll: () => {

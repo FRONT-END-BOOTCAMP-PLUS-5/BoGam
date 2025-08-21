@@ -10,7 +10,6 @@ import {
 import { AddressDropDownProps } from './types';
 import { AddressDropDownList } from './AddressDropDownList';
 import { formatAddress } from '@utils/addressUtils';
-import { useUserAddresses } from '@libs/stores/userAddresses/useUserAddresses';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { LoadingState } from './_components/LoadingState';
@@ -58,8 +57,8 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // React Query로 초기 데이터 로드
-  const { isLoading, isAuthenticated } = useUserAddresses();
+  // React Query 제거 - Zustand store만 사용
+  // const { isLoading, isAuthenticated } = useUserAddresses();
 
   // Store에서 데이터 가져오기
   const {
@@ -100,6 +99,10 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   // 빈 상태 체크
   const isEmpty = !addresses || addresses.length === 0;
+
+  // 로딩 상태 표시 - React Query 제거로 인해 항상 false
+  const isLoading = false;
+  const isAuthenticated = true; // 인증 상태는 상위 컴포넌트에서 관리
 
   // 로딩 상태 표시
   if (isLoading) {
