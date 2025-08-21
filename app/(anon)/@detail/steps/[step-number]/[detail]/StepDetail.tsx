@@ -9,9 +9,11 @@ import ModalContent from './_components/ModalContent';
 interface StepDetailProps {
   isOpen: boolean;
   onClose: () => void;
+  stepNumber: string;
+  pageIdx: number;
 }
 
-export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
+export default function StepDetailPage({ isOpen, onClose, stepNumber, pageIdx }: StepDetailProps) {
   const {
     dragState,
     modalRef,
@@ -62,7 +64,7 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
           onClose={onClose}
         />
 
-        <ModalContent />
+        <ModalContent stepNumber={stepNumber} pageIdx={pageIdx} />
       </div>
     </div>
   );
