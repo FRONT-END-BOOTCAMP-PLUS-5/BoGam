@@ -55,6 +55,7 @@ model UserAddress {
   realEstates RealEstate?
   stepResults StepResult[]
   taxCerts    TaxCert?
+  brokers     Broker?
   address     Address      @relation(fields: [addressId], references: [id], onDelete: Cascade)
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -70,6 +71,16 @@ model RealEstate {
   userAddress    UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("real_estates")
+}
+
+model Broker {
+  id             Int         @id @default(autoincrement())
+  userAddressId  Int         @unique @map("user_address_id")
+  brokerData     String      @map("broker_data")
+  updatedAt      DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAddress    UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+
+  @@map("brokers")
 }
 
 model Step {

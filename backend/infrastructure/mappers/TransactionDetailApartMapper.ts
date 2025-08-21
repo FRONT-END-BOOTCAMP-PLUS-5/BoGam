@@ -41,7 +41,26 @@ function pickRent(
     item.resDealType ? String(item.resDealType) : undefined,
     item.resLocation ? String(item.resLocation) : undefined,
     item.resFloorNum ? String(item.resFloorNum) : undefined,
-    item.resDong ? String(item.resDong) : undefined
+    item.resDong ? String(item.resDong) : undefined,
+    // 전월세 전용 필드들
+    item.commStartDate ? String(item.commStartDate) : undefined,
+    item.commEndDate ? String(item.commEndDate) : undefined,
+    item.resDeposit ? String(item.resDeposit) : undefined,
+    item.resMonthlyRent ? String(item.resMonthlyRent) : undefined,
+    item.resContractType ? String(item.resContractType) : undefined,
+    item.resRenewalUse ? String(item.resRenewalUse) : undefined,
+    item.resPrevDeposit ? String(item.resPrevDeposit) : undefined,
+    item.resPrevMonthlyRent ? String(item.resPrevMonthlyRent) : undefined,
+    item.resDesignationYN ? String(item.resDesignationYN) : undefined,
+    item.resRoadCondition ? String(item.resRoadCondition) : undefined,
+    item.resLandMoveDate ? String(item.resLandMoveDate) : undefined,
+    item.resLandMoveReason ? String(item.resLandMoveReason) : undefined,
+    item.resMinBLR ? String(item.resMinBLR) : undefined,
+    item.resMaxBLR ? String(item.resMaxBLR) : undefined,
+    item.resMinFAR ? String(item.resMinFAR) : undefined,
+    item.resMaxFAR ? String(item.resMaxFAR) : undefined,
+    item.resStructure ? String(item.resStructure) : undefined,
+    item.resBuildYear ? String(item.resBuildYear) : undefined
   );
 }
 
@@ -63,13 +82,13 @@ export function sanitizeTransactionDetailApartResponse(
 ): GetTransactionDetailResponseDto {
   if (!response?.data) return response;
 
-  if (Array.isArray(response.data)) {
-    const mapped = response.data.map((d: unknown) =>
-      sanitizeOne(d as Record<string, unknown>)
-    );
-    return { ...response, data: mapped };
-  }
+  const sanitized = sanitizeOne(response.data as Record<string, unknown>);
 
-  const mappedOne = sanitizeOne(response.data as Record<string, unknown>);
-  return { ...response, data: mappedOne };
+  return {
+    ...response,
+    data: {
+      resSaleList: sanitized.resSaleList,
+      resRentList: sanitized.resRentList,
+    },
+  };
 }

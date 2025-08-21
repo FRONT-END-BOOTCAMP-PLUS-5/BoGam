@@ -16,6 +16,7 @@ export const useMainPageState = () => {
   const [dong, setDong] = useState('');
   const [ho, setHo] = useState('');
   const [savedLawdCode, setSavedLawdCode] = useState('');
+
   const [buildingType, setBuildingType] = useState<BuildingType>({
     category: '',
     type: '',

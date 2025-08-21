@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { userAddressApi } from '@libs/api_front/userAddress.api';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
@@ -8,6 +8,19 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 export const useUserAddresses = () => {
   const { data: session, status } = useSession();
   const { initializeFromQuery } = useUserAddressStore();
+
+  // initializeFromQuery를 useCallback으로 메모이제이션
+  const memoizedInitializeFromQuery = useCallback(
+    (data: UserAddress[]) => {
+      console.log(
+        '🔄 React Query 데이터로 store 초기화:',
+        data.length,
+        '개 주소'
+      );
+      initializeFromQuery(data);
+    },
+    [initializeFromQuery]
+  );
 
   // React Query로 사용자 주소 데이터 가져오기
   const {
@@ -29,11 +42,6 @@ export const useUserAddresses = () => {
 
           // x와 y가 같은 값이면 잘못된 데이터로 간주
           if (x === y && x !== 0) {
-            console.warn('잘못된 좌표 데이터 발견:', {
-              x,
-              y,
-              address: item.address.lotAddress,
-            });
             // 기본값으로 설정 (서울 시청)
             x = 126.978;
             y = 37.5665;
@@ -60,37 +68,29 @@ export const useUserAddresses = () => {
             ho: item.address.ho || '', // 호 정보 직접 매핑
           };
 
-          console.log('📍 주소 변환 결과:', {
-            originalItem: item,
-            convertedAddress: convertedAddress,
-            dong: item.address.dong,
-            ho: item.address.ho,
-          });
-
           return convertedAddress;
         });
 
-        console.log('✅ 변환된 주소 데이터:', convertedAddresses);
         return convertedAddresses;
       }
 
-      console.log('❌ 주소 데이터 없음');
       return [];
     },
     enabled: status === 'authenticated' && !!session?.user?.nickname,
-    staleTime: 0, // 즉시 stale로 처리하여 캐시 무효화 시 즉시 refetch
-    gcTime: 10 * 60 * 1000, // 10분간 메모리 유지
+    staleTime: Infinity, // 수동으로 무효화할 때까지 fresh 상태 유지
+    gcTime: 30 * 60 * 1000, // 30분간 메모리 유지
     retry: 3, // 실패 시 3번 재시도
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 지수 백오프
+    refetchOnWindowFocus: false, // 윈도우 포커스 시 refetch 방지
+    refetchOnMount: false, // 컴포넌트 마운트 시 refetch 방지 (캐시가 있으면)
   });
 
   // React Query에서 받은 데이터를 Zustand store에 동기화
   useEffect(() => {
-    if (userAddressesData) {
-      console.log('🔄 React Query 데이터를 Store에 동기화:', userAddressesData);
-      initializeFromQuery(userAddressesData);
+    if (userAddressesData && userAddressesData.length > 0) {
+      memoizedInitializeFromQuery(userAddressesData);
     }
-  }, [userAddressesData, initializeFromQuery]);
+  }, [userAddressesData, memoizedInitializeFromQuery]);
 
   return {
     isLoading: isLoading || status === 'loading',

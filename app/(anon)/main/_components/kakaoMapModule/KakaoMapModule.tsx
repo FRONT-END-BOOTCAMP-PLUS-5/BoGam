@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useKakaoMap } from '@/(anon)/main/_components/hooks/useKakaoMap';
+import { useKakaoMap } from '@/hooks/main/useKakaoMap';
 import {
   Location,
   KakaoMapOptions,
@@ -9,7 +9,7 @@ import {
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
-import { useLocationManager } from '@/(anon)/main/_components/hooks/useLocationManager';
+import { useLocationManager } from '@/hooks/main/useLocationManager';
 
 interface KakaoMapModuleProps {
   showTransactionMarkers?: boolean;
@@ -24,31 +24,53 @@ const KakaoMapModule: React.FC<KakaoMapModuleProps> = (props) => {
   const { transactionData } = useTransactionDataStore();
   const { gpsLocation, gpsLoading, currentLocationType } = useLocationManager();
 
-  // 지도 중심점 결정 (mapCenter가 우선, 선택된 주소는 초기값으로만 사용)
+  // 지도 중심점 결정 (위치 타입에 따라 결정)
   const effectiveMapCenter = useMemo(() => {
-    // mapCenter가 설정되어 있으면 우선 사용 (사용자가 버튼을 눌렀을 때)
-    if (mapCenter && (mapCenter.lat !== 37.5665 || mapCenter.lng !== 126.978)) {
-      console.log('🗺️ 사용자 설정 지도 중심점 사용:', mapCenter);
-      return mapCenter;
-    }
-
-    // 선택된 주소가 있으면 해당 주소 사용
-    if (selectedAddress) {
-      // 좌표 유효성 검사
-      if (selectedAddress.x === selectedAddress.y && selectedAddress.x !== 0) {
-        console.warn('잘못된 주소 좌표:', selectedAddress);
-        return mapCenter; // 기본 지도 중심점 사용
+    // GPS 모드인 경우 GPS 위치 우선 사용
+    if (currentLocationType === 'gps') {
+      if (gpsLocation) {
+        return gpsLocation;
       }
-      console.log('🗺️ 선택된 주소로 지도 중심점 설정:', {
-        lat: selectedAddress.y,
-        lng: selectedAddress.x,
-      });
-      return { lat: selectedAddress.y, lng: selectedAddress.x };
+
+      return { lat: 37.5665, lng: 126.978 };
     }
 
-    console.log('🗺️ 기본 지도 중심점 사용:', mapCenter);
-    return mapCenter;
-  }, [selectedAddress, mapCenter]);
+    // 사용자 주소 모드인 경우
+    if (currentLocationType === 'user-address') {
+      // mapCenter가 명시적으로 설정된 경우 (사용자가 버튼을 눌렀을 때)
+      if (
+        mapCenter &&
+        (mapCenter.lat !== 37.5665 || mapCenter.lng !== 126.978)
+      ) {
+        return mapCenter;
+      }
+
+      // 선택된 주소가 있으면 해당 주소 사용
+      if (selectedAddress) {
+        // 좌표 유효성 검사
+        if (
+          selectedAddress.x === selectedAddress.y &&
+          selectedAddress.x !== 0
+        ) {
+          console.warn('잘못된 주소 좌표:', selectedAddress);
+          return { lat: 37.5665, lng: 126.978 }; // 기본 위치 사용
+        }
+
+        return { lat: selectedAddress.y, lng: selectedAddress.x };
+      }
+    }
+
+    return { lat: 37.5665, lng: 126.978 };
+  }, [
+    currentLocationType,
+    selectedAddress?.id,
+    selectedAddress?.x,
+    selectedAddress?.y,
+    mapCenter?.lat,
+    mapCenter?.lng,
+    gpsLocation?.lat,
+    gpsLocation?.lng,
+  ]);
 
   // KakaoMap 옵션
   const mapOptions: KakaoMapOptions = {

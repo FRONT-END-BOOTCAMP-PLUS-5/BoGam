@@ -1,5 +1,6 @@
 import { Broker } from '@be/domain/entities/Broker';
+import { GetBrokerQueryDto } from '@be/applications/brokers/dtos/GetBrokerQueryDto';
 
 export interface BrokerRepository {
-    find(brkrNm:string, bsnmCmpnm:string): Promise<Broker>;
+  find(query: GetBrokerQueryDto): Promise<Broker | Broker[]>;
 }

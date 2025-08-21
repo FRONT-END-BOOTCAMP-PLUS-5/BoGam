@@ -40,8 +40,6 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
       title?: string,
       content?: string
     ) => {
-      console.log('createMarker 호출됨:', { id, location, title });
-
       if (!window.kakao?.maps) {
         console.warn('카카오 맵 SDK가 로드되지 않았습니다.');
         return null;
@@ -51,7 +49,6 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
       removeMarker(id);
 
       const position = new window.kakao.maps.LatLng(location.lat, location.lng);
-      console.log('마커 위치:', position);
 
       const marker = new window.kakao.maps.Marker({
         position,
@@ -62,7 +59,6 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
         zIndex: markerOptions.zIndex ?? 1,
       });
 
-      console.log('마커 생성 완료:', marker);
       markersRef.current.set(id, marker);
 
       // 인포윈도우 생성
@@ -89,9 +85,7 @@ export const useKakaoMapMarkers = (options: UseKakaoMapMarkersOptions = {}) => {
 
   const createMultipleMarkers = useCallback(
     (markersData: MarkerData[], map: Record<string, unknown>) => {
-      console.log('createMultipleMarkers 호출됨:', markersData);
       markersData.forEach(({ id, location, title, content }) => {
-        console.log('마커 생성:', { id, location, title });
         createMarker(id, location, map, title, content);
       });
     },
