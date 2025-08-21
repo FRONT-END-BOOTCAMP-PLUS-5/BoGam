@@ -144,11 +144,17 @@ export default function BrokerTestPage() {
       
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>사용자 주소 정보</h2>
-                 <div className={styles.addressInfo}>
-           <p className={styles.addressInfoText}><strong>선택된 주소:</strong> {selectedAddress?.nickname || '없음'}</p>
-           <p className={styles.addressInfoText}><strong>주소 ID:</strong> {selectedAddress?.id || '없음'}</p>
-           <p className={styles.addressInfoText}><strong>전체 주소 수:</strong> {userAddresses.length}</p>
-         </div>
+        <div className={styles.addressInfo}>
+          <p className={styles.addressInfoText}>
+            <strong>선택된 주소:</strong> {selectedAddress?.nickname || '없음'}
+          </p>
+          <p className={styles.addressInfoText}>
+            <strong>주소 ID:</strong> {selectedAddress?.id || '없음'}
+          </p>
+          <p className={styles.addressInfoText}>
+            <strong>전체 주소 수:</strong> {userAddresses.length}
+          </p>
+        </div>
       </div>
 
       <div className={styles.section}>
@@ -230,10 +236,20 @@ export default function BrokerTestPage() {
       {apiResponse && (
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>API 응답 결과</h2>
-                     <div className={`${styles.response} ${apiResponse.success ? styles.success : styles.error}`}>
-             <p className={styles.responseText}><strong>상태:</strong> {apiResponse.success ? '성공' : '실패'}</p>
-             {apiResponse.message && <p className={styles.responseText}><strong>메시지:</strong> {apiResponse.message}</p>}
-             {apiResponse.error && <p className={styles.responseText}><strong>에러:</strong> {apiResponse.error}</p>}
+          <div className={`${styles.response} ${apiResponse.success ? styles.success : styles.error}`}>
+            <p className={styles.responseText}>
+              <strong>상태:</strong> {apiResponse.success ? '성공' : '실패'}
+            </p>
+            {apiResponse.message && (
+              <p className={styles.responseText}>
+                <strong>메시지:</strong> {apiResponse.message}
+              </p>
+            )}
+            {apiResponse.error && (
+              <p className={styles.responseText}>
+                <strong>에러:</strong> {apiResponse.error}
+              </p>
+            )}
             {apiResponse.data && (
               <div>
                 <p><strong>데이터:</strong></p>
