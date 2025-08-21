@@ -4,6 +4,7 @@ export const styles = {
     'flex items-start justify-between px-4 py-2 hover:bg-brand-light-blue/10 transition-colors duration-200 border-b border-brand-light-gray/50 opacity-0 -translate-y-[10px] animate-[fadeInSlide_0.3s_ease-out_forwards]',
   listItemLast: 'border-b-0',
   listItemActive: 'bg-brand-light-blue/20 border-l-4 border-l-brand pl-4',
+  listItemVolatile: 'bg-brand-light-yellow/20 border-l-4 border-l-brand-yellow',
 
   // 주소 컨텐츠 영역
   addressContent: 'flex items-start flex-1 min-w-0 cursor-pointer',
@@ -19,8 +20,10 @@ export const styles = {
   addressTextActive: 'font-medium text-brand-black',
 
   // 주소 텍스트 라인
-  addressFirstLine: 'text-sm text-brand-black leading-relaxed break-all leading-[1.4]',
-  addressSecondLine: 'text-xs text-brand-dark-gray leading-relaxed mt-1 break-all leading-[1.3]',
+  addressFirstLine:
+    'text-sm text-brand-black leading-relaxed break-all leading-[1.4]',
+  addressSecondLine:
+    'text-xs text-brand-dark-gray leading-relaxed mt-1 break-all leading-[1.3]',
 
   // 삭제 버튼
   deleteButton:
@@ -31,9 +34,9 @@ export const styles = {
 } as const;
 
 // 조건부 스타일 함수들
-export const getListItemStyle = (isActive: boolean, isLast: boolean) =>
+export const getListItemStyle = (isActive: boolean, isVolatile: boolean) =>
   `${styles.listItem} ${isActive ? styles.listItemActive : ''} ${
-    isLast ? styles.listItemLast : ''
+    isVolatile ? styles.listItemVolatile : ''
   }`;
 
 export const getAddressTextStyle = (isActive: boolean) =>

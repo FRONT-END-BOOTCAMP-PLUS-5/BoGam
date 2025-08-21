@@ -161,7 +161,7 @@ export default function StyleBadgesPage() {
             <div className="text-gray-600">아이콘: text-white</div>
           </div>
           <div className="p-3 bg-white border rounded-lg">
-            <div className="font-medium">Uncheck (미확인)</div>
+            <div className="font-medium">Unchecked (미확인)</div>
             <div className="text-gray-600">배경: bg-brand-light-gray = #e5e7eb</div>
             <div className="text-gray-600">아이콘: text-brand-dark-gray = #6D6D6D</div>
           </div>

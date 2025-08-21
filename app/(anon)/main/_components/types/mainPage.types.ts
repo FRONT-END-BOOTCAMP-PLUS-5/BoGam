@@ -45,6 +45,9 @@ export interface UserAddress {
   // 동/호 정보 (별도 필드)
   dong?: string; // 동
   ho?: string; // 호
+
+  // 휘발성 플래그 (새 주소 검색 시 임시 저장용)
+  isVolatile?: boolean;
 }
 
 export interface TransactionData {

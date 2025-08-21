@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useMainPageModule } from '@/(anon)/main/_components/hooks/useMainPageModule';
-import { useMainPageState } from '@/(anon)/main/_components/hooks/useMainPageState';
-import { parseAddress } from '@utils/addressParser';
+import { useAddressManagement } from '@/hooks/main/useAddressManagement';
+import { useTransactionManagement } from '@/hooks/main/useTransactionManagement';
+import { useMainPageState } from '@/hooks/main/useMainPageState';
+import { parseAddressString } from '@utils/main/addressUtils';
 import { styles } from '@/(anon)/main/_components/tabContainer/TransactionSearchTab.styles';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
@@ -35,39 +36,27 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
   const [searchGbn, setSearchGbn] = useState('1'); // 0: 지번주소, 1: 도로명주소
   const [showDanjiModal, setShowDanjiModal] = useState(false);
 
-  // useMainPageModule에서 필요한 함수들 가져오기
-  const {
-    selectedAddress,
-    isNewAddressSearch,
-    activeAddressType,
-    handleMoveToAddress,
-  } = useMainPageModule();
+  // 새로운 Hook들 사용
+  const { selectedAddress } = useAddressManagement();
+  const { handleTransactionSearch: handleMoveToAddress } =
+    useTransactionManagement();
 
   // useMainPageState에서 상태와 setter 함수들 가져오기
-  const { selectedYear, setSelectedYear, newAddressData } = useMainPageState();
+  const { selectedYear, setSelectedYear } = useMainPageState();
 
   // 선택된 주소가 변경될 때마다 주소 파싱
   useEffect(() => {
-    // activeAddressType이 'new'일 때는 selectedAddress를 사용하지 않음
-    if (activeAddressType === 'new' && newAddressData.roadAddress) {
-      const address = newAddressData.roadAddress || '';
-      const parsed = parseAddress(address);
-      setParsedAddress(parsed);
-    } else if (selectedAddress && activeAddressType === 'dropdown') {
-      const address = selectedAddress.completeAddress || '';
-      const parsed = parseAddress(address);
+    if (selectedAddress) {
+      const address =
+        selectedAddress.completeAddress || selectedAddress.roadAddress || '';
+      const parsed = parseAddressString(address);
       setParsedAddress(parsed);
     }
-  }, [selectedAddress, activeAddressType, newAddressData]);
+  }, [selectedAddress]);
 
   // 주소 표시 로직
-  const displayAddress = (() => {
-    // activeAddressType이 'new'일 때는 빈 문자열 반환
-    if (activeAddressType === 'new') {
-      return '';
-    }
-    return selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
-  })();
+  const displayAddress =
+    selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
 
   const handleFetchComplex = () => {
     setShowDanjiModal(true);
@@ -80,7 +69,9 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
 
   const handleTransactionSearch = () => {
     // 실거래가 조회 API 요청 (선택된 타입과 건물 코드 전달)
-    handleMoveToAddress(selectedType, complexName);
+    if (selectedAddress) {
+      handleMoveToAddress(selectedType, complexName);
+    }
     // 세 번째 탭으로 이동
     onTabChange?.(2);
   };
@@ -213,7 +204,6 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
         onCancel={() => setShowDanjiModal(false)}
         title='단지 일련번호 조회'
         icon='info'
-        confirmText=''
         cancelText='닫기'
         onConfirm={() => {}} // 빈 함수로 설정 (확인 버튼 숨김)
       >

@@ -16,7 +16,7 @@ export const useRootStep = create<RootStepStore>((set) => ({
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('step', step);
     }
-    set({ step });
+    set({ step, initialized: true });
   },
   initStepFromSession: () => {
     if (typeof window !== 'undefined') {
