@@ -150,7 +150,7 @@ export default function Steps3Page() {
       </HTMLFlipBook>
       <div className={styles.indicatorWrapper}>
         <div className={styles.indicatorLeft}>
-          {currentPage === 0 && (
+          {currentPage === 0 && Number(stepNumber) > 1 && (
             <button
               className={styles.indicatorArrowBtn}
               aria-label="이전 단계로 이동"
@@ -175,7 +175,7 @@ export default function Steps3Page() {
           ))}
         </div>
         <div className={styles.indicatorRight}>
-          {currentPage === totalPages - 1 && (
+          {currentPage === totalPages - 1 && Number(stepNumber) < 7 && (
             <button
               className={styles.indicatorArrowBtn}
               aria-label="다음 단계로 이동"
