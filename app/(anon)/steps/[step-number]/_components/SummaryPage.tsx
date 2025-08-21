@@ -1,3 +1,5 @@
+'use client';
+
 import { summaryPageStyles } from './SummaryPage.styles';
 
 interface SummaryPageProps {
