@@ -50,11 +50,14 @@ export default function Header() {
         </button>
       </header>
 
-      <div className={`${styles.slidePanel} ${
+      <div 
+        className={`${styles.slidePanel} ${
           isDashboardOpen ? styles.slideIn : styles.slideOut
-        }`}>
-          <HambugiDashboard onClose={() => setIsDashboardOpen(false)} />
-        </div>
+        }`}
+        data-dashboard="true"
+      >
+        <HambugiDashboard onClose={() => setIsDashboardOpen(false)} />
+      </div>
     </>
   );
 }

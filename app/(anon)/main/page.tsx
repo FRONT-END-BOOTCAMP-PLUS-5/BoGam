@@ -1,20 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
+import FloatingButton from '@/(anon)/main/_components/floatingButtom/FloatingButton';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { styles } from './main.styles';
-import AuthLanding from '@/(anon)/main/_components/AuthLanding';
+import { MapPinned, Pin, House, X } from 'lucide-react';
 
 export default function MainPage() {
   // 탭 상태 관리
   const [activeTab, setActiveTab] = useState(0);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   // useMainPageModule에서 모든 상태와 함수 가져오기 (React Query 포함)
   const mainPageModule = useMainPageModule();
   const { gpsLoading, gpsError, currentLocationType } = mainPageModule;
+
+  // 햄부기 대시보드 열림 상태 감지
+  useEffect(() => {
+    const checkDashboardOpen = () => {
+      const dashboardElement = document.querySelector('[data-dashboard="true"]');
+      setIsDashboardOpen(!!dashboardElement);
+    };
+
+    // 초기 체크
+    checkDashboardOpen();
+
+    // MutationObserver로 DOM 변화 감지
+    const observer = new MutationObserver(checkDashboardOpen);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
 
   // 탭 변경 핸들러
   const handleTabChange = (tabIndex: number) => {
@@ -32,26 +52,32 @@ export default function MainPage() {
           {/* 지도 헤더 - 첫 번째 탭에서만 표시 */}
 
           <div className={styles.mapHeader}>
-            <span className={styles.mapIcon}>🗺️</span>
+            <MapPinned className={styles.mapIcon} />
             <span className={styles.mapTitle}>관심 지역 지도</span>
             {/* 위치 상태 표시 */}
             <div className={styles.locationStatus}>
               {gpsLoading ? (
                 <span className={styles.locationLoading}>
-                  📍 위치 확인 중...
+                  <Pin /> 위치 확인 중...
                 </span>
               ) : gpsError ? (
-                <span className={styles.locationError}>❌ 위치 오류</span>
+                <span className={styles.locationError}>
+                  <X size={16} /> 위치 오류
+                </span>
               ) : currentLocationType === 'gps' ? (
-                <span className={styles.locationGPS}>📍 GPS 위치</span>
+                <span className={styles.locationGPS}>
+                  <Pin size={16} /> GPS 위치
+                </span>
               ) : (
-                <span className={styles.locationUser}>🏠 사용자 주소</span>
+                <span className={styles.locationUser}>
+                  <House size={16} /> 사용자 주소
+                </span>
               )}
             </div>
           </div>
 
           <div className={styles.searchGuide}>
-            주소와 키워드로 전세매물을 찾아보세요!
+            관심 전세매물을 검색하여 전세보감의 가이드를 이용해 보세요!
           </div>
 
           {/* 탭 컨테이너 */}
@@ -64,6 +90,9 @@ export default function MainPage() {
             </div>
           )}
         </div>
+        <FloatingButton isDashboardOpen={isDashboardOpen} />
+
+        <div className={styles.buttonArea}></div>
       </div>
       <AuthLanding />
     </div>
