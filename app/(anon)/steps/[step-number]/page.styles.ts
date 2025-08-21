@@ -43,20 +43,12 @@ export const styles = {
   firstLeftBox: 'flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray',
   leftBox: 'flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray',
   lastLeftBox: 'flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray] border-r-[10px] border-r-brand-light-gray',
-  rightFirstOutsideBox: 'w-[87%] bg-white h-[5vh] rounded-lg ml-[6%] mt-[2vh]',
-  rightFirstInsideBox: 'w-[95%] border-2 border-brand mx-auto mt-[2vh] rounded-lg h-[3.5vh] relative top-[0.6vh]',
-  smallFont: 'font-bold text-[0.8em] flex items-center justify-center pt-[0.3vh]',
-  whitePaper: 'w-[87%] bg-white ml-[6%] rounded-xl mt-[2vh] p-[2vh_4%]',
-  topic: 'text-[0.8em] font-bold pb-[1vh] pt-[1vh] border-b border-gray-400 mb-[1.5vh]',
-  introContent: 'text-[0.65em] pb-[1vh]',
   backPage: 'h-screen w-[1.5%] bg-gray-300 border-t border-t-gray-400 border-r border-r-gray-400 border-b border-b-gray-400 rounded-xl',
   generalWhitePage: 'bg-white w-full h-full flex items-start justify-start box-border relative',
   smallFontDiv: 'relative pb-[2vh] pt-[2vh] border-b border-b-brand-light-gray w-full',
   borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
   danger: 'text-[0.8em] font-bold w-[22%] shadow-[inset_0px_-11px_0_#EDC9C9]',
-  leftDiv: 'w-[50px] h-full flex flex-col bg-transparent border-none shadow-none flex-shrink-0',
-  leftFirst: "flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray",
-  leftCenter: "flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray",
-  leftLast: "flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray",
-  stateDiv: "absolute top-[13%] left-1/2 -translate-x-1/2 z-[100]"
+  stateDiv: "absolute top-[13%] left-1/2 -translate-x-1/2 z-[100]",
+  dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-white)]',
+  dotActive: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-black)]'
 } as const;

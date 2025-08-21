@@ -2,150 +2,19 @@
 
 export default Steps3Page;
 
-import React, {
-  ReactElement,
-  useCallback,
+import {
   useEffect,
-  useImperativeHandle,
   useRef,
-  useState,
+  useState
 } from 'react';
 
-import { PageFlip } from 'page-flip';
 import HTMLFlipBook from "react-pageflip";
-import { IFlipSetting, IEventProps } from './settings';
 import { styles } from './page.styles';
 import GeneralPage from '../_components/GeneralPage';
+import SummaryPage from '../_components/SummaryPage';
 import StateIcon from '../../_components/common/stateIcon/StateIcon';
-import onboardingStyles from '@/(anon)/_components/onboarding/Onboarding.module.css';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-interface IProps extends IFlipSetting, IEventProps {
-  className: string;
-  style: React.CSSProperties;
-  children: React.ReactNode;
-  renderOnlyPageLengthChange?: boolean;
-}
-
-const HTMLFlipBookForward = React.forwardRef<PageFlip, IProps>(
-  (props, ref) => {
-    const htmlElementRef = useRef<HTMLDivElement>(null);
-    const childRef = useRef<HTMLElement[]>([]);
-    const pageFlip = useRef<PageFlip | null>(null);
-
-    const [pages, setPages] = useState<ReactElement[]>([]);
-
-    useImperativeHandle(ref, () => pageFlip.current as PageFlip, [pageFlip.current]);
-
-    const refreshOnPageDelete = useCallback(() => {
-    }, []);
-
-    const removeHandlers = useCallback(() => {
-      const flip = pageFlip.current;
-      if (flip) {
-        if (typeof flip.off === 'function') {
-          flip.off('flip');
-          flip.off('changeOrientation');
-          flip.off('changeState');
-          flip.off('init');
-          flip.off('update');
-        }
-      }
-    }, []);
-
-    useEffect(() => {
-      childRef.current = [];
-      if (props.children) {
-        const childList = React.Children.map(props.children, (child, idx) => {
-          return React.cloneElement(child as ReactElement, {
-            key: idx,
-          });
-        }) || [];
-
-        if (!props.renderOnlyPageLengthChange || pages.length !== childList.length) {
-          if (childList.length < pages.length) {
-            refreshOnPageDelete();
-          }
-          setPages(childList);
-        }
-      }
-    }, [props.children, pages.length, refreshOnPageDelete, props.renderOnlyPageLengthChange]);
-
-    useEffect(() => {
-      const setHandlers = () => {
-        const flip = pageFlip.current;
-        if (flip) {
-          if (props.onFlip && typeof flip.on === 'function') {
-            flip.on('flip', (e: unknown) => props.onFlip && props.onFlip(e));
-          }
-          if (props.onChangeOrientation && typeof flip.on === 'function') {
-            flip.on('changeOrientation', (e: unknown) => props.onChangeOrientation && props.onChangeOrientation(e));
-          }
-          if (props.onChangeState && typeof flip.on === 'function') {
-            flip.on('changeState', (e: unknown) => props.onChangeState && props.onChangeState(e));
-          }
-          if (props.onInit && typeof flip.on === 'function') {
-            flip.on('init', (e: unknown) => props.onInit && props.onInit(e));
-          }
-          if (props.onUpdate && typeof flip.on === 'function') {
-            flip.on('update', (e: unknown) => props.onUpdate && props.onUpdate(e));
-          }
-        }
-      };
-
-      if (pages.length > 0 && childRef.current.length > 0) {
-        removeHandlers();
-        if (htmlElementRef.current && !pageFlip.current) {
-          pageFlip.current = new PageFlip(htmlElementRef.current, props as any);
-        }
-        if (pageFlip.current && typeof pageFlip.current.getFlipController === 'function' && !pageFlip.current.getFlipController()) {
-          pageFlip.current.loadFromHTML(childRef.current);
-        } else if (pageFlip.current && typeof pageFlip.current.updateFromHtml === 'function') {
-          pageFlip.current.updateFromHtml(childRef.current);
-        }
-        setHandlers();
-      }
-    }, [pages, props, removeHandlers]);
-
-    return (
-      <div ref={htmlElementRef} className={props.className} style={props.style}>
-        {pages}
-      </div>
-    );
-  }
-);
-
-function SummaryPage({ title, contents }: { title: string; contents: { subtitle: string; items: string[] }[] }) {
-  return (
-    <div className={styles.generalPage}>
-      <div className={styles.leftDiv}>
-        <div className={styles.leftFirst}></div>
-        <div className={styles.leftCenter}></div>
-        <div className={styles.leftCenter}></div>
-        <div className={styles.leftCenter}></div>
-        <div className={styles.leftLast}></div>
-      </div>
-      <div>
-        <div className={styles.rightFirstOutsideBox}>
-          <div className={styles.rightFirstInsideBox}>
-            <p className={styles.smallFont}> {title} </p>
-          </div>
-        </div>
-        <div className={styles.whitePaper + ' max-h-[340px] overflow-y-auto'}>
-          {contents.map((block, i) => (
-            <div key={i}>
-              <h6 className={styles.topic}>{block.subtitle}</h6>
-              {block.items.map((item, j) => (
-                <p key={j} className={styles.introContent}>{item}</p>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export function Steps3Page() {
   const router = useRouter();
@@ -217,7 +86,9 @@ export function Steps3Page() {
       setMarginLeft('translateX(-37%)');
     }
   }, []);
+  
   if (loading) return <div>데이터를 불러오는 중...</div>;
+  
   return (
     <div className={styles.book}>
       <div className={styles.stateDiv}>
@@ -270,7 +141,7 @@ export function Steps3Page() {
           {Array.from({ length: totalPages }).map((_, j) => (
             <button
               key={j}
-              className={`${onboardingStyles.dot} ${j === currentPage ? onboardingStyles.dotActive : ''} ${styles.indicatorDotBtn} ${j === currentPage ? 'bg-black' : 'bg-[#A7A8A9]'}`}
+              className={`${styles.dot} ${j === currentPage ? styles.dotActive : ''} ${styles.indicatorDotBtn}`}
               aria-label={`slide ${j + 1}${j === currentPage ? ' (current)' : ''}`}
               onClick={() => bookRef.current?.pageFlip?.flip(j * 2)}
             />
