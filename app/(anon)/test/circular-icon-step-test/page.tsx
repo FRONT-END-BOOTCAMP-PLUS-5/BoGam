@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import stepDetailApi from '@libs/api_front/step.api';
+import stepResultQueryApi from '@libs/api_front/stepResultQueries.api';
 
 export default function CircularIconStepTestPage() {
   const pathname = usePathname();
@@ -15,10 +15,10 @@ export default function CircularIconStepTestPage() {
   const [virtualPath, setVirtualPath] = useState('/steps/1/2'); // 기본값 설정
   const stepInfo = parseStepUrl(virtualPath);
   
-  const [stepDetails, setStepDetails] = useState<Record<string, 'match' | 'mismatch' | 'uncheck'>>({
-    '표제부': 'uncheck',
-    '갑구': 'uncheck',
-    '을구': 'uncheck'
+  const [stepDetails, setStepDetails] = useState<Record<string, 'match' | 'mismatch' | 'unchecked'>>({
+    '표제부': 'unchecked',
+    '갑구': 'unchecked',
+    '을구': 'unchecked'
   });
 
   const [apiResult, setApiResult] = useState('');
@@ -37,7 +37,7 @@ export default function CircularIconStepTestPage() {
           userAddressId: selectedAddress.id 
         });
         
-        const existingData = await stepDetailApi.getStepDetail({
+        const existingData = await stepResultQueryApi.getStepResult({
           userAddressNickname: selectedAddress?.nickname || '채원강남집',
           stepNumber: stepInfo.mainNum.toString(),
           detail: stepInfo.subNum.toString()
@@ -45,21 +45,21 @@ export default function CircularIconStepTestPage() {
         
         console.log('✅ 기존 데이터 가져오기 성공:', existingData);
         
-                 if (existingData.jsonDetails) {
-           // API에서 받은 jsonDetails를 현재 상태와 병합
-           // 타입 안전성을 위해 필터링
-           const filteredDetails: Record<string, 'match' | 'mismatch' | 'uncheck'> = {};
-           Object.entries(existingData.jsonDetails).forEach(([key, value]) => {
-             if (value === 'match' || value === 'mismatch' || value === 'uncheck') {
-               filteredDetails[key] = value;
-             }
-           });
+        if (existingData.jsonDetails) {
+          // API에서 받은 jsonDetails를 현재 상태와 병합
+          // 타입 안전성을 위해 필터링
+          const filteredDetails: Record<string, 'match' | 'mismatch' | 'unchecked'> = {};
+          Object.entries(existingData.jsonDetails).forEach(([key, value]) => {
+            if (value === 'match' || value === 'mismatch' || value === 'unchecked') {
+              filteredDetails[key] = value;
+            }
+          });
           
           // 기본 템플릿과 병합 (기존 데이터가 우선)
-          const defaultTemplate: Record<string, 'match' | 'mismatch' | 'uncheck'> = {
-            '표제부': 'uncheck',
-            '갑구': 'uncheck',
-            '을구': 'uncheck'
+          const defaultTemplate: Record<string, 'match' | 'mismatch' | 'unchecked'> = {
+            '표제부': 'unchecked',
+            '갑구': 'unchecked',
+            '을구': 'unchecked'
           };
           const mergedDetails = { ...defaultTemplate, ...filteredDetails };
           
@@ -68,22 +68,22 @@ export default function CircularIconStepTestPage() {
         } else {
           // 기존 데이터가 없으면 기본 템플릿 사용
           setStepDetails({
-            '표제부': 'uncheck' as const,
-            '갑구': 'uncheck' as const,
-            '을구': 'uncheck' as const
+            '표제부': 'unchecked' as const,
+            '갑구': 'unchecked' as const,
+            '을구': 'unchecked' as const
           });
           setApiResult('ℹ️ 기존 데이터 없음 - 기본 템플릿 사용');
         }
-             } catch (error) {
-         console.log('❌ 기존 데이터 가져오기 실패:', error);
-         // 에러 발생 시에는 기본 템플릿 사용
-         setStepDetails({
-           '표제부': 'uncheck' as const,
-           '갑구': 'uncheck' as const,
-           '을구': 'uncheck' as const
-         });
-         setApiResult('❌ 기존 데이터 가져오기 실패');
-       } finally {
+      } catch (error) {
+        console.log('❌ 기존 데이터 가져오기 실패:', error);
+        // 에러 발생 시에는 기본 템플릿 사용
+        setStepDetails({
+          '표제부': 'unchecked' as const,
+          '갑구': 'unchecked' as const,
+          '을구': 'unchecked' as const
+        });
+        setApiResult('❌ 기존 데이터 가져오기 실패');
+      } finally {
         setIsLoading(false);
       }
     };
@@ -91,7 +91,7 @@ export default function CircularIconStepTestPage() {
     fetchExistingData();
   }, [virtualPath, selectedAddress?.id]); // virtualPath나 selectedAddress가 바뀔 때마다 실행
 
-  const handleStepResultUpdate = (newDetails: Record<string, 'match' | 'mismatch' | 'uncheck'>) => {
+  const handleStepResultUpdate = (newDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>) => {
     setStepDetails(newDetails);
     setApiResult('✅ Step Result 업데이트 성공!');
   };
@@ -165,14 +165,14 @@ export default function CircularIconStepTestPage() {
       <div className="bg-yellow-50 p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-3">Step Details 테스트</h2>
         
-                <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {Object.entries(stepDetails).map(([key, value]) => (
             <div key={key} className="flex items-center gap-3">
               <span className="text-sm font-medium">{key}:</span>
               <CircularIconBadge
-                type={value === 'match' ? 'match-blue' : value === 'mismatch' ? 'mismatch' : 'uncheck'}
+                type={value === 'match' ? 'match-blue' : value === 'mismatch' ? 'mismatch' : 'unchecked'}
                 size="md"
-                clickable={value === 'uncheck' || value === 'match'}
+                clickable={value === 'unchecked' || value === 'match'}
                 stepData={stepInfo ? {
                   stepNumber: stepInfo.mainNum,
                   detail: stepInfo.subNum,
@@ -217,11 +217,11 @@ export default function CircularIconStepTestPage() {
       <div className="bg-gray-50 p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-3">사용법</h2>
         <p className="text-sm">1. unchecked 뱃지를 클릭하면 match로 변경되고 API가 호출됩니다</p>
-        <p className="text-sm">2. match 뱃지를 클릭하면 uncheck로 변경됩니다 (토글 기능)</p>
-        <p className="text-sm">3. 위의 &quot;Steps X-Y&quot; 버튼을 클릭하여 가상 URL을 변경하세요</p>
+        <p className="text-sm">2. match 뱃지를 클릭하면 unchecked로 변경됩니다 (토글 기능)</p>
+        <p className="text-sm">3. 위의 "Steps X-Y" 버튼을 클릭하여 가상 URL을 변경하세요</p>
         <p className="text-sm">4. 가상 URL이 변경되면 자동으로 기존 데이터를 가져옵니다 (GET 요청)</p>
         <p className="text-sm">5. 가상 URL이 변경되면 mainNum, subNum이 자동으로 파싱됩니다</p>
-        <p className="text-sm">6. &quot;테스트 페이지로 돌아가기&quot; 버튼으로 원래 가상 경로로 돌아갈 수 있습니다</p>
+        <p className="text-sm">6. "테스트 페이지로 돌아가기" 버튼으로 원래 가상 경로로 돌아갈 수 있습니다</p>
         <p className="text-sm">7. 실제 페이지는 이동하지 않고 테스트 페이지 안에서 시뮬레이션됩니다</p>
       </div>
     </div>

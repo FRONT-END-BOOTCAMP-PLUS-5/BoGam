@@ -1,14 +1,14 @@
 import { frontendAxiosInstance } from './axiosInstance';
 
-// Step Detail 데이터 타입 정의
-export interface StepDetailData {
+// Step Result 데이터 타입 정의 (조회용)
+export interface StepResultData {
   id: number;
   userAddressId: number;
   stepId: number;
   mismatch: number;
   match: number;
   unchecked: number;
-  jsonDetails: Record<string, string>;
+  jsonDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>;
   createdAt: string;
   updatedAt: string;
   stepNumber: number;
@@ -16,40 +16,40 @@ export interface StepDetailData {
 }
 
 // API 응답 타입 정의
-interface StepDetailApiResponse {
+interface StepResultQueryResponse {
   success: boolean;
-  data: StepDetailData;
+  data: StepResultData;
   message?: string;
 }
 
 // API 요청 파라미터 타입 정의
-interface GetStepDetailParams {
+interface GetStepResultParams {
   userAddressNickname: string;
   stepNumber: string;
   detail: string;
 }
 
 /**
- * Step Detail API 클래스
+ * Step Result Query API 클래스 (조회용)
  */
-class StepDetailApi {
-  private static instance: StepDetailApi;
+class StepResultQueryApi {
+  private static instance: StepResultQueryApi;
 
   private constructor() {}
 
-  public static getInstance(): StepDetailApi {
-    if (!StepDetailApi.instance) {
-      StepDetailApi.instance = new StepDetailApi();
+  public static getInstance(): StepResultQueryApi {
+    if (!StepResultQueryApi.instance) {
+      StepResultQueryApi.instance = new StepResultQueryApi();
     }
-    return StepDetailApi.instance;
+    return StepResultQueryApi.instance;
   }
 
   /**
-   * Step Detail 데이터 조회
+   * Step Result 데이터 조회
    */
-  public async getStepDetail(
-    params: GetStepDetailParams
-  ): Promise<StepDetailData> {
+  public async getStepResult(
+    params: GetStepResultParams
+  ): Promise<StepResultData> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
     // 쿼리 파라미터 구성
@@ -59,7 +59,7 @@ class StepDetailApi {
       detail: params.detail.toString(),
     });
 
-    const response = await axiosInstance.get<StepDetailApiResponse>(
+    const response = await axiosInstance.get<StepResultQueryResponse>(
       `/api/step-results?${queryParams.toString()}`
     );
 
@@ -73,5 +73,5 @@ class StepDetailApi {
   }
 }
 
-export const stepDetailApi = StepDetailApi.getInstance();
-export default stepDetailApi;
+export const stepResultQueryApi = StepResultQueryApi.getInstance();
+export default stepResultQueryApi;

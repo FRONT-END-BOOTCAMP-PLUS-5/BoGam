@@ -12,7 +12,6 @@ export const styles = {
   match: "bg-brand-green text-white",
   "match-blue": "bg-brand text-white",
   mismatch: "bg-brand-error text-white",
-  uncheck: "bg-brand-light-gray text-brand-dark-gray",
   unchecked: "bg-brand-light-gray text-brand-dark-gray",
   "unchecked-white": "bg-brand-white text-brand-dark-gray",
   link: "bg-brand-gold text-white",
@@ -31,5 +30,6 @@ export const styles = {
   thick: "stroke-[3]",
   
   // Interactive styles
-  clickable: "cursor-pointer hover:opacity-80 active:scale-95"
+  clickable: "cursor-pointer hover:opacity-80 active:scale-95",
+  loading: "opacity-50 cursor-not-allowed"
 } as const;

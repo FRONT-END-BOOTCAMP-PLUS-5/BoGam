@@ -97,7 +97,7 @@ export const mockData = {
       hasLink: false,
       details: {
         "갑구": "match",
-        "을구": "uncheck",
+        "을구": "unchecked",
         "표제부": "match"
       }
     },
@@ -153,7 +153,7 @@ export const mockData = {
       match: 1,
       unchecked: 1,
       details: {
-        "1": "uncheck",
+        "1": "unchecked",
         "2": "mismatch",
         "3": "match"
       },

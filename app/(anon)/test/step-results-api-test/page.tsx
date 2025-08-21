@@ -20,7 +20,7 @@ const StepResultsApiTest = () => {
     details: {
       표제부: 'match',
       갑구: 'match',
-      을구: 'uncheck'
+              을구: 'unchecked'
     }
   }), [selectedAddress?.id]);
 
@@ -39,8 +39,8 @@ const StepResultsApiTest = () => {
 
       // details의 값들이 올바른 타입인지 검증
       for (const [key, value] of Object.entries(parsed.details)) {
-        if (!['match', 'mismatch', 'uncheck'].includes(value as string)) {
-          throw new Error(`details.${key}의 값이 올바르지 않습니다. 'match', 'mismatch', 'uncheck' 중 하나여야 합니다.`);
+              if (!['match', 'mismatch', 'unchecked'].includes(value as string)) {
+        throw new Error(`details.${key}의 값이 올바르지 않습니다. 'match', 'mismatch', 'unchecked' 중 하나여야 합니다.`);
         }
       }
 
@@ -119,7 +119,7 @@ const StepResultsApiTest = () => {
         />
         <div className="mt-2 text-sm text-gray-600">
           <p>필수 필드: userAddressId, mainNum, subNum, details</p>
-          <p>details 값: &quot;match&quot;, &quot;mismatch&quot;, &quot;uncheck&quot; 중 하나</p>
+          <p>details 값: &quot;match&quot;, &quot;mismatch&quot;, &quot;unchecked&quot; 중 하나</p>
         </div>
       </div>
 
