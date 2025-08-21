@@ -1,5 +1,6 @@
 export const summaryPageStyles = {
   generalPage: 'bg-[var(--brand)] w-full h-full flex items-start justify-start box-border relative',
+  generalPageGreen: 'bg-[var(--brand-dark-green)] w-full h-full flex items-start justify-start box-border relative',
   leftDiv: 'w-[50px] h-full flex flex-col bg-transparent border-none shadow-none flex-shrink-0',
   leftFirst: "flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-[var(--brand-light-gray)] border-b-[3px] border-b-[var(--brand-light-gray)]",
   leftCenter: "flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-[var(--brand-light-gray)] border-r-[10px] border-r-[var(--brand-light-gray)] border-b-[3px] border-b-[var(--brand-light-gray)]",
