@@ -13,14 +13,14 @@ const StepResultsApiTest = () => {
   // userAddressStore에서 선택된 주소 가져오기
   const { selectedAddress } = useUserAddressStore();
 
-  const defaultData = useMemo((): StepResultRequest => ({
+    const defaultData = useMemo((): StepResultRequest => ({
     userAddressId: selectedAddress?.id || 1,
-    mainNum: 1,
-    subNum: 1,
-    details: {
+    stepNumber: 1,
+    detail: 1,
+    jsonDetails: {
       표제부: 'match',
       갑구: 'match',
-              을구: 'unchecked'
+      을구: 'unchecked'
     }
   }), [selectedAddress?.id]);
 
@@ -29,20 +29,20 @@ const StepResultsApiTest = () => {
     try {
       const parsed = JSON.parse(jsonInput);
       
-      // 필수 필드 검증
-      if (typeof parsed.userAddressId !== 'number' || 
-          typeof parsed.mainNum !== 'number' || 
-          typeof parsed.subNum !== 'number' || 
-          !parsed.details || typeof parsed.details !== 'object') {
-        throw new Error('필수 필드가 누락되었거나 타입이 잘못되었습니다.');
-      }
+             // 필수 필드 검증
+       if (typeof parsed.userAddressId !== 'number' || 
+           typeof parsed.stepNumber !== 'number' || 
+           typeof parsed.detail !== 'number' || 
+           !parsed.jsonDetails || typeof parsed.jsonDetails !== 'object') {
+         throw new Error('필수 필드가 누락되었거나 타입이 잘못되었습니다.');
+       }
 
-      // details의 값들이 올바른 타입인지 검증
-      for (const [key, value] of Object.entries(parsed.details)) {
-              if (!['match', 'mismatch', 'unchecked'].includes(value as string)) {
-        throw new Error(`details.${key}의 값이 올바르지 않습니다. 'match', 'mismatch', 'unchecked' 중 하나여야 합니다.`);
-        }
-      }
+       // jsonDetails의 값들이 올바른 타입인지 검증
+       for (const [key, value] of Object.entries(parsed.jsonDetails)) {
+         if (!['match', 'mismatch', 'unchecked'].includes(value as string)) {
+           throw new Error(`jsonDetails.${key}의 값이 올바르지 않습니다. 'match', 'mismatch', 'unchecked' 중 하나여야 합니다.`);
+         }
+       }
 
       return parsed as StepResultRequest;
     } catch {
@@ -117,10 +117,10 @@ const StepResultsApiTest = () => {
           className="w-full h-48 p-3 font-mono text-sm border rounded resize-none"
           placeholder="JSON을 입력하세요..."
         />
-        <div className="mt-2 text-sm text-gray-600">
-          <p>필수 필드: userAddressId, mainNum, subNum, details</p>
-          <p>details 값: &quot;match&quot;, &quot;mismatch&quot;, &quot;unchecked&quot; 중 하나</p>
-        </div>
+                 <div className="mt-2 text-sm text-gray-600">
+           <p>필수 필드: userAddressId, stepNumber, detail, jsonDetails</p>
+           <p>jsonDetails 값: &quot;match&quot;, &quot;mismatch&quot;, &quot;unchecked&quot; 중 하나</p>
+         </div>
       </div>
 
       {/* API 호출 버튼 */}
