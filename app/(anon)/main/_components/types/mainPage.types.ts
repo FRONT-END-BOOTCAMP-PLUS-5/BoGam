@@ -59,7 +59,7 @@ export interface TransactionData {
   일: string;
   법정동: string;
   지번: string;
-  location: MapLocation;
+  location: MapLocation | null;
 }
 
 export interface BuildingType {

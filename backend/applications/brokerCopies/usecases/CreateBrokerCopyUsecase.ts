@@ -10,8 +10,8 @@ export class CreateBrokerCopyUsecase {
     try {
       const { userAddressId, brokerJson } = request;
       
-      // JSON을 암호화된 문자열로 변환
-      const encryptedData = encryptJson(brokerJson);
+      // JSON 문자열을 암호화된 문자열로 변환
+      const encryptedData = encryptJson(JSON.parse(brokerJson));
       
       // 중개사 복사본 생성/수정
       const brokerCopy = await this.brokerCopyRepository.upsertByUserAddressId(

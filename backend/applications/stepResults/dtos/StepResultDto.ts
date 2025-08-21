@@ -3,9 +3,9 @@ import { StepResultEntity } from '@be/domain/entities/StepResult';
 export interface CreateStepResultDto {
   userAddressId: number;
   stepId?: number;
-  mainNum?: number;
-  subNum?: number;
-  details: unknown;
+  stepNumber?: number;
+  detail?: number;
+  jsonDetails: unknown;
 }
 
 export interface StepResultResponseDto {
@@ -23,5 +23,5 @@ export interface StepResultSummaryDto {
   totalMatch: number;
   totalUnchecked: number;
   stepCount: number;
-  mainNum: number;
+  stepNumber: number;
 }

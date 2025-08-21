@@ -66,15 +66,6 @@ export async function GET(req: NextRequest) {
       }, { status: 400 });
     }
     
-    // 환경변수 검증
-    const key = process.env.VWORLD_BROKER_KEY;
-    if (!key) {
-      return NextResponse.json({ 
-        success: false, 
-        error: 'VWORLD_BROKER_KEY not configured' 
-      }, { status: 500 });
-    }
-    
     // 페이지네이션 파라미터 검증 및 기본값 설정
     const validatedNumOfRows = numOfRows ? Math.min(parseInt(numOfRows), 1000) : 10; // 최대 1000
     const validatedPageNo = pageNo ? Math.max(parseInt(pageNo), 1) : 1; // 최소 1
@@ -92,7 +83,7 @@ export async function GET(req: NextRequest) {
       const createBrokerCopyUsecase = new CreateBrokerCopyUsecase(new BrokerCopyRepositoryImpl());
       const brokerCopyResult = await createBrokerCopyUsecase.execute({
         userAddressId: userAddressId,
-        brokerJson: Array.isArray(result) ? result.map(broker => Object.assign({}, broker)) : [Object.assign({}, result)] as any
+        brokerJson: JSON.stringify(Array.isArray(result) ? result.map(broker => Object.assign({}, broker)) : [Object.assign({}, result)])
       });
       
       if (!brokerCopyResult.success) {

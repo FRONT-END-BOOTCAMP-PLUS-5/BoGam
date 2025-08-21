@@ -6,10 +6,10 @@ import { StepResultRepositoryImpl } from '@be/infrastructure/repository/StepResu
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    // userAddressNickname은 전역에서 가져옴. 일단 임시로 설정
+    // userAddressNickname은 전역에서 가져옴.
     const userAddressNickname = searchParams.get('userAddressNickname');
-    const mainNum = searchParams.get('stepNumber');
-    const subNum = searchParams.get('detail');
+    const stepNumber = searchParams.get('stepNumber');
+    const detail = searchParams.get('detail');
 
     if (!userAddressNickname) {
       return NextResponse.json(
@@ -21,28 +21,28 @@ export async function GET(request: NextRequest) {
     const repository = new StepResultRepositoryImpl();
     const usecase = new StepResultUsecase(repository);
 
-    // mainNum과 subNum 파싱
-    const mainNumInt = mainNum ? parseInt(mainNum) : undefined;
-    const subNumInt = subNum ? parseInt(subNum) : undefined;
+    // stepNumber와 detail 파싱
+    const stepNumberInt = stepNumber ? parseInt(stepNumber) : undefined;
+    const detailInt = detail ? parseInt(detail) : undefined;
 
-    if (mainNum && isNaN(mainNumInt!)) {
+    if (stepNumber && isNaN(stepNumberInt!)) {
       return NextResponse.json(
-        { success: false, error: 'mainNum은 숫자여야 합니다.' },
+        { success: false, error: 'stepNumber는 숫자여야 합니다.' },
         { status: 400 }
       );
     }
 
-    if (subNum && isNaN(subNumInt!)) {
+    if (detail && isNaN(detailInt!)) {
       return NextResponse.json(
-        { success: false, error: 'subNum은 숫자여야 합니다.' },
+        { success: false, error: 'detail은 숫자여야 합니다.' },
         { status: 400 }
       );
     }
 
     const result = await usecase.getStepResults(
       userAddressNickname,
-      mainNumInt,
-      subNumInt
+      stepNumberInt,
+      detailInt
     );
 
     if (!result.success) {
@@ -75,13 +75,13 @@ export async function POST(request: NextRequest) {
       errors.push('userAddressId는 필수입니다.');
     }
 
-    // stepId 또는 mainNum+subNum 중 하나는 필요
-    if (!body.stepId && (!body.mainNum || !body.subNum)) {
-      errors.push('stepId 또는 mainNum+subNum이 필요합니다.');
+    // stepId 또는 stepNumber+detail 중 하나는 필요
+    if (!body.stepId && (!body.stepNumber || !body.detail)) {
+      errors.push('stepId 또는 stepNumber+detail이 필요합니다.');
     }
 
-    if (!body.details) {
-      errors.push('details는 필수입니다.');
+    if (!body.jsonDetails) {
+      errors.push('jsonDetails는 필수입니다.');
     }
 
     if (errors.length > 0) {

@@ -1,7 +1,10 @@
 'use client';
 
 import React from 'react';
-import { styles, getDropdownContainerStyle } from './AddressDropDownList.styles';
+import {
+  styles,
+  getDropdownContainerStyle,
+} from './AddressDropDownList.styles';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { AddressDropDownItem } from './AddressDropDownItem';
 

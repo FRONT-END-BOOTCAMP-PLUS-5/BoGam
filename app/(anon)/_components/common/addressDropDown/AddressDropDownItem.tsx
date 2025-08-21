@@ -1,6 +1,5 @@
 'use client';
-
-import React from 'react';
+import { useState } from 'react';
 import {
   styles,
   getListItemStyle,
@@ -31,13 +30,27 @@ export function AddressDropDownItem({
   showDeleteButton = true,
   animationDelay = 0,
 }: AddressDropDownItemProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   // 안전한 핸들러들
   const handleDelete = () => {
     onDelete?.(address.id);
   };
 
-  const handleToggleFavorite = () => {
-    onToggleFavorite?.(address.id);
+  const handleToggleFavorite = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    try {
+      // Store의 toggleFavorite 함수 호출 (API 호출과 UI 업데이트를 모두 처리)
+      await onToggleFavorite?.(address.id);
+    } catch (error) {
+      console.error('즐겨찾기 토글 오류:', error);
+      alert('즐겨찾기 토글 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSelect = () => {
@@ -71,9 +84,14 @@ export function AddressDropDownItem({
               handleToggleFavorite();
             }}
             className={styles.starButton}
+            disabled={isLoading}
             aria-label={address.isPrimary ? '즐겨찾기 해제' : '즐겨찾기 추가'}
           >
-            <StarIcon filled={address.isPrimary || false} />
+            {isLoading ? (
+              <div className='animate-spin w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full' />
+            ) : (
+              <StarIcon filled={address.isPrimary || false} />
+            )}
           </button>
         )}
         <div className={styles.addressTextContainer}>
