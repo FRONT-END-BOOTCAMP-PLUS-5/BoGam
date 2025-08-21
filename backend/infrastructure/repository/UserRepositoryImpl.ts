@@ -101,4 +101,15 @@ export class UserRepositoryImpl implements UserRepository {
       return false;
     }
   }
+
+  async deleteByNickname(nickname: string): Promise<boolean> {
+    try {
+      await prisma.user.delete({
+        where: { nickname },
+      });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }
