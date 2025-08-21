@@ -1,21 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
-import stepDetailApi, { StepDetailData } from '@libs/api_front/step.api';
+import stepResultQueryApi, { StepResultData } from '@libs/api_front/stepResultQueries.api';
 
-interface GetStepDetailParams {
+interface GetStepResultParams {
   userAddressNickname: string;
   stepNumber: string;
   detail: string;
 }
 
-export const useGetStepDetail = (params: GetStepDetailParams) => {
-  const { data, isLoading, isError } = useQuery<StepDetailData>({
+export const useGetStepResult = (params: GetStepResultParams) => {
+  const { data, isLoading, isError } = useQuery<StepResultData>({
     queryKey: [
-      'stepDetail',
+      'stepResults',
       params.userAddressNickname,
       params.stepNumber,
       params.detail,
     ],
-    queryFn: () => stepDetailApi.getStepDetail(params),
+    queryFn: () => stepResultQueryApi.getStepResult(params),
     enabled: !!(
       params.userAddressNickname &&
       params.stepNumber &&

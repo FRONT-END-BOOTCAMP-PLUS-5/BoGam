@@ -1,7 +1,5 @@
 'use client';
 
-export default Steps3Page;
-
 import {
   useEffect,
   useRef,
@@ -42,7 +40,7 @@ interface StepData {
   pages: PageData[];
 }
 
-export function Steps3Page() {
+export default function Steps3Page() {
   const router = useRouter();
   const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
@@ -210,6 +208,17 @@ export function Steps3Page() {
               </button>
             )}
           </div>
+        </div>
+        <div className={styles.indicatorRight}>
+          {currentPage === totalPages - 1 && (
+            <button
+              className={styles.indicatorArrowBtn}
+              aria-label="다음 단계로 이동"
+              onClick={() => router.push(`/steps/${Number(stepNumber) + 1}`)}
+            >
+              <ChevronRight size={22} color="#222" />
+            </button>
+          )}
         </div>
       </div>
       
