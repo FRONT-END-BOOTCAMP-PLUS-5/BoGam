@@ -7,6 +7,7 @@ import {
 } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 import { extractActualData } from '@libs/responseUtils';
 import styles from '@/(anon)/test/tax-cert/TaxCertResultDisplay.module.css';
+import PdfViewer from './_components/PdfViewer';
 
 interface TaxCertResultDisplayProps {
   response: CodefResponse;
@@ -260,24 +261,57 @@ export default function TaxCertResultDisplay({
       {(data.resOriGinalData || data.resOriGinalData1) && (
         <div className={styles.originalDataContainer}>
           <h4 className={styles.originalDataTitle}>원문 데이터</h4>
+          
+          {/* XML 원문 */}
           {data.resOriGinalData && (
             <div className={styles.originalDataField}>
-              <label className={styles.originalDataLabel}>
-                XML 원문 (디코딩됨)
-              </label>
+              <div className={styles.originalDataHeader}>
+                <label className={styles.originalDataLabel}>
+                  XML 원문 (디코딩됨)
+                </label>
+                <button
+                  className={styles.copyButton}
+                  onClick={() => {
+                    navigator.clipboard.writeText(data.resOriGinalData || '');
+                    // 복사 완료 피드백 (선택사항)
+                    alert('XML 원문이 클립보드에 복사되었습니다.');
+                  }}
+                  title="클립보드에 복사"
+                >
+                  📋 복사
+                </button>
+              </div>
               <pre className={styles.originalDataContent}>
                 {data.resOriGinalData}
               </pre>
             </div>
           )}
+          
+          {/* PDF 원문 - PdfViewer 컴포넌트 사용 */}
           {data.resOriGinalData1 && (
             <div className={styles.originalDataField}>
-              <label className={styles.originalDataLabel}>
-                PDF 원문 (디코딩됨)
-              </label>
-              <pre className={styles.originalDataContent}>
-                {data.resOriGinalData1.substring(0, 500)}...
-              </pre>
+              <div className={styles.originalDataHeader}>
+                <label className={styles.originalDataLabel}>
+                  PDF 원문 (디코딩됨)
+                </label>
+                <button
+                  className={styles.copyButton}
+                  onClick={() => {
+                    navigator.clipboard.writeText(data.resOriGinalData1 || '');
+                    // 복사 완료 피드백 (선택사항)
+                    alert('PDF 원문이 클립보드에 복사되었습니다.');
+                  }}
+                  title="클립보드에 복사"
+                >
+                  📋 복사
+                </button>
+              </div>
+              
+              {/* PDF 뷰어 및 다운로드 */}
+              <PdfViewer 
+                base64={data.resOriGinalData1} 
+                fileName="납세증명서.pdf"
+              />
             </div>
           )}
         </div>

@@ -1,16 +1,54 @@
 export const styles = {
-  // Container
-  container: "p-5 min-h-screen bg-white",
-  
-  // Content
+  container: "p-5 min-h-screen bg-[var(--brand-light-gray)]",
   content: "text-center py-10 px-5",
-  
-  // Title
-  title: "text-2xl font-semibold text-gray-800 mb-8",
-  
-  // Button Container
-  buttonContainer: "flex flex-col gap-4 items-center",
-  
-  // Button
-  clickButton: "bg-blue-500 text-white border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-blue-600 active:bg-blue-700"
+  title: "text-2xl font-semibold text-[var(--brand-black)] mb-8",
+  clickButton: "bg-[var(--brand)] text-[var(--brand-white)] border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-[var(--brand-dark-blue)] active:bg-[var(--brand-black)]",
+
+  demoBook: 'mx-auto shadow-[var(--shadow-book)]',
+  page: 'bg-[var(--brand-white)] shadow-[var(--shadow-lg)] rounded-[8px] overflow-hidden relative',
+  pageCover: 'bg-[var(--brand-light-blue)] font-bold flex items-center justify-center',
+  pageContent: 'p-8 min-h-[600px] flex flex-col justify-center items-center',
+  pageHeader: 'text-[1.5rem] mb-4',
+  pageFooter: 'mt-8 text-[1rem] text-[var(--brand-dark-gray)]',
+  leftClickArea: 'absolute left-0 top-0 w-[30%] h-full z-[10] cursor-pointer', 
+  indicatorWrapper: 'w-[180px] mt-8 flex items-center justify-between relative',
+  indicatorLeft: 'absolute left-0 top-0 h-full flex items-center',
+  indicatorRight: 'absolute right-0 top-0 h-full flex items-center',
+  indicatorDots: 'flex justify-center items-center w-full',
+  indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
+  indicatorDotBtn: 'mx-[6px]',
+  book: 'max-w-[480px] w-full mx-auto bg-[rgba(229,231,235,0.3)] relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
+  flipBook: 'flex items-center justify-center w-fit h-fit overflow-visible relative border-none',
+  flex: 'flex h-full',
+  introPage: 'bg-white mx-auto w-full h-[300px] flex items-center justify-center box-border',
+  underlineBold: 'bg-brand-error',
+  upPoint: 'w-0 h-0 border-l-[15px] border-l-brand-error border-r-[15px] border-r-brand-error border-t-[15px] border-t-transparent border-b-[15px] border-b-brand-error ml-1/2',
+  pageNum: 'bg-brand rounded-full w-[30px] h-[30px] text-white border-none flex items-center justify-center font-bold cursor-pointer m-[var(--padding-xs)] pl-[var(--padding-xs)]',
+  pageNumDiv: 'absolute left-[calc(100%-20px)] top-[20%] flex flex-col gap-[var(--padding-sm)]',
+  boldMainText: 'font-bold text-[0.9em] mt-[3vh] ml-[2.5%]',
+  numCircle: 'w-[6%] h-[6%] bg-black text-white flex items-center justify-center text-[0.8em] rounded-full',
+  circleAndText: 'flex mt-[3vh] ml-[2.5%]',
+  smallText: 'text-[0.75em] ml-[5%]',
+  generalPage: 'bg-brand w-full h-full flex items-start justify-start box-border relative',
+  generalPageTitle: 'text-white font-bold mt-[3vh] ml-[5%]',
+  insideBox: 'w-[90%] h-[80%] bg-white mt-[2.5vh] ml-0',
+  blue: 'absolute w-[95%] h-[4%] bg-brand rounded-[30em] bottom-[2%] z-[1]',
+  dangerDiv: 'absolute w-[45%] border border-black pt-[0.5vh] pb-[0.5vh] rounded-[var(--radius-lg)] ml-[23%] flex mt-[3vh]',
+  text: 'w-[95%] h-[50%] pt-[25%] pl-[5%] text-center text-[0.85em]',
+  goDiv: 'absolute bottom-[6.3vh] left-[65%]',
+  go: 'font-bold',
+  goToLink: 'flex justify-center pt-[10vh] underline',
+  goToNext: 'absolute w-[30%] h-[3vh] bg-white z-[5] bottom-[1.3vh] ml-[65%]',
+  left: 'w-[15%] h-full flex flex-col bg-transparent border-none shadow-none',
+  firstLeftBox: 'flex-1 w-full h-[20%] bg-transparent border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray',
+  leftBox: 'flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray border-r-[10px] border-r-brand-light-gray border-b-[3px] border-b-brand-light-gray',
+  lastLeftBox: 'flex-1 w-full h-[20%] bg-transparent border-t-[10px] border-t-brand-light-gray] border-r-[10px] border-r-brand-light-gray',
+  backPage: 'h-screen w-[1.5%] bg-gray-300 border-t border-t-gray-400 border-r border-r-gray-400 border-b border-b-gray-400 rounded-xl',
+  generalWhitePage: 'bg-white w-full h-full flex items-start justify-start box-border relative',
+  smallFontDiv: 'relative pb-[2vh] pt-[2vh] border-b border-b-brand-light-gray w-full',
+  borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
+  danger: 'text-[0.8em] font-bold w-[22%] shadow-[inset_0px_-11px_0_#EDC9C9]',
+  stateDiv: "absolute top-[13%] left-1/2 -translate-x-1/2 z-[100]",
+  dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-light-gray)]',
+  dotActive: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-brand-black'
 } as const;
