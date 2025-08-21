@@ -43,21 +43,15 @@ export const TabContainer: React.FC<TabContainerProps> = ({
         ))}
       </div>
 
-      {/* 탭 컨텐츠 - 모든 컴포넌트를 렌더링하되 활성 탭만 표시 */}
+      {/* 탭 컨텐츠 - 활성 탭만 렌더링 */}
       <div className={styles.tabContent}>
-        {tabs.map((tab) => {
-          const TabComponent = tab.component;
-          return (
-            <div
-              key={tab.id}
-              style={{
-                display: activeTab === tab.id ? 'block' : 'none',
-              }}
-            >
-              <TabComponent onTabChange={onTabChange} />
-            </div>
-          );
-        })}
+        {(() => {
+          const activeTabData = tabs.find((tab) => tab.id === activeTab);
+          if (!activeTabData) return null;
+
+          const TabComponent = activeTabData.component;
+          return <TabComponent onTabChange={onTabChange} />;
+        })()}
       </div>
     </div>
   );

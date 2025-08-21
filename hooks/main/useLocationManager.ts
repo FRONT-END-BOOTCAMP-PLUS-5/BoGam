@@ -1,16 +1,13 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useGeolocation } from './useGeolocation';
-import { Location } from '@/(anon)/main/_components/types/map.types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useMapStore } from '@libs/stores/map/mapStore';
-import { useUserAddresses } from '@libs/stores/userAddresses/useUserAddresses';
 
 export const useLocationManager = () => {
   // Store에서 데이터 가져오기
-  const { userAddresses, selectedAddress, selectAddress } =
-    useUserAddressStore();
-  const { setMapCenter } = useMapStore();
-  const { isAuthenticated } = useUserAddresses();
+  const { userAddresses, selectAddress } = useUserAddressStore();
+
+  // 인증 상태는 상위 컴포넌트에서 관리
+  const isAuthenticated = true;
 
   // GPS 위치 정보 관리
   const {
@@ -36,11 +33,11 @@ export const useLocationManager = () => {
       if (targetAddress) {
         // 좌표 유효성 검사
         if (targetAddress.x === targetAddress.y && targetAddress.x !== 0) {
-          // 잘못된 좌표가 있으면 GPS 위치를 사용하되, 지도 중심점은 자동 설정하지 않음
+          // 잘못된 좌표가 있으면 GPS 위치를 사용
           return;
         }
 
-        // Store의 selectAddress만 사용 (지도 중심점은 자동 설정하지 않음)
+        // Store의 selectAddress만 사용
         selectAddress(targetAddress);
       }
     }

@@ -33,7 +33,26 @@ export class TransactionDetailApartRentItem {
     public readonly resDealType?: string,
     public readonly resLocation?: string,
     public readonly resFloorNum?: string,
-    public readonly resDong?: string
+    public readonly resDong?: string,
+    // 전월세 전용 필드들
+    public readonly commStartDate?: string,
+    public readonly commEndDate?: string,
+    public readonly resDeposit?: string,
+    public readonly resMonthlyRent?: string,
+    public readonly resContractType?: string,
+    public readonly resRenewalUse?: string,
+    public readonly resPrevDeposit?: string,
+    public readonly resPrevMonthlyRent?: string,
+    public readonly resDesignationYN?: string,
+    public readonly resRoadCondition?: string,
+    public readonly resLandMoveDate?: string,
+    public readonly resLandMoveReason?: string,
+    public readonly resMinBLR?: string,
+    public readonly resMaxBLR?: string,
+    public readonly resMinFAR?: string,
+    public readonly resMaxFAR?: string,
+    public readonly resStructure?: string,
+    public readonly resBuildYear?: string
   ) {}
 }
 
