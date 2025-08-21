@@ -6,10 +6,10 @@ export class StepResultEntity {
     public mismatch?: number | null,
     public match?: number | null,
     public unchecked?: number | null,
-    public details?: unknown,
+    public jsonDetails?: unknown,
     public createdAt?: Date,
     public updatedAt?: Date,
-    public mainNum?: number,
-    public subNum?: number
+    public stepNumber?: number,
+    public detail?: number
   ) {}
 }

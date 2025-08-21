@@ -36,5 +36,5 @@ export const styles = {
   otpBox: "w-12 h-12 text-center rounded-xl border text-lg border-brand-light-gray focus:shadow-[0_0_0_3px_var(--brand-shadow)] focus:border-brand",
   
   // 그리드 레이아웃(선택)
-  formRow: "grid grid-cols-1 gap-6"
+  formRow: "grid grid-cols-1 gap-6 w-[90%] mx-auto"
 };

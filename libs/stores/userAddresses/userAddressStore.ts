@@ -30,6 +30,9 @@ interface UserAddressStore {
   setDong: (dong: string) => void;
   setHo: (ho: string) => void;
 
+  // 전체 상태 초기화 (로그아웃/세션만료)
+  clearAll: () => void;
+
   // 에러 처리
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -348,6 +351,17 @@ export const useUserAddressStore = create<UserAddressStore>()(
         // 동/호 상태 관리
         setDong: (dong) => set({ dong }, false, 'setDong'),
         setHo: (ho) => set({ ho }, false, 'setHo'),
+
+        // 전체 상태 초기화 (로그아웃/세션만료)
+        clearAll: () => {
+          set({
+            userAddresses: [],
+            selectedAddress: null,
+            isLoading: false,
+            error: null,
+          }, false, 'clearAll');
+          console.log('🧹 user-address-store 초기화');
+        },
 
         // 에러 처리
         setError: (error) => set({ error }, false, 'setError'),
