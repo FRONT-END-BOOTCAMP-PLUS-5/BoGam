@@ -30,19 +30,16 @@ export const useMapManagement = () => {
   // 지도 중심점 설정
   const handleSetMapCenter = (location: Location) => {
     setMapCenter(location);
-    console.log('지도 중심점 설정:', location);
   };
 
   // 검색 위치 마커 설정
   const handleSetSearchLocationMarker = (location: Location) => {
     setSearchLocationMarker(location);
-    console.log('검색 위치 마커 설정:', location);
   };
 
   // 지도 경계 조정
   const handleAdjustBounds = (shouldAdjust: boolean) => {
     setAdjustBounds(shouldAdjust);
-    console.log('지도 경계 조정:', shouldAdjust);
   };
 
   // GPS 위치로 지도 이동
@@ -50,7 +47,6 @@ export const useMapManagement = () => {
     if (gpsLocation && isValidLocation(gpsLocation)) {
       setMapCenter(gpsLocation);
       setSearchLocationMarker(gpsLocation);
-      console.log('GPS 위치로 지도 이동:', gpsLocation);
     }
   };
 
@@ -60,7 +56,6 @@ export const useMapManagement = () => {
     if (location && isValidLocation(location)) {
       setMapCenter(location);
       setSearchLocationMarker(location);
-      console.log('주소로 지도 이동:', location);
     }
   };
 

@@ -21,6 +21,8 @@ export async function POST(request: NextRequest) {
       isTwoWayAuth?: boolean;
     } = await request.json();
 
+    console.log('body', body);
+
     // 필수 필드 검증
     if (!body.password) {
       return NextResponse.json(
@@ -159,9 +161,7 @@ export async function POST(request: NextRequest) {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new CreateRealEstateCopyUsecase(dbRepository);
 
-        const userAddressId = await getUserAddressId(
-          body.userAddressNickname
-        );
+        const userAddressId = await getUserAddressId(body.userAddressNickname);
 
         if (!userAddressId) {
           return NextResponse.json({

@@ -25,8 +25,14 @@ export const styles = {
   transactionItem:
     'border border-brand-light-gray rounded-lg p-4 mb-3 hover:shadow-md transition-shadow duration-200 cursor-pointer',
   transactionTitle: 'text-base font-semibold text-brand-black mb-2',
-  transactionDetails: 'space-y-1 mb-2',
+  transactionDetails: 'space-y-2 mb-2',
   transactionDetail: 'text-sm text-brand-dark-gray',
+
+  // 수직 정렬을 위한 새로운 스타일
+  detailRow: 'flex justify-between items-center',
+  detailLabel: 'text-sm text-brand-dark-gray font-medium',
+  detailValue: 'text-sm text-brand-black font-semibold',
+
   transactionDate: 'text-sm text-brand-blue font-medium mb-1',
   transactionAddress: 'text-sm text-brand-dark-gray font-medium',
 } as const;

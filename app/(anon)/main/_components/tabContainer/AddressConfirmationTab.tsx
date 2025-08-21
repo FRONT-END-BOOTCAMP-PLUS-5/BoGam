@@ -34,34 +34,17 @@ export const AddressConfirmationTab: React.FC = () => {
   const { searchQuery, dong, ho, setSearchQuery, setDong, setHo } =
     useMainPageState();
 
-  // 선택된 주소가 변경될 때 동/호 데이터 업데이트
+  // 선택된 주소가 변경될 때 동 데이터만 업데이트 (호는 저장 시에만 사용)
   useEffect(() => {
     if (selectedAddress) {
       const dongValue = selectedAddress.dong || '';
-      const hoValue = selectedAddress.ho || '';
-
-      console.log('주소 선택 시 동/호 업데이트:', {
-        dongValue,
-        hoValue,
-      });
-
-      // React 상태 업데이트
+      // 호는 기존 값 유지 (저장 시에만 사용)
       setDong(dongValue);
-      setHo(hoValue);
     }
-  }, [selectedAddress, setDong, setHo]);
+  }, [selectedAddress, setDong]);
 
   // 주소 표시 로직
   const displaySearchQuery = selectedAddress?.completeAddress || '';
-
-  // 디버깅: 현재 상태 로그
-  console.log('AddressConfirmationTab 상태:', {
-    dong,
-    ho,
-    selectedAddress: selectedAddress?.completeAddress,
-    searchQuery,
-    displaySearchQuery,
-  });
 
   return (
     <div className={styles.container}>
@@ -76,7 +59,7 @@ export const AddressConfirmationTab: React.FC = () => {
         </Button>
         <div className={styles.actionButtons}>
           <Button
-            onClick={() => handleMoveToAddressOnly(dong, ho)}
+            onClick={() => handleMoveToAddressOnly(dong)}
             disabled={!dong.trim()}
             variant='primary'
             className={styles.confirmButton}
@@ -111,7 +94,7 @@ export const AddressConfirmationTab: React.FC = () => {
             className={styles.dongField}
           />
           <TextInput
-            placeholder='호'
+            placeholder='호 (저장 시에만 사용)'
             value={ho}
             onChange={(e) => setHo(e.target.value)}
             className={styles.hoField}

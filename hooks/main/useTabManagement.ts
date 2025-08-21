@@ -16,7 +16,6 @@ export const useTabManagement = () => {
   const handleTabChange = (tabIndex: number) => {
     if (isValidTabChange(activeTab, tabIndex)) {
       setActiveTab(tabIndex);
-      console.log('탭 변경:', tabIndex);
     }
   };
 
@@ -29,28 +28,24 @@ export const useTabManagement = () => {
   const goToNextTab = () => {
     const nextTab = getNextTabIndex(activeTab);
     setActiveTab(nextTab);
-    console.log('다음 탭으로 이동:', nextTab);
   };
 
   // 이전 탭으로 이동
   const goToPreviousTab = () => {
     const previousTab = getPreviousTabIndex(activeTab);
     setActiveTab(previousTab);
-    console.log('이전 탭으로 이동:', previousTab);
   };
 
   // 첫 번째 탭으로 이동
   const goToFirstTab = () => {
     const firstTab = getFirstTabIndex();
     setActiveTab(firstTab);
-    console.log('첫 번째 탭으로 이동');
   };
 
   // 마지막 탭으로 이동
   const goToLastTab = () => {
     const lastTab = getLastTabIndex();
     setActiveTab(lastTab);
-    console.log('마지막 탭으로 이동');
   };
 
   return {

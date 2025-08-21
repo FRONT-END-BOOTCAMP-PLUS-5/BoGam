@@ -1,23 +1,46 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { styles } from './TransactionList.styles';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
+
+// 전월세 데이터 타입 정의
+interface RentTransactionData {
+  id: string;
+  아파트: string;
+  거래금액: string;
+  전용면적: string;
+  층: string;
+  건축년도: string;
+  년: string;
+  월: string;
+  일: string;
+  법정동: string;
+  지번: string;
+  location: Location | null;
+  보증금: string;
+  월세: string;
+  계약구분: string;
+  계약시작일: string;
+  계약종료일: string;
+  종전보증금: string;
+  종전월세: string;
+}
+
+// 타입 가드 함수
+const isRentData = (item: unknown): item is RentTransactionData => {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    ('보증금' in item || '월세' in item)
+  );
+};
 
 export const TransactionList: React.FC = () => {
   const { transactionData, isLoading } = useTransactionDataStore(
     (state) => state
   );
   const { setMapCenter, setAdjustBounds } = useMapStore();
-
-  // 디버깅을 위한 useEffect 추가
-  useEffect(() => {
-    console.log('🔍 TransactionList 렌더링 - transactionData:', {
-      length: transactionData.length,
-      data: transactionData,
-      isLoading,
-    });
-  }, [transactionData, isLoading]);
 
   const handleTransactionClick = (location: Location | null) => {
     if (!location) {
@@ -54,9 +77,6 @@ export const TransactionList: React.FC = () => {
     );
   }
 
-  // 디버깅용 로그 (필요시 주석 해제)
-  console.log('렌더링 시작 - transactionData.length:', transactionData.length);
-
   return (
     <div className={styles.transactionList}>
       <div className={styles.transactionHeader}>
@@ -66,39 +86,86 @@ export const TransactionList: React.FC = () => {
         </span>
       </div>
       <div className={styles.transactionItems}>
-        {transactionData.slice(0, 10).map((item, index) => (
-          <div
-            key={index}
-            className={styles.transactionItem}
-            onClick={() => {
-              if (item.location) {
-                handleTransactionClick(item.location);
-              } else {
-                console.log('실거래가 클릭 - 좌표 정보 없음');
-              }
-            }}
-            style={{ cursor: item.location ? 'pointer' : 'default' }}
-          >
-            <div className={styles.transactionTitle}>
-              {item.아파트 || '부동산'}
+        {transactionData.slice(0, 10).map((item, index) => {
+          // 전월세 데이터인지 확인
+          const isRent = isRentData(item);
+
+          return (
+            <div
+              key={index}
+              className={styles.transactionItem}
+              onClick={() => {
+                if (item.location) {
+                  handleTransactionClick(item.location);
+                } else {
+                  console.log('실거래가 클릭 - 좌표 정보 없음');
+                }
+              }}
+              style={{ cursor: item.location ? 'pointer' : 'default' }}
+            >
+              <div className={styles.transactionTitle}>{item.아파트}</div>
+              <div className={styles.transactionDetails}>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>거래금액:</span>
+                  <span className={styles.detailValue}>{item.거래금액}</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>면적:</span>
+                  <span className={styles.detailValue}>{item.전용면적}㎡</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>층수:</span>
+                  <span className={styles.detailValue}>{item.층}층</span>
+                </div>
+                {/* 전월세 데이터인 경우 추가 정보 표시 */}
+                {isRent && (
+                  <>
+                    {item.계약시작일 && item.계약종료일 && (
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>계약기간:</span>
+                        <span className={styles.detailValue}>
+                          {item.계약시작일} ~ {item.계약종료일}
+                        </span>
+                      </div>
+                    )}
+                    {item.계약구분 && (
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>계약구분:</span>
+                        <span className={styles.detailValue}>
+                          {item.계약구분}
+                        </span>
+                      </div>
+                    )}
+                    {item.종전보증금 && item.종전보증금 !== '0' && (
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>종전보증금:</span>
+                        <span className={styles.detailValue}>
+                          {item.종전보증금}만원
+                        </span>
+                      </div>
+                    )}
+                    {item.종전월세 && item.종전월세 !== '0' && (
+                      <div className={styles.detailRow}>
+                        <span className={styles.detailLabel}>종전월세:</span>
+                        <span className={styles.detailValue}>
+                          {item.종전월세}만원
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className={styles.transactionDate}>
+                {item.년 && item.월 && item.일
+                  ? `${item.년}.${item.월}.${item.일}`
+                  : ''}
+              </div>
+              <div className={styles.transactionAddress}>
+                {item.법정동} {item.지번}
+              </div>
             </div>
-            <div className={styles.transactionDetails}>
-              <span>
-                거래금액: {item.거래금액 ? `${item.거래금액}만원` : '전월세'}
-              </span>
-              <span>면적: {item.전용면적}㎡</span>
-              <span>층수: {item.층}층</span>
-            </div>
-            <div className={styles.transactionDate}>
-              {item.년 && item.월 && item.일
-                ? `${item.년}.${item.월}.${item.일}`
-                : ''}
-            </div>
-            <div className={styles.transactionAddress}>
-              {item.법정동} {item.지번}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

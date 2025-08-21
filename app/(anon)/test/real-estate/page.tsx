@@ -41,12 +41,9 @@ export default function RealEstateSearchTest() {
   const [formData, setFormData] = useState({
     userAddressId: 1,
     password: '1234',
-    address: '고양시 일산동구 위시티3로 111',
-    realtyType: '1',
-    addr_sido: '경기도',
+    address: '경기도 고양시 일산동구 위시티3로 111 207동 1901호',
+    realtyType: '3',
     recordStatus: '0',
-    dong: '207',
-    ho: '1901',
     startPageNo: '1',
     pageCount: '5', // 검색 결과 제한을 위해 줄임
     applicationType: '1', // 전유 포함으로 변경하여 더 구체적인 검색
@@ -155,12 +152,9 @@ export default function RealEstateSearchTest() {
     setFormData({
       userAddressId: 1,
       password: '1234',
-      address: '고양시 일산동구 식사동 0',
-      realtyType: '1',
-      addr_sido: '경기도',
+      address: '경기도 고양시 일산동구 식사동 0 207동 1901호',
+      realtyType: '3',
       recordStatus: '0',
-      dong: '207',
-      ho: '1901',
       startPageNo: '1',
       pageCount: '5', // 검색 결과 제한을 위해 줄임
       applicationType: '0', // 전유 포함으로 변경하여 더 구체적인 검색
@@ -239,29 +233,15 @@ export default function RealEstateSearchTest() {
 
             <div className={styles.field}>
               <label htmlFor='realtyType'>부동산 구분</label>
-              <select
+              <input
+                type='text'
                 id='realtyType'
                 name='realtyType'
                 value={formData.realtyType}
-                onChange={handleInputChange}
-              >
-                <option value='0'>토지+건물</option>
-                <option value='1'>집합건물</option>
-                <option value='2'>토지</option>
-                <option value='3'>건물</option>
-              </select>
-            </div>
-
-            <div className={styles.field}>
-              <label htmlFor='addr_sido'>시/도</label>
-              <input
-                type='text'
-                id='addr_sido'
-                name='addr_sido'
-                value={formData.addr_sido}
-                onChange={handleInputChange}
-                placeholder='예: 서울특별시'
+                disabled
+                className={styles.disabledField}
               />
+              <small>건물로 고정됨</small>
             </div>
 
             <div className={styles.field}>
@@ -276,30 +256,6 @@ export default function RealEstateSearchTest() {
                 <option value='1'>폐쇄</option>
                 <option value='2'>현행+폐쇄</option>
               </select>
-            </div>
-
-            <div className={styles.field}>
-              <label htmlFor='dong'>동 (집합건물용)</label>
-              <input
-                type='text'
-                id='dong'
-                name='dong'
-                value={formData.dong}
-                onChange={handleInputChange}
-                placeholder='예: 101'
-              />
-            </div>
-
-            <div className={styles.field}>
-              <label htmlFor='ho'>호 (집합건물용)</label>
-              <input
-                type='text'
-                id='ho'
-                name='ho'
-                value={formData.ho}
-                onChange={handleInputChange}
-                placeholder='예: 101호'
-              />
             </div>
           </div>
 

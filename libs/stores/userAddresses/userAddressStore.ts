@@ -30,6 +30,9 @@ interface UserAddressStore {
   setDong: (dong: string) => void;
   setHo: (ho: string) => void;
 
+  // 전체 상태 초기화 (로그아웃/세션만료)
+  clearAll: () => void;
+
   // 에러 처리
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -165,7 +168,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
           try {
             // 서버에 저장
-            const response = await userAddressApi.addAddress({
+            const apiRequestData = {
               addressNickname: newAddress.nickname,
               latitude: newAddress.y,
               longitude: newAddress.x,
@@ -174,7 +177,9 @@ export const useUserAddressStore = create<UserAddressStore>()(
               ho: newAddress.ho || '', // 직접 사용
               lotAddress: newAddress.lotAddress,
               roadAddress: newAddress.roadAddress,
-            });
+            };
+
+            const response = await userAddressApi.addAddress(apiRequestData);
 
             if (response.success) {
               // 서버에서 받은 실제 ID로 업데이트
@@ -346,6 +351,17 @@ export const useUserAddressStore = create<UserAddressStore>()(
         // 동/호 상태 관리
         setDong: (dong) => set({ dong }, false, 'setDong'),
         setHo: (ho) => set({ ho }, false, 'setHo'),
+
+        // 전체 상태 초기화 (로그아웃/세션만료)
+        clearAll: () => {
+          set({
+            userAddresses: [],
+            selectedAddress: null,
+            isLoading: false,
+            error: null,
+          }, false, 'clearAll');
+          console.log('🧹 user-address-store 초기화');
+        },
 
         // 에러 처리
         setError: (error) => set({ error }, false, 'setError'),

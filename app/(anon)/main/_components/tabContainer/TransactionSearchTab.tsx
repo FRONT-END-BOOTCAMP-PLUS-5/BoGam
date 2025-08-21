@@ -46,11 +46,6 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
 
   // 선택된 주소가 변경될 때마다 주소 파싱
   useEffect(() => {
-    console.log('🔍 주소 파싱 useEffect 실행:', {
-      selectedAddressCompleteAddress: selectedAddress?.completeAddress,
-      roadAddress: selectedAddress?.roadAddress,
-    });
-
     if (selectedAddress) {
       const address =
         selectedAddress.completeAddress || selectedAddress.roadAddress || '';
@@ -210,7 +205,6 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
         onCancel={() => setShowDanjiModal(false)}
         title='단지 일련번호 조회'
         icon='info'
-        confirmText=''
         cancelText='닫기'
         onConfirm={() => {}} // 빈 함수로 설정 (확인 버튼 숨김)
       >
