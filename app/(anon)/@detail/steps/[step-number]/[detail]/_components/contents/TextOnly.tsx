@@ -2,9 +2,10 @@
 
 import React from 'react';
 import styles from './TextOnly.styles';
-import { useGetStepDetail } from '../../../../../../../../hooks/useGetStepDetail';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface ContentSection {
   title?: string;
@@ -21,17 +22,15 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   // 전역 store에서 선택된 주소 가져오기
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
   
-  // URL에서 stepNumber와 detail 가져오기 (3번째, 4번째 값)
+  // URL에서 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
-  const pathParts = pathname.split('/');
-  const stepNumber = pathParts[2]; // /steps/4/2 에서 4 (3번째)
-  const detail = pathParts[3];     // /steps/4/2 에서 2 (4번째)
+  const stepInfo = parseStepUrl(pathname);
   
-  // useGetStepDetail 훅 사용
-  const { data: stepData, isLoading, isError } = useGetStepDetail({
+  // useGetStepResult 훅 사용
+  const { data: stepData, isLoading, isError } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
-    stepNumber,
-    detail
+    stepNumber: stepInfo?.mainNum?.toString() || '',
+    detail: stepInfo?.subNum?.toString() || ''
   });
 
   // 로딩 상태
@@ -56,14 +55,18 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     );
   }
 
-  // stepData 표시 함수 - details의 값들을 CircularIconBadge로 표시
+  // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
   const renderStepData = () => (
     <div className={styles.stepDataSection}>
       <div className={styles.stepDataTitle}>스텝 데이터</div>
       <div>
         <div className={styles.badgeContainer}>
-          {Object.values(stepData.details).map((value, index) => (
-            <CircularIconBadge key={index} type={value as 'match' | 'mismatch' | 'unchecked'} size="xsm" />
+          {Object.entries(stepData.jsonDetails).map(([key, value]) => (
+            <CircularIconBadge 
+              key={key} 
+              type={value as 'match' | 'mismatch' | 'unchecked'} 
+              size="xsm" 
+            />
           ))}
         </div>
       </div>
