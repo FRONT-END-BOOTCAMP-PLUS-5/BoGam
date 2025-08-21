@@ -80,7 +80,7 @@ export default function Steps3Page() {
     if (page.type === 'summary') {
       flipPages.push(
         <div key={`summary-${idx}`} className={styles.flex}>
-          <SummaryPage title={page.title ?? ''} contents={page.contents ?? []} />
+          <SummaryPage title={page.title ?? ''} contents={page.contents ?? []} stepNumber={stepNumber} />
         </div>
       );
     } else if (page.type === 'general') {

@@ -10,4 +10,5 @@ export const summaryPageStyles = {
   whitePaper: 'w-[90%] bg-white ml-[5%] rounded-xl mt-[2vh] p-[2vh_4%] h-[60vh] min-h-[40vh]',
   topic: 'text-[0.8em] font-bold pb-[1vh] pt-[1vh] border-b border-gray-400 mb-[1.5vh]',
   introContent: 'text-[0.65em] pb-[1vh]',
+  generalPageGreen: 'bg-[var(--brand-dark-green)] w-full h-full flex items-start justify-start box-border relative'
 } as const;
