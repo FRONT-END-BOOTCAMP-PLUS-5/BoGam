@@ -2,6 +2,7 @@
 
 import { generalPageStyles } from './generalPage.style';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface pageType {
     title: string,
@@ -13,6 +14,20 @@ interface pageType {
 
 export default function GeneralPage({ title, category, content, pageIdx, stepNumber }: pageType) {
     const router = useRouter();
+    const [stepNum, setStepNum] = useState<string>('');
+
+    const handleClick = async () => {
+        setStepNum(stepNumber);
+
+        const newUrl = `/steps/${stepNumber}/${pageIdx}`;
+        
+        sessionStorage.setItem('programmatic-navigation', 'true');
+        sessionStorage.setItem('navigation-timestamp', Date.now().toString());
+        window.dispatchEvent(new PopStateEvent('popstate'));
+        
+        router.push(newUrl);
+    }
+
     return (
         <div className={generalPageStyles.generalWhitePage}>
             <div>
@@ -26,7 +41,7 @@ export default function GeneralPage({ title, category, content, pageIdx, stepNum
                     </p>
                 </div>
                 <div className={generalPageStyles.goInsideDiv}>
-                    <button className={generalPageStyles.goInside} onClick={() => router.push(`/steps/${stepNumber}/${pageIdx}`)}> 바로가기 </button>
+                    <button className={generalPageStyles.goInside} onClick={handleClick}> 바로가기 </button>
                 </div>
             </div>
         </div>
