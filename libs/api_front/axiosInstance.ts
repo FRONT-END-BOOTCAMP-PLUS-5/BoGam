@@ -35,7 +35,7 @@ class FrontendAxiosInstance {
   private static instance: FrontendAxiosInstance;
   private axiosInstance: AxiosInstance;
   private readonly baseURL: string;
-  private readonly timeout: number = 10000; // 10초
+  private readonly timeout: number = 60000; // 60초
 
   private constructor() {
     // 환경에 따른 baseURL 설정

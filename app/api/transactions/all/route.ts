@@ -70,39 +70,21 @@ export async function GET(
     // 5. Usecase 인스턴스 생성
     const usecase = new GetRealEstateTransactionUsecase();
 
-    // 6. 각 주택 유형별로 범위 데이터 수집 (병렬 처리)
-    console.log(`📄 각 주택 유형별 범위 데이터 조회 중...`);
+    // 6. 통합 실거래가 조회 및 동별 그룹화
+    console.log(`📄 통합 실거래가 조회 및 동별 그룹화 중...`);
 
-    const [apartment, detachedHouse, officetel, rowHouse] = await Promise.all([
-      usecase.getAllApartmentTransactionsByDateRange(
-        requestDto.LAWD_CD,
-        requestDto.DEAL_YMD,
-        options
-      ),
-      usecase.getAllDetachedHouseTransactionsByDateRange(
-        requestDto.LAWD_CD,
-        requestDto.DEAL_YMD,
-        options
-      ),
-      usecase.getAllOfficetelTransactionsByDateRange(
-        requestDto.LAWD_CD,
-        requestDto.DEAL_YMD,
-        options
-      ),
-      usecase.getAllRowHouseTransactionsByDateRange(
-        requestDto.LAWD_CD,
-        requestDto.DEAL_YMD,
-        options
-      ),
-    ]);
-
-    // 7. 모든 데이터 통합
-    const allItems = [
-      ...(apartment.body.items.item || []),
-      ...(detachedHouse.body.items.item || []),
-      ...(officetel.body.items.item || []),
-      ...(rowHouse.body.items.item || []),
-    ];
+    const {
+      apartment,
+      detachedHouse,
+      officetel,
+      rowHouse,
+      allItems,
+      groupedByDong,
+    } = await usecase.getAllTransactionsWithGrouping(
+      requestDto.LAWD_CD,
+      requestDto.DEAL_YMD,
+      options
+    );
 
     // 8. 요약 정보 생성
     const currentYearMonth = getCurrentYearMonth();
@@ -130,11 +112,15 @@ export async function GET(
         rowHouseCount: rowHouse.body.items.item?.length || 0,
         collectedCount: allItems.length,
       },
+      groupedByDong,
     };
 
     console.log(`✅ 실거래가 통합 조회 완료: 총 ${allItems.length}건`);
     console.log(
       `📊 요약: 아파트 ${response.summary.apartmentCount}건, 단독/다가구 ${response.summary.detachedHouseCount}건, 오피스텔 ${response.summary.officetelCount}건, 연립다세대 ${response.summary.rowHouseCount}건`
+    );
+    console.log(
+      `🏘️ 동별 그룹화: 총 ${groupedByDong.totalDongs}개 동, 가장 활발한 동: ${groupedByDong.mostActiveDong.dongName} (${groupedByDong.mostActiveDong.transactionCount}건)`
     );
 
     return NextResponse.json<GetAllTransactionResponse>(response);

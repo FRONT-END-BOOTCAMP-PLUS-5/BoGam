@@ -16,6 +16,7 @@ export const useMainPageState = () => {
   const [dong, setDong] = useState('');
   const [ho, setHo] = useState('');
   const [savedLawdCode, setSavedLawdCode] = useState('');
+
   const [buildingType, setBuildingType] = useState<BuildingType>({
     category: '',
     type: '',
@@ -30,6 +31,20 @@ export const useMainPageState = () => {
     jibunAddress: '',
     legalDistrictCode: '',
   });
+
+  // 새로운 주소 검색 데이터 (별도 관리)
+  const [newAddressData, setNewAddressData] = useState({
+    roadAddress: '',
+    dong: '',
+    ho: '',
+    searchQuery: '',
+    savedLawdCode: '',
+  });
+
+  // 현재 활성화된 주소 타입 ('new' | 'dropdown')
+  const [activeAddressType, setActiveAddressType] = useState<
+    'new' | 'dropdown'
+  >('dropdown');
 
   return {
     // 검색 관련 상태
@@ -55,5 +70,11 @@ export const useMainPageState = () => {
     setSelectedMonth,
     setShowPostcode,
     setAddressSaveData,
+
+    // 새로운 주소 관련 상태
+    newAddressData,
+    activeAddressType,
+    setNewAddressData,
+    setActiveAddressType,
   };
 };

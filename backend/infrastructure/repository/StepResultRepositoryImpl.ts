@@ -18,21 +18,21 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         where.stepId = params.stepId;
       }
 
-      if (params.mainNum || params.subNum) {
+      if (params.stepNumber || params.detail) {
         where.step = {};
-        if (params.mainNum) {
-          (where.step as Record<string, unknown>).mainNum = params.mainNum;
+        if (params.stepNumber) {
+          (where.step as Record<string, unknown>).mainNum = params.stepNumber; // Prisma에서는 'mainNum' 필드 사용
         }
-        if (params.subNum) {
-          (where.step as Record<string, unknown>).subNum = params.subNum;
+        if (params.detail) {
+          (where.step as Record<string, unknown>).subNum = params.detail; // Prisma에서는 'subNum' 필드 사용
         }
       }
 
       const orderBy: Record<string, unknown> = {};
-      if (params.mainNum && params.subNum) {
+      if (params.stepNumber && params.detail) {
         orderBy.stepId = 'asc';
-      } else if (params.mainNum) {
-        orderBy.step = { subNum: 'asc' };
+      } else if (params.stepNumber) {
+        orderBy.step = { subNum: 'asc' }; // Prisma에서는 'subNum' 필드 사용
       } else {
         orderBy.stepId = 'asc';
       }
@@ -45,22 +45,22 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         skip: params.offset as number,
       });
 
-      return stepResults.map(
-        (result) =>
-          new StepResultEntity(
-            result.id,
-            result.userAddressId,
-            result.stepId,
-            result.mismatch,
-            result.match,
-            result.unchecked,
-            result.details,
-            result.createdAt,
-            result.updatedAt,
-            result.step?.mainNum,
-            result.step?.subNum
-          )
-      );
+              return stepResults.map(
+          (result) =>
+            new StepResultEntity(
+              result.id,
+              result.userAddressId,
+              result.stepId,
+              result.mismatch,
+              result.match,
+              result.unchecked,
+              result.details, // Prisma에서는 여전히 'details' 필드 사용
+              result.createdAt,
+              result.updatedAt,
+              result.step?.mainNum, // Prisma에서는 여전히 'mainNum' 필드 사용
+              result.step?.subNum   // Prisma에서는 여전히 'subNum' 필드 사용
+            )
+        );
     } catch (error) {
       console.error('❌ StepResult 조회 오류:', error);
       throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
@@ -79,10 +79,10 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         create: {
           userAddressId: stepResult.userAddressId!,
           stepId: stepResult.stepId!,
-          details: stepResult.details as never,
+          details: stepResult.jsonDetails as never, // Prisma에서는 'details' 필드 사용
         },
         update: {
-          details: stepResult.details as never,
+          details: stepResult.jsonDetails as never, // Prisma에서는 'details' 필드 사용
         },
         include: { step: true },
       });
@@ -106,11 +106,11 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         result.mismatch,
         result.match,
         result.unchecked,
-        result.details,
+        result.details, // Prisma에서는 'details' 필드 사용
         result.createdAt,
         result.updatedAt,
-        result.step?.mainNum,
-        result.step?.subNum
+        result.step?.mainNum, // Prisma에서는 'mainNum' 필드 사용
+        result.step?.subNum   // Prisma에서는 'subNum' 필드 사용
       );
     } catch (error) {
       console.error('❌ StepResult upsert 오류:', error);
@@ -119,12 +119,12 @@ export class StepResultRepositoryImpl implements StepResultRepository {
   }
 
   async findStepIdByMainSub(
-    mainNum: number,
-    subNum: number
+    stepNumber: number,
+    detail: number
   ): Promise<number | null> {
     try {
       const step = await prisma.step.findFirst({
-        where: { mainNum, subNum },
+        where: { mainNum: stepNumber, subNum: detail }, // Prisma에서는 'mainNum', 'subNum' 필드 사용
       });
       return step?.id || null;
     } catch (error) {

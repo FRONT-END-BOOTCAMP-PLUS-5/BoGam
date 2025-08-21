@@ -12,14 +12,18 @@ export const TopSection: React.FC = () => {
 
   // 주소 선택 핸들러
   const handleAddressSelect = (id: number) => {
+    // 빈 주소 항목 선택 시 (id가 -1인 경우)
+    if (id === -1) {
+      // 선택된 주소를 초기화
+      console.log('📍 TopSection - 빈 주소 항목 선택됨');
+      return;
+    }
+
     const selectedAddress = userAddresses.find((addr) => addr.id === id);
     if (selectedAddress) {
       handleAddressChangeWithTransaction(selectedAddress);
     } else {
-      console.error('📍 TopSection - 주소를 찾을 수 없음:', {
-        id,
-        userAddresses,
-      });
+      console.error('📍 TopSection - 주소를 찾을 수 없음:', id, userAddresses);
     }
   };
 
@@ -34,7 +38,6 @@ export const TopSection: React.FC = () => {
 
       {/* props 전달 없이 Store에서 직접 데이터 사용 */}
       <AddressDropDown
-        title='과거의 집'
         showFavoriteToggle={true}
         showDeleteButton={true}
         placeholder='주소를 선택해주세요'
