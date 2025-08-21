@@ -16,8 +16,22 @@ export default function RootFlow() {
 
   // 1. 초기화
   useEffect(() => {
-    initStepFromSession();
-  }, [initStepFromSession]);
+    const savedStep = sessionStorage.getItem('step');
+    if (savedStep === 'auth') {
+      // auth 단계일 때는 먼저 정리 후 step 설정
+      setStep('auth');
+      // Clear all sessionStorage items except 'step'
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key !== 'step') {
+          sessionStorage.removeItem(key);
+        }
+      }
+    } else {
+      // auth가 아닐 때만 기존 초기화 로직 실행
+      initStepFromSession();
+    }
+  }, [initStepFromSession, setStep]);
 
   // 2. 인증된 사용자는 메인으로 이동
   useEffect(() => {

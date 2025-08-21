@@ -20,6 +20,9 @@ interface UserAddressStore {
   selectAddress: (address: UserAddress) => void;
   clearSelectedAddress: () => void; // 추가
 
+  // 전체 상태 초기화 (로그아웃/세션만료)
+  clearAll: () => void;
+
   // 에러 처리
   setError: (error: string | null) => void;
   clearError: () => void;
@@ -249,6 +252,17 @@ export const useUserAddressStore = create<UserAddressStore>()(
         // 선택된 주소 초기화
         clearSelectedAddress: () => {
           set({ selectedAddress: null }, false, 'clearSelectedAddress');
+        },
+
+        // 전체 상태 초기화 (로그아웃/세션만료)
+        clearAll: () => {
+          set({
+            userAddresses: [],
+            selectedAddress: null,
+            isLoading: false,
+            error: null,
+          }, false, 'clearAll');
+          console.log('🧹 user-address-store 초기화');
         },
 
         // 에러 처리
