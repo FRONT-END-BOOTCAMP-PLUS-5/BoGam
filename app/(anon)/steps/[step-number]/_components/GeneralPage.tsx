@@ -1,6 +1,6 @@
 'use client';
 
-import { generalPageStyles } from './generalPage.style';
+import { GeneralPageStyles } from './GeneralPage.styles';
 import { useRouter } from 'next/navigation';
 
 interface pageType {
@@ -39,19 +39,19 @@ export default function GeneralPage({ title, category, content, pageIdx, stepNum
     };
 
     return (
-        <div className={generalPageStyles.generalWhitePage}>
+        <div className={GeneralPageStyles.generalWhitePage}>
             <div>
-                <div className={generalPageStyles.smallFontDiv}>
-                    <h3 className={generalPageStyles.smallFont}> {title} </h3>
+                <div className={GeneralPageStyles.smallFontDiv}>
+                    <h3 className={GeneralPageStyles.smallFont}> {title} </h3>
                 </div>
-                <div className={generalPageStyles.borderBottomDiv}>
-                    <h5 className={generalPageStyles.danger}> {category} </h5>
-                    <p className={generalPageStyles.content} style={{ whiteSpace: 'pre-line' }}>
+                <div className={GeneralPageStyles.borderBottomDiv}>
+                    <h5 className={GeneralPageStyles.danger}> {category} </h5>
+                    <p className={GeneralPageStyles.content} style={{ whiteSpace: 'pre-line' }}>
                         {content}
                     </p>
                 </div>
-                <div className={generalPageStyles.goInsideDiv}>
-                    <button className={generalPageStyles.goInside} onClick={handleClick}> 바로가기 </button>
+                <div className={GeneralPageStyles.goInsideDiv}>
+                    <button className={GeneralPageStyles.goInside} onClick={handleClick}> 바로가기 </button>
                 </div>
             </div>
         </div>
