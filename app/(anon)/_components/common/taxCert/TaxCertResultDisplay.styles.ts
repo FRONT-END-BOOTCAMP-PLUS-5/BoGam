@@ -78,7 +78,4 @@ export const styles = {
   
   // 복사 버튼
   copyButton: "px-3 py-1 text-xs font-medium text-brand bg-brand-light-blue border border-brand rounded hover:bg-brand-90 transition-colors",
-  
-  // 원본 데이터 내용
-  originalDataContent: "bg-brand-white border border-brand-light-gray rounded p-3 text-xs text-brand-black overflow-x-auto whitespace-pre-wrap max-h-96 overflow-y-auto",
 } as const;

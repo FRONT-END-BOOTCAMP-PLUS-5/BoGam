@@ -8,6 +8,7 @@ import {
 import { styles } from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay.styles';
 import PdfViewer from './PdfViewer';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 export default function TaxCertResultDisplay() {
   const { selectedAddress } = useUserAddressStore();
@@ -108,17 +109,20 @@ export default function TaxCertResultDisplay() {
     }
   }, [userAddressNickname]);
 
-  // 로딩 상태
+  // 로딩 오버레이
   if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
           <h3 className={styles.title}>📄 납세증명서 발급 결과</h3>
         </div>
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">납세증명서 데이터를 조회하고 있습니다...</p>
-        </div>
+        <LoadingOverlay
+          isVisible={true}
+          title="납세증명서 데이터를 가져오고 있습니다..."
+          currentStep={1}
+          totalSteps={1}
+          stepLabel="완료"
+        />
       </div>
     );
   }
