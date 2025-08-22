@@ -56,7 +56,7 @@ export const useMainPageModule = () => {
 
         // 새 주소를 즉시 store에 저장 (휘발성) - 호는 빈 값으로 설정
         const newAddressData = {
-          nickname: '새 주소',
+          nickname: `${data.address}`,
           x: location.lng,
           y: location.lat,
           isPrimary: false,

@@ -148,8 +148,8 @@ export default function ApiTestPage() {
       '단계 결과 생성': {
         userAddressId: 1,
         stepId: 1,
-        mainNum: 1,
-        subNum: 1,
+        stepNumber: 1,
+        detail: 1,
         mismatch: 0,
         match: 5,
         unchecked: 0,
@@ -419,8 +419,8 @@ export default function ApiTestPage() {
     const requestData = {
       userAddressId: 1,
       stepId: 1,
-      mainNum: 1,
-      subNum: 1,
+      stepNumber: 1,
+      detail: 1,
       mismatch: 0,
       match: 5,
       unchecked: 0,
@@ -447,20 +447,23 @@ export default function ApiTestPage() {
       certPassword: 'encrypted_password',
     };
 
-    callApi('납세증명서 발급', '/api/tax-certs', {
+    callApi('납세증명서 발급', '/api/copies/tax-cert', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
   };
 
   const testTaxCertExists = () => {
-    callApi('납세증명서 존재 확인', '/api/tax-certs/exists?nickname=test');
+    callApi(
+      '납세증명서 존재 확인',
+      '/api/copies/tax-cert?userAddressNickname=채원강남집'
+    );
   };
 
   const testTaxCertCopy = () => {
     callApi(
       '저장된 납세증명서 조회',
-      '/api/tax-cert-copies?userAddressNickname=test'
+      '/api/copies/tax-cert?userAddressNickname=채원강남집'
     );
   };
 

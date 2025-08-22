@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useMainPageState } from '@/hooks/main/useMainPageState';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
@@ -31,17 +31,15 @@ export const AddressConfirmationTab: React.FC = () => {
   };
 
   // useMainPageState에서 상태와 setter 함수들 가져오기
-  const { searchQuery, dong, ho, setSearchQuery, setDong, setHo } =
-    useMainPageState();
+  const { dong, ho, setSearchQuery, setDong, setHo } = useMainPageState();
 
   // 선택된 주소가 변경될 때 동 데이터만 업데이트 (호는 저장 시에만 사용)
   useEffect(() => {
     if (selectedAddress) {
-      const dongValue = selectedAddress.dong || '';
-      // 호는 기존 값 유지 (저장 시에만 사용)
-      setDong(dongValue);
+      setDong(selectedAddress.dong || '');
+      setHo(selectedAddress.ho || '');
     }
-  }, [selectedAddress, setDong]);
+  }, [selectedAddress, setDong, setHo]);
 
   // 주소 표시 로직
   const displaySearchQuery = selectedAddress?.completeAddress || '';
@@ -67,7 +65,9 @@ export const AddressConfirmationTab: React.FC = () => {
             확인하기
           </Button>
           <Button
-            onClick={saveAddressToUser}
+            onClick={() => {
+              saveAddressToUser(dong, ho);
+            }}
             disabled={!dong.trim()}
             variant='secondary'
             className={styles.saveButton}

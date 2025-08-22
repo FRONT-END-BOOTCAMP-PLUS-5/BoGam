@@ -160,12 +160,119 @@
   margin-bottom: 1rem;
 }
 
+.originalDataHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
 .originalDataLabel {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
   color: #374151;
+  margin-bottom: 0;
+}
+
+.copyButton {
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.copyButton:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.copyButton:active {
+  transform: translateY(0);
+}
+
+/* PDF 뷰어 스타일 */
+.pdfViewerContainer {
+  margin-top: 1rem;
+}
+
+.pdfPreviewContainer {
+  margin-bottom: 1rem;
+}
+
+.pdfPreviewTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
   margin-bottom: 0.5rem;
+}
+
+.pdfIframe {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.pdfDownloadContainer {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.pdfDownloadButton {
+  display: inline-block;
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.pdfDownloadButton:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.pdfDownloadButton:active {
+  transform: translateY(0);
+}
+
+.pdfLoadingContainer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+}
+
+.pdfLoadingText {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.pdfErrorContainer {
+  text-align: center;
+  padding: 2rem;
+  background-color: #fef2f2;
+  border-radius: 0.375rem;
+  border: 1px solid #fecaca;
+}
+
+.pdfErrorText {
+  color: #dc2626;
+  font-size: 0.875rem;
 }
 
 .originalDataContent {

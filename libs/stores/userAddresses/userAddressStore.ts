@@ -169,7 +169,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
           try {
             // 서버에 저장
             const apiRequestData = {
-              addressNickname: newAddress.nickname,
+              addressNickname: `${newAddress.roadAddress}${newAddress.dong}${newAddress.ho}`,
               latitude: newAddress.y,
               longitude: newAddress.x,
               legalDistrictCode: newAddress.legalDistrictCode || '',
@@ -354,12 +354,16 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
         // 전체 상태 초기화 (로그아웃/세션만료)
         clearAll: () => {
-          set({
-            userAddresses: [],
-            selectedAddress: null,
-            isLoading: false,
-            error: null,
-          }, false, 'clearAll');
+          set(
+            {
+              userAddresses: [],
+              selectedAddress: null,
+              isLoading: false,
+              error: null,
+            },
+            false,
+            'clearAll'
+          );
           console.log('🧹 user-address-store 초기화');
         },
 
