@@ -39,7 +39,7 @@ interface StepData {
   pages: PageData[];
 }
 
-export default function Steps3Page() {
+export default function MiddleStepPage() {
   const router = useRouter();
   const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
