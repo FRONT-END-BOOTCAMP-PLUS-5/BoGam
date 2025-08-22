@@ -1,5 +1,5 @@
 export const styles = {
-  container: "p-5 min-h-screen bg-brand-light-gray",
+  container: "p-5 h-screen bg-brand-light-gray",
   content: "text-center py-10 px-5",
   title: "text-2xl font-semibold text-brand-black mb-8",
   clickButton: "bg-brand text-brand-white border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-brand-dark-blue active:bg-brand-black",
@@ -17,7 +17,7 @@ export const styles = {
   indicatorDots: 'flex justify-center items-center w-full',
   indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
   indicatorDotBtn: 'mx-[6px]',
-  book: 'max-w-[480px] w-full mx-auto bg-[rgba(229,231,235,0.3)] relative overflow-hidden min-h-screen box-border flex flex-col justify-center items-center border-0',
+  book: 'max-w-[480px] w-full h-full mx-auto bg-[rgba(229,231,235,0.3)] relative overflow-hidden min-h-[calc(100vh-4rem)] box-border flex flex-col justify-center items-center border-0',
   flipBook: 'flex items-center justify-center w-fit h-fit overflow-visible relative border-none',
   flex: 'flex h-full',
   introPage: 'bg-white mx-auto w-full h-[300px] flex items-center justify-center box-border',
