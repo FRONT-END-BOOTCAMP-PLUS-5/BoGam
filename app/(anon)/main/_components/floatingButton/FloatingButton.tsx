@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/(anon)/_components/common/button/Button';
-import { styles } from '@/(anon)/main/_components/floatingButtom/FloatingButton.styles';
+import { styles } from '@/(anon)/main/_components/floatingButton/FloatingButton.styles';
 import { ClipboardCheck } from 'lucide-react';
 
 interface FloatingButtonProps {

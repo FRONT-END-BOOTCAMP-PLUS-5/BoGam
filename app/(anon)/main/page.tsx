@@ -5,7 +5,7 @@ import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
-import FloatingButton from '@/(anon)/main/_components/floatingButtom/FloatingButton';
+import FloatingButton from '@/(anon)/main/_components/floatingButton/FloatingButton';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { styles } from './main.styles';
 import { MapPinned, Pin, House, X } from 'lucide-react';
