@@ -90,7 +90,7 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={pageData as any} columns={stepContentData?.columns || 2} title={stepContentData?.title || '제출 서류'} />;
+        return <Table data={pageData as any} columns={stepContentData?.columns || 2} title={stepContentData?.title || '제출 서류'} emptyRows={stepContentData?.emptyRows || 0} />;
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
