@@ -1,15 +1,4 @@
 export const styles = {
-  container: 'min-h-screen bg-brand-light-gray p-6',
-  wrapper: 'max-w-6xl mx-auto',
-  mainCard: 'bg-brand-white rounded-lg shadow-lg p-6',
-  header: 'mb-6',
-  title: 'text-2xl font-bold text-brand-black mb-4',
-  searchContainer: 'flex gap-4 items-center',
-  searchInput:
-    'flex-1 px-4 py-2 border border-brand-light-gray rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent',
-  resetButton:
-    'px-4 py-2 bg-brand-dark-gray text-brand-white rounded-lg hover:bg-brand-black transition-colors',
-  searchResult: 'text-sm text-brand-dark-gray mt-2',
   dataContainer:
     'max-h-[70vh] overflow-y-auto border border-brand-light-gray rounded-lg',
   dataList: 'p-4 space-y-3',

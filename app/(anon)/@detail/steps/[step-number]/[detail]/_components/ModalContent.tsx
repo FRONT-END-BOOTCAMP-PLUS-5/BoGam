@@ -48,17 +48,25 @@ export default function ModalContent() {
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
+    // LegacyContentSection[]를 { left: string; right?: string }[]로 변환하는 함수
+    const convertToTableData = (
+      data: LegacyContentSection[]
+    ): Array<{ left: string; right?: string }> => {
+      return data.map((item, index) => ({
+        left: item.title || `항목 ${index + 1}`,
+        right: item.summary || item.contents?.join(', ') || undefined,
+      }));
+    };
+
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={pageData as unknown as Record<string, string>} />;
+        return <Table data={convertToTableData(pageData)} />;
       case 'List':
-        return <List data={pageData as unknown as Record<string, string>} />;
+        return <List data={convertToTableData(pageData)} />;
       case 'DataGrid':
-        return (
-          <DataGrid data={pageData as unknown as Record<string, string>} />
-        );
+        return <DataGrid data={convertToTableData(pageData)} />;
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
       case 'CombinedContent':
@@ -150,7 +158,7 @@ export default function ModalContent() {
 
       {/* 기본 DataGrid 표시 */}
       <div className={styles.mainContent}>
-        <DataGrid data={{}} />
+        <DataGrid data={[]} />
       </div>
     </>
   );
