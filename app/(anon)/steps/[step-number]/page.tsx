@@ -93,7 +93,7 @@ export default function MiddleStepPage() {
     if (idx < pages.length - 1) {
       flipPages.push(
         <div key={`empty-${idx}`} className={styles.page}>
-          <div className={styles.pageContent} style={{ backgroundColor: 'var(--brand-light-gray)' }}></div>
+          <div className={`${styles.pageContent} bg-brand-light-gray`}></div>
         </div>
       );
     }
