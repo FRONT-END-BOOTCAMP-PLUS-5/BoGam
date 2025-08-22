@@ -8,9 +8,9 @@ import {
 
 import HTMLFlipBook from "react-pageflip";
 import { styles } from './page.styles';
-import GeneralPage from './_components/GeneralPage';
-import SummaryPage from './_components/SummaryPage';
-import StateIcon from '../../_components/common/stateIcon/StateIcon';
+import GeneralPage from '@/(anon)/steps/[step-number]/_components/GeneralPage';
+import SummaryPage from '@/(anon)/steps/[step-number]/_components/SummaryPage';
+import StateIcon from '@/(anon)/_components/common/stateIcon/StateIcon';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
