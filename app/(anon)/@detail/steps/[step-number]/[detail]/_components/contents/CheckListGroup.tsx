@@ -32,13 +32,6 @@ interface CheckListGroupProps {
 }
 
 const CheckListGroup = ({ data }: CheckListGroupProps) => {
-  const [contentData, setContentData] = useState<{
-    successMessage?: string;
-    errorMessage?: string;
-    links?: Array<{ title: string; url: string }>;
-    data?: ContentSection[][];
-  } | null>(null);
-  
   // 로컬 상태로 즉시 UI 반응
   const [localStepDetails, setLocalStepDetails] = useState<Record<string, 'match' | 'mismatch' | 'unchecked'>>({});
   
@@ -158,7 +151,7 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
                           <div className={styles.checklistBadge}>
                             <CircularIconBadge 
                               type={currentStatus}
-                              size="xsm"
+                              size="sm"
                               clickable={currentStatus === 'unchecked' || currentStatus === 'match'}
                               stepData={{
                                 stepNumber: stepNumber,
