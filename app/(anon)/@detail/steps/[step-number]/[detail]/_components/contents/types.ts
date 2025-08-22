@@ -8,48 +8,58 @@ export interface BaseContentSection {
 // TextOnly 전용 인터페이스
 export interface TextOnlySection extends BaseContentSection {
   type: 'TextOnly';
-  data: any[];
-  subtitles?: string[];
-  contents?: string[];
-  contentSections?: Array<{
-    subtitle: string;
-    contents: string[];
-  }>;
-  image?: {
-    src: string;
-    alt: string;
-    width?: number;
-    height?: number;
-  };
-  button?: {
-    text: string;
-    onClick?: string;
-    variant?: 'primary' | 'secondary' | 'ghost';
-    href?: string;
-    fullWidth?: boolean;
-  };
-  buttons?: Array<{
-    text: string;
-    onClick?: string;
-    variant?: 'primary' | 'secondary' | 'ghost';
-    href?: string;
-    fullWidth?: boolean;
+  data: Array<{
+    title?: string;
+    subtitles?: string[];
+    contents?: string[];
+    contentSections?: Array<{
+      subtitle: string;
+      contents: string[];
+    }>;
+    summary?: string;
+    image?: {
+      src: string;
+      alt: string;
+      width?: number;
+      height?: number;
+    };
+    button?: {
+      text: string;
+      onClick?: string;
+      variant?: 'primary' | 'secondary' | 'ghost';
+      href?: string;
+      fullWidth?: boolean;
+    };
+    buttons?: Array<{
+      text: string;
+      onClick?: string;
+      variant?: 'primary' | 'secondary' | 'ghost';
+      href?: string;
+      fullWidth?: boolean;
+    }>;
   }>;
 }
 
 // RadioGroup 전용 인터페이스
 export interface RadioGroupSection extends BaseContentSection {
   type: 'RadioGroup';
-  data: any[];
-  contents?: string[];
-  messages?: string[];
-  link?: string;
+  data: Array<{
+    title?: string;
+    subtitle?: string;
+    contents?: string[];
+    messages?: string[];
+    link?: string;
+    summary?: string;
+  }>;
 }
 
 // Table 전용 인터페이스
 export interface TableSection extends BaseContentSection {
   type: 'Table';
-  data: Record<string, string>;
+  data: Array<{
+    left: string;
+    right?: string;
+  }>;
 }
 
 // List 전용 인터페이스

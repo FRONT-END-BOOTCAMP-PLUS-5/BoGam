@@ -41,7 +41,7 @@ const CombinedContent = ({
         content = <DataGrid data={section.data} />;
         break;
       default:
-        console.warn(`Unknown section type: ${(section as any).type}`);
+        console.warn(`Unknown section type: ${(section as ContentSection).type}`);
         return null;
     }
 
