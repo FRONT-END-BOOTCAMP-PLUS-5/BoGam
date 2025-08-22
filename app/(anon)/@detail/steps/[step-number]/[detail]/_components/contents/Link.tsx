@@ -31,7 +31,7 @@ export default function Link({ title, data }: LinkProps) {
               onClick={() => handleLinkClick(linkItem.url)}
               variant="primary"
               fullWidth={false}
-              className="px-8 py-4 text-lg font-semibold"
+              className={styles.buttonPosition}
             >
               {linkItem.title}
             </Button>
