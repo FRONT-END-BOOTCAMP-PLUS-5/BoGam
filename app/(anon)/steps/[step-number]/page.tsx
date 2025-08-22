@@ -117,6 +117,7 @@ export default function Steps3Page() {
       <div className={styles.stateDiv}>
         <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
       </div>
+      
       <HTMLFlipBook
         ref={bookRef}
         className={styles.demoBook}
@@ -148,6 +149,7 @@ export default function Steps3Page() {
       >
         {flipPages}
       </HTMLFlipBook>
+      
       <div className={styles.indicatorWrapper}>
         <div className={styles.indicatorLeft}>
           {currentPage === 0 && Number(stepNumber) > 1 && (
