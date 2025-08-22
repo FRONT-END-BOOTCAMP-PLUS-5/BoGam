@@ -2,6 +2,7 @@
 
 import { GeneralPageStyles } from './GeneralPage.styles';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface pageType {
   title: string;
