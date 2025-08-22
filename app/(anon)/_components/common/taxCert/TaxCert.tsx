@@ -1,10 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
-import { extractActualData } from '@libs/responseUtils';
-import ApiResultDisplay from '@/(anon)/_components/common/ApiResultDisplay';
-import TaxCertResultDisplay from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay';
 import { styles } from '@/(anon)/_components/common/taxCert/TaxCert.styles';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { useTaxCertValidation } from './hooks/useTaxCertValidation';
@@ -83,16 +79,6 @@ export default function TaxCert() {
           </p>
         </div>
       </ConfirmModal>
-
-      {/* 결과 표시 */}
-      {response && (
-        <>
-          <ApiResultDisplay response={response} error={error} />
-          {extractActualData(response)?.resIssueNo && (
-            <TaxCertResultDisplay response={response} />
-          )}
-        </>
-      )}
     </div>
   );
 }

@@ -1,51 +1,159 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import {
-  CodefResponse,
   TaxCertRespiteItem,
   TaxCertArrearsItem,
 } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
-import { extractActualData } from '@libs/responseUtils';
 import { styles } from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay.styles';
 import PdfViewer from './PdfViewer';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
-interface TaxCertResultDisplayProps {
-  response: CodefResponse;
-}
+export default function TaxCertResultDisplay() {
+  const { selectedAddress } = useUserAddressStore();
+  const userAddressNickname = selectedAddress?.nickname || '';
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-export default function TaxCertResultDisplay({
-  response,
-}: TaxCertResultDisplayProps) {
-  // 디버깅을 위한 로그
-  console.log('🔍 원본 응답:', response);
+  useEffect(() => {
+    const fetchTaxCertData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/copies/tax-cert?userAddressNickname=${encodeURIComponent(userAddressNickname)}`);
+        const result = await response.json();
 
-  // 중첩된 응답 구조에서 실제 데이터 추출
-  const data = extractActualData(response);
+        console.log('🔍 API 응답:', result);
+        console.log('🔍 result의 키들:', Object.keys(result));
+        console.log('🔍 result.data:', result.data);
+        console.log('🔍 result.data의 타입:', typeof result.data);
+        if (result.data) {
+          console.log('🔍 result.data의 키들:', Object.keys(result.data));
+          console.log('🔍 result.data의 전체 내용:', JSON.stringify(result.data, null, 2));
+        }
 
-  console.log('🔍 추출된 데이터:', data);
+        if (result.success && result.data) {
+          console.log('🔍 데이터 처리 시작 - result.data:', result.data);
+          console.log('🔍 result.data의 키들:', Object.keys(result.data));
+          
+          // DB에서 조회된 데이터를 파싱
+          // GetTaxCertCopyUsecase에서 반환하는 taxCertJson 필드 사용
+          if (result.data.taxCertJson) {
+            console.log('🔍 taxCertJson 필드 발견:', result.data.taxCertJson);
+            try {
+              // 이미 복호화된 JSON 객체이므로 파싱 불필요
+              setData(result.data.taxCertJson);
+              console.log('✅ taxCertJson 데이터 설정 완료');
+            } catch (parseError) {
+              console.error('데이터 처리 오류:', parseError);
+              console.error('처리할 데이터:', result.data.taxCertJson);
+              setError('납세증명서 데이터 형식이 올바르지 않습니다.');
+            }
+          } else if (result.data.data && result.data.data.taxCertJson) {
+            console.log('🔍 중첩된 구조 발견 - result.data.data.taxCertJson:', result.data.data.taxCertJson);
+            try {
+              // 실제 납세증명서 데이터는 result.data.data.taxCertJson.data에 있음
+              if (result.data.data.taxCertJson.data) {
+                setData(result.data.data.taxCertJson.data);
+                console.log('✅ 중첩된 데이터의 data 필드 설정 완료');
+              } else {
+                // data 필드가 없으면 전체 taxCertJson 사용
+                setData(result.data.data.taxCertJson);
+                console.log('✅ 중첩된 데이터 전체 설정 완료');
+              }
+            } catch (parseError) {
+              console.error('중첩된 데이터 처리 오류:', parseError);
+              console.error('처리할 데이터:', result.data.data.taxCertJson);
+              setError('납세증명서 데이터 형식이 올바르지 않습니다.');
+            }
+          } else if (result.data.taxCertData) {
+            console.log('🔍 taxCertData 필드 발견:', result.data.taxCertData);
+            // taxCertData 필드가 있는 경우 (암호화된 데이터)
+            try {
+              const taxCertData = JSON.parse(result.data.taxCertData);
+              setData(taxCertData);
+              console.log('✅ taxCertData 파싱 및 설정 완료');
+            } catch (parseError) {
+              console.error('JSON 파싱 오류:', parseError);
+              console.error('파싱할 데이터:', result.data.taxCertData);
+              setError('납세증명서 데이터 형식이 올바르지 않습니다.');
+            }
+          } else {
+            console.error('❌ taxCertJson 또는 taxCertData 필드가 없음:', result.data);
+            console.error('❌ 사용 가능한 필드들:', Object.keys(result.data));
+            console.error('❌ result.data의 전체 내용:', JSON.stringify(result.data, null, 2));
+            
+            // 추가 디버깅: result.data.data가 있는지 확인
+            if (result.data.data) {
+              console.log('🔍 result.data.data가 존재함:', result.data.data);
+              console.log('🔍 result.data.data의 키들:', Object.keys(result.data.data));
+            }
+            
+            setError('납세증명서 데이터가 올바르지 않습니다.');
+          }
+        } else {
+          console.error('❌ API 응답이 실패하거나 데이터가 없음:', result);
+          setError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
+        }
+      } catch (err) {
+        setError('납세증명서 데이터 조회 중 오류가 발생했습니다.');
+        console.error('납세증명서 조회 오류:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!data) {
-    // data가 없으면 원본 응답을 표시
+    if (userAddressNickname) {
+      fetchTaxCertData();
+    }
+  }, [userAddressNickname]);
+
+  // 로딩 상태
+  if (loading) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
           <h3 className={styles.title}>📄 납세증명서 발급 결과</h3>
-          <div className={`${styles.statusContainer} ${styles.statusWarning}`}>
-            <p className={`${styles.statusText} ${styles.statusTextWarning}`}>
-              ⚠️ 응답 데이터를 파싱할 수 없습니다. 원본 응답을 표시합니다.
-            </p>
-          </div>
         </div>
-
-        <div className={styles.originalDataContent}>
-          <h4 className={styles.originalDataTitle}>원본 응답</h4>
-          <pre className={styles.originalDataContent}>
-            {JSON.stringify(response, null, 2)}
-          </pre>
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">납세증명서 데이터를 조회하고 있습니다...</p>
         </div>
       </div>
     );
   }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h3 className={styles.title}>📄 납세증명서 발급 결과</h3>
+        </div>
+        <div className={`${styles.statusContainer} ${styles.statusWarning}`}>
+          <p className={`${styles.statusText} ${styles.statusTextWarning}`}>
+            ❌ {error}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 데이터가 없는 경우
+  if (!data) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <h3 className={styles.title}>📄 납세증명서 발급 결과</h3>
+        </div>
+        <div className="text-center py-8">
+          <p className="text-gray-500">해당 사용자 주소에 대한 납세증명서 데이터가 없습니다.</p>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('🔍 조회된 데이터:', data);
 
   return (
     <div className={styles.container}>

@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import Button from '@/(anon)/_components/common/button/Button';
+import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { styles } from './SimpleAuthForm.styles';
 
 // 간편인증 방법 데이터
@@ -74,6 +76,24 @@ export default function SimpleAuthForm({
   onInputChange,
   onLoginTypeLevelChange,
 }: SimpleAuthFormProps) {
+  const [isAuthMethodModalOpen, setIsAuthMethodModalOpen] = useState(false);
+
+  const handleOpenAuthMethodModal = () => {
+    setIsAuthMethodModalOpen(true);
+  };
+
+  const handleCloseAuthMethodModal = () => {
+    setIsAuthMethodModalOpen(false);
+  };
+
+  const handleSelectAuthMethod = (methodId: string) => {
+    onLoginTypeLevelChange(methodId);
+    setIsAuthMethodModalOpen(false);
+  };
+
+  // 선택된 인증 방법 정보 가져오기
+  const selectedMethod = authMethods.find(method => method.id === formData.loginTypeLevel);
+
   return (
     <>
       <div className={styles.field}>
@@ -135,35 +155,33 @@ export default function SimpleAuthForm({
         </div>
       )}
 
-      {/* 간편인증 로그인 구분 - 아이콘 그리드 형태 */}
+      {/* 간편인증 로그인 구분 - 모달 버튼 */}
       <div className={`${styles.mt6} ${styles.spaceY3}`}>
         <label className={styles.label}>
           간편인증 로그인 구분 <span className={styles.require}>*</span>
         </label>
-        <div className={styles.authGrid}>
-          {authMethods.map((method) => (
-            <div
-              key={method.id}
-              className={`${styles.authItem} ${
-                formData.loginTypeLevel === method.id
-                  ? styles.authItemSelected
-                  : styles.authItemDefault
-              }`}
-              onClick={() => onLoginTypeLevelChange(method.id)}
-            >
-              <div className={styles.authIconContainer}>
-                <Image
-                  src={method.image}
-                  alt={method.alt}
-                  width={48}
-                  height={48}
-                  className={styles.authIcon}
-                />
-                <span className={styles.authText}>{method.name}</span>
-              </div>
+        <Button
+          variant="secondary"
+          fullWidth
+          onClick={handleOpenAuthMethodModal}
+          className={styles.authMethodButton}
+        >
+          {selectedMethod ? (
+            <div className={styles.selectedAuthMethod}>
+              <Image
+                src={selectedMethod.image}
+                alt={selectedMethod.alt}
+                width={24}
+                height={24}
+                className={styles.authIconSmall}
+              />
+              <span className={styles.selectedAuthText}>{selectedMethod.name}</span>
             </div>
-          ))}
-        </div>
+          ) : (
+            <span className={styles.placeholderText}>간편인증 방법을 선택해주세요</span>
+          )}
+          <span className={styles.dropdownArrow}>▼</span>
+        </Button>
       </div>
 
       {/* 통신사 (통신사인증서 선택 시에만 표시) */}
@@ -200,6 +218,42 @@ export default function SimpleAuthForm({
           mask='phone'
         />
       </div>
+
+      {/* 간편인증 방법 선택 모달 */}
+      <ConfirmModal
+        isOpen={isAuthMethodModalOpen}
+        title="간편인증 로그인 구분 선택"
+        onCancel={handleCloseAuthMethodModal}
+        confirmText="닫기"
+        cancelText="취소"
+        icon="info"
+        onConfirm={handleCloseAuthMethodModal}
+      >
+        <div className={styles.authGrid}>
+          {authMethods.map((method) => (
+            <div
+              key={method.id}
+              className={`${styles.authItem} ${
+                formData.loginTypeLevel === method.id
+                  ? styles.authItemSelected
+                  : styles.authItemDefault
+              }`}
+              onClick={() => handleSelectAuthMethod(method.id)}
+            >
+              <div className={styles.authIconContainer}>
+                <Image
+                  src={method.image}
+                  alt={method.alt}
+                  width={48}
+                  height={48}
+                  className={styles.authIcon}
+                />
+                <span className={styles.authText}>{method.name}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </ConfirmModal>
     </>
   );
 }

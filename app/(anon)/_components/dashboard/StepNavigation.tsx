@@ -28,7 +28,6 @@ export default function StepNavigation({
       {/* 단계 목록 */}
       <div className={styles.stepsList}>
         {steps.map((step) => {
-          console.log(`Step ${step.id}: isActive=${step.isActive}, isCompleted=${step.isCompleted}`);
           return (
             <button
               key={step.id}
