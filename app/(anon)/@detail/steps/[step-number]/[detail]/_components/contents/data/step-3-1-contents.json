@@ -1,0 +1,13 @@
+{
+  "dataType": "BrokerForm",
+  "title": "공인중개사 자격증 조회를 위한 입력",
+  "data": [
+    [
+      {
+        "businessName": "",
+        "agentName": "",
+        "description": "사업자 상호와 중개업자명을 입력하신 후 입력 제출 버튼을 클릭하세요."
+      }
+    ]
+  ]
+}

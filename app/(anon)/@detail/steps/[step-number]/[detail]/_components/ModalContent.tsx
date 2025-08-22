@@ -9,6 +9,7 @@ import Table from './contents/Table';
 import List from './contents/List';
 import RadioGroup from './contents/RadioGroup';
 import Link from './contents/Link';
+import BrokerForm from './contents/BrokerForm';
 import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface ContentSection {
@@ -100,6 +101,8 @@ export default function ModalContent() {
         return <RadioGroup data={pageData}/>;
       case 'Link':
         return <Link data={pageData as any} title={stepContentData?.title} />;
+      case 'BrokerForm':
+        return <BrokerForm data={pageData as any} title={stepContentData?.title} />;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
