@@ -159,8 +159,8 @@ export const mockData = {
       },
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-12T01:50:13.329Z",
-      mainNum: 2,
-      subNum: 1,
+      stepNumber: 2,
+      detail: 1,
       expanded: false
     },
     // Main Step 3: 계약서 작성할 때
@@ -174,8 +174,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-10T04:20:00.000Z",
-      mainNum: 3,
-      subNum: 1,
+      stepNumber: 3,
+      detail: 1,
       expanded: false
     },
     // Main Step 4: 계약한 직후
@@ -189,8 +189,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-11T05:15:00.000Z",
-      mainNum: 4,
-      subNum: 1,
+      stepNumber: 4,
+      detail: 1,
       expanded: false
     },
     // Main Step 5: 입주한 이후
@@ -204,8 +204,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-13T06:45:00.000Z",
-      mainNum: 5,
-      subNum: 1,
+      stepNumber: 5,
+      detail: 1,
       expanded: false
     },
     // Main Step 6: 계약기간이 끝난 후
@@ -219,8 +219,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-14T07:30:00.000Z",
-      mainNum: 6,
-      subNum: 1,
+      stepNumber: 6,
+      detail: 1,
       expanded: false
     },
     // Main Step 7: 이런 상황에 휘말리지 않도록 유의하세요!
@@ -234,8 +234,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-16T08:20:00.000Z",
-      mainNum: 7,
-      subNum: 1,
+      stepNumber: 7,
+      detail: 1,
       expanded: false
     }
   ]
