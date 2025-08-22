@@ -37,9 +37,7 @@ export const useGetRealEstateFromDB = (userAddressNickname?: string) => {
       const response = await frontendAxiosInstance
         .getAxiosInstance()
         .post(`/api/copies/real-estate`, {
-          params: {
-            userAddressNickname,
-          },
+          userAddressNickname,
         });
 
       return response.data as ApiResponse;
