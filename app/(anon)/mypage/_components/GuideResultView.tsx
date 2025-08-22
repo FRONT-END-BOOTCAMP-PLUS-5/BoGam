@@ -28,8 +28,8 @@ export interface GuideStepData {
   unchecked: number;
   createdAt: string;
   updatedAt: string;
-  mainNum: number;
-  subNum: number;
+  stepNumber: number;
+  detail: number;
   expanded?: boolean;
 
   // Fields for GuideStepItem and its content, primarily for mainNum 1
@@ -53,13 +53,13 @@ export interface GuideResultViewProps {
 }
 
 export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
-  // mainNum별로 그룹화
+  // stepNumber별로 그룹화
   const groupedSteps = guideSteps.reduce((acc, step) => {
-    const mainNum = step.mainNum;
-    if (!acc[mainNum]) {
-      acc[mainNum] = [];
+    const stepNumber = step.stepNumber;
+    if (!acc[stepNumber]) {
+      acc[stepNumber] = [];
     }
-    acc[mainNum].push(step);
+    acc[stepNumber].push(step);
     return acc;
   }, {} as Record<number, GuideStepData[]>);
 
@@ -107,7 +107,7 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
                     {steps.map((subStep) => (
                       <GuideStepItem
                         key={subStep.id}
-                        stepNumber={`${subStep.mainNum}-${subStep.subNum}`} // mainNum-subNum 형식
+                        stepNumber={`${subStep.stepNumber}-${subStep.detail}`} // stepNumber-detail 형식
                         title={subStep.title || ''} // Ensure title is not undefined
                         showDivider={false}
                       >
@@ -151,7 +151,7 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
                         <div key={step.id} className={styles.tempStepItem}>
                           <div className={styles.tempStepItemHeader}>
                             <span className={styles.tempStepItemNumber}>
-                              서브 {step.subNum}
+                              서브 {step.detail}
                             </span>
                             <span className={styles.tempStepItemStats}>
                               ✓{step.match} ✗{step.mismatch} ?{step.unchecked}

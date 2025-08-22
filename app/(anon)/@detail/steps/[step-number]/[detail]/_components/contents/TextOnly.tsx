@@ -29,8 +29,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   // useGetStepResult 훅 사용
   const { data: stepData, isLoading, isError } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
-    stepNumber: stepInfo?.mainNum?.toString() || '',
-    detail: stepInfo?.subNum?.toString() || ''
+    stepNumber: stepInfo?.stepNumber?.toString() || '',
+    detail: stepInfo?.detail?.toString() || ''
   });
 
   // 로딩 상태
