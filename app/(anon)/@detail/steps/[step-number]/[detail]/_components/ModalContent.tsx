@@ -8,6 +8,7 @@ import TextOnly from './contents/TextOnly';
 import Table from './contents/Table';
 import List from './contents/List';
 import RadioGroup from './contents/RadioGroup';
+import Link from './contents/Link';
 import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface ContentSection {
@@ -97,6 +98,8 @@ export default function ModalContent() {
         return <DataGrid data={pageData as unknown as Record<string, string>} />;
       case 'RadioGroup':
         return <RadioGroup data={pageData}/>;
+      case 'Link':
+        return <Link data={pageData as any} title={stepContentData?.title} />;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
