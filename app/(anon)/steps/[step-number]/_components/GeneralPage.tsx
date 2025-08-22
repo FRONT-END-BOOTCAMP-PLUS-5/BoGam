@@ -2,6 +2,7 @@
 
 import { GeneralPageStyles } from './GeneralPage.styles';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface pageType {
     title: string,
@@ -13,30 +14,19 @@ interface pageType {
 
 export default function GeneralPage({ title, category, content, pageIdx, stepNumber }: pageType) {
     const router = useRouter();
+    const [stepNum, setStepNum] = useState<string>('');
 
     const handleClick = async () => {
-        try {
-            // URL에서 step-number와 detail 파라미터 추출
-            const urlParams = new URLSearchParams(window.location.search);
-            const step = urlParams.get('step-number') || stepNumber;
-            const detail = urlParams.get('detail') || pageIdx.toString();
-            
-            // 프로그래밍 라우팅 플래그와 타임스탬프 설정
-            sessionStorage.setItem('programmatic-navigation', 'true');
-            sessionStorage.setItem('navigation-timestamp', Date.now().toString());
+        setStepNum(stepNumber);
 
-            // 페이지 이동 없이 URL만 변경 (슬롯만 표시)
-            const newUrl = `/steps/${step}/${detail}`;
-            window.history.pushState({}, '', newUrl);
-
-            // Next.js router의 pathname 업데이트를 위해 강제로 리렌더링 트리거
-            window.dispatchEvent(new PopStateEvent('popstate'));
-        } catch (error) {
-            console.error('파라미터 추출 중 오류:', error);
-            // 오류 발생 시 기본값으로 이동
-            router.push(`/steps/${stepNumber}/${pageIdx}`);
-        }
-    };
+        const newUrl = `/steps/${stepNumber}/${pageIdx}`;
+        
+        sessionStorage.setItem('programmatic-navigation', 'true');
+        sessionStorage.setItem('navigation-timestamp', Date.now().toString());
+        window.dispatchEvent(new PopStateEvent('popstate'));
+        
+        router.push(newUrl);
+    }
 
     return (
         <div className={GeneralPageStyles.generalWhitePage}>
