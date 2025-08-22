@@ -2,7 +2,6 @@
 
 import { Check, X, Link } from 'lucide-react';
 import clsx from 'clsx';
-import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { styles } from './CircularIconBadge.styles';
 
 type CircularIconBadgeProps = {
@@ -31,8 +30,6 @@ const CircularIconBadge = ({
   clickable = false,
   stepData 
 }: CircularIconBadgeProps) => {
-  const { createOrUpdateStepResult, isLoading } = useStepResultMutations();
-  
   // ===== 아이콘 관련 함수들 =====
   const getIcon = () => {
     switch (type) {
@@ -74,7 +71,7 @@ const CircularIconBadge = ({
   };
 
   // ===== Step Result 업데이트 핸들러 =====
-  const handleStepResultClick = async () => {
+  const handleStepResultClick = () => {
     if (!stepData?.currentKey) {
       console.log('❌ Step Result 업데이트 조건 불만족:', { hasStepData: !!stepData, hasCurrentKey: !!stepData?.currentKey });
       return;
@@ -83,42 +80,26 @@ const CircularIconBadge = ({
     const newDetails = { ...stepData.currentDetails };
     const currentValue = stepData.currentDetails[stepData.currentKey];
     
-    try {
-      // 토글: unchecked ↔ match
-      if (currentValue === 'unchecked') {
-        newDetails[stepData.currentKey] = 'match';
-      } else if (currentValue === 'match') {
-        newDetails[stepData.currentKey] = 'unchecked';
-      } else {
-        console.log('⚠️ 변경할 수 없는 상태:', currentValue);
-        return;
-      }
-
-      // 훅을 사용하여 API 호출
-      const result = await createOrUpdateStepResult.mutateAsync({
-        userAddressId: stepData.userAddressId,
-        stepNumber: stepData.stepNumber,
-        detail: stepData.detail,
-        jsonDetails: newDetails
-      });
-      
-      console.log('✅ Step Result 업데이트 성공:', result);
-
-      // 부모 컴포넌트에 업데이트 알림
-      stepData.onStepResultUpdate?.(newDetails);
-      onClick?.();
-      
-    } catch (error) {
-      console.error('❌ Step Result 업데이트 실패:', error);
-      alert('Step Result 업데이트에 실패했습니다. 다시 시도해주세요.');
+    // 토글: unchecked ↔ match
+    if (currentValue === 'unchecked') {
+      newDetails[stepData.currentKey] = 'match';
+    } else if (currentValue === 'match') {
+      newDetails[stepData.currentKey] = 'unchecked';
+    } else {
+      console.log('⚠️ 변경할 수 없는 상태:', currentValue);
+      return;
     }
+
+    // 즉시 부모 컴포넌트에 업데이트 알림 (API 호출 없이)
+    stepData.onStepResultUpdate?.(newDetails);
+    onClick?.();
   };
 
   // ===== 클릭 핸들러 =====
   const handleClick = () => {
-    if (stepData?.currentKey && !isLoading) {
+    if (stepData?.currentKey) {
       handleStepResultClick();
-    } else if (!isLoading) {
+    } else {
       onClick?.();
     }
   };
@@ -152,7 +133,6 @@ const CircularIconBadge = ({
         styles[size],
         styles[type],
         clickable && styles.clickable,
-        isLoading && styles.loading,
         className
       )}
       onClick={clickable ? handleClick : undefined}
