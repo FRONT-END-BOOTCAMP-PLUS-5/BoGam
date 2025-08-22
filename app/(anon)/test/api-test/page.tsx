@@ -447,20 +447,23 @@ export default function ApiTestPage() {
       certPassword: 'encrypted_password',
     };
 
-    callApi('납세증명서 발급', '/api/tax-certs', {
+    callApi('납세증명서 발급', '/api/copies/tax-cert', {
       method: 'POST',
       body: JSON.stringify(requestData),
     });
   };
 
   const testTaxCertExists = () => {
-    callApi('납세증명서 존재 확인', '/api/tax-certs/exists?nickname=test');
+    callApi(
+      '납세증명서 존재 확인',
+      '/api/copies/tax-cert?userAddressNickname=채원강남집'
+    );
   };
 
   const testTaxCertCopy = () => {
     callApi(
       '저장된 납세증명서 조회',
-      '/api/tax-cert-copies?userAddressNickname=test'
+      '/api/copies/tax-cert?userAddressNickname=채원강남집'
     );
   };
 

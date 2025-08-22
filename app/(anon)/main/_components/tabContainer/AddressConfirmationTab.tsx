@@ -37,11 +37,10 @@ export const AddressConfirmationTab: React.FC = () => {
   // 선택된 주소가 변경될 때 동 데이터만 업데이트 (호는 저장 시에만 사용)
   useEffect(() => {
     if (selectedAddress) {
-      const dongValue = selectedAddress.dong || '';
-      // 호는 기존 값 유지 (저장 시에만 사용)
-      setDong(dongValue);
+      setDong(selectedAddress.dong || '');
+      setHo(selectedAddress.ho || '');
     }
-  }, [selectedAddress, setDong]);
+  }, [selectedAddress, setDong, setHo]);
 
   // 주소 표시 로직
   const displaySearchQuery = selectedAddress?.completeAddress || '';
@@ -67,7 +66,9 @@ export const AddressConfirmationTab: React.FC = () => {
             확인하기
           </Button>
           <Button
-            onClick={saveAddressToUser}
+            onClick={() => {
+              saveAddressToUser(dong, ho);
+            }}
             disabled={!dong.trim()}
             variant='secondary'
             className={styles.saveButton}
