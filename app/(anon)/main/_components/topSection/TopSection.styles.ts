@@ -1,11 +1,11 @@
 export const styles = {
   // 상단 섹션 컨테이너
-  topSection: 'bg-brand-white rounded-lg shadow-lg p-6 mb-6',
+  topSection: 'bg-brand-white rounded-lg shadow-lg p-6 mb-3',
 
   // 사용자 정보 영역
-  userInfo: 'flex items-center justify-between mb-4',
+  userInfo: 'flex items-centermb-4',
   userGreeting: 'text-lg font-semibold text-brand-black',
-  userIcon: 'text-2xl mr-2',
+  userIcon: 'text-2xl mr-2 text-brand',
   userName: 'text-lg font-semibold text-brand-black',
   userAddressLabel: 'text-sm text-brand-dark-gray mb-2',
 

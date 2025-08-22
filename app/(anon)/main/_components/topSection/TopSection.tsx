@@ -4,6 +4,7 @@ import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { styles } from './TopSection.styles';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
+import { UserRound } from 'lucide-react';
 
 export const TopSection: React.FC = () => {
   const { data: session } = useSession();
@@ -30,7 +31,7 @@ export const TopSection: React.FC = () => {
   return (
     <div className={styles.topSection}>
       <div className={styles.userInfo}>
-        <span className={styles.userIcon}>👤</span>
+        <UserRound className={styles.userIcon} />
         <span className={styles.userName}>
           {session?.user?.name || '사용자'} 님
         </span>
