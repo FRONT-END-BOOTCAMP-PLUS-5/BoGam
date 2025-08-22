@@ -3,11 +3,16 @@ import { SummaryPageStyles } from './SummaryPage.styles';
 interface SummaryPageProps {
   title: string;
   contents: { subtitle: string; items: string[] }[];
+  stepNumber: string;
 }
 
-export default function SummaryPage({ title, contents }: SummaryPageProps) {
+export default function SummaryPage({ title, contents, stepNumber }: SummaryPageProps) {
+  const isEarlyStep = ['1', '2', '3'].includes(stepNumber);
+  const generalPageClass = isEarlyStep
+    ? SummaryPageStyles.generalPage
+    : SummaryPageStyles.generalPageGreen;
   return (
-    <div className={SummaryPageStyles.generalPage}>
+    <div className={generalPageClass}>
       <div className={SummaryPageStyles.leftDiv}>
         <div className={SummaryPageStyles.leftFirst}></div>
         <div className={SummaryPageStyles.leftCenter}></div>

@@ -8,9 +8,9 @@ import {
 
 import HTMLFlipBook from "react-pageflip";
 import { styles } from './page.styles';
-import GeneralPage from './_components/GeneralPage';
-import SummaryPage from './_components/SummaryPage';
-import StateIcon from '../../_components/common/stateIcon/StateIcon';
+import GeneralPage from '@/(anon)/steps/[step-number]/_components/GeneralPage';
+import SummaryPage from '@/(anon)/steps/[step-number]/_components/SummaryPage';
+import StateIcon from '@/(anon)/_components/common/stateIcon/StateIcon';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -39,7 +39,7 @@ interface StepData {
   pages: PageData[];
 }
 
-export default function Steps3Page() {
+export default function MiddleStepPage() {
   const router = useRouter();
   const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
@@ -80,7 +80,7 @@ export default function Steps3Page() {
     if (page.type === 'summary') {
       flipPages.push(
         <div key={`summary-${idx}`} className={styles.flex}>
-          <SummaryPage title={page.title ?? ''} contents={page.contents ?? []} />
+          <SummaryPage title={page.title ?? ''} contents={page.contents ?? []} stepNumber={stepNumber} />
         </div>
       );
     } else if (page.type === 'general') {
@@ -93,7 +93,7 @@ export default function Steps3Page() {
     if (idx < pages.length - 1) {
       flipPages.push(
         <div key={`empty-${idx}`} className={styles.page}>
-          <div className={styles.pageContent} style={{ backgroundColor: 'var(--brand-light-gray)' }}></div>
+          <div className={`${styles.pageContent} bg-brand-light-gray`}></div>
         </div>
       );
     }
@@ -117,6 +117,7 @@ export default function Steps3Page() {
       <div className={styles.stateDiv}>
         <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
       </div>
+      
       <HTMLFlipBook
         ref={bookRef}
         className={styles.demoBook}
@@ -148,9 +149,10 @@ export default function Steps3Page() {
       >
         {flipPages}
       </HTMLFlipBook>
+      
       <div className={styles.indicatorWrapper}>
         <div className={styles.indicatorLeft}>
-          {currentPage === 0 && (
+          {currentPage === 0 && Number(stepNumber) > 1 && (
             <button
               className={styles.indicatorArrowBtn}
               aria-label="이전 단계로 이동"
@@ -175,7 +177,7 @@ export default function Steps3Page() {
           ))}
         </div>
         <div className={styles.indicatorRight}>
-          {currentPage === totalPages - 1 && (
+          {currentPage === totalPages - 1 && Number(stepNumber) < 7 && (
             <button
               className={styles.indicatorArrowBtn}
               aria-label="다음 단계로 이동"
