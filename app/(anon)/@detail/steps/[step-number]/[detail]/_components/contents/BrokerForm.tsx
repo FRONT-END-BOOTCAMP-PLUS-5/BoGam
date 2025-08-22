@@ -160,9 +160,38 @@ export default function BrokerForm({ title, data }: BrokerFormProps) {
           {result.type === 'match' && result.data && (
             <div className="mt-4 p-3 bg-white rounded border">
               <h4 className="font-semibold mb-2">조회 결과:</h4>
-              <pre className="text-sm overflow-auto">
-                {JSON.stringify(result.data, null, 2)}
-              </pre>
+              <div className="space-y-2 text-sm">
+                {Array.isArray(result.data) ? (
+                  result.data.map((broker, index) => (
+                    <div key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
+                      <h5 className="font-medium text-brand mb-2">중개업자 정보 {index + 1}</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div><span className="font-medium">중개업자종별:</span> {broker.brkrAsortCodeNm} ({broker.brkrAsortCode})</div>
+                        <div><span className="font-medium">등록번호:</span> {broker.jurirno || '정보없음'}</div>
+                        <div><span className="font-medium">자격증취득일:</span> {broker.crqfcAcqdt || '정보없음'}</div>
+                        <div><span className="font-medium">직위구분:</span> {broker.ofcpsSeCodeNm} ({broker.ofcpsSeCode})</div>
+                        <div><span className="font-medium">중개업자명:</span> {broker.brkrNm}</div>
+                        <div><span className="font-medium">데이터기준일자:</span> {broker.lastUpdtDt}</div>
+                        <div><span className="font-medium">시군구:</span> {broker.IdCodeNm} ({broker.IdCode})</div>
+                        <div><span className="font-medium">자격증번호:</span> {broker.crqfcNo || '정보없음'}</div>
+                        <div><span className="font-medium">사업자상호:</span> {broker.bsnmCmpnm}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="space-y-2">
+                    <div><span className="font-medium">중개업자종별:</span> {result.data.brkrAsortCodeNm} ({result.data.brkrAsortCode})</div>
+                    <div><span className="font-medium">등록번호:</span> {result.data.jurirno || '정보없음'}</div>
+                    <div><span className="font-medium">자격증취득일:</span> {result.data.crqfcAcqdt || '정보없음'}</div>
+                    <div><span className="font-medium">직위구분:</span> {result.data.ofcpsSeCodeNm} ({result.data.ofcpsSeCode})</div>
+                    <div><span className="font-medium">중개업자명:</span> {result.data.brkrNm}</div>
+                    <div><span className="font-medium">데이터기준일자:</span> {result.data.lastUpdtDt}</div>
+                    <div><span className="font-medium">시군구:</span> {result.data.IdCodeNm} ({result.data.IdCode})</div>
+                    <div><span className="font-medium">자격증번호:</span> {result.data.crqfcNo || '정보없음'}</div>
+                    <div><span className="font-medium">사업자상호:</span> {result.data.bsnmCmpnm}</div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
