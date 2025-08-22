@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { styles } from './RadioButtonGroup.styles';
 import RadioButton from './RadioButton';
@@ -29,7 +29,12 @@ const RadioButtonGroup = ({
   className,
   showYesNoLabels = true
 }: RadioButtonGroupProps) => {
-  const [selectedValue, setSelectedValue] = useState(defaultValue || options[0]?.value || '');
+  const [selectedValue, setSelectedValue] = useState(defaultValue || '');
+
+  // defaultValue가 변경될 때 selectedValue도 업데이트
+  useEffect(() => {
+    setSelectedValue(defaultValue || '');
+  }, [defaultValue]);
 
   const handleChange = (value: string) => {
     setSelectedValue(value);

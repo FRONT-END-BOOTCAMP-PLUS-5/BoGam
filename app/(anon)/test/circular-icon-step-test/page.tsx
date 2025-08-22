@@ -32,15 +32,15 @@ export default function CircularIconStepTestPage() {
       setIsLoading(true);
       try {
         console.log('🔍 기존 데이터 가져오기 시작:', { 
-          stepNumber: stepInfo.mainNum, 
-          detail: stepInfo.subNum,
+          stepNumber: stepInfo.stepNumber, 
+          detail: stepInfo.detail,
           userAddressId: selectedAddress.id 
         });
         
         const existingData = await stepResultQueryApi.getStepResult({
           userAddressNickname: selectedAddress?.nickname || '채원강남집',
-          stepNumber: stepInfo.mainNum.toString(),
-          detail: stepInfo.subNum.toString()
+          stepNumber: stepInfo.stepNumber.toString(),
+          detail: stepInfo.detail.toString()
         });
         
         console.log('✅ 기존 데이터 가져오기 성공:', existingData);
@@ -97,9 +97,9 @@ export default function CircularIconStepTestPage() {
   };
 
   // 가상 URL 변경 함수 (실제 라우팅하지 않음)
-  const changeUrl = (mainNum: number, subNum: number) => {
-    const newPath = `/steps/${mainNum}/${subNum}`;
-    console.log('🔄 URL 변경:', { from: virtualPath, to: newPath, mainNum, subNum });
+  const changeUrl = (stepNumber: number, detail: number) => {
+    const newPath = `/steps/${stepNumber}/${detail}`;
+    console.log('🔄 URL 변경:', { from: virtualPath, to: newPath, stepNumber, detail });
     setVirtualPath(newPath);
   };
 
@@ -113,8 +113,8 @@ export default function CircularIconStepTestPage() {
         <p><strong>가상 경로:</strong> {virtualPath}</p>
         {stepInfo ? (
           <>
-            <p><strong>Main:</strong> {stepInfo.mainNum}</p>
-            <p><strong>Sub:</strong> {stepInfo.subNum}</p>
+            <p><strong>Main:</strong> {stepInfo.stepNumber}</p>
+            <p><strong>Sub:</strong> {stepInfo.detail}</p>
             {isLoading && <p className="text-blue-600">🔄 기존 데이터 로딩 중...</p>}
           </>
         ) : (
@@ -174,8 +174,8 @@ export default function CircularIconStepTestPage() {
                 size="md"
                 clickable={value === 'unchecked' || value === 'match'}
                 stepData={stepInfo ? {
-                  stepNumber: stepInfo.mainNum,
-                  detail: stepInfo.subNum,
+                  stepNumber: stepInfo.stepNumber,
+                  detail: stepInfo.detail,
                   userAddressId: selectedAddress?.id || 1,
                   currentDetails: stepDetails,
                   currentKey: key, // 현재 뱃지의 키 전달
@@ -220,7 +220,7 @@ export default function CircularIconStepTestPage() {
         <p className="text-sm">2. match 뱃지를 클릭하면 unchecked로 변경됩니다 (토글 기능)</p>
         <p className="text-sm">3. 위의 &quot;Steps X-Y&quot; 버튼을 클릭하여 가상 URL을 변경하세요</p>
         <p className="text-sm">4. 가상 URL이 변경되면 자동으로 기존 데이터를 가져옵니다 (GET 요청)</p>
-        <p className="text-sm">5. 가상 URL이 변경되면 mainNum, subNum이 자동으로 파싱됩니다</p>
+        <p className="text-sm">5. 가상 URL이 변경되면 stepNumber, detail이 자동으로 파싱됩니다</p>
         <p className="text-sm">6. &quot;테스트 페이지로 돌아가기&quot; 버튼으로 원래 가상 경로로 돌아갈 수 있습니다</p>
         <p className="text-sm">7. 실제 페이지는 이동하지 않고 테스트 페이지 안에서 시뮬레이션됩니다</p>
       </div>
