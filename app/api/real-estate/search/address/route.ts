@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       tradingYN: body.tradingYN || '0',
       listNumber: body.listNumber,
       electronicClosedYN: body.electronicClosedYN || '0',
-      ePrepayNo: 'B58346230711',
+      ePrepayNo: 'V88553329403',
       ePrepayPass: 'qwe123',
       originDataYN: body.originDataYN || '0',
       warningSkipYN: body.warningSkipYN || '0',

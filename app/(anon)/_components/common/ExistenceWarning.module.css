@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modal {
@@ -47,7 +47,7 @@
 }
 
 .title::before {
-  content: "⚠️";
+  content: '⚠️';
   font-size: 20px;
 }
 
@@ -122,11 +122,11 @@
     margin: 20px;
     padding: 20px;
   }
-  
+
   .footer {
     flex-direction: column;
   }
-  
+
   .cancelButton,
   .confirmButton {
     width: 100%;
