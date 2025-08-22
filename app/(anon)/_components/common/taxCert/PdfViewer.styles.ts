@@ -10,7 +10,7 @@ export const styles = {
   pdfLoadingText: "text-lg font-medium text-brand-dark-gray",
   
   // PDF 에러 컨테이너
-  pdfErrorContainer: "flex justify-center items-center p-8 bg-red-50 border border-red-200 rounded-lg",
+  pdfErrorContainer: "flex justify-center items-center p-8 bg-brand-error-light border border-brand-error rounded-lg",
   
   // PDF 에러 텍스트
   pdfErrorText: "text-lg font-medium text-brand-error",

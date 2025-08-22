@@ -1,11 +1,12 @@
 import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
+import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 export const useTaxCertHandlers = (
   formData: GetTaxCertRequestDto,
   setFormData: React.Dispatch<React.SetStateAction<GetTaxCertRequestDto>>,
-  submitTaxCert: (formData: GetTaxCertRequestDto) => Promise<any>,
-  submitTwoWayAuth: (formData: GetTaxCertRequestDto, simpleAuth: string) => Promise<any>,
-  handleFirstRequestComplete: (responseData: any) => boolean,
+  submitTaxCert: (formData: GetTaxCertRequestDto) => Promise<CodefResponse>,
+  submitTwoWayAuth: (formData: GetTaxCertRequestDto, simpleAuth: string) => Promise<CodefResponse>,
+  handleFirstRequestComplete: (responseData: CodefResponse) => boolean,
   setShowSimpleAuthModal: (show: boolean) => void,
   validateFormData: (formData: GetTaxCertRequestDto) => { isValid: boolean; errors: string[] },
   setError: (error: string | null) => void

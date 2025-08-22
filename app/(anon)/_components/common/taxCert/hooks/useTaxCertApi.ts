@@ -31,9 +31,12 @@ export const useTaxCertApi = () => {
       // React Query hook 사용하여 API 호출
       const data = await issueTaxCert(requestData);
       
-      setResponse(data.data);
-
-      return data.data;
+      if (data.data) {
+        setResponse(data.data);
+        return data.data;
+      } else {
+        throw new Error('응답 데이터가 없습니다.');
+      }
     } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message
@@ -106,9 +109,12 @@ export const useTaxCertApi = () => {
       // React Query hook 사용하여 API 호출
       const data = await issueTaxCert(twoWayRequest as TaxCertIssueRequest);
       
-      setResponse(data.data);
-
-      return data.data;
+      if (data.data) {
+        setResponse(data.data);
+        return data.data;
+      } else {
+        throw new Error('응답 데이터가 없습니다.');
+      }
     } catch (error) {
       const errorMessage = error instanceof Error
         ? error.message

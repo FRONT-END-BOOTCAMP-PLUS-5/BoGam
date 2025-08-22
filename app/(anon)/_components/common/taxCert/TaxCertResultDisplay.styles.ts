@@ -14,11 +14,11 @@ export const styles = {
   
   // 상태 컨테이너
   statusContainer: "p-4 rounded-lg mb-4",
-  statusWarning: "bg-yellow-50 border border-yellow-200",
+  statusWarning: "bg-brand-warning border border-brand-warning",
   
   // 상태 텍스트
   statusText: "text-sm font-medium",
-  statusTextWarning: "text-yellow-800",
+  statusTextWarning: "text-brand-warning-dark",
   
   // 원본 데이터 컨테이너
   originalDataContent: "bg-brand-light-gray border border-brand-light-gray rounded-lg p-4",

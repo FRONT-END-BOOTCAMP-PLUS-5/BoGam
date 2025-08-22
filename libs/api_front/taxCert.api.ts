@@ -1,4 +1,5 @@
 import { frontendAxiosInstance } from './axiosInstance';
+import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 // 납세증명서 발급 요청 타입 정의
 export interface TaxCertIssueRequest {
@@ -56,7 +57,7 @@ export interface TaxCertIssueRequest {
 export interface TaxCertApiResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: CodefResponse;
   warning?: string;
   resultCode?: string;
   errors?: string[];

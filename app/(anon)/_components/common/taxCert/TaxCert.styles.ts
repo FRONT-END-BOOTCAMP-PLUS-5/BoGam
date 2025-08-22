@@ -36,7 +36,7 @@ export const styles = {
   input: "w-full px-3 py-2 border border-brand-light-gray rounded-md text-sm transition-all focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand",
   
   // 필수 입력 필드
-  inputRequired: "w-full px-3 py-2 border-2 border-brand-error rounded-md text-sm bg-red-50 transition-all focus:outline-none focus:border-brand-error focus:bg-brand-white focus:ring-0 focus:ring-brand-error",
+  inputRequired: "w-full px-3 py-2 border-2 border-brand-error rounded-md text-sm bg-brand-error-light transition-all focus:outline-none focus:border-brand-error focus:bg-brand-white focus:ring-0 focus:ring-brand-error",
   
   // 텍스트 영역
   textarea: "w-full px-3 py-2 border border-brand-light-gray rounded-md text-sm resize-y min-h-24 transition-all focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand",
@@ -45,7 +45,7 @@ export const styles = {
   select: "w-full px-3 py-2 border border-brand-light-gray rounded-md text-sm bg-brand-white transition-all focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand",
   
   // 필수 셀렉트 박스
-  selectRequired: "w-full px-3 py-2 border-2 border-brand-error rounded-md text-sm bg-red-50 transition-all focus:outline-none focus:border-brand-error focus:bg-brand-white focus:ring-0 focus:ring-brand-error",
+  selectRequired: "w-full px-3 py-2 border-2 border-brand-error rounded-md text-sm bg-brand-error-light transition-all focus:outline-none focus:border-brand-error focus:bg-brand-white focus:ring-0 focus:ring-brand-error",
   
   // 버튼 컨테이너
   buttonContainer: "flex justify-end gap-4",
@@ -54,7 +54,7 @@ export const styles = {
   submitButton: "bg-brand text-brand-white px-6 py-2 rounded-md font-medium transition-all hover:bg-brand-90 disabled:opacity-50 disabled:cursor-not-allowed",
   
   // 에러 컨테이너
-  errorContainer: "mt-4 p-4 bg-red-50 border border-red-200 rounded-md",
+  errorContainer: "mt-4 p-4 bg-brand-error-light border border-brand-error rounded-md",
   
   // 에러 텍스트
   errorText: "text-brand-error",
