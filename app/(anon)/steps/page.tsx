@@ -21,8 +21,6 @@ export default function Steps() {
 
   return (
     <div className={stepsStyles.container}>
-      {/* header */}
-
       {/* 메인 콘텐츠 */}
       <div className={stepsStyles.mainContent}>
         <BookLayout 

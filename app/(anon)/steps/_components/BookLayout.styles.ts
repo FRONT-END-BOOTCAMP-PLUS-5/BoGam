@@ -1,5 +1,6 @@
 export const styles = {
   container: "w-full space-y-6 bg-transparent",
+  header: "sticky top-0 z-30 p-4 border-b border-brand-light-gray bg-brand-white shadow-sm",
   title: "text-lg font-semibold text-brand-black",
   sectionLabel: "text-base font-semibold text-brand-black mb-4",
   grid: "grid grid-cols-1 gap-6",

@@ -1,5 +1,6 @@
 export const stepsStyles = {
   container: "w-full min-h-screen bg-transparent",
+  header: "p-4 border-b border-brand-light-gray bg-brand-white",
   mainContent: "p-4",
   loadingOverlay: "fixed inset-0 bg-brand-white z-50 flex items-center justify-center",
   loadingContent: "text-center",
