@@ -11,6 +11,7 @@ import RadioGroup from './contents/RadioGroup';
 import Link from './contents/Link';
 import BrokerForm from './contents/BrokerForm';
 import { parseStepUrl } from '@utils/stepUrlParser';
+import { LegacyContentSection } from './contents/types';
 
 interface ContentSection {
   title?: string;
@@ -86,7 +87,7 @@ export default function ModalContent() {
   }, [stepNumber, detail]);
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
-  const renderSwiperContent = (pageData: ContentSection[]) => {
+  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
   
     switch (dataType) {
       case 'TextOnly':
@@ -138,7 +139,7 @@ export default function ModalContent() {
           }}
         >
           {stepContentData.data.map(
-            (pageData: ContentSection[], pageIndex: number) => (
+            (pageData: LegacyContentSection[], pageIndex: number) => (
               <SwiperSlide key={pageIndex}>
                 <div className={styles.mainContent}>
                   {renderSwiperContent(pageData)}

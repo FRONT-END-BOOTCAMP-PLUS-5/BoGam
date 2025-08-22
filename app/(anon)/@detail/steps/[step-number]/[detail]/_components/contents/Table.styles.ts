@@ -1,5 +1,5 @@
 const styles = {
-  container: 'w-full bg-white rounded-lg shadow-sm',
+  container: 'w-full bg-brand-white rounded-lg shadow-sm',
   title: 'text-lg font-bold text-brand-black mb-4 px-4 pt-4',
   table: 'w-full border-collapse',
   tableRow: 'border-b border-brand-light-gray',

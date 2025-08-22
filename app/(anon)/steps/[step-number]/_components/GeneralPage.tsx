@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface pageType {
-    title: string,
-    category: string,
-    content: string,
-    pageIdx: number,
-    stepNumber: string
+  title: string;
+  category: string;
+  content: string;
+  pageIdx: number;
+  stepNumber: string;
 }
+
 
 export default function GeneralPage({ title, category, content, pageIdx, stepNumber }: pageType) {
     const router = useRouter();
@@ -45,5 +46,5 @@ export default function GeneralPage({ title, category, content, pageIdx, stepNum
                 </div>
             </div>
         </div>
-    )
+  );
 }

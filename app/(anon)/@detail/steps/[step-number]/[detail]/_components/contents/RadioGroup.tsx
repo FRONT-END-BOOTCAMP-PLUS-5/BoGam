@@ -83,7 +83,8 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       console.error('필수 정보가 누락되었습니다.');
       return;
     }
-
+    
+    //default는 unchecked, 예는 match, 아니오는 mismatch
     const jsonDetails: Record<string, 'match' | 'mismatch' | 'unchecked'> = {};
     
     // 전체 JSON 데이터의 모든 질문에 대해 상태 설정
