@@ -1,0 +1,73 @@
+{
+    "dataType": "TextOnly",
+    "data": [
+        [
+            {
+                "title": "내용증명이란? ",
+                "contentSections": [
+                    {
+                        "subtitle": "우체국에서 공적으로 증명하는 법적 문서",
+                        "contents": [
+                            "발송인이 요구사항 등을 명시한 문서를 보냈다는 사실을 우체국에서 공적으로 증명합니다.",
+                            "내가 누군가에게 어떤 서류를 전달할 때 내용증명으로 보내면, 우체국에서는 그 서류가 전달되었는지뿐만 아니라 그 내용까지도 증명해주는 거죠."
+                        ]
+                    },
+                    {
+                        "subtitle": "단순한데 의미가 있을까?",
+                        "contents": [
+                            "간단하지만 생각보다 받는 상대방은 심리적 압박을 받을 수 있어요. 물론 실제 법적인 공방이 오가게 될 때 증거로서 작용할 수도 있죠."
+                        ]
+                    }
+                ],
+                "image": {
+                    "src": "https://mblogthumb-phinf.pstatic.net/MjAxOTExMDRfMjM5/MDAxNTcyODYzMjU3NDkx.L7u9nUpcPGeCx6DEZDVWxyajHfn7UfK0UWcivySrj-Mg.6_b6q5p8Pq6G0EK9NCeOAgDfPsCjgt5oCeR25lSgPDMg.JPEG.smspkkb/%EC%9D%B4%EB%AF%B8%EC%A7%80_11.jpg?type=w800",
+                    "alt": "내용증명 샘플 이미지",
+                    "width": 300,
+                    "height": 200
+                }
+            }
+        ],
+        [
+            {
+                "title": "내용증명 작성 방법 ✍🏻",
+                "contentSections": [
+                    {
+                        "subtitle": "💡 일반 우체국에서 보내는 방법",
+                        "contents": [
+                            "1. 내용증명서 총 3통 작성 (발송인 보관 1통, 상대방 발송 1통, 우체국 보관 1통)",
+                            "2. 우체국 창구에 직접 접수하며, 등기번호로 발송 상태 확인 가능",
+                            "3. 문서가 2매 이상일 경우 인장 날인 필수 (간인, 계인)",
+                            "4. 특수우편물 수령증 있으면 3년 이내 재증명 가능"
+                        ]
+                    },
+                    {
+                        "subtitle": "💡인터넷우체국에서 보내는 방법",
+                        "contents": [
+                            "1. 인터넷우체국 접속 → 우편 → 증명서비스 → 내용증명 메뉴 선택",
+                            "2. 양식 다운로드 후 파일 첨부 또는 웹에서 직접 작성",
+                            "3. 보내는 사람/받는 사람 정보 입력 → 본문 작성 → 미리보기 → 결제 → 발송 완료",
+                            "4. 24시간 이용 가능, 방문 없이 간편하게 처리"
+                        ]
+                    }
+                ],
+                "buttons": [
+                    {
+                        "text": "우체국에서 내용증명 보내는 방법",
+                        "variant": "secondary",
+                        "href": "http://www.postnews.kr/cpost_news/sub_read.asp?cate=29&BoardID=7275",
+                        "onClick": "openContentNotice",
+                        "fullWidth": true
+                    },
+                    {
+                        "text": "우체국 내용증명 보내기 바로가기",
+                        "variant": "primary",
+                        "href": "https://service.epost.go.kr/econprf.RetrieveEConprfReqSend.postal?type&grp=A",
+                        "onClick": "openContentNotice",
+                        "fullWidth": true
+                    }
+                ]
+            }
+        ]
+    ]
+    
+}
