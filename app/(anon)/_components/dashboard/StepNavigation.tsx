@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { styles } from './StepNavigation.styles';
 
 interface StepNavigationProps {
@@ -22,7 +21,6 @@ export default function StepNavigation({
   onLogout,
   currentStep
 }: StepNavigationProps) {
-  const router = useRouter();
   return (
     <div className={styles.container}>
       {/* 단계 목록 */}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { styles } from './PdfViewer.styles';
 
 interface RealEstatePdfViewerProps {
   base64: string;
@@ -54,17 +55,17 @@ export function PdfViewer({
 
   if (isLoading) {
     return (
-      <div className='flex flex-col items-center justify-center py-8'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mb-4'></div>
-        <p className='text-gray-600'>PDF를 로딩하는 중...</p>
+      <div className={styles.loadingContainer}>
+        <div className={styles.loadingSpinner}></div>
+        <p className={styles.loadingText}>PDF를 로딩하는 중...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
-        <p className='text-red-800 text-sm'>{error}</p>
+      <div className={styles.errorContainer}>
+        <p className={styles.errorText}>{error}</p>
       </div>
     );
   }

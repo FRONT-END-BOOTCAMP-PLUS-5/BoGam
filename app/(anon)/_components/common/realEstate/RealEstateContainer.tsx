@@ -1,12 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {
-  RealEstateContainerProps,
-  RealEstateFormData,
-  ApiResponse,
-  AddressListItem,
-} from './types';
+import { RealEstateFormData, ApiResponse, AddressListItem } from './types';
 import { RealEstateInput } from './RealEstateInput';
 import { RealEstateOutput } from './RealEstateOutput';
 import { RealEstateTwoWayContent } from './RealEstateTwoWayContent';
@@ -19,9 +14,9 @@ import {
   useTwoWayAuth,
 } from '@/hooks/useRealEstate';
 
-export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
+export const RealEstateContainer = () => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
-  const [formData, setFormData] = useState<RealEstateFormData>({
+  const [formData] = useState<RealEstateFormData>({
     userAddressNickname: '',
     password: '1234',
     address: '',
@@ -71,8 +66,9 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
   const { selectedAddress } = useUserAddressStore();
 
   // 데이터 존재 여부 확인
-  const { data: existsData, isLoading: existsLoading } =
-    useCheckRealEstateExists(selectedAddress?.nickname);
+  const { data: existsData } = useCheckRealEstateExists(
+    selectedAddress?.nickname
+  );
 
   // 데이터 생성 mutation
   const createRealEstateMutation = useCreateRealEstate((data) => {
@@ -90,7 +86,7 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
     }
   });
 
-  const twoWayAuthMutation = useTwoWayAuth((data) => {
+  const twoWayAuthMutation = useTwoWayAuth(() => {
     // 2-way 인증 성공 후 탭 전환
     console.log('✅ 2-way 인증 완료 - Output 탭으로 이동');
     // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
@@ -119,10 +115,6 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
       setActiveTab('input');
     }
   }, [activeTab, existsData]);
-
-  const handleFormDataChange = React.useCallback((data: RealEstateFormData) => {
-    setFormData(data);
-  }, []);
 
   const handleAddressSelect = async (address: AddressListItem) => {
     console.log('🔍 주소 선택됨:', address);

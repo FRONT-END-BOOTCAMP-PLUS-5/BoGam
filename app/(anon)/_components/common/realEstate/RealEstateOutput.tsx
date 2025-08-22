@@ -61,30 +61,6 @@ export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
     );
   }
 
-  // JSON 데이터에서 문자열이 있는 모든 컬럼들을 추출하는 함수
-  const extractStringFields = (
-    data: Record<string, unknown>
-  ): Record<string, string> => {
-    const stringFields: Record<string, string> = {};
-
-    const processObject = (obj: unknown, prefix = '') => {
-      if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
-        Object.entries(obj).forEach(([key, value]) => {
-          const fullKey = prefix ? `${prefix}.${key}` : key;
-
-          if (typeof value === 'string' && value.trim() !== '') {
-            stringFields[fullKey] = value;
-          } else if (typeof value === 'object' && value !== null) {
-            processObject(value, fullKey);
-          }
-        });
-      }
-    };
-
-    processObject(data);
-    return stringFields;
-  };
-
   // 위험 단어 검색 함수
   const searchDangerousWords = (
     data: Record<string, unknown>

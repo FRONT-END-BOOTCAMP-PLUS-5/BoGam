@@ -10,7 +10,7 @@ import Onboarding from '@/(anon)/_components/onboarding/Onboarding';
 import AuthLanding from '@/(anon)/_components/onboarding/AuthLanding';
 
 export default function RootFlow() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const { step, setStep, initStepFromSession, initialized } = useRootStep();
 
