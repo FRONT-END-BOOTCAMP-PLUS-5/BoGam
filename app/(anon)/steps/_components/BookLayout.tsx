@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import BookCanvas from './BookCanvas';
 import { styles, getTextBoxClass } from './BookLayout.styles';
+import { stepSummaries } from './stepSummaries';
 
 interface BookLayoutProps {
   onAllBooksLoaded?: () => void;
@@ -13,51 +14,8 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
   const [loadedBooks, setLoadedBooks] = useState<Set<number>>(new Set());
   const [ , setIsAllBooksLoaded] = useState(false);
 
-  // 7개 책 데이터 정의 - 모든 책을 medium 크기로 고정
-  const books = [
-    {
-      id: 1,
-      title: '1단계',
-      subtitle: '클릭하면 뜨는 말',
-      description: '예쁜 책 파라다이스'
-    },
-    {
-      id: 2,
-      title: '2단계',
-      subtitle: '두 번째 책 정보',
-      description: '추가 설명 텍스트'
-    },
-    {
-      id: 3,
-      title: '3단계',
-      subtitle: '세 번째 책 정보',
-      description: '마지막 설명 텍스트'
-    },
-    {
-      id: 4,
-      title: '4단계',
-      subtitle: '네 번째 책 정보',
-      description: '관련 정보'
-    },
-    {
-      id: 5,
-      title: '5단계',
-      subtitle: '다섯 번째 책 정보',
-      description: '관련 정보'
-    },
-    {
-      id: 6,
-      title: '6단계',
-      subtitle: '여섯 번째 책 정보',
-      description: '관련 정보'
-    },
-    {
-      id: 7,
-      title: '7단계',
-      subtitle: '일곱 번째 책 정보',
-      description: '관련 정보'
-    }
-  ];
+  // 7개 책 데이터 정의 - stepSummaries에서 가져오기
+  const books = stepSummaries;
 
   // 책 로딩 완료 핸들러
   const handleBookLoad = (bookId: number) => {
