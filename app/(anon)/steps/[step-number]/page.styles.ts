@@ -1,15 +1,15 @@
 export const styles = {
-  container: "p-5 min-h-screen bg-[var(--brand-light-gray)]",
+  container: "p-5 min-h-screen bg-brand-light-gray",
   content: "text-center py-10 px-5",
-  title: "text-2xl font-semibold text-[var(--brand-black)] mb-8",
-  clickButton: "bg-[var(--brand)] text-[var(--brand-white)] border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-[var(--brand-dark-blue)] active:bg-[var(--brand-black)]",
+  title: "text-2xl font-semibold text-brand-black mb-8",
+  clickButton: "bg-brand text-brand-white border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-brand-dark-blue active:bg-brand-black",
 
   demoBook: 'mx-auto shadow-[var(--shadow-book)]',
-  page: 'bg-[var(--brand-white)] shadow-[var(--shadow-lg)] rounded-[8px] overflow-hidden relative',
-  pageCover: 'bg-[var(--brand-light-blue)] font-bold flex items-center justify-center',
+  page: 'bg-brand-white shadow-[var(--shadow-lg)] rounded-[8px] overflow-hidden relative',
+  pageCover: 'bg-brand-light-blue font-bold flex items-center justify-center',
   pageContent: 'p-8 min-h-[600px] flex flex-col justify-center items-center',
   pageHeader: 'text-[1.5rem] mb-4',
-  pageFooter: 'mt-8 text-[1rem] text-[var(--brand-dark-gray)]',
+  pageFooter: 'mt-8 text-[1rem] text-brand-dark-gray',
   leftClickArea: 'absolute left-0 top-0 w-[30%] h-full z-[10] cursor-pointer', 
   indicatorWrapper: 'w-[180px] mt-8 flex items-center justify-between relative',
   indicatorLeft: 'absolute left-0 top-0 h-full flex items-center',
@@ -49,6 +49,6 @@ export const styles = {
   borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
   danger: 'text-[0.8em] font-bold w-[22%] shadow-[inset_0px_-11px_0_#EDC9C9]',
   stateDiv: "absolute top-[13%] left-1/2 -translate-x-1/2 ",
-  dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-[var(--brand-light-gray)]',
+  dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-brand-light-gray',
   dotActive: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-brand-black'
 } as const;
