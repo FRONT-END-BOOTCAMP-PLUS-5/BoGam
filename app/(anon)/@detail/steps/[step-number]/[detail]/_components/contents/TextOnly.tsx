@@ -132,6 +132,26 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                 />
               </div>
             )}
+            {section.subtitles && section.subtitles.length > 0 && (
+              <div className={styles.subtitlesContainer}>
+                {section.subtitles.map((subtitle, index) => (
+                  <div key={index} className={styles.sectionSubtitle}>
+                    {subtitle}
+                  </div>
+                ))}
+              </div>
+            )}
+            {section.image && (
+              <div className={styles.imageContainer}>
+                <img
+                  src={section.image.src}
+                  alt={section.image.alt}
+                  width={section.image.width}
+                  height={section.image.height}
+                  className={styles.contentImage}
+                />
+              </div>
+            )}
             {section.contents && (
               <div className={styles.contents}>
                 {section.contents.map((content: string, contentIndex: number) => (
