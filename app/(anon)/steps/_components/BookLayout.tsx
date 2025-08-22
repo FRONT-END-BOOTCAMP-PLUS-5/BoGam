@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import BookCanvas from './BookCanvas';
 import { styles, getTextBoxClass } from './BookLayout.styles';
 import { stepSummaries } from './stepSummaries';
-import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 
 interface BookLayoutProps {
   onAllBooksLoaded?: () => void;
@@ -47,15 +46,6 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
   // 고정된 크기 설정
   return (
     <div className={styles.container}>
-      {/* 상단고정 헤더 */}
-      <header className={styles.header}>
-        <AddressDropDown 
-          title="현재 열람"
-          showFavoriteToggle={true}
-          showDeleteButton={true}
-        />
-      </header>
-
       {/* 계약전 섹션 */}
       <div className={styles.sectionLabel}>계약전</div>
       

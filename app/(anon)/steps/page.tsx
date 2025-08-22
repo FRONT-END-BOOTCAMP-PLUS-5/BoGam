@@ -4,12 +4,11 @@ import { useState } from 'react';
 import BookLayout from './_components/BookLayout';
 import { stepsStyles } from './page.styles';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
+import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 
 export default function Steps() {
   const [isAllBooksLoaded, setIsAllBooksLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
-
-
 
   const handleAllBooksLoaded = () => {
     setIsAllBooksLoaded(true);
@@ -21,6 +20,15 @@ export default function Steps() {
 
   return (
     <div className={stepsStyles.container}>
+      {/* 주소 드롭다운 헤더 */}
+      <header className={stepsStyles.header}>
+        <AddressDropDown 
+          title="현재 열람"
+          showFavoriteToggle={true}
+          showDeleteButton={true}
+        />
+      </header>
+
       {/* 메인 콘텐츠 */}
       <div className={stepsStyles.mainContent}>
         <BookLayout 
