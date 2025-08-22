@@ -1,5 +1,3 @@
-'use client';
-
 import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -9,6 +7,7 @@ import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
 import Table from './contents/Table';
 import List from './contents/List';
+import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface ContentSection {
   title?: string;
@@ -25,35 +24,30 @@ interface StepContentData {
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [stepContentData, setStepContentData] = useState<StepContentData | null>(null);
+  const [stepContentData, setStepContentData] =
+    useState<StepContentData | null>(null);
   const [dataType, setDataType] = useState<string>('default');
-  
+
   // URL에서 직접 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
-  const pathParts = pathname.split('/');
-  const stepNumber = pathParts[2]; // /steps/4/2 에서 4
-  const detail = pathParts[3];     // /steps/4/2 에서 2
+  const stepUrlData = parseStepUrl(pathname);
+  const stepNumber = stepUrlData?.mainNum?.toString() || '1';
+  const detail = stepUrlData?.subNum?.toString() || '1';
 
   // JSON 파일에서 콘텐츠 데이터 가져오기
   useEffect(() => {
     const loadContentData = async () => {
       try {
-        // 정적 import 방식으로 변경
-        if (stepNumber === '4' && detail === '2') {
-          const contentModule = await import('./contents/data/step-4-2-contents.json');
-          setStepContentData(contentModule.default);
-          setDataType(contentModule.default.dataType || 'default');
-        } else if (stepNumber === '4' && detail === '3') {
-          const contentModule = await import('./contents/data/step-4-3-contents.json');
-          setStepContentData(contentModule.default);
-          setDataType(contentModule.default.dataType || 'default');
-        } else if (stepNumber === '4' && detail === '4') {
-          const contentModule = await import('./contents/data/step-4-4-contents.json');
-          setStepContentData(contentModule.default);
-          setDataType(contentModule.default.dataType || 'default');
-        }
-      } catch {
-        console.log('Step content data not found, using default DataGrid');
+        // 동적 import로 stepNumber와 detail을 자동 조합
+        const contentModule = await import(
+          `./contents/data/step-${stepNumber}-${detail}-contents.json`
+        );
+        setStepContentData(contentModule.default);
+        setDataType(contentModule.default.dataType || 'default');
+      } catch (error) {
+        console.log(
+          `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
+        );
         setDataType('default');
       }
     };
@@ -65,13 +59,15 @@ export default function ModalContent() {
   const renderSwiperContent = (pageData: ContentSection[]) => {
     switch (dataType) {
       case 'TextOnly':
-        return <TextOnly data={pageData}/>;
+        return <TextOnly data={pageData} />;
       case 'Table':
         return <Table data={pageData as unknown as Record<string, string>} />;
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
-        return <DataGrid data={pageData as unknown as Record<string, string>} />;
+        return (
+          <DataGrid data={pageData as unknown as Record<string, string>} />
+        );
       default:
         return null;
     }
@@ -96,34 +92,40 @@ export default function ModalContent() {
         </div>
 
         {/* Swiper로 JSON의 data 배열 항목 하나당 한 페이지 */}
-        <Swiper 
-          spaceBetween={50} 
-          slidesPerView={1} 
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={1}
           className={styles.swiperContainer}
           onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
           }}
         >
-          {stepContentData.data.map((pageData: ContentSection[], pageIndex: number) => (
-            <SwiperSlide key={pageIndex}>
-              <div className={styles.mainContent}>
-                {renderSwiperContent(pageData)}
-              </div>
-            </SwiperSlide>
-          ))}
+          {stepContentData.data.map(
+            (pageData: ContentSection[], pageIndex: number) => (
+              <SwiperSlide key={pageIndex}>
+                <div className={styles.mainContent}>
+                  {renderSwiperContent(pageData)}
+                </div>
+              </SwiperSlide>
+            )
+          )}
         </Swiper>
 
         {/* 페이지 인디케이터 */}
         {stepContentData.data.length > 1 && (
-          <div className={styles.pageIndicator} aria-label="페이지 인디케이터">
+          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
             {stepContentData.data.map((_: unknown, index: number) => (
               <button
                 key={index}
                 className={`${styles.pageDot} ${
-                  index === currentPage ? styles.pageDotActive : styles.pageDotInactive
+                  index === currentPage
+                    ? styles.pageDotActive
+                    : styles.pageDotInactive
                 }`}
-                aria-label={`페이지 ${index + 1}${index === currentPage ? ' (현재)' : ''}`}
+                aria-label={`페이지 ${index + 1}${
+                  index === currentPage ? ' (현재)' : ''
+                }`}
                 onClick={() => handlePageChange(index)}
               />
             ))}
