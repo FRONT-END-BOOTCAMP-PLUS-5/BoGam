@@ -23,7 +23,7 @@
           }
         ],
         "image": {
-          "src": "https://mblogthumb-phinf.pstatic.net/MjAyMDA0MjdfMjE5/MDAxNTg4MDQ5NzI5NzE5.L7u9nUpcPGeCx6DEZDVWxyajHfn7UfK0UWcivySrj-Mg.6_b6q5p8Pq6G0EK9NCeOAgDfPsCjgt5oCeR25lSgPDMg.JPEG.smspkkb/%EC%9D%B4%EB%AF%B8%EC%A7%80_11.jpg?type=w800",
+          "src": "https://d1tgonli21s4df.cloudfront.net/ck-upload/2025/6/1749520969949.webp",
           "alt": "지급명령서 샘플 이미지",
           "width": 300,
           "height": 200
@@ -122,7 +122,7 @@
         ],
         "buttons": [
           {
-            "text": "대법원 인터넷등기소 바로가기",
+            "text": "등기부등본 발급하기",
             "variant": "primary",
             "href": "https://ecf.scourt.go.kr/",
             "fullWidth": true

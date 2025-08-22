@@ -14,16 +14,17 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'd1tgonli21s4df.cloudfront.net', // CloudFront 이미지 (6-3 단계 지급명령서)
+        hostname: 'ibbiu.com', // 등기부등본 샘플 이미지 (6-2 단계 임차권등기명령)
         port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'ibbiu.com', // 등기부등본 샘플 이미지 (6-2 단계 임차권등기명령)
+        hostname: 'd1tgonli21s4df.cloudfront.net', // CloudFront 이미지 (6-3 단계 지급명령서)
         port: '',
         pathname: '/**',
       },
+      
     ],
   },
 };
