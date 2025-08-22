@@ -1,10 +1,7 @@
 import bcrypt from 'bcrypt';
 import { prisma } from '@utils/prisma';
 import { NextResponse } from 'next/server';
-
-function formatPhone(raw: string) {
-  return raw.replace(/\D/g, '').slice(0, 11);
-}
+import { formatPhone } from '@utils/formatUtils';
 
 export async function POST(req: Request) {
   try {
