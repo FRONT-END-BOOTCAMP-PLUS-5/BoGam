@@ -7,6 +7,7 @@ import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
 import Table from './contents/Table';
 import List from './contents/List';
+import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
@@ -18,8 +19,7 @@ import {
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [stepContentData, setStepContentData] =
-    useState<StepContentData | null>(null);
+  const [stepContentData, setStepContentData] = useState<StepContentData | null>(null);
   const [dataType, setDataType] = useState<string>('default');
 
   // URL에서 직접 stepNumber와 detail 가져오기
@@ -30,9 +30,10 @@ export default function ModalContent() {
 
   // JSON 파일에서 콘텐츠 데이터 가져오기
   useEffect(() => {
+    if (!stepNumber || !detail) return;
+    
     const loadContentData = async () => {
       try {
-        // 동적 import로 stepNumber와 detail을 자동 조합
         const contentModule = await import(
           `./contents/data/step-${stepNumber}-${detail}-contents.json`
         );
@@ -51,7 +52,6 @@ export default function ModalContent() {
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
-  
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
@@ -60,7 +60,9 @@ export default function ModalContent() {
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
-        return <DataGrid data={pageData as unknown as Record<string, string>} />;
+        return <DataGrid data={pageData} />;
+      case 'CheckListGroup':
+        return <CheckListGroup data={pageData} />;
       case 'RadioGroup':
         return <RadioGroup data={pageData}/>;
       case 'CombinedContent':
@@ -150,9 +152,8 @@ export default function ModalContent() {
         </h2>
       </div>
 
-      {/* 기본 DataGrid 표시 */}
       <div className={styles.mainContent}>
-        <DataGrid data={{}} />
+        <DataGrid data={[]} />
       </div>
     </>
   );
