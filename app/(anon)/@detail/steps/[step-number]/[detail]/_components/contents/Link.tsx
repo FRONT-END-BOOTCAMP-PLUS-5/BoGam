@@ -2,6 +2,7 @@
 
 import React from 'react';
 import styles from './Link.styles';
+import Button from '@/(anon)/_components/common/button/Button';
 
 interface LinkData {
   title: string;
@@ -26,13 +27,14 @@ export default function Link({ title, data }: LinkProps) {
       {data.map((linkItem, index) => (
         <div key={index} className="text-center">
           <div className={styles.linkContainer}>
-            <button
+            <Button
               onClick={() => handleLinkClick(linkItem.url)}
-              className={styles.linkButton}
-              aria-label={`${linkItem.title} 링크로 이동`}
+              variant="primary"
+              fullWidth={false}
+              className="px-8 py-4 text-lg font-semibold"
             >
-              <span className={styles.linkText}>{linkItem.title}</span>
-            </button>
+              {linkItem.title}
+            </Button>
           </div>
           
           {linkItem.description && (
