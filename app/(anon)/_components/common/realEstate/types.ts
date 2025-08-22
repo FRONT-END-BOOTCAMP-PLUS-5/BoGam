@@ -33,6 +33,7 @@ export interface ApiResponse {
   };
   warning?: string;
   resultCode?: string;
+  userAddressNickname: string;
 }
 
 export interface AddressListItem {
@@ -44,7 +45,7 @@ export interface AddressListItem {
 }
 
 export interface RealEstateFormData {
-  userAddressId: number;
+  userAddressNickname: string;
   password: string;
   address: string;
   realtyType: string;
@@ -84,18 +85,14 @@ export interface RealEstateFormData {
   identityList: Array<{ reqIdentity: string }>;
 }
 
-export interface RealEstateContainerProps {
-  // 필요한 경우 외부에서 전달받을 props
-}
-
 export interface RealEstateInputProps {
   formData: RealEstateFormData;
   onSubmit: (data: RealEstateFormData) => void;
-  onReset: () => void;
   loading: boolean;
 }
 
 export interface RealEstateOutputProps {
   response: ApiResponse | null;
   loading: boolean;
+  existsData?: { success: boolean; exists: boolean } | null;
 }

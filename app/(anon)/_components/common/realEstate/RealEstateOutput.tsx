@@ -4,20 +4,35 @@ import React from 'react';
 import { RealEstateOutputProps, ApiResponse } from './types';
 import { PdfViewer } from '../pdfViewer/PdfViewer';
 import { styles } from './RealEstateOutput.styles';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useGetRealEstateFromDB } from '@/hooks/useRealEstate';
 
 export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
   response,
   loading,
+  existsData,
 }) => {
+  const { selectedAddress } = useUserAddressStore();
+
+  // DB에서 데이터 조회 (response prop이 없을 때만)
+  const { data: dbResponse, isLoading: dbLoading } = useGetRealEstateFromDB(
+    response ? undefined : selectedAddress?.nickname
+  );
+
+  // response prop이 있으면 그것을 사용, 없으면 dbResponse 사용
+  const displayResponse: ApiResponse | null = response || dbResponse || null;
+
   // 로딩 중일 때
-  if (loading) {
+  if (loading || dbLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.mainContainer}>
           <h2 className={styles.title}>응답 결과</h2>
           <div className={styles.loadingContainer}>
             <div className={styles.loadingSpinner}></div>
-            <p className={styles.loadingText}>위험한 단어를 검색 중이에요 !</p>
+            <p className={styles.loadingText}>
+              등기부등본 데이터를 불러오는 중이에요 !
+            </p>
             <p className={styles.loadingSubText}>
               다소 시간이 걸릴 수 있어요 !
             </p>
@@ -28,14 +43,18 @@ export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
   }
 
   // 데이터가 없을 때
-  if (!response) {
+  if (!displayResponse || (existsData?.success && !existsData.exists)) {
     return (
       <div className={styles.container}>
         <div className={styles.mainContainer}>
           <h2 className={styles.title}>응답 결과</h2>
           <div className={styles.emptyContainer}>
             <p className={styles.emptyText}>등기부등본 데이터가 없어요 !</p>
-            <p className={styles.emptyText}>혹시 주소를 선택하지 않으셨나요?</p>
+            <p className={styles.emptyText}>
+              {existsData?.success && !existsData.exists
+                ? '해당 주소에 대한 등기부등본 데이터가 없습니다. Input 탭에서 데이터를 조회해주세요.'
+                : '혹시 주소를 선택하지 않으셨나요?'}
+            </p>
           </div>
         </div>
       </div>
@@ -112,7 +131,7 @@ export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
 
         <div
           className={`${styles.responseBox} ${
-            response.success
+            displayResponse.success
               ? styles.responseBoxSuccess
               : styles.responseBoxError
           }`}
@@ -120,67 +139,69 @@ export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
           <div className={styles.responseHeader}>
             <span
               className={`${styles.responseStatus} ${
-                response.success
+                displayResponse.success
                   ? styles.responseStatusSuccess
                   : styles.responseStatusError
               }`}
             >
-              {response.success ? '✅ 성공' : '❌ 실패'}
+              {displayResponse.success ? '✅ 성공' : '❌ 실패'}
             </span>
-            {response.resultCode && (
+            {displayResponse.resultCode && (
               <span className={styles.responseCode}>
-                코드: {response.resultCode}
+                코드: {displayResponse.resultCode}
               </span>
             )}
           </div>
 
           <div className={styles.responseMessage}>
-            <strong>메시지:</strong> {response.message}
+            <strong>메시지:</strong> {displayResponse.message}
           </div>
 
-          {response.error && (
+          {displayResponse.error && (
             <div className={styles.responseError}>
-              <strong>오류:</strong> {response.error}
+              <strong>오류:</strong> {displayResponse.error}
             </div>
           )}
 
-          {response.warning && (
+          {displayResponse.warning && (
             <div className={styles.responseWarning}>
-              <strong>경고:</strong> {response.warning}
+              <strong>경고:</strong> {displayResponse.warning}
             </div>
           )}
         </div>
 
-        {response.twoWayInfo && !response.requiresTwoWayAuth && (
+        {displayResponse.twoWayInfo && !displayResponse.requiresTwoWayAuth && (
           <div className={styles.twoWayContainer}>
             <h3 className={styles.twoWayTitle}>2-way 인증 정보</h3>
             <div className={styles.twoWayGrid}>
               <div className={styles.twoWayItem}>
-                <strong>Method:</strong> {response.twoWayInfo.method}
+                <strong>Method:</strong> {displayResponse.twoWayInfo.method}
               </div>
               <div className={styles.twoWayItem}>
-                <strong>Job Index:</strong> {response.twoWayInfo.jobIndex}
+                <strong>Job Index:</strong>{' '}
+                {displayResponse.twoWayInfo.jobIndex}
               </div>
               <div className={styles.twoWayItem}>
-                <strong>Thread Index:</strong> {response.twoWayInfo.threadIndex}
+                <strong>Thread Index:</strong>{' '}
+                {displayResponse.twoWayInfo.threadIndex}
               </div>
               <div className={styles.twoWayItem}>
-                <strong>JTI:</strong> {response.twoWayInfo.jti}
+                <strong>JTI:</strong> {displayResponse.twoWayInfo.jti}
               </div>
               <div className={styles.twoWayItem}>
                 <strong>Timestamp:</strong>{' '}
-                {response.twoWayInfo.twoWayTimestamp}
+                {displayResponse.twoWayInfo.twoWayTimestamp}
               </div>
             </div>
           </div>
         )}
 
-        {response.data && typeof response.data === 'object' && (
+        {displayResponse.data && typeof displayResponse.data === 'object' && (
           <div className={styles.dangerousWordsSection}>
             <h3 className={styles.dangerousWordsTitle}>위험 단어 검색 결과</h3>
             {(() => {
               const dangerousResults = searchDangerousWords(
-                response.data as Record<string, unknown>
+                displayResponse.data as Record<string, unknown>
               );
 
               if (dangerousResults.length === 0) {
@@ -231,33 +252,22 @@ export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
           </div>
         )}
 
-        {response?.data?.data &&
-        typeof response.data.data === 'object' &&
-        'resOriGinalData' in response.data.data &&
-        typeof (response.data.data as Record<string, unknown>)
+        {displayResponse?.data?.data &&
+        typeof displayResponse.data.data === 'object' &&
+        'resOriGinalData' in displayResponse.data.data &&
+        typeof (displayResponse.data.data as Record<string, unknown>)
           .resOriGinalData === 'string' ? (
           <div className={styles.pdfSection}>
             <h3 className={styles.pdfTitle}>등기부등본 PDF</h3>
             <PdfViewer
               base64={
-                (response.data.data as Record<string, unknown>)
+                (displayResponse.data.data as Record<string, unknown>)
                   .resOriGinalData as string
               }
               fileName='등기부등본.pdf'
             />
           </div>
         ) : null}
-
-        {response.data && (
-          <div className={styles.jsonSection}>
-            <h3 className={styles.jsonTitle}>전체 JSON 데이터</h3>
-            <div className={styles.jsonContainer}>
-              <pre className={styles.jsonPre}>
-                {JSON.stringify(response.data, null, 2)}
-              </pre>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

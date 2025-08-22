@@ -85,6 +85,7 @@ export const useAddressManagement = () => {
       setRoadAddress(baseAddress);
       // 동만 업데이트 (호는 기존 값 유지)
       setDong(dong || extractedDong);
+      setHo(ho || '');
       setSearchQuery(storeSelectedAddress.completeAddress);
       setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
 

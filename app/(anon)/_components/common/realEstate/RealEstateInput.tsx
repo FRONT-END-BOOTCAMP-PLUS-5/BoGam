@@ -11,7 +11,6 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 export const RealEstateInput = ({
   formData,
   onSubmit,
-  onReset,
   loading,
 }: RealEstateInputProps) => {
   const { selectedAddress } = useUserAddressStore();
@@ -34,20 +33,25 @@ export const RealEstateInput = ({
           : selectedAddress.lotAddress
       } ${selectedAddress.dong}동 ${selectedAddress.ho}호`;
       setValue('address', address);
+      setValue('userAddressNickname', selectedAddress.nickname);
 
-      // userAddressId도 함께 업데이트
-      setValue('userAddressId', selectedAddress.id);
+      console.log('🔍 RealEstateInput - selectedAddress 변경:', {
+        nickname: selectedAddress.nickname,
+        address: address,
+      });
     }
   }, [selectedAddress, setValue]);
 
   // 폼 제출 시에만 상위 컴포넌트에 데이터 전달
 
   const handleFormSubmit = (data: RealEstateFormData) => {
+    console.log('🔍 RealEstateInput - 폼 제출 데이터:', {
+      userAddressNickname: data.userAddressNickname,
+      address: data.address,
+      phoneNo: data.phoneNo,
+      password: data.password,
+    });
     onSubmit(data);
-  };
-
-  const handleReset = () => {
-    onReset();
   };
 
   return (
@@ -145,6 +149,13 @@ export const RealEstateInput = ({
                 <p className={styles.helpText}>주소를 선택해주세요</p>
               )}
             </div>
+
+            {/* 숨겨진 userAddressNickname 필드 */}
+            <input
+              type='hidden'
+              {...register('userAddressNickname')}
+              value={selectedAddress?.nickname || ''}
+            />
           </div>
 
           {/* 버튼 섹션 */}
@@ -159,7 +170,6 @@ export const RealEstateInput = ({
             </Button>
             <Button
               type='button'
-              onClick={handleReset}
               variant='secondary'
               className={styles.resetButton}
             >

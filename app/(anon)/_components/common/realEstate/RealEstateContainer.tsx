@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   RealEstateContainerProps,
   RealEstateFormData,
@@ -12,13 +12,18 @@ import { RealEstateOutput } from './RealEstateOutput';
 import { RealEstateTwoWayContent } from './RealEstateTwoWayContent';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { styles } from './RealEstateContainer.styles';
-import { frontendAxiosInstance } from '@libs/api_front/axiosInstance';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import {
+  useCheckRealEstateExists,
+  useCreateRealEstate,
+  useTwoWayAuth,
+} from '@/hooks/useRealEstate';
 
 export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
   const [formData, setFormData] = useState<RealEstateFormData>({
-    userAddressId: 1,
-    password: 'qwe123',
+    userAddressNickname: '',
+    password: '1234',
     address: '',
     realtyType: '1',
     recordStatus: '0',
@@ -44,8 +49,8 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
     addr_lotNumber: '',
     inputSelect: '',
     buildingName: '',
-    dong: '',
-    ho: '',
+    dong: '101',
+    ho: '101',
     addr_sigungu: '',
     addr_roadName: '',
     addr_buildingNumber: '',
@@ -58,134 +63,74 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
   });
 
   const [response, setResponse] = useState<ApiResponse | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [selectedAddress, setSelectedAddress] =
+  const [twoWaySelectedAddress, setTwoWaySelectedAddress] =
     useState<AddressListItem | null>(null);
   const [showTwoWayModal, setShowTwoWayModal] = useState(false);
+
+  // selectedAddress 변경 시 데이터 존재 여부 확인
+  const { selectedAddress } = useUserAddressStore();
+
+  // 데이터 존재 여부 확인
+  const { data: existsData, isLoading: existsLoading } =
+    useCheckRealEstateExists(selectedAddress?.nickname);
+
+  // 데이터 생성 mutation
+  const createRealEstateMutation = useCreateRealEstate((data) => {
+    // 일반 API 요청 성공 후 탭 전환 (2-way 인증이 필요 없는 경우)
+    if (!data.requiresTwoWayAuth) {
+      console.log('✅ 일반 API 요청 완료 - Output 탭으로 이동');
+      // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
+      setTimeout(() => {
+        if (existsData?.success && existsData.exists) {
+          setActiveTab('output');
+        } else {
+          console.log('⚠️ 데이터가 없어서 Output 탭으로 이동하지 않음');
+        }
+      }, 100);
+    }
+  });
+
+  const twoWayAuthMutation = useTwoWayAuth((data) => {
+    // 2-way 인증 성공 후 탭 전환
+    console.log('✅ 2-way 인증 완료 - Output 탭으로 이동');
+    // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
+    setTimeout(() => {
+      if (existsData?.success && existsData.exists) {
+        setActiveTab('output');
+      } else {
+        console.log('⚠️ 데이터가 없어서 Output 탭으로 이동하지 않음');
+      }
+    }, 100);
+  });
+
+  // 데이터 존재 여부에 따라 탭 설정
+  useEffect(() => {
+    if (existsData?.success && existsData.exists) {
+      setActiveTab('output');
+    } else if (existsData?.success && !existsData.exists) {
+      setActiveTab('input');
+    }
+  }, [existsData]);
+
+  // exists 데이터가 없으면 Output 탭으로 이동하지 못하도록 방지
+  useEffect(() => {
+    if (activeTab === 'output' && existsData?.success && !existsData.exists) {
+      console.log('⚠️ 데이터가 없어서 Input 탭으로 강제 이동');
+      setActiveTab('input');
+    }
+  }, [activeTab, existsData]);
 
   const handleFormDataChange = React.useCallback((data: RealEstateFormData) => {
     setFormData(data);
   }, []);
 
-  const handleReset = React.useCallback(() => {
-    const resetData: RealEstateFormData = {
-      userAddressId: 1,
-      password: '1234',
-      address: '',
-      realtyType: '1',
-      recordStatus: '0',
-      startPageNo: '1',
-      pageCount: '5',
-      applicationType: '1',
-      organization: '0002',
-      phoneNo: '01011111111',
-      inquiryType: '1', // 간편검색으로 고정
-      issueType: '1',
-      jointMortgageJeonseYN: '0',
-      tradingYN: '0',
-      electronicClosedYN: '0',
-      originDataYN: '1', // 원문 데이터 항상 포함
-      warningSkipYN: '0',
-      registerSummaryYN: '0',
-      selectAddress: '0',
-      isIdentityViewYn: '0',
-      // 누락된 필드들 초기값
-      uniqueNo: '',
-      addr_sido: '',
-      addr_dong: '',
-      addr_lotNumber: '',
-      inputSelect: '',
-      buildingName: '',
-      dong: '',
-      ho: '',
-      addr_sigungu: '',
-      addr_roadName: '',
-      addr_buildingNumber: '',
-      listNumber: '',
-      ePrepayNo: '',
-      ePrepayPass: '',
-      originData: '',
-      reqIdentity: '',
-      identityList: [{ reqIdentity: '' }],
-    };
-    setFormData(resetData);
-    setResponse(null);
-    setSelectedAddress(null);
-  }, []);
-
-  const handleSubmit = async (data: RealEstateFormData) => {
-    const requestData = {
-      ...data,
-      dong: data.dong || '101',
-      ho: data.ho || '101',
-    };
-
-    setLoading(true);
-    setResponse(null);
-    setSelectedAddress(null);
-
-    try {
-      console.log('📤 요청 데이터 전송 중...');
-      const res = await frontendAxiosInstance
-        .getAxiosInstance()
-        .post('/api/real-estate/search/address', requestData);
-
-      console.log('📥 응답 수신:', {
-        status: res.status,
-        statusText: res.statusText,
-        ok: res.status >= 200 && res.status < 300,
-      });
-
-      const responseData: ApiResponse = res.data as ApiResponse;
-      console.log('📋 응답 데이터:', responseData);
-
-      setResponse(responseData);
-
-      // 2-way 인증이 필요한 경우 모달 표시 (백엔드 API 응답 기준)
-      if (responseData.requiresTwoWayAuth && responseData.resAddrList) {
-        console.log('🔐 2-way 인증 필요, 모달 표시');
-        console.log('📋 2-way 인증 정보:', {
-          requiresTwoWayAuth: responseData.requiresTwoWayAuth,
-          twoWayInfo: responseData.twoWayInfo,
-          resAddrList: responseData.resAddrList,
-        });
-        setShowTwoWayModal(true);
-      } else {
-        console.log('✅ 일반 응답, Output 탭으로 이동');
-        console.log('📋 응답 타입:', {
-          requiresTwoWayAuth: responseData.requiresTwoWayAuth,
-          hasTwoWayInfo: !!responseData.twoWayInfo,
-          hasResAddrList: !!responseData.resAddrList,
-        });
-        // 결과가 있으면 Output 탭으로 이동
-        setActiveTab('output');
-      }
-    } catch (error) {
-      console.error('❌ API 요청 오류:', error);
-      setResponse({
-        success: false,
-        message: 'API 호출 중 오류가 발생했습니다.',
-        error: error instanceof Error ? error.message : '알 수 없는 오류',
-      });
-      setActiveTab('output');
-    } finally {
-      console.log('🏁 API 요청 완료');
-      setLoading(false);
-    }
-  };
-
   const handleAddressSelect = async (address: AddressListItem) => {
     console.log('🔍 주소 선택됨:', address);
-    setSelectedAddress(address);
-
-    console.log('address', address);
+    console.log('🔍 현재 selectedAddress:', selectedAddress);
+    setTwoWaySelectedAddress(address);
 
     // 모달 즉시 닫기
     setShowTwoWayModal(false);
-
-    // Output 탭으로 이동하여 로딩 상태 표시
-    setActiveTab('output');
-    setLoading(true);
 
     // 주소 선택 즉시 2-way 인증 요청 실행
     await handleTwoWayAuthWithAddress(address);
@@ -193,18 +138,14 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
 
   const handleTwoWayAuthWithAddress = async (address: AddressListItem) => {
     if (!response?.twoWayInfo) {
-      console.log('⚠️ 2-way 인증: 2-way 정보 없음');
       alert('2-way 인증 정보가 없습니다.');
       return;
     }
 
-    console.log('🔐 2-way 인증 요청 시작:', {
-      selectedAddress: address,
-      twoWayInfo: response.twoWayInfo,
-    });
-
-    // twoWayLoading은 더 이상 사용하지 않음 (모달에서 로딩하지 않으므로)
-    // setTwoWayLoading(true);
+    if (!selectedAddress?.nickname) {
+      alert('선택된 주소 정보가 없습니다.');
+      return;
+    }
 
     try {
       // 2-way 인증 요청 데이터 준비
@@ -212,28 +153,10 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
         Object.entries(formData).filter(([key]) => key !== 'uniqueNo')
       );
 
-      // 필수 컬럼 dong, ho 추가 (handleSubmit과 동일하게)
+      // 필수 컬럼 dong, ho 추가
       twoWayRequestData.dong = formData.dong || '101';
       twoWayRequestData.ho = formData.ho || '101';
-
-      // 간편검색인 경우 주소 필드들을 address로 묶기
-      if (formData.inquiryType === '1') {
-        const addressParts = [
-          formData.addr_sido,
-          formData.addr_sigungu,
-          formData.addr_dong,
-          formData.dong && formData.ho
-            ? `${formData.dong}동 ${formData.ho}호`
-            : '',
-        ].filter(Boolean);
-
-        twoWayRequestData.address = addressParts.join(' ');
-
-        console.log('🔗 2-way 인증 간편검색 주소 조합:', {
-          combined: twoWayRequestData.address,
-          parts: addressParts,
-        });
-      }
+      twoWayRequestData.userAddressNickname = selectedAddress.nickname;
 
       const twoWayRequest = {
         // 2-way 인증 필수 파라미터
@@ -242,61 +165,67 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
         threadIndex: response.twoWayInfo.threadIndex,
         jti: response.twoWayInfo.jti,
         twoWayTimestamp: response.twoWayInfo.twoWayTimestamp,
-        isTwoWayAuth: true, // 2-way 인증 요청 플래그
+        isTwoWayAuth: true,
 
         // 원본 요청 파라미터들
         ...twoWayRequestData,
       };
 
-      console.log(
-        '📤 2-way 인증 요청 데이터:',
-        JSON.stringify(twoWayRequest, null, 2)
-      );
-
-      const res = await frontendAxiosInstance
-        .getAxiosInstance()
-        .post('/api/real-estate/search/address', twoWayRequest);
-
-      console.log('📥 2-way 인증 응답 수신:', {
-        status: res.status,
-        statusText: res.statusText,
-        ok: res.status >= 200 && res.status < 300,
-      });
-
-      const data: ApiResponse = res.data as ApiResponse;
-      console.log('📋 2-way 인증 응답 데이터:', data);
-
+      const data = await twoWayAuthMutation.mutateAsync(twoWayRequest);
       setResponse(data);
-      // 모달은 이미 닫혀있고, Output 탭도 이미 활성화되어 있음
     } catch (error) {
       console.error('❌ 2-way 인증 API 요청 오류:', error);
       setResponse({
         success: false,
         message: '2-way 인증 API 호출 중 오류가 발생했습니다.',
         error: error instanceof Error ? error.message : '알 수 없는 오류',
+        userAddressNickname: selectedAddress.nickname,
       });
-      // 모달은 이미 닫혀있고, Output 탭도 이미 활성화되어 있음
-    } finally {
-      console.log('🏁 2-way 인증 요청 완료');
-      // twoWayLoading은 더 이상 사용하지 않음
-      // setTwoWayLoading(false);
     }
-  };
-
-  const handleTwoWayAuth = async () => {
-    if (!selectedAddress || !response?.twoWayInfo) {
-      console.log('⚠️ 2-way 인증: 부동산이 선택되지 않거나 2-way 정보 없음');
-      alert('부동산을 선택해주세요.');
-      return;
-    }
-
-    // 선택된 주소로 2-way 인증 요청
-    await handleTwoWayAuthWithAddress(selectedAddress);
   };
 
   const handleCloseTwoWayModal = () => {
     setShowTwoWayModal(false);
-    setSelectedAddress(null);
+    setTwoWaySelectedAddress(null);
+  };
+
+  const handleSubmit = async (data: RealEstateFormData) => {
+    if (!selectedAddress) {
+      alert('주소를 선택해주세요.');
+      return;
+    }
+
+    const requestData = {
+      ...data,
+      userAddressNickname: selectedAddress.nickname,
+      userAddressId: selectedAddress.id, // userAddressId도 함께 전달
+    };
+
+    // userAddressNickname이 없으면 명시적으로 추가
+    if (!requestData.userAddressNickname) {
+      requestData.userAddressNickname = selectedAddress.nickname;
+    }
+
+    try {
+      const responseData = await createRealEstateMutation.mutateAsync(
+        requestData
+      );
+
+      setResponse(responseData);
+
+      // 2-way 인증이 필요한 경우 모달 표시
+      if (responseData.requiresTwoWayAuth && responseData.resAddrList) {
+        setShowTwoWayModal(true);
+      }
+    } catch (error) {
+      console.error('❌ API 요청 오류:', error);
+      setResponse({
+        success: false,
+        message: 'API 호출 중 오류가 발생했습니다.',
+        error: error instanceof Error ? error.message : '알 수 없는 오류',
+        userAddressNickname: selectedAddress.nickname,
+      });
+    }
   };
 
   return (
@@ -329,13 +258,16 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
           <RealEstateInput
             formData={formData}
             onSubmit={handleSubmit}
-            onReset={handleReset}
-            loading={loading}
+            loading={createRealEstateMutation.isPending}
           />
         )}
 
         {activeTab === 'output' && (
-          <RealEstateOutput response={response} loading={loading} />
+          <RealEstateOutput
+            response={response}
+            loading={createRealEstateMutation.isPending}
+            existsData={existsData}
+          />
         )}
       </div>
 
@@ -346,12 +278,12 @@ export const RealEstateContainer: React.FC<RealEstateContainerProps> = () => {
         onCancel={handleCloseTwoWayModal}
         cancelText='취소'
         icon='info'
-        isLoading={false} // 모달에서 로딩하지 않으므로 false로 고정
+        isLoading={false}
         onConfirm={undefined}
       >
         <RealEstateTwoWayContent
           resAddrList={response?.resAddrList || []}
-          selectedAddress={selectedAddress}
+          selectedAddress={twoWaySelectedAddress}
           onAddressSelect={handleAddressSelect}
         />
       </ConfirmModal>
