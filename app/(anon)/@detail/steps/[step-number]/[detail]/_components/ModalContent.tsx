@@ -44,6 +44,9 @@ interface ContentSection {
 interface StepContentData {
   dataType: string;
   data: ContentSection[][];
+  columns?: 2 | 3;
+  title?: string;
+  emptyRows?: number;
 }
 
 export default function ModalContent() {
@@ -87,7 +90,7 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={pageData as unknown as Record<string, string>} />;
+        return <Table data={pageData as any} columns={stepContentData?.columns || 2} />;
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
