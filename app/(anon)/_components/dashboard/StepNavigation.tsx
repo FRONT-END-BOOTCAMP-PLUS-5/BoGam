@@ -28,6 +28,7 @@ export default function StepNavigation({
       {/* 단계 목록 */}
       <div className={styles.stepsList}>
         {steps.map((step) => {
+
           return (
             <button
               key={step.id}

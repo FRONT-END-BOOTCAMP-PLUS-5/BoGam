@@ -87,8 +87,8 @@ export const mockData = {
       unchecked: 1,
       createdAt: "2025-08-08T06:10:59.493Z",
       updatedAt: "2025-08-18T02:57:08.906Z",
-      mainNum: 1,
-      subNum: 1,
+      stepNumber: 1,
+      detail: 1,
       expanded: true,
       title: "가짜 임대인 구분하기",
       content: "신흥사부동산중개인사무소의 홍길동 씨는 공인중개사 자격증을 소지하고 있습니다!",
@@ -110,8 +110,8 @@ export const mockData = {
       unchecked: 1,
       createdAt: "2025-08-08T06:15:00.000Z",
       updatedAt: "2025-08-12T01:50:13.329Z",
-      mainNum: 1,
-      subNum: 2,
+              stepNumber: 1,
+        detail: 2,
       expanded: false,
       title: "최우선변제 금액 안내",
       content: "",
@@ -133,8 +133,8 @@ export const mockData = {
       unchecked: 1,
       createdAt: "2025-08-08T06:20:00.000Z",
       updatedAt: "2025-08-15T03:30:00.000Z",
-      mainNum: 1,
-      subNum: 3,
+              stepNumber: 1,
+        detail: 3,
       expanded: false,
       title: "공제증서 발급 안내",
       content: "공제증서 발급 요건이 불충족되었습니다.",
@@ -159,8 +159,8 @@ export const mockData = {
       },
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-12T01:50:13.329Z",
-      mainNum: 2,
-      subNum: 1,
+      stepNumber: 2,
+      detail: 1,
       expanded: false
     },
     // Main Step 3: 계약서 작성할 때
@@ -174,8 +174,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-10T04:20:00.000Z",
-      mainNum: 3,
-      subNum: 1,
+      stepNumber: 3,
+      detail: 1,
       expanded: false
     },
     // Main Step 4: 계약한 직후
@@ -189,8 +189,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-11T05:15:00.000Z",
-      mainNum: 4,
-      subNum: 1,
+      stepNumber: 4,
+      detail: 1,
       expanded: false
     },
     // Main Step 5: 입주한 이후
@@ -204,8 +204,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-13T06:45:00.000Z",
-      mainNum: 5,
-      subNum: 1,
+      stepNumber: 5,
+      detail: 1,
       expanded: false
     },
     // Main Step 6: 계약기간이 끝난 후
@@ -219,8 +219,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-14T07:30:00.000Z",
-      mainNum: 6,
-      subNum: 1,
+      stepNumber: 6,
+      detail: 1,
       expanded: false
     },
     // Main Step 7: 이런 상황에 휘말리지 않도록 유의하세요!
@@ -234,8 +234,8 @@ export const mockData = {
       details: {},
       createdAt: "2025-08-08T02:19:21.487Z",
       updatedAt: "2025-08-16T08:20:00.000Z",
-      mainNum: 7,
-      subNum: 1,
+      stepNumber: 7,
+      detail: 1,
       expanded: false
     }
   ]

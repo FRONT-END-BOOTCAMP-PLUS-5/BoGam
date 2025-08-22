@@ -7,6 +7,7 @@ import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
 import Table from './contents/Table';
 import List from './contents/List';
+import RadioGroup from './contents/RadioGroup';
 import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface ContentSection {
@@ -55,8 +56,8 @@ export default function ModalContent() {
   // URL에서 직접 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
   const stepUrlData = parseStepUrl(pathname);
-  const stepNumber = stepUrlData?.mainNum?.toString() || '1';
-  const detail = stepUrlData?.subNum?.toString() || '1';
+  const stepNumber = stepUrlData?.stepNumber?.toString() || '1';
+  const detail = stepUrlData?.detail?.toString() || '1';
 
   // JSON 파일에서 콘텐츠 데이터 가져오기
   useEffect(() => {
@@ -90,9 +91,9 @@ export default function ModalContent() {
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
-        return (
-          <DataGrid data={pageData as unknown as Record<string, string>} />
-        );
+        return <DataGrid data={pageData as unknown as Record<string, string>} />;
+      case 'RadioGroup':
+        return <RadioGroup data={pageData}/>;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;

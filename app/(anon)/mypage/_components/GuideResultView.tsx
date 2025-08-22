@@ -28,11 +28,11 @@ export interface GuideStepData {
   unchecked: number;
   createdAt: string;
   updatedAt: string;
-  mainNum: number;
-  subNum: number;
+  stepNumber: number;
+  detail: number;
   expanded?: boolean;
 
-  // Fields for GuideStepItem and its content, primarily for mainNum 1
+  // Fields for GuideStepItem and its content, primarily for stepNumber 1
   title?: string;
   content?: string;
   type?: 'match' | 'mismatch' | 'unchecked' | 'link';
@@ -53,13 +53,13 @@ export interface GuideResultViewProps {
 }
 
 export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
-  // mainNum별로 그룹화
+  // stepNumber별로 그룹화
   const groupedSteps = guideSteps.reduce((acc, step) => {
-    const mainNum = step.mainNum;
-    if (!acc[mainNum]) {
-      acc[mainNum] = [];
+    const stepNumber = step.stepNumber;
+    if (!acc[stepNumber]) {
+      acc[stepNumber] = [];
     }
-    acc[mainNum].push(step);
+    acc[stepNumber].push(step);
     return acc;
   }, {} as Record<number, GuideStepData[]>);
 
@@ -85,8 +85,8 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
       </div>
       
       <div className={styles.guideSteps}>
-        {Object.entries(groupedSteps).map(([mainNum, steps]) => {
-          const stepIndex = parseInt(mainNum) - 1;
+        {Object.entries(groupedSteps).map(([stepNumber, steps]) => {
+          const stepIndex = parseInt(stepNumber) - 1;
           const totalMatch = steps.reduce((sum, step) => sum + step.match, 0);
           const totalMismatch = steps.reduce((sum, step) => sum + step.mismatch, 0);
           const totalUnchecked = steps.reduce((sum, step) => sum + step.unchecked, 0);
@@ -94,20 +94,20 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
 
           return (
             <ResultAccordion
-              key={mainNum}
-              stageNumber={`${mainNum}단계`}
+              key={stepNumber}
+              stageNumber={`${stepNumber}단계`}
               subtitle={STEP_TITLES[stepIndex]}
               defaultOpen={isExpanded}
               numbers={[totalMatch.toString(), totalMismatch.toString(), totalUnchecked.toString()]}
             >
               <div className={styles.stepContent}>
-                {parseInt(mainNum) === 1 ? (
+                {parseInt(stepNumber) === 1 ? (
                   // 1단계는 GuideStepItem 컴포넌트들을 사용하여 예쁘게 꾸며주기
                   <div>
                     {steps.map((subStep) => (
                       <GuideStepItem
                         key={subStep.id}
-                        stepNumber={`${subStep.mainNum}-${subStep.subNum}`} // mainNum-subNum 형식
+                        stepNumber={`${subStep.stepNumber}-${subStep.detail}`} // stepNumber-detail 형식
                         title={subStep.title || ''} // Ensure title is not undefined
                         showDivider={false}
                       >
@@ -151,7 +151,7 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
                         <div key={step.id} className={styles.tempStepItem}>
                           <div className={styles.tempStepItemHeader}>
                             <span className={styles.tempStepItemNumber}>
-                              서브 {step.subNum}
+                              서브 {step.detail}
                             </span>
                             <span className={styles.tempStepItemStats}>
                               ✓{step.match} ✗{step.mismatch} ?{step.unchecked}
