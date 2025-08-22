@@ -202,7 +202,6 @@ export async function POST(request: NextRequest) {
             {
               success: true,
               message: '납세증명서 발급이 성공적으로 완료되었습니다.',
-              data: result.data,
             },
             { status: 200 }
           );
@@ -214,7 +213,6 @@ export async function POST(request: NextRequest) {
               success: true,
               message:
                 '납세증명서 발급이 완료되었지만 저장 중 문제가 발생했습니다.',
-              data: result.data,
               warning: 'DB 저장 실패',
             },
             { status: 200 }
@@ -232,7 +230,6 @@ export async function POST(request: NextRequest) {
             success: true,
             message:
               '납세증명서 발급이 완료되었지만 저장 중 문제가 발생했습니다.',
-            data: result.data,
             warning: 'DB 저장 실패',
           },
           { status: 200 }
@@ -245,7 +242,6 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: '추가인증이 필요합니다.',
-          data: result.data,
         },
         { status: 202 }
       );
@@ -261,7 +257,6 @@ export async function POST(request: NextRequest) {
           message: `납세증명서 발급 실패: ${
             result.data?.result?.message || '알 수 없는 오류'
           }`,
-          data: result.data,
           resultCode: codefResultCode,
         },
         { status: 400 }
