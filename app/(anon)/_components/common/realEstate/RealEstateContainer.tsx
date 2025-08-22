@@ -13,6 +13,7 @@ import {
   useCreateRealEstate,
   useTwoWayAuth,
 } from '@/hooks/useRealEstate';
+import Button from '@/(anon)/_components/common/button/Button';
 
 export const RealEstateContainer = () => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
@@ -74,13 +75,10 @@ export const RealEstateContainer = () => {
   const createRealEstateMutation = useCreateRealEstate((data) => {
     // 일반 API 요청 성공 후 탭 전환 (2-way 인증이 필요 없는 경우)
     if (!data.requiresTwoWayAuth) {
-      console.log('✅ 일반 API 요청 완료 - Output 탭으로 이동');
       // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
       setTimeout(() => {
         if (existsData?.success && existsData.exists) {
           setActiveTab('output');
-        } else {
-          console.log('⚠️ 데이터가 없어서 Output 탭으로 이동하지 않음');
         }
       }, 100);
     }
@@ -88,13 +86,10 @@ export const RealEstateContainer = () => {
 
   const twoWayAuthMutation = useTwoWayAuth(() => {
     // 2-way 인증 성공 후 탭 전환
-    console.log('✅ 2-way 인증 완료 - Output 탭으로 이동');
     // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
     setTimeout(() => {
       if (existsData?.success && existsData.exists) {
         setActiveTab('output');
-      } else {
-        console.log('⚠️ 데이터가 없어서 Output 탭으로 이동하지 않음');
       }
     }, 100);
   });
@@ -111,14 +106,11 @@ export const RealEstateContainer = () => {
   // exists 데이터가 없으면 Output 탭으로 이동하지 못하도록 방지
   useEffect(() => {
     if (activeTab === 'output' && existsData?.success && !existsData.exists) {
-      console.log('⚠️ 데이터가 없어서 Input 탭으로 강제 이동');
       setActiveTab('input');
     }
   }, [activeTab, existsData]);
 
   const handleAddressSelect = async (address: AddressListItem) => {
-    console.log('🔍 주소 선택됨:', address);
-    console.log('🔍 현재 selectedAddress:', selectedAddress);
     setTwoWaySelectedAddress(address);
 
     // 모달 즉시 닫기
@@ -166,7 +158,6 @@ export const RealEstateContainer = () => {
       const data = await twoWayAuthMutation.mutateAsync(twoWayRequest);
       setResponse(data);
     } catch (error) {
-      console.error('❌ 2-way 인증 API 요청 오류:', error);
       setResponse({
         success: false,
         message: '2-way 인증 API 호출 중 오류가 발생했습니다.',
@@ -210,7 +201,6 @@ export const RealEstateContainer = () => {
         setShowTwoWayModal(true);
       }
     } catch (error) {
-      console.error('❌ API 요청 오류:', error);
       setResponse({
         success: false,
         message: 'API 호출 중 오류가 발생했습니다.',
@@ -226,22 +216,24 @@ export const RealEstateContainer = () => {
 
       {/* 탭 네비게이션 */}
       <div className={styles.tabContainer}>
-        <button
+        <Button
           onClick={() => setActiveTab('input')}
+          variant={activeTab === 'input' ? 'primary' : 'ghost'}
           className={`${styles.tab} ${
             activeTab === 'input' ? styles.activeTab : styles.inactiveTab
           }`}
         >
           입력
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab('output')}
+          variant={activeTab === 'output' ? 'primary' : 'ghost'}
           className={`${styles.tab} ${
             activeTab === 'output' ? styles.activeTab : styles.inactiveTab
           }`}
         >
           결과
-        </button>
+        </Button>
       </div>
 
       {/* 탭 컨텐츠 */}

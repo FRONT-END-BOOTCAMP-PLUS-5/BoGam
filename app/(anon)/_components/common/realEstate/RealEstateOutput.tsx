@@ -6,6 +6,7 @@ import { PdfViewer } from '../pdfViewer/PdfViewer';
 import { styles } from './RealEstateOutput.styles';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useGetRealEstateFromDB } from '@/hooks/useRealEstate';
+import LoadingOverlay from '../loading/LoadingOverlay';
 
 export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
   response,
@@ -28,15 +29,12 @@ export const RealEstateOutput: React.FC<RealEstateOutputProps> = ({
       <div className={styles.container}>
         <div className={styles.mainContainer}>
           <h2 className={styles.title}>응답 결과</h2>
-          <div className={styles.loadingContainer}>
-            <div className={styles.loadingSpinner}></div>
-            <p className={styles.loadingText}>
-              등기부등본 데이터를 불러오는 중이에요 !
-            </p>
-            <p className={styles.loadingSubText}>
-              다소 시간이 걸릴 수 있어요 !
-            </p>
-          </div>
+          <LoadingOverlay
+            isVisible={true}
+            title='등기부등본 데이터를 불러오는 중이에요!'
+            currentStep={1}
+            totalSteps={3}
+          />
         </div>
       </div>
     );

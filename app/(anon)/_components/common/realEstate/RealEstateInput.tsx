@@ -20,6 +20,7 @@ export const RealEstateInput = ({
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
   } = useForm<RealEstateFormData>({
     defaultValues: formData,
   });
@@ -34,23 +35,12 @@ export const RealEstateInput = ({
       } ${selectedAddress.dong}동 ${selectedAddress.ho}호`;
       setValue('address', address);
       setValue('userAddressNickname', selectedAddress.nickname);
-
-      console.log('🔍 RealEstateInput - selectedAddress 변경:', {
-        nickname: selectedAddress.nickname,
-        address: address,
-      });
     }
   }, [selectedAddress, setValue]);
 
   // 폼 제출 시에만 상위 컴포넌트에 데이터 전달
 
   const handleFormSubmit = (data: RealEstateFormData) => {
-    console.log('🔍 RealEstateInput - 폼 제출 데이터:', {
-      userAddressNickname: data.userAddressNickname,
-      address: data.address,
-      phoneNo: data.phoneNo,
-      password: data.password,
-    });
     onSubmit(data);
   };
 
@@ -72,7 +62,8 @@ export const RealEstateInput = ({
                     message: '유효한 전화번호를 입력해주세요.',
                   },
                 })}
-                placeholder='01012345678'
+                placeholder='010-1234-5678'
+                mask='phone'
                 className={errors.phoneNo ? styles.inputError : styles.input}
               />
               {errors.phoneNo && (
@@ -172,6 +163,48 @@ export const RealEstateInput = ({
               type='button'
               variant='secondary'
               className={styles.resetButton}
+              onClick={() => {
+                // 폼 초기화 로직
+                reset({
+                  phoneNo: '01011111111',
+                  password: '1234',
+                  address: '',
+                  userAddressNickname: '',
+                  realtyType: '1',
+                  recordStatus: '0',
+                  startPageNo: '1',
+                  pageCount: '5',
+                  applicationType: '1',
+                  organization: '0002',
+                  inquiryType: '1',
+                  issueType: '1',
+                  jointMortgageJeonseYN: '0',
+                  tradingYN: '0',
+                  electronicClosedYN: '0',
+                  originDataYN: '1',
+                  warningSkipYN: '0',
+                  registerSummaryYN: '0',
+                  selectAddress: '0',
+                  isIdentityViewYn: '0',
+                  uniqueNo: '',
+                  addr_sido: '',
+                  addr_dong: '',
+                  addr_lotNumber: '',
+                  inputSelect: '',
+                  buildingName: '',
+                  dong: '101',
+                  ho: '101',
+                  addr_sigungu: '',
+                  addr_roadName: '',
+                  addr_buildingNumber: '',
+                  listNumber: '',
+                  ePrepayNo: '',
+                  ePrepayPass: '',
+                  originData: '',
+                  reqIdentity: '',
+                  identityList: [{ reqIdentity: '' }],
+                });
+              }}
             >
               초기화
             </Button>

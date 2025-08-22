@@ -72,37 +72,27 @@ export function PdfViewer({
 
   if (!pdfUrl) {
     return (
-      <div className='bg-gray-50 border border-gray-200 rounded-lg p-4'>
-        <p className='text-gray-600 text-sm'>PDF 데이터가 없습니다.</p>
+      <div className={styles.emptyContainer}>
+        <p className={styles.emptyText}>PDF 데이터가 없습니다.</p>
       </div>
     );
   }
 
   return (
-    <div className='space-y-4'>
+    <div className={styles.mainContainer}>
       {/* PDF 미리보기 */}
-      <div className='border border-gray-200 rounded-lg overflow-hidden'>
-        <div className='bg-gray-50 px-4 py-2 border-b border-gray-200'>
-          <h4 className='font-medium text-gray-800'>PDF 미리보기</h4>
+      <div className={styles.pdfPreviewContainer}>
+        <div className={styles.pdfPreviewHeader}>
+          <h4 className={styles.pdfPreviewTitle}>PDF 미리보기</h4>
         </div>
-        <iframe
-          src={pdfUrl}
-          width='100%'
-          height='600px'
-          style={{ border: 'none' }}
-          title='등기부등본 PDF'
-        />
+        <iframe src={pdfUrl} style={styles.pdfIframe} title='등기부등본 PDF' />
       </div>
 
       {/* 다운로드 버튼 */}
-      <div className='flex justify-center'>
-        <a
-          href={pdfUrl}
-          download={fileName}
-          className='inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
-        >
+      <div className={styles.downloadButtonContainer}>
+        <a href={pdfUrl} download={fileName} className={styles.downloadButton}>
           <svg
-            className='w-4 h-4 mr-2'
+            className={styles.downloadIcon}
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'

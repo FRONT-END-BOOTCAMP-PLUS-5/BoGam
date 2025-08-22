@@ -10,10 +10,7 @@ import List from './contents/List';
 import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import { 
-  LegacyContentSection, 
-  StepContentData 
-} from './contents/types';
+import { LegacyContentSection, StepContentData } from './contents/types';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -38,7 +35,7 @@ export default function ModalContent() {
         );
         setStepContentData(contentModule.default);
         setDataType(contentModule.default.dataType || 'default');
-      } catch (error) {
+      } catch {
         console.log(
           `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
         );
@@ -51,7 +48,6 @@ export default function ModalContent() {
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
-  
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
@@ -60,15 +56,17 @@ export default function ModalContent() {
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
-        return <DataGrid data={pageData as unknown as Record<string, string>} />;
+        return (
+          <DataGrid data={pageData as unknown as Record<string, string>} />
+        );
       case 'RadioGroup':
-        return <RadioGroup data={pageData}/>;
+        return <RadioGroup data={pageData} />;
       case 'CombinedContent':
         // CombinedContent의 경우 전체 stepContentData.sections를 전달
         return stepContentData && stepContentData.sections ? (
-          <CombinedContent 
+          <CombinedContent
             sections={stepContentData.sections}
-            spacing="lg"
+            spacing='lg'
             showDividers={true}
           />
         ) : null;
