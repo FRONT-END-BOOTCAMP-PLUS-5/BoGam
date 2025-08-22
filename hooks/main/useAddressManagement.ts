@@ -85,6 +85,7 @@ export const useAddressManagement = () => {
       setRoadAddress(baseAddress);
       // 동만 업데이트 (호는 기존 값 유지)
       setDong(dong || extractedDong);
+      setHo(ho || '');
       setSearchQuery(storeSelectedAddress.completeAddress);
       setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
 
@@ -139,15 +140,15 @@ export const useAddressManagement = () => {
   };
 
   // 주소 수동 저장 함수 (DB에 실제 저장) - 호 데이터 사용
-  const saveAddressToUser = async () => {
+  const saveAddressToUser = async (dongValue?: string, hoValue?: string) => {
     if (!storeSelectedAddress) {
       alert('저장할 주소가 선택되지 않았습니다.');
       return;
     }
 
-    // 현재 상태에서 동/호 값 가져오기 (호는 저장 시에만 사용)
-    const currentDong = storeSelectedAddress.dong || dong || '';
-    const currentHo = storeSelectedAddress.ho || ho || '';
+    // 전달받은 값 우선 사용, 없으면 상태값 사용
+    const currentDong = dongValue || storeSelectedAddress.dong || dong || '';
+    const currentHo = hoValue || storeSelectedAddress.ho || ho || '';
 
     if (!currentDong) {
       alert('동을 입력해주세요.');
@@ -157,6 +158,7 @@ export const useAddressManagement = () => {
     try {
       // 호는 옵션으로 처리 (저장 시에만 사용)
       const hoPart = currentHo ? ` ${currentHo}호` : '';
+
       const completeAddress = `${storeSelectedAddress.roadAddress} ${currentDong}동${hoPart}`;
 
       // 중복 주소 체크
@@ -174,7 +176,7 @@ export const useAddressManagement = () => {
       // 휘발성 주소인 경우 DB에 실제 저장
       if (storeSelectedAddress.isVolatile) {
         const addressData = {
-          nickname: storeSelectedAddress.nickname,
+          nickname: `${storeSelectedAddress.nickname} ${currentDong}동${currentHo}호`,
           x: storeSelectedAddress.x,
           y: storeSelectedAddress.y,
           isPrimary: false,

@@ -6,23 +6,18 @@ import RadioGroup from './RadioGroup';
 import Table from './Table';
 import List from './List';
 import DataGrid from './DataGrid';
-import { 
-  ContentSection, 
-  CombinedContentProps 
-} from './types';
+import { ContentSection, CombinedContentProps } from './types';
 import { styles } from './CombinedContent.styles';
 
-const CombinedContent = ({ 
-  sections, 
-  spacing = 'md', 
-  showDividers = true 
+const CombinedContent = ({
+  sections,
+  spacing = 'md',
+  showDividers = true,
 }: CombinedContentProps) => {
-
-
   // 각 섹션을 렌더링하는 함수
   const renderSection = (section: ContentSection, index: number) => {
     const isLast = index === sections.length - 1;
-    
+
     let content;
     switch (section.type) {
       case 'TextOnly':
@@ -41,7 +36,9 @@ const CombinedContent = ({
         content = <DataGrid data={section.data} />;
         break;
       default:
-        console.warn(`Unknown section type: ${(section as any).type}`);
+        console.warn(
+          `Unknown section type: ${(section as Record<string, unknown>).type}`
+        );
         return null;
     }
 
@@ -58,14 +55,12 @@ const CombinedContent = ({
             )}
           </div>
         )}
-        
+
         {/* 컴포넌트 렌더링 */}
         {content}
-        
+
         {/* 구분선 (마지막 섹션이 아니고 구분선을 표시하는 경우) */}
-        {!isLast && showDividers && (
-          <div className={styles.divider} />
-        )}
+        {!isLast && showDividers && <div className={styles.divider} />}
       </div>
     );
   };
