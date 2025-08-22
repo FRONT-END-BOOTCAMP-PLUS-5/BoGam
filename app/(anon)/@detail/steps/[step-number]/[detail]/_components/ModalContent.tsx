@@ -12,8 +12,33 @@ import { parseStepUrl } from '@utils/stepUrlParser';
 interface ContentSection {
   title?: string;
   subtitle?: string;
+  subtitles?: string[];
   contents?: string[];
+  contentSections?: Array<{
+    subtitle: string;
+    contents: string[];
+  }>;
   summary?: string;
+  image?: {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+  };
+  button?: {
+    text: string;
+    onClick?: string;
+    variant?: 'primary' | 'secondary' | 'ghost';
+    href?: string;
+    fullWidth?: boolean;
+  };
+  buttons?: Array<{
+    text: string;
+    onClick?: string;
+    variant?: 'primary' | 'secondary' | 'ghost';
+    href?: string;
+    fullWidth?: boolean;
+  }>;
 }
 
 interface StepContentData {
@@ -57,6 +82,9 @@ export default function ModalContent() {
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: ContentSection[]) => {
+    console.log('renderSwiperContent - dataType:', dataType);
+    console.log('renderSwiperContent - pageData:', pageData);
+    
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
@@ -69,6 +97,7 @@ export default function ModalContent() {
           <DataGrid data={pageData as unknown as Record<string, string>} />
         );
       default:
+        console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
     }
   };

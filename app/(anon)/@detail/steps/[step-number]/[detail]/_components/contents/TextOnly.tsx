@@ -2,10 +2,6 @@
 
 import React from 'react';
 import styles from './TextOnly.styles';
-import { useGetStepResult } from '@/hooks/useStepResultQueries';
-import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
-import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { parseStepUrl } from '@utils/stepUrlParser';
 import Button from '@/(anon)/_components/common/button/Button';
 
 interface ContentSection {
@@ -45,59 +41,7 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
-  // 전역 store에서 선택된 주소 가져오기
-  const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
-  
-  // URL에서 stepNumber와 detail 가져오기
-  const pathname = window.location.pathname;
-  const stepInfo = parseStepUrl(pathname);
-  
-  // useGetStepResult 훅 사용
-  const { data: stepData, isLoading, isError } = useGetStepResult({
-    userAddressNickname: selectedAddress?.nickname || '',
-    stepNumber: stepInfo?.mainNum?.toString() || '',
-    detail: stepInfo?.subNum?.toString() || ''
-  });
-
-  // 로딩 상태
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loadingContainer}>
-          <div>로딩 중...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // 에러 상태
-  if (isError || !stepData) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.errorContainer}>
-          데이터를 불러오는 중 오류가 발생했습니다.
-        </div>
-      </div>
-    );
-  }
-
-  // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
-  const renderStepData = () => (
-    <div className={styles.stepDataSection}>
-      <div className={styles.stepDataTitle}>스텝 데이터</div>
-      <div>
-        <div className={styles.badgeContainer}>
-          {Object.entries(stepData.jsonDetails).map(([key, value]) => (
-            <CircularIconBadge 
-              key={key} 
-              type={value as 'match' | 'mismatch' | 'unchecked'} 
-              size="xsm" 
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  console.log('TextOnly - data:', data);
 
   // data가 배열인 경우만 처리
   if (Array.isArray(data) && data.length > 0) {
@@ -197,8 +141,6 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             )}
           </div>
         ))}
-        
-        {renderStepData()}
       </div>
     );
   }
@@ -209,8 +151,6 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       <div className={styles.noDataContainer}>
         데이터가 없습니다.
       </div>
-      
-      {renderStepData()}
     </div>
   );
 };
