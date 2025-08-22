@@ -1,4 +1,4 @@
-export const generalPageStyles = {
+export const GeneralPageStyles = {
   generalWhitePage: 'bg-[var(--brand-white)] w-full h-full flex items-start justify-start box-border relative',
   smallFontDiv: 'relative pb-[2vh] pt-[2vh] border-b border-b-[var(--brand-light-gray)] w-full',
   borderBottomDiv: 'border-b border-b-[var(--brand-light-gray)] py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
