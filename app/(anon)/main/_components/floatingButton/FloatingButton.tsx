@@ -6,11 +6,7 @@ import Button from '@/(anon)/_components/common/button/Button';
 import { styles } from '@/(anon)/main/_components/floatingButton/FloatingButton.styles';
 import { ClipboardCheck } from 'lucide-react';
 
-interface FloatingButtonProps {
-  isDashboardOpen?: boolean;
-}
-
-export default function FloatingButton({ isDashboardOpen = false }: FloatingButtonProps) {
+export default function FloatingButton() {
   const router = useRouter();
 
   const handleClick = () => {
@@ -18,12 +14,7 @@ export default function FloatingButton({ isDashboardOpen = false }: FloatingButt
   };
 
   return (
-    <div 
-      className={styles.container}
-      style={{ 
-        zIndex: isDashboardOpen ? 10 : 50 
-      }}
-    >
+    <div className={styles.container}>
       <Button
         onClick={handleClick}
         variant='primary'

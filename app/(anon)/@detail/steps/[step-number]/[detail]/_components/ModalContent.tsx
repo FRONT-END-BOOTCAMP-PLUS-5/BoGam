@@ -11,7 +11,6 @@ import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface ContentSection {
   title?: string;
-  subtitle?: string;
   subtitles?: string[];
   contents?: string[];
   contentSections?: Array<{
@@ -82,9 +81,7 @@ export default function ModalContent() {
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: ContentSection[]) => {
-    console.log('renderSwiperContent - dataType:', dataType);
-    console.log('renderSwiperContent - pageData:', pageData);
-    
+  
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;

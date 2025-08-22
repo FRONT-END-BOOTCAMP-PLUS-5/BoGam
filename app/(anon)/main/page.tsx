@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
@@ -13,28 +13,13 @@ import { MapPinned, Pin, House, X } from 'lucide-react';
 export default function MainPage() {
   // 탭 상태 관리
   const [activeTab, setActiveTab] = useState(0);
-  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+
 
   // useMainPageModule에서 모든 상태와 함수 가져오기 (React Query 포함)
   const mainPageModule = useMainPageModule();
   const { gpsLoading, gpsError, currentLocationType } = mainPageModule;
 
-  // 햄부기 대시보드 열림 상태 감지
-  useEffect(() => {
-    const checkDashboardOpen = () => {
-      const dashboardElement = document.querySelector('[data-dashboard="true"]');
-      setIsDashboardOpen(!!dashboardElement);
-    };
 
-    // 초기 체크
-    checkDashboardOpen();
-
-    // MutationObserver로 DOM 변화 감지
-    const observer = new MutationObserver(checkDashboardOpen);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, []);
 
   // 탭 변경 핸들러
   const handleTabChange = (tabIndex: number) => {
@@ -90,7 +75,7 @@ export default function MainPage() {
             </div>
           )}
         </div>
-        <FloatingButton isDashboardOpen={isDashboardOpen} />
+        <FloatingButton />
 
         <div className={styles.buttonArea}></div>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import styles from './TextOnly.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
@@ -10,7 +11,6 @@ import Button from '@/(anon)/_components/common/button/Button';
 
 interface ContentSection {
   title?: string;
-  subtitle?: string;
   subtitles?: string[];
   contents?: string[];
   contentSections?: Array<{
@@ -110,9 +110,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             {section.title && (
               <div className={styles.sectionTitle}>{section.title}</div>
             )}
-            {section.subtitle && (
-              <div className={styles.sectionSubtitle}>{section.subtitle}</div>
-            )}
+
             {section.subtitles && section.subtitles.length > 0 && (
               <div className={styles.subtitlesContainer}>
                 {section.subtitles.map((subtitle, index) => (
@@ -124,12 +122,13 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             )}
             {section.image && (
               <div className={styles.imageContainer}>
-                <img
+                <Image
                   src={section.image.src}
                   alt={section.image.alt}
-                  width={section.image.width}
-                  height={section.image.height}
+                  width={section.image.width || 300}
+                  height={section.image.height || 200}
                   className={styles.contentImage}
+                  priority={false}
                 />
               </div>
             )}
@@ -183,17 +182,19 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             {section.buttons && section.buttons.length > 0 && (
               <div className={styles.buttonsContainer}>
                 {section.buttons.map((button, index) => (
-                  <button
+                  <Button
                     key={index}
-                    className={`${styles.customButton} ${button.variant === 'primary' ? styles.primaryButton : styles.secondaryButton}`}
+                    variant={button.variant || 'primary'}
+                    href={button.href}
                     onClick={() => {
                       if (button.href) {
                         window.open(button.href, '_blank', 'noopener,noreferrer');
                       }
                     }}
+                    fullWidth={button.fullWidth}
                   >
                     {button.text}
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

@@ -28,9 +28,6 @@ const styles = {
   // 버튼 스타일
   buttonContainer: 'mt-6 flex justify-center',
   buttonsContainer: 'mt-6 flex flex-col gap-2 items-center',
-  customButton: 'w-full px-4 py-3 rounded-xl font-medium transition-all duration-200',
-  primaryButton: 'bg-brand text-brand-white hover:bg-brand-90',
-  secondaryButton: 'bg-brand-light-gray text-brand-black hover:bg-brand-light-gray',
 };
 
 export default styles;
