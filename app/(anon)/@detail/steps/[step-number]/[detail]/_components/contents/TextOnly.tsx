@@ -111,6 +111,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
               <div className={styles.sectionTitle}>{section.title}</div>
             )}
 
+<<<<<<< HEAD
             {section.subtitles && section.subtitles.length > 0 && (
               <div className={styles.subtitlesContainer}>
                 {section.subtitles.map((subtitle, index) => (
@@ -132,6 +133,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                 />
               </div>
             )}
+=======
+>>>>>>> 334b250 (refactor: TextOnly 컴포넌트 최적화 및 z-index 구조 개선)
             {section.subtitles && section.subtitles.length > 0 && (
               <div className={styles.subtitlesContainer}>
                 {section.subtitles.map((subtitle, index) => (
@@ -143,12 +146,13 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             )}
             {section.image && (
               <div className={styles.imageContainer}>
-                <img
+                <Image
                   src={section.image.src}
                   alt={section.image.alt}
-                  width={section.image.width}
-                  height={section.image.height}
+                  width={section.image.width || 300}
+                  height={section.image.height || 200}
                   className={styles.contentImage}
+                  priority={false}
                 />
               </div>
             )}
