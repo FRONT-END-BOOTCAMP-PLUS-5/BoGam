@@ -148,8 +148,8 @@ export default function ApiTestPage() {
       '단계 결과 생성': {
         userAddressId: 1,
         stepId: 1,
-        mainNum: 1,
-        subNum: 1,
+        stepNumber: 1,
+        detail: 1,
         mismatch: 0,
         match: 5,
         unchecked: 0,
@@ -419,8 +419,8 @@ export default function ApiTestPage() {
     const requestData = {
       userAddressId: 1,
       stepId: 1,
-      mainNum: 1,
-      subNum: 1,
+      stepNumber: 1,
+      detail: 1,
       mismatch: 0,
       match: 5,
       unchecked: 0,

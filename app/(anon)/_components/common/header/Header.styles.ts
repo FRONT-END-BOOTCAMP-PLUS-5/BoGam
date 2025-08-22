@@ -4,5 +4,11 @@ export const styles = {
   backButton: 'text-base',
   slidePanel: "fixed top-0 right-0 h-full w-full transform transition-transform duration-300 ease-in-out z-[60]",
   slideIn: "translate-x-0",
-  slideOut: "translate-x-full"
+  slideOut: "translate-x-full",
+  
+  // 헤더 레이아웃 스타일
+  headerLayout: 'flex items-center justify-between w-full',
+  leftSection: 'flex items-center',
+  centerSection: 'flex-1 flex justify-center',
+  rightSection: 'flex items-center'
 };
