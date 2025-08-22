@@ -121,7 +121,6 @@ export default function TaxCertResultDisplay() {
           title="납세증명서 데이터를 가져오고 있습니다..."
           currentStep={1}
           totalSteps={1}
-          stepLabel="완료"
         />
       </div>
     );

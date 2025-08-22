@@ -37,7 +37,6 @@ export default function Steps() {
         title="책 가져오는 중..."
         currentStep={loadingProgress}
         totalSteps={7}
-        stepLabel="완료"
       />
 
       {/* footer */}

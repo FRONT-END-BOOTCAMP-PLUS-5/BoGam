@@ -1,26 +1,25 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
-import { API_ENDPOINTS } from '@libs/api-endpoints';
 import { formatPhone } from '@utils/formatUtils';
 import { extractActualData } from '@libs/responseUtils';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useIssueTaxCert } from '@/hooks/useTaxCertQueries';
+import { TaxCertIssueRequest } from '@libs/api_front/taxCert.api';
 
 export const useTaxCertApi = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<CodefResponse | null>(null);
+  
+  // React Query hook 사용
+  const { mutateAsync: issueTaxCert, isPending: isLoading } = useIssueTaxCert();
   
   // 전역 스토어에서 선택된 주소의 닉네임 가져오기
   const selectedAddressNickname = useUserAddressStore((state) => state.selectedAddress?.nickname);
 
   const submitTaxCert = async (formData: GetTaxCertRequestDto) => {
     try {
-      setIsLoading(true);
       setError(null);
-
-      console.log('📋 폼 데이터:', formData);
 
       // userAddressNickname 필드 추가 및 전화번호 포맷팅
       const requestData = {
@@ -29,37 +28,18 @@ export const useTaxCertApi = () => {
         userAddressNickname: selectedAddressNickname || '기본주소',
       };
       
-      console.log("requestData@@@@@", requestData);
-      const apiResponse = await axios.post(
-        API_ENDPOINTS.TAX_CERT,
-        requestData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      // React Query hook 사용하여 API 호출
+      const data = await issueTaxCert(requestData);
       
-      console.log("apiResponse@@@@@", apiResponse);
-      const data = apiResponse.data as CodefResponse;
+      setResponse(data.data);
 
-      if (data && typeof data === 'object' && 'error' in data) {
-        throw new Error(String(data.error));
-      }
-
-      console.log('✅ API 응답:', data);
-      setResponse(data);
-
-      return data;
+      return data.data;
     } catch (error) {
-      console.error('❌ API 요청 오류:', error);
       const errorMessage = error instanceof Error
         ? error.message
         : '알 수 없는 오류가 발생했습니다.';
       setError(errorMessage);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -69,10 +49,7 @@ export const useTaxCertApi = () => {
     extraInfo?: Record<string, unknown>
   ) => {
     try {
-      setIsLoading(true);
       setError(null);
-
-      console.log('🔐 추가인증 요청:', { simpleAuth, extraInfo });
 
       // 1차 응답에서 실제 데이터 추출
       const responseActualData = response
@@ -87,8 +64,6 @@ export const useTaxCertApi = () => {
         twoWayTimestamp: responseActualData?.twoWayTimestamp || Date.now(),
       };
 
-      console.log('🔐 twoWayInfo:', twoWayInfo);
-
       // 1차 응답에서 간편인증 토큰들 추출
       const simpleKeyToken =
         responseActualData?.simpleKeyToken ||
@@ -98,12 +73,6 @@ export const useTaxCertApi = () => {
       const certificate =
         responseActualData?.certificate ||
         responseActualData?.extraInfo?.certificate;
-
-      console.log('🔐 간편인증 토큰들:', {
-        simpleKeyToken,
-        rValue,
-        certificate,
-      });
 
       const twoWayRequest: GetTaxCertRequestDto = {
         organization: formData.organization,
@@ -134,40 +103,18 @@ export const useTaxCertApi = () => {
         ...(extraInfo && { extraInfo }),
       };
 
-      console.log(
-        '🔐 2차 요청 데이터:',
-        JSON.stringify(twoWayRequest, null, 2)
-      );
+      // React Query hook 사용하여 API 호출
+      const data = await issueTaxCert(twoWayRequest as TaxCertIssueRequest);
+      
+      setResponse(data.data);
 
-      const apiResponse = await axios.post(
-        API_ENDPOINTS.TAX_CERT,
-        twoWayRequest,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const data = apiResponse.data as CodefResponse;
-
-      if (data && typeof data === 'object' && 'error' in data) {
-        throw new Error(String(data.error));
-      }
-
-      console.log('🔐 추가인증 응답:', data);
-      setResponse(data);
-
-      return data;
+      return data.data;
     } catch (error) {
-      console.error('❌ 추가인증 요청 오류:', error);
       const errorMessage = error instanceof Error
         ? error.message
         : '알 수 없는 오류가 발생했습니다.';
       setError(errorMessage);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
