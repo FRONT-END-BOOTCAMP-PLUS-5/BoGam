@@ -2,7 +2,7 @@ import styles from './DataGrid.styles';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 
 interface DataGridProps {
-  data: Array<{ left: string; right?: string }>;
+  data: { left: string; right?: string }[];
 }
 
 const DataGrid = ({ data }: DataGridProps) => {

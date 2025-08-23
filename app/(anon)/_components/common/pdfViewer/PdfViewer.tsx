@@ -51,7 +51,7 @@ export function PdfViewer({
       setIsLoading(false);
       setError('PDF 데이터가 없습니다.');
     }
-  }, [base64]);
+  }, [base64, pdfUrl]);
 
   if (isLoading) {
     return (

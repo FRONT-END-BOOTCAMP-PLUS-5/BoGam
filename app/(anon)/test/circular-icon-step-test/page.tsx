@@ -89,7 +89,7 @@ export default function CircularIconStepTestPage() {
     };
 
     fetchExistingData();
-  }, [virtualPath, selectedAddress?.id]); // virtualPath나 selectedAddress가 바뀔 때마다 실행
+  }, [virtualPath, selectedAddress, stepInfo]); // virtualPath나 selectedAddress, stepInfo가 바뀔 때마다 실행
 
   const handleStepResultUpdate = (newDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>) => {
     setStepDetails(newDetails);
