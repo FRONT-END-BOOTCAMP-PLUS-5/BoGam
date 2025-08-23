@@ -39,7 +39,17 @@ export default function Header() {
               />
             ) : (
               <button
-                onClick={() => router.back()}
+                onClick={() => {
+                  // 상위 페이지로 이동
+                  const pathSegments = pathname.split('/').filter(Boolean);
+                  if (pathSegments.length > 1) {
+                    // 첫 번째 세그먼트만 유지 (예: steps/4 -> steps)
+                    const parentPath = '/' + pathSegments[0];
+                    router.push(parentPath);
+                  } else {
+                    router.push('/main');
+                  }
+                }}
                 className={styles.backButton}
               >
                 <ChevronLeft />

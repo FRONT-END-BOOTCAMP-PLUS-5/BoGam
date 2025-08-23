@@ -34,7 +34,7 @@ export default function TaxCert() {
 
   // 커스텀 훅들 사용
   const { validateFormData } = useTaxCertValidation();
-  const { isLoading, error, response, setError, submitTaxCert, submitTwoWayAuth } = useTaxCertApi();
+  const { isLoading, error, setError, submitTaxCert, submitTwoWayAuth } = useTaxCertApi();
   const { showSimpleAuthModal, setShowSimpleAuthModal, handleFirstRequestComplete } = useTaxCertTwoWay();
   
   const { handleInputChange, handleLoginTypeLevelChange, handleSubmit, handleSimpleAuthApprove, handleSimpleAuthCancel } = useTaxCertHandlers(

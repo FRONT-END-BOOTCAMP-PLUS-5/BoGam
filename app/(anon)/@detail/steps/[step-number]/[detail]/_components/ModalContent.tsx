@@ -11,10 +11,8 @@ import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import { 
-  LegacyContentSection, 
-  StepContentData 
-} from './contents/types';
+import { LegacyContentSection, StepContentData } from './contents/types';
+import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -39,7 +37,7 @@ export default function ModalContent() {
         );
         setStepContentData(contentModule.default);
         setDataType(contentModule.default.dataType || 'default');
-      } catch (error) {
+      } catch {
         console.log(
           `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
         );
@@ -50,27 +48,61 @@ export default function ModalContent() {
     loadContentData();
   }, [stepNumber, detail]);
 
+  // 단계별 컴포넌트 라우팅
+  const renderStepComponent = () => {
+    // 등기부등본 관련 라우팅인 경우 RealEstateContainer 반환
+    if (isRealEstateRoute) {
+      return <RealEstateContainer />;
+    }
+
+    // 기타 단계들은 기존 JSON 데이터 기반 렌더링
+    return null;
+  };
+
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
+
+    // LegacyContentSection[]를 { left: string; right?: string }[]로 변환하는 함수
+    const convertToTableData = (
+      data: LegacyContentSection[]
+    ): Array<{ left: string; right?: string }> => {
+      return data.map((item, index) => ({
+        left: item.title || `항목 ${index + 1}`,
+        right: item.summary || item.contents?.join(', ') || undefined,
+      }));
+    };
+
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={pageData as unknown as Record<string, string>} />;
+        return (
+          <Table
+            data={pageData as unknown as { left: string; right?: string }[]}
+          />
+        );
       case 'List':
-        return <List data={pageData as unknown as Record<string, string>} />;
+        return (
+          <List
+            data={pageData as unknown as { left: string; right?: string }[]}
+          />
+        );
       case 'DataGrid':
-        return <DataGrid data={pageData} />;
+        return (
+          <DataGrid
+            data={pageData as unknown as { left: string; right?: string }[]}
+          />
+        );
       case 'CheckListGroup':
         return <CheckListGroup data={pageData} />;
       case 'RadioGroup':
-        return <RadioGroup data={pageData}/>;
+        return <RadioGroup data={pageData} />;
       case 'CombinedContent':
         // CombinedContent의 경우 전체 stepContentData.sections를 전달
         return stepContentData && stepContentData.sections ? (
-          <CombinedContent 
+          <CombinedContent
             sections={stepContentData.sections}
-            spacing="lg"
+            spacing='lg'
             showDividers={true}
           />
         ) : null;
@@ -79,6 +111,36 @@ export default function ModalContent() {
         return null;
     }
   };
+
+  // 등기부등본 관련 특정 라우팅 조합들
+  const realEstateRoutes = [
+    { step: '1', detail: '1' },
+    { step: '2', detail: '2' },
+    { step: '6', detail: '3' },
+    { step: '5', detail: '2' },
+    { step: '4', detail: '1' },
+  ];
+
+  const isRealEstateRoute = realEstateRoutes.some(
+    (route) => route.step === stepNumber && route.detail === detail
+  );
+
+  // 등기부등본 관련 라우팅인 경우 해당 컴포넌트 렌더링
+  if (isRealEstateRoute) {
+    return (
+      <>
+        {/* 공통 헤더 렌더링 */}
+        <div className={styles.stepHeader}>
+          <h2 className={styles.stepTitle}>
+            {`${stepNumber}-${detail}단계 상세 보기`}
+          </h2>
+        </div>
+
+        {/* 단계별 컴포넌트 렌더링 */}
+        {renderStepComponent()}
+      </>
+    );
+  }
 
   // JSON 데이터가 있는 경우 JSON의 data 배열을 페이지로 사용
   if (stepContentData && stepContentData.dataType && stepContentData.data) {

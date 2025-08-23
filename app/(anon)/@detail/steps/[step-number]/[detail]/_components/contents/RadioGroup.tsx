@@ -246,10 +246,10 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
             <div className={styles.radioColumn}>
               <RadioButtonGroup
                 name={`section-${sectionIndex}`}
-                options={[{ value: 'no', label: '아니오' }, { value: 'yes', label: '예' }]}
+                options={[{ value: 'yes', label: '예' }, { value: 'no', label: '아니오' }]}
                 defaultValue={selectedAnswers[sectionIndex] || ""}
                 onChange={(value) => handleRadioChange(sectionIndex, value)}
-                showYesNoLabels={sectionIndex === 0}
+                showYesNoLabels={true}
                 disabled={isLoading}
               />
             </div>

@@ -62,11 +62,11 @@
   background: #eff6ff;
 }
 
-.radioLabel input[type="radio"]:checked + * {
+.radioLabel input[type='radio']:checked + * {
   color: #1d4ed8;
 }
 
-.radioLabel:has(input[type="radio"]:checked) {
+.radioLabel:has(input[type='radio']:checked) {
   border-color: #3b82f6;
   background: #dbeafe;
 }
@@ -109,7 +109,7 @@
 }
 
 .required::after {
-  content: " *";
+  content: ' *';
   color: #ef4444;
   font-weight: bold;
 }
@@ -119,7 +119,8 @@
   font-weight: bold;
 }
 
-.input, .select {
+.input,
+.select {
   padding: 12px;
   border: 2px solid #d1d5db;
   border-radius: 6px;
@@ -128,7 +129,8 @@
   background: white;
 }
 
-.input:focus, .select:focus {
+.input:focus,
+.select:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
@@ -210,7 +212,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .postcodeContainer {
@@ -346,21 +348,21 @@
   .container {
     padding: 15px;
   }
-  
+
   .form {
     padding: 20px;
   }
-  
+
   .row {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
+
   .radioGroup {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .title {
     font-size: 24px;
   }

@@ -25,6 +25,7 @@ export interface BaseRealEstateRequest {
   selectAddress?: string; // 주소 리스트 선택 여부[0: 미선택, 1: 선택, default: 0]
   isIdentityViewYn?: string; // 주민등록번호 공개 여부[0: 미공개, 1: 특정인공개, default: 0]
   identityList?: Identity[]; // 주민등록번호 List[isIdentityViewYn='1'인 경우 필수]
+  userAddressNickname?: string; // 사용자 주소 닉네임 (프론트엔드에서 전달받는 필드)
 }
 
 // 고유 번호로 검색

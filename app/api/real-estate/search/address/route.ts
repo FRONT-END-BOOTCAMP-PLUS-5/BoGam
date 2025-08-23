@@ -11,7 +11,9 @@ const usecase = new GetRealEstatesUsecase();
 
 export async function POST(request: NextRequest) {
   try {
-    const body: DetailInquiryRequest & { userAddressNickname: string } & {
+    const body: DetailInquiryRequest & {
+      userAddressNickname: string;
+    } & {
       // 2-way 인증 관련 필드
       uniqueNo?: string;
       jobIndex?: number;
@@ -21,6 +23,8 @@ export async function POST(request: NextRequest) {
       isTwoWayAuth?: boolean;
     } = await request.json();
 
+    console.log('body', body);
+
     // 필수 필드 검증
     if (!body.password) {
       return NextResponse.json(
@@ -29,17 +33,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // realtyType "1" (집합건물)에서 dong 또는 ho 필수 검증
-    if (body.realtyType === '1' && !body.dong && !body.ho) {
+    if (!body.userAddressNickname) {
       return NextResponse.json(
-        { success: false, message: '집합건물의 경우 동 또는 호는 필수입니다.' },
+        { success: false, message: '사용자 주소 닉네임은 필수입니다.' },
         { status: 400 }
       );
     }
 
-    // if (body.password.length !== 4 || !/^\d{4}$/.test(body.password)) {
+    // // realtyType "1" (집합건물)에서 dong 또는 ho 필수 검증
+    // if (body.realtyType === '1' && !body.dong && !body.ho) {
     //   return NextResponse.json(
-    //     { success: false, message: '비밀번호는 4자리 숫자여야 합니다.' },
+    //     { success: false, message: '집합건물의 경우 동 또는 호는 필수입니다.' },
     //     { status: 400 }
     //   );
     // }
@@ -73,6 +77,7 @@ export async function POST(request: NextRequest) {
 
     // API 요청 데이터 구성
     const apiRequest: DetailInquiryRequest & {
+      userAddressNickname: string;
       uniqueNo?: string;
       is2Way?: boolean;
       twoWayInfo?: {
@@ -82,6 +87,7 @@ export async function POST(request: NextRequest) {
         twoWayTimestamp: number;
       };
     } = {
+      userAddressNickname: body.userAddressNickname,
       address: body.address,
       realtyType: body.realtyType,
       addr_sido: body.addr_sido || '',
@@ -107,7 +113,7 @@ export async function POST(request: NextRequest) {
       tradingYN: body.tradingYN || '0',
       listNumber: body.listNumber,
       electronicClosedYN: body.electronicClosedYN || '0',
-      ePrepayNo: 'B58346230711',
+      ePrepayNo: 'V88553329403',
       ePrepayPass: 'qwe123',
       originDataYN: body.originDataYN || '0',
       warningSkipYN: body.warningSkipYN || '0',
@@ -153,15 +159,19 @@ export async function POST(request: NextRequest) {
     const codefResultCode = response?.result?.code;
     const isCodefSuccess = codefResultCode === 'CF-00000';
 
+    console.log('🔍 CODEF API 응답:', {
+      codefResultCode,
+      isCodefSuccess,
+      responseKeys: Object.keys(response || {}),
+    });
+
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장
       try {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new CreateRealEstateCopyUsecase(dbRepository);
 
-        const userAddressId = await getUserAddressId(
-          body.userAddressNickname
-        );
+        const userAddressId = await getUserAddressId(body.userAddressNickname);
 
         if (!userAddressId) {
           return NextResponse.json({
@@ -170,10 +180,24 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        const createResponse = await dbUseCase.createRealEstateCopy({
+        console.log('🔍 DB 저장 시도:', {
           userAddressId: userAddressId,
-          realEstateJson: JSON.parse(JSON.stringify(response)),
+          responseKeys: Object.keys(response || {}),
+          responseType: typeof response,
         });
+
+        let createResponse;
+        try {
+          createResponse = await dbUseCase.createRealEstateCopy({
+            userAddressId: userAddressId,
+            realEstateJson: JSON.parse(JSON.stringify(response)),
+          });
+
+          console.log('🔍 DB 저장 결과:', createResponse);
+        } catch (error) {
+          console.error('❌ DB 저장 중 오류 발생:', error);
+          throw error;
+        }
 
         if (createResponse.success) {
           console.log('✅ 등기부등본 DB upsert 완료:', {

@@ -14,12 +14,9 @@ export default function MainPage() {
   // 탭 상태 관리
   const [activeTab, setActiveTab] = useState(0);
 
-
   // useMainPageModule에서 모든 상태와 함수 가져오기 (React Query 포함)
   const mainPageModule = useMainPageModule();
   const { gpsLoading, gpsError, currentLocationType } = mainPageModule;
-
-
 
   // 탭 변경 핸들러
   const handleTabChange = (tabIndex: number) => {
