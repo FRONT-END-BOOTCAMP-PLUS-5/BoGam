@@ -1,4 +1,4 @@
-import { SummaryPageStyles } from './SummaryPage.styles';
+import { styles } from './SummaryPage.styles';
 
 interface SummaryPageProps {
   title: string;
@@ -8,30 +8,33 @@ interface SummaryPageProps {
 
 export default function SummaryPage({ title, contents, stepNumber }: SummaryPageProps) {
   const isEarlyStep = ['1', '2', '3'].includes(stepNumber);
-  const generalPageClass = isEarlyStep
-    ? SummaryPageStyles.generalPage
-    : SummaryPageStyles.generalPageGreen;
+  const bookCoverClass = isEarlyStep
+    ? styles.bookCover
+    : styles.bookCoverGreen;
   return (
-    <div className={generalPageClass}>
-      <div className={SummaryPageStyles.leftDiv}>
-        <div className={SummaryPageStyles.leftFirst}></div>
-        <div className={SummaryPageStyles.leftCenter}></div>
-        <div className={SummaryPageStyles.leftCenter}></div>
-        <div className={SummaryPageStyles.leftCenter}></div>
-        <div className={SummaryPageStyles.leftLast}></div>
+    <div className={bookCoverClass}>
+      <div className={styles.leftDiv}>
+        <div className={styles.leftFirst}></div>
+        <div className={styles.leftCenter}></div>
+        <div className={styles.leftCenter}></div>
+        <div className={styles.leftCenter}></div>
+        <div className={styles.leftLast}></div>
       </div>
-      <div>
-        <div className={SummaryPageStyles.rightFirstOutsideBox}>
-          <div className={SummaryPageStyles.rightFirstInsideBox}>
-            <p className={SummaryPageStyles.smallFont}> {title} </p>
+      <div className={styles.rightContainer}>
+        {/* 상단 영역 */}
+        <div className={styles.rightFirstOutsideBox}>
+          <div className={styles.rightFirstInsideBox}>
+            <p className={styles.smallFont}> {title} </p>
           </div>
         </div>
-        <div className={SummaryPageStyles.whitePaper + ' max-h-[340px] overflow-y-auto'}>
+        
+        {/* 하단 영역 */}
+        <div className={styles.whitePaper}>
           {contents.map((block, i) => (
             <div key={i}>
-              <h6 className={SummaryPageStyles.topic}>{block.subtitle}</h6>
+              <h6 className={styles.topic}>{block.subtitle}</h6>
               {block.items.map((item, j) => (
-                <p key={j} className={SummaryPageStyles.introContent}>{item}</p>
+                <p key={j} className={styles.introContent}>{item}</p>
               ))}
             </div>
           ))}

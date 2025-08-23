@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './List.styles';
 
 interface ListProps {
-  data: Record<string, string>;
+  data: { left: string; right?: string }[];
 }
 
 const List = ({ data }: ListProps) => {
