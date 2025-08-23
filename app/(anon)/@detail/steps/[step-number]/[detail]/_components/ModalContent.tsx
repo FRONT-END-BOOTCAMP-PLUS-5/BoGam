@@ -115,7 +115,7 @@ export default function ModalContent() {
   // 등기부등본 관련 특정 라우팅 조합들
   const realEstateRoutes = [
     { step: '1', detail: '3' },
-    { step: '2', detail: '2' },
+    { step: '2', detail: '3' },
     { step: '6', detail: '3' },
     { step: '5', detail: '2' },
     { step: '4', detail: '1' },
