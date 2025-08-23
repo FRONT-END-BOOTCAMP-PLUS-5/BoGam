@@ -9,6 +9,7 @@ import { styles } from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay
 import PdfViewer from './PdfViewer';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
+import { useGetTaxCertCopy } from '@/hooks/useTaxCertQueries';
 
 // 납세증명서 데이터 타입 정의
 interface TaxCertData {
@@ -37,69 +38,37 @@ interface TaxCertData {
 export default function TaxCertResultDisplay() {
   const { selectedAddress } = useUserAddressStore();
   const userAddressNickname = selectedAddress?.nickname || '';
+  
+  // useGetTaxCertCopy 훅 사용
+  const { data: result, isLoading, error } = useGetTaxCertCopy(userAddressNickname);
+
+  // 데이터 파싱 및 상태 관리
   const [data, setData] = useState<TaxCertData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [parsedError, setParsedError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTaxCertData = async () => {
+    if (result && result.success && result.data) {
       try {
-        setLoading(true);
-        const response = await fetch(`/api/copies/tax-cert?userAddressNickname=${encodeURIComponent(userAddressNickname)}`);
-        const result = await response.json();
-
-
-
-        if (result.success && result.data) {
-          // DB에서 조회된 데이터를 파싱
-          // GetTaxCertCopyUsecase에서 반환하는 taxCertJson 필드 사용
-          if (result.data.taxCertJson) {
-            try {
-              // 이미 복호화된 JSON 객체이므로 파싱 불필요
-              setData(result.data.taxCertJson);
-            } catch {
-              setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-            }
-          } else if (result.data.data && result.data.data.taxCertJson) {
-            try {
-              // 실제 납세증명서 데이터는 result.data.data.taxCertJson.data에 있음
-              if (result.data.data.taxCertJson.data) {
-                setData(result.data.data.taxCertJson.data);
-              } else {
-                // data 필드가 없으면 전체 taxCertJson 사용
-                setData(result.data.data.taxCertJson);
-              }
-            } catch {
-              setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-            }
-          } else if (result.data.taxCertData) {
-            // taxCertData 필드가 있는 경우 (암호화된 데이터)
-            try {
-              const taxCertData = JSON.parse(result.data.taxCertData);
-              setData(taxCertData);
-            } catch {
-              setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-            }
-          } else {
-            setError('납세증명서 데이터가 올바르지 않습니다.');
-          }
+        // DB에서 조회된 데이터를 파싱
+        // GetTaxCertCopyUsecase에서 반환하는 taxCertJson 필드 사용
+        console.log(result.data.taxCertJson.data);
+        if (result.data.taxCertJson.data) {
+          // 이미 복호화된 JSON 객체이므로 파싱 불필요
+          setData(result.data.taxCertJson.data);
         } else {
-          setError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
+          setParsedError('납세증명서 데이터가 올바르지 않습니다.');
         }
+        setParsedError(null);
       } catch {
-        setError('납세증명서 데이터 조회 중 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
+        setParsedError('납세증명서 데이터 형식이 올바르지 않습니다.');
       }
-    };
-
-    if (userAddressNickname) {
-      fetchTaxCertData();
+    } else if (result && !result.success) {
+      setParsedError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
     }
-  }, [userAddressNickname]);
+  }, [result]);
 
-  // 로딩 오버레이
-  if (loading) {
+  // 로딩 상태
+  if (isLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -115,8 +84,9 @@ export default function TaxCertResultDisplay() {
     );
   }
 
-  // 에러 상태
-  if (error) {
+  // 에러 상태 (API 에러 또는 파싱 에러)
+  if (error || parsedError) {
+    const errorMessage = error instanceof Error ? error.message : String(error || parsedError);
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -124,7 +94,7 @@ export default function TaxCertResultDisplay() {
         </div>
         <div className={`${styles.statusContainer} ${styles.statusWarning}`}>
           <p className={`${styles.statusText} ${styles.statusTextWarning}`}>
-            ❌ {error}
+            ❌ {errorMessage}
           </p>
         </div>
       </div>
