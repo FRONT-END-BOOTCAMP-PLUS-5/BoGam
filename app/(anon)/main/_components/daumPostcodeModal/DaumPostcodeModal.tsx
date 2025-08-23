@@ -14,6 +14,8 @@ export const DaumPostcodeModal = ({
   showPostcode,
   onClose,
 }: DaumPostcodeModalProps) => {
+  console.log('postcodeRef',postcodeRef);
+  console.log('showPostcode',showPostcode);
   return (
     <ConfirmModal
       isOpen={showPostcode}
@@ -24,7 +26,10 @@ export const DaumPostcodeModal = ({
       cancelText='닫기'
       onConfirm={undefined}
     >
-      <div ref={postcodeRef} className='w-full h-[600px] border-0' />
+      <div 
+        ref={postcodeRef} 
+        className='w-full min-h-80 h-80 max-h-80 overflow-auto'
+      />
     </ConfirmModal>
   );
 };

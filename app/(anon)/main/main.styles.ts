@@ -4,7 +4,7 @@ export const styles = {
 
   // 하단 섹션
   bottomSection:
-    'bg-brand-white rounded-lg shadow-lg p-6 space-y-3 flex-1 overflow-y-auto min-h-0',
+    'bg-brand-white rounded-lg shadow-lg p-6 flex-1 min-h-0',
 
   // 지도 헤더
   mapHeader: 'flex items-center gap-2 mb-4',
