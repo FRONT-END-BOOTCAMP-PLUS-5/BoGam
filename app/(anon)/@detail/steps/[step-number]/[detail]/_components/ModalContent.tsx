@@ -62,11 +62,13 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={convertToTableData(pageData)} />;
+        return <Table data={pageData as unknown as { left: string; right?: string }[]} />;
       case 'List':
-        return <List data={convertToTableData(pageData)} />;
+        return <List data={pageData as unknown as { left: string; right?: string }[]} />;
       case 'DataGrid':
-        return <DataGrid data={convertToTableData(pageData)} />;
+        return (
+          <DataGrid data={pageData as unknown as { left: string; right?: string }[]} />
+        );
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
       case 'CombinedContent':

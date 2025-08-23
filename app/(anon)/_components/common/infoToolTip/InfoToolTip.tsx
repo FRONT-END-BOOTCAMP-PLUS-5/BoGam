@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { styles } from './InfoToolTip.styles';
 
 interface InfoToolTipProps {
@@ -21,54 +21,7 @@ export default function InfoToolTip({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-          !containerRef.current.contains(event.target as Node) &&
-          tooltipRef.current &&
-          !tooltipRef.current.contains(event.target as Node)
-      ) {
-        setIsVisible(false);
-      }
-    };
-
-    const handleScroll = () => {
-      if (isVisible) {
-        // 스크롤 시 즉시 위치 업데이트 (애니메이션 없음)
-        calculateTooltipPosition();
-      }
-    };
-
-    const handleResize = () => {
-      if (isVisible) {
-        calculateTooltipPosition();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleResize, { passive: true });
-    
-    // 모바일 환경을 위한 추가 이벤트
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
-      window.visualViewport.addEventListener('scroll', handleScroll);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-      
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleResize);
-        window.visualViewport.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, [isVisible]);
-
-  const calculateTooltipPosition = () => {
+  const calculateTooltipPosition = useCallback(() => {
     if (!containerRef.current) return;
 
     const containerRect = containerRef.current.getBoundingClientRect();
@@ -148,7 +101,54 @@ export default function InfoToolTip({
 
     console.log('Final tooltip position:', { top, left, arrowDirection });
     setTooltipPosition({ top, left, arrowDirection });
-  };
+  }, [definition]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+          !containerRef.current.contains(event.target as Node) &&
+          tooltipRef.current &&
+          !tooltipRef.current.contains(event.target as Node)
+      ) {
+        setIsVisible(false);
+      }
+    };
+
+    const handleScroll = () => {
+      if (isVisible) {
+        // 스크롤 시 즉시 위치 업데이트 (애니메이션 없음)
+        calculateTooltipPosition();
+      }
+    };
+
+    const handleResize = () => {
+      if (isVisible) {
+        calculateTooltipPosition();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+    
+    // 모바일 환경을 위한 추가 이벤트
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      window.visualViewport.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+        window.visualViewport.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [isVisible, calculateTooltipPosition]);
 
   const handleTermClick = (e: React.MouseEvent) => {
     e.preventDefault();
