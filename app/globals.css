@@ -13,7 +13,7 @@
   --brand-dark-gray: #6d6d6d;
   --brand-light-gray: #e5e7eb;
   --brand-green: #4fa373;
-  --brand-dark-green: #527A6E;
+  --brand-dark-green: #527a6e;
   --brand-gold: #a68a56;
   --error: #c24a4a;
   --brand-shadow: #4b72a659;
@@ -24,7 +24,8 @@
 
   --radius-lg: 16px;
 
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-book: 10px 10px 15px -5px rgba(0, 0, 0, 0.4);
 
   --padding-xs: 8px;
@@ -113,6 +114,33 @@ img {
 /* 스크롤바 제거 (모바일 UX) */
 ::-webkit-scrollbar {
   display: none;
+}
+
+/* 커스텀 스크롤바 스타일 */
+.custom-scrollbar::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Firefox 스크롤바 스타일 */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
 }
 
 /* ==== PWA App Shell ==== */
