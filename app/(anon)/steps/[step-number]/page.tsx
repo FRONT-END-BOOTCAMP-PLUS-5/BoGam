@@ -11,6 +11,22 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ReactNode } from 'react';
 
+// HTMLFlipBook 인스턴스 타입 정의
+interface FlipBookInstance {
+  object: {
+    flip: (pageIndex: number) => void;
+    turnToPage: (pageIndex: number) => void;
+  };
+}
+
+// bookRef 타입 정의
+type BookRefType = {
+  object: {
+    flip: (pageIndex: number) => void;
+    turnToPage: (pageIndex: number) => void;
+  };
+} | null;
+
 interface PageContent {
   subtitle: string;
   items: string[];
@@ -33,13 +49,13 @@ type PageData = SummaryPageData | GeneralPageData;
 
 export default function MiddleStepPage() {
   const router = useRouter();
-  const bookRef = useRef<typeof HTMLFlipBook | null>(null);
+  const bookRef = useRef<BookRefType>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
   const [currentPage, setCurrentPage] = useState(0);
   const [pages, setPages] = useState<PageData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isManualFlip, setIsManualFlip] = useState(false);
-  const [flipBookInstance, setFlipBookInstance] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [flipBookInstance, setFlipBookInstance] = useState<FlipBookInstance | null>(null);
   
   // 딱 1번만 실행하기 위한 ref
   const hasInitialized = useRef(false);
@@ -182,7 +198,7 @@ export default function MiddleStepPage() {
           swipeDistance={30}
           showPageCorners={false}
           disableFlipByClick={false}
-          onInit={(flipBook: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+          onInit={(flipBook: FlipBookInstance) => {
             // flipBook 객체를 별도로 저장
             setFlipBookInstance(flipBook);
             bookRef.current = flipBook;

@@ -302,9 +302,9 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
               ) : (
                 <div className={styles.successMessage}>
                   {contentData.successMessage || ''}
-                    {contentData.links && contentData.links.length > 0 && (
+                                           {contentData.links && contentData.links.length > 0 && (
                      <div className={styles.linksContainer}>
-                       {contentData.links.map((link: { title: string; url: string }, index: number) => (
+                       {contentData.links.map((link, index: number) => (
                          <Button 
                            key={index}
                            href={link.url} 
