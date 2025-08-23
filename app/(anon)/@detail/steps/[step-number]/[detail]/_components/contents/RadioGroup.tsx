@@ -40,9 +40,8 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
   // 초기화 여부를 추적하는 ref
   const hasInitialized = useRef(false);
   
-  const queryClient = useQueryClient();
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
-  const { createOrUpdateStepResult } = useStepResultMutations();
+  const { upsertStepResult, removeQueries } = useStepResultMutations();
 
   // URL 파싱 - ModalContent와 동일한 방식
   const pathname = window.location.pathname;
@@ -139,7 +138,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
     try {
       // 백그라운드에서 저장 (UI 업데이트에 영향 없음)
-      createOrUpdateStepResult.mutate({
+      upsertStepResult.mutate({
         userAddressId: selectedAddress.id,
         stepNumber: stepNumber,
         detail: detail,
@@ -152,7 +151,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     } catch (error) {
       console.error('❌ 저장 실패:', error);
     }
-  }, [selectedAddress?.id, stepNumber, detail, data, contentData, stepData, createOrUpdateStepResult]);
+  }, [selectedAddress?.id, stepNumber, detail, data, contentData, stepData, upsertStepResult]);
 
   // 라디오 버튼 변경 핸들러
   const handleRadioChange = (sectionIndex: number, value: string) => {
@@ -204,11 +203,10 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
         saveToDatabase(uncheckedAnswers);
         
         // 쿼리 완전 중단
-        const queryKey = ['stepResults', selectedAddress.nickname, String(stepNumber), String(detail)];
-        queryClient.removeQueries({ queryKey });
+        removeQueries(selectedAddress.nickname, stepNumber, detail);
       }
     }
-  }, [isError, data, hasInitializedFromError, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, queryClient, saveToDatabase]);
+  }, [isError, data, hasInitializedFromError, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, saveToDatabase, removeQueries]);
 
   // 전체 결과 상태 계산 (모든 페이지 데이터 종합)
   const calculateOverallResult = useCallback(() => {
@@ -384,9 +382,9 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
               ) : (
                 <div className={styles.successMessage}>
                   {contentData.successMessage || ''}
-                    {contentData.links && contentData.links.length > 0 && (
+                                           {contentData.links && contentData.links.length > 0 && (
                      <div className={styles.linksContainer}>
-                       {contentData.links.map((link: { title: string; url: string }, index: number) => (
+                       {contentData.links.map((link, index: number) => (
                          <Button 
                            key={index}
                            href={link.url} 
