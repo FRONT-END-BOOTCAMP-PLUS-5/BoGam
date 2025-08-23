@@ -11,6 +11,7 @@ import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { LegacyContentSection, StepContentData } from './contents/types';
+import TaxCertResultDisplay from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -25,26 +26,53 @@ export default function ModalContent() {
   const stepNumber = stepUrlData?.stepNumber?.toString() || '1';
   const detail = stepUrlData?.detail?.toString() || '1';
 
+  // TaxCert 컴포넌트를 사용할 단계인지 확인
+  const isTaxCertStep =
+    (stepNumber === '1' && detail === '5') ||
+    (stepNumber === '5' && detail === '1');
+
   // JSON 파일에서 콘텐츠 데이터 가져오기
   useEffect(() => {
-    const loadContentData = async () => {
-      try {
-        // 동적 import로 stepNumber와 detail을 자동 조합
-        const contentModule = await import(
-          `./contents/data/step-${stepNumber}-${detail}-contents.json`
-        );
-        setStepContentData(contentModule.default);
-        setDataType(contentModule.default.dataType || 'default');
-      } catch {
-        console.log(
-          `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
-        );
-        setDataType('default');
-      }
-    };
+    // TaxCert 단계가 아닌 경우에만 JSON 데이터를 로드
+    if (!isTaxCertStep) {
+      const loadContentData = async () => {
+        try {
+          // 동적 import로 stepNumber와 detail을 자동 조합
+          const contentModule = await import(
+            `./contents/data/step-${stepNumber}-${detail}-contents.json`
+          );
+          setStepContentData(contentModule.default);
+          setDataType(contentModule.default.dataType || 'default');
+        } catch {
+          console.log(
+            `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
+          );
+          setDataType('default');
+        }
+      };
 
-    loadContentData();
-  }, [stepNumber, detail]);
+      loadContentData();
+    }
+  }, [stepNumber, detail, isTaxCertStep]);
+
+  // TaxCert 단계인 경우 TaxCert 컴포넌트를 직접 렌더링
+  if (isTaxCertStep) {
+    return (
+      <>
+        {/* 공통 헤더 렌더링 */}
+        <div className={styles.stepHeader}>
+          <h2 className={styles.stepTitle}>
+            {`${stepNumber}-${detail}단계 상세 보기`}
+          </h2>
+        </div>
+
+        {/* TaxCert 컴포넌트 렌더링 */}
+        <div className={styles.mainContent}>
+          <TaxCertResultDisplay />
+        </div>
+      </>
+    );
+  }
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
