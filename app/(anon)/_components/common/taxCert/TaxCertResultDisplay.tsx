@@ -28,6 +28,11 @@ interface TaxCertData {
 export default function TaxCertResultDisplay() {
   const { selectedAddress } = useUserAddressStore();
   const userAddressNickname = selectedAddress?.nickname || '';
+  
+  // useGetTaxCertCopy 훅 사용
+  const { data: result, isLoading, error } = useGetTaxCertCopy(userAddressNickname);
+
+  // 데이터 파싱 및 상태 관리
   const [data, setData] = useState<TaxCertData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +78,7 @@ export default function TaxCertResultDisplay() {
   };
 
   useEffect(() => {
-    const fetchTaxCertData = async () => {
+    if (result && result.success && result.data) {
       try {
         setLoading(true);
         const response = await fetch(
@@ -117,19 +122,23 @@ export default function TaxCertResultDisplay() {
             setError('납세증명서 데이터가 올바르지 않습니다.');
           }
         } else {
-          setError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
+          setParsedError('납세증명서 데이터가 올바르지 않습니다.');
         }
+        setParsedError(null);
       } catch {
-        setError('납세증명서 데이터 조회 중 오류가 발생했습니다.');
-      } finally {
-        setLoading(false);
+        setParsedError('납세증명서 데이터 형식이 올바르지 않습니다.');
       }
-    };
-
-    if (userAddressNickname) {
-      fetchTaxCertData();
+    } else if (result && !result.success) {
+      setParsedError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
     }
-  }, [userAddressNickname]);
+  }, [result]);
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   // 입력 컴포넌트
   const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
