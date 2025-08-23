@@ -122,7 +122,7 @@ export default function TaxCertResultDisplay() {
           <h3 className={styles.title}>📄 납세증명서 발급 결과</h3>
         </div>
         <div className="text-center py-8">
-          <p className="text-gray-500">해당 사용자 주소에 대한 납세증명서 데이터가 없습니다.</p>
+          <p className="text-brand-dark-gray">해당 사용자 주소에 대한 납세증명서 데이터가 없습니다.</p>
         </div>
       </div>
     );
@@ -177,7 +177,7 @@ export default function TaxCertResultDisplay() {
         <h4 className={styles.tableTitle}>
           징수유예등 또는 체납처분유예의 명세
         </h4>
-        <div className='overflow-x-auto'>
+                 <div className={styles.overflowContainer}>
           {data.resRespiteList && data.resRespiteList.length > 0 ? (
             <table className={styles.table}>
               <thead className={styles.tableHeader}>
@@ -222,32 +222,32 @@ export default function TaxCertResultDisplay() {
               </tbody>
             </table>
           ) : (
-            <div className="text-center py-8 border border-brand-light-gray rounded-lg">
-              <p className="text-gray-500">징수유예등 또는 체납처분유예의 명세가 없습니다.</p>
-              <p className="text-xs text-gray-400 mt-2">
-                resRespiteList: {JSON.stringify(data.resRespiteList)}
-              </p>
-            </div>
+                         <div className={styles.noDataContainer}>
+               <p className={styles.noDataText}>징수유예등 또는 체납처분유예의 명세가 없습니다.</p>
+               <p className={styles.noDataSubText}>
+                 resRespiteList: {JSON.stringify(data.resRespiteList)}
+               </p>
+             </div>
           )}
         </div>
       </div>
 
       {/* 상세 정보 아코디언 (기본정보 + 발급정보 + 원문데이터 + 체납내역 통합) */}
-      <div className={`${styles.tableContainer} border border-brand-light-gray rounded-lg`}>
+      <div className={`${styles.tableContainer} ${styles.accordionContainer}`}>
         <button
-          className={`w-full text-left p-4 bg-brand-light-gray hover:bg-brand-light-blue transition-colors flex justify-between items-center`}
+          className={styles.accordionButton}
           onClick={() => toggleSection('basicInfo')}
         >
-          <span className="text-lg font-semibold text-brand-black">📋 상세 정보</span>
-          <span className="text-brand-dark-gray">
+          <span className={styles.accordionTitle}>📋 상세 정보</span>
+          <span className={styles.accordionIcon}>
             {expandedSections.basicInfo ? '▼' : '▶'}
           </span>
         </button>
         {expandedSections.basicInfo && (
-          <div className="p-4 border-t border-brand-light-gray space-y-6">
+          <div className={styles.accordionContent}>
             {/* 기본 정보 섹션 */}
             <div>
-              <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+              <h5 className={styles.sectionTitle}>
                 📋 기본 정보
               </h5>
               <div className={styles.infoGrid}>
@@ -278,7 +278,7 @@ export default function TaxCertResultDisplay() {
 
             {/* 발급 정보 섹션 */}
             <div>
-              <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+              <h5 className={styles.sectionTitle}>
                 🏢 발급 정보
               </h5>
               <div className={styles.infoGrid}>
@@ -323,10 +323,10 @@ export default function TaxCertResultDisplay() {
 
             {/* 체납 내역 섹션 */}
             <div>
-              <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+              <h5 className={styles.sectionTitle}>
                 💰 체납 내역
               </h5>
-              <div className='overflow-x-auto'>
+              <div className={styles.overflowContainer}>
                 {data.resArrearsList && data.resArrearsList.length > 0 ? (
                   <table className={styles.table}>
                     <thead className={styles.tableHeader}>
@@ -367,9 +367,9 @@ export default function TaxCertResultDisplay() {
                     </tbody>
                   </table>
                 ) : (
-                  <div className="text-center py-8 border border-brand-light-gray rounded-lg">
-                    <p className="text-gray-500">체납 내역이 없습니다.</p>
-                    <p className="text-xs text-gray-400 mt-2">
+                  <div className={styles.noDataContainer}>
+                    <p className={styles.noDataText}>체납 내역이 없습니다.</p>
+                    <p className={styles.noDataSubText}>
                       resArrearsList: {JSON.stringify(data.resArrearsList)}
                     </p>
                   </div>
@@ -380,7 +380,7 @@ export default function TaxCertResultDisplay() {
             {/* 원문 데이터 섹션 */}
             {(data.resOriGinalData || data.resOriGinalData1) && (
               <div>
-                <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+                <h5 className={styles.sectionTitle}>
                   📄 원문 데이터
                 </h5>
                 {/* XML 원문 */}
