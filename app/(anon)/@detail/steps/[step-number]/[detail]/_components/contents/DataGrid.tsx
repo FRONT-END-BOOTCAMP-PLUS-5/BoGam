@@ -2,19 +2,19 @@ import styles from './DataGrid.styles';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 
 interface DataGridProps {
-  data: Record<string, string>;
+  data: { left: string; right?: string }[];
 }
 
 const DataGrid = ({ data }: DataGridProps) => {
   return (
     <div>
-      {Object.entries(data).map(([key, value], index) => (
+      {data.map((item, index) => (
         <div key={index} className={styles.detailItem}>
           <div className={styles.detailKey}>
-            {key}:
+            {item.left}:
           </div>
           <div className={styles.detailValue}>
-            <CircularIconBadge type={value as 'match' | 'mismatch' | 'unchecked'} size="xsm" />
+            <CircularIconBadge type={item.right as 'match' | 'mismatch' | 'unchecked'} size="xsm" />
           </div>
         </div>
       ))}

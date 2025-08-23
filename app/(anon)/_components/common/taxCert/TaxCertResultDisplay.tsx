@@ -57,7 +57,7 @@ export default function TaxCertResultDisplay() {
             try {
               // 이미 복호화된 JSON 객체이므로 파싱 불필요
               setData(result.data.taxCertJson);
-            } catch (parseError) {
+            } catch {
               setError('납세증명서 데이터 형식이 올바르지 않습니다.');
             }
           } else if (result.data.data && result.data.data.taxCertJson) {
@@ -69,7 +69,7 @@ export default function TaxCertResultDisplay() {
                 // data 필드가 없으면 전체 taxCertJson 사용
                 setData(result.data.data.taxCertJson);
               }
-            } catch (parseError) {
+            } catch {
               setError('납세증명서 데이터 형식이 올바르지 않습니다.');
             }
           } else if (result.data.taxCertData) {
@@ -77,7 +77,7 @@ export default function TaxCertResultDisplay() {
             try {
               const taxCertData = JSON.parse(result.data.taxCertData);
               setData(taxCertData);
-            } catch (parseError) {
+            } catch {
               setError('납세증명서 데이터 형식이 올바르지 않습니다.');
             }
           } else {
@@ -86,7 +86,7 @@ export default function TaxCertResultDisplay() {
         } else {
           setError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
         }
-      } catch (err) {
+      } catch {
         setError('납세증명서 데이터 조회 중 오류가 발생했습니다.');
       } finally {
         setLoading(false);

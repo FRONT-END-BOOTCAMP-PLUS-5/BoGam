@@ -33,13 +33,13 @@ type PageData = SummaryPageData | GeneralPageData;
 
 export default function MiddleStepPage() {
   const router = useRouter();
-  const bookRef = useRef<any>(null);
+  const bookRef = useRef<typeof HTMLFlipBook | null>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
   const [currentPage, setCurrentPage] = useState(0);
   const [pages, setPages] = useState<PageData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isManualFlip, setIsManualFlip] = useState(false);
-  const [flipBookInstance, setFlipBookInstance] = useState<any>(null);
+  const [flipBookInstance, setFlipBookInstance] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
   
   // 딱 1번만 실행하기 위한 ref
   const hasInitialized = useRef(false);
@@ -182,7 +182,7 @@ export default function MiddleStepPage() {
           swipeDistance={30}
           showPageCorners={false}
           disableFlipByClick={false}
-          onInit={(flipBook: any) => {
+          onInit={(flipBook: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
             // flipBook 객체를 별도로 저장
             setFlipBookInstance(flipBook);
             bookRef.current = flipBook;

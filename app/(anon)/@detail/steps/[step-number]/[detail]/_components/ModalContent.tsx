@@ -52,12 +52,12 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={pageData as unknown as Record<string, string>} />;
+        return <Table data={pageData as unknown as { left: string; right?: string }[]} />;
       case 'List':
-        return <List data={pageData as unknown as Record<string, string>} />;
+        return <List data={pageData as unknown as { left: string; right?: string }[]} />;
       case 'DataGrid':
         return (
-          <DataGrid data={pageData as unknown as Record<string, string>} />
+          <DataGrid data={pageData as unknown as { left: string; right?: string }[]} />
         );
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
@@ -150,7 +150,7 @@ export default function ModalContent() {
 
       {/* 기본 DataGrid 표시 */}
       <div className={styles.mainContent}>
-        <DataGrid data={{}} />
+        <DataGrid data={[]} />
       </div>
     </>
   );
