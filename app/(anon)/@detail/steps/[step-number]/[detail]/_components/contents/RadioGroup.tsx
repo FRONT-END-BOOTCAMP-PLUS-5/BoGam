@@ -10,19 +10,10 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { parseStepUrl } from '@utils/stepUrlParser';
 import RadioButtonGroup from '@/(anon)/_components/common/radioButtonGroup/RadioButtonGroup';
 import Button from '@/(anon)/_components/common/button/Button';
-
-interface ContentSection {
-  title?: string;
-  subtitle?: string;
-  contents?: string[];
-  messages?: string[];
-  successMessages?: string[];
-  link?: string;
-  summary?: string;
-}
+import { LegacyContentSection } from './types';
 
 interface RadioGroupProps {
-  data: ContentSection[];
+  data: LegacyContentSection[];
 }
 
 const RadioGroup = ({ data }: RadioGroupProps) => {
@@ -32,7 +23,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     successMessage?: string;
     errorMessage?: string;
     links?: Array<{ title: string; url: string }>;
-    data?: ContentSection[][];
+    data?: LegacyContentSection[][];
     sections?: Record<string, unknown>[]; // CombinedContent 타입에 대한 추가 필드
     dataType?: string; // dataType 속성 추가
   } | null>(null);
@@ -247,10 +238,10 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       }
     } else {
       // 기존 방식: data 배열에서 질문 제목 추출
-      const flatData = (dataSource as ContentSection[][]).flat();
-      totalQuestions = flatData.filter((section: ContentSection) => section.title).length;
+      const flatData = (dataSource as LegacyContentSection[][]).flat();
+      totalQuestions = flatData.filter((section: LegacyContentSection) => section.title).length;
       allQuestionTitles = flatData
-        .filter((section: ContentSection) => section.title)
+        .filter((section: LegacyContentSection) => section.title)
         .map(section => section.title as string);
     }
     
@@ -297,7 +288,9 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       {data.map((section, sectionIndex) => (
         <div key={sectionIndex} className={styles.section}>
           {section.title && <div className={styles.sectionTitle}>{section.title}</div>}
-          {section.subtitle && <div className={styles.sectionSubtitle}>{section.subtitle}</div>}
+          {section.subtitles && section.subtitles.length > 0 && (
+            <div className={styles.sectionSubtitle}>{section.subtitles[0]}</div>
+          )}
           
           <div className={styles.contentRow}>
             <div className={styles.contentColumn}>
@@ -323,19 +316,17 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           {/* 선택에 따른 메시지 표시 */}
           {selectedAnswers[sectionIndex] && selectedAnswers[sectionIndex] !== 'unchecked' && selectedAnswers[sectionIndex] !== '' && (
             (selectedAnswers[sectionIndex] === 'yes' && section.messages) || 
-            (selectedAnswers[sectionIndex] === 'no' && section.successMessages) ? (
+            (selectedAnswers[sectionIndex] === 'no') ? (
               <div className={styles.messagesContainer}>
                 {selectedAnswers[sectionIndex] === 'yes' && section.messages && (
                   // '예' 선택 시 경고 메시지
-                  section.messages.map((message, messageIndex) => (
+                  section.messages.map((message: string, messageIndex: number) => (
                     <div key={messageIndex} className={styles.messageItem}>{message}</div>
                   ))
                 )}
-                {selectedAnswers[sectionIndex] === 'no' && section.successMessages && (
-                  // '아니오' 선택 시 안전 메시지
-                  section.successMessages.map((message, messageIndex) => (
-                    <div key={messageIndex} className={styles.messageItem}>{message}</div>
-                  ))
+                {selectedAnswers[sectionIndex] === 'no' && (
+                  // '아니오' 선택 시 기본 메시지
+                  <div className={styles.messageItem}>안전합니다.</div>
                 )}
                 {section.link && (
                   <div className={styles.linkContainer}>

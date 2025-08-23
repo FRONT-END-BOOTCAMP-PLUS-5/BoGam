@@ -75,13 +75,32 @@ export interface DataGridSection extends BaseContentSection {
   data: Array<{ left: string; right?: string }>;
 }
 
+// CheckListGroup 전용 인터페이스
+export interface CheckListGroupSection extends BaseContentSection {
+  type: 'CheckListGroup';
+  data: Array<{
+    title?: string;
+    description?: string[];
+    checklistGroups?: Array<{
+      title: string;
+      items: Array<{
+        id: string;
+        text: string;
+      }>;
+    }>;
+    summary?: string;
+    link?: string;
+  }>;
+}
+
 // 모든 섹션 타입을 유니온으로 정의
 export type ContentSection =
   | TextOnlySection
   | RadioGroupSection
   | TableSection
   | ListSection
-  | DataGridSection;
+  | DataGridSection
+  | CheckListGroupSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {
