@@ -32,7 +32,7 @@ type PageData = SummaryPageData | GeneralPageData;
 
 export default function MiddleStepPage() {
   const router = useRouter();
-  const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
+  const bookRef = useRef<any>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
   const [currentPage, setCurrentPage] = useState(1); 
   const [pages, setPages] = useState<PageData[]>([]);
@@ -122,6 +122,7 @@ export default function MiddleStepPage() {
         <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
       </div>
       <HTMLFlipBook
+        key={`book-${currentPage}`}
         ref={bookRef}
         className={styles.demoBook}
         width={550}
@@ -134,7 +135,7 @@ export default function MiddleStepPage() {
         maxShadowOpacity={0.5}
         showCover={true}
         mobileScrollSupport={true}
-        startPage={0}
+        startPage={currentPage === 1 ? 0 : (currentPage - 1) * 2}
         drawShadow={true}
         flippingTime={1000}
         usePortrait={false}
@@ -149,7 +150,7 @@ export default function MiddleStepPage() {
         useMouseEvents={true}
         swipeDistance={30}
         showPageCorners={false}
-        disableFlipByClick={true}
+        disableFlipByClick={false}
         onFlip={(e: { data: number }) => {
           const currentFlipPage = flipPages[e.data];
           if (currentFlipPage && typeof currentFlipPage === 'object' && 'key' in currentFlipPage) {
@@ -207,7 +208,6 @@ export default function MiddleStepPage() {
             const isActive = (j + 1) === currentPage;
             const baseClasses = 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out mx-[6px]';
             const dotClasses = `${baseClasses} ${isActive ? 'bg-brand-black' : 'bg-brand-light-gray'}`;
-            console.log(`Dot ${j}: currentPage=${currentPage}, j=${j}, isActive=${isActive}, classes="${dotClasses}"`);
             
             return (
               <button
@@ -218,8 +218,43 @@ export default function MiddleStepPage() {
                   isActive ? ' (current)' : ''
                 }`}
                 onClick={() => {
-                  if (bookRef.current?.pageFlip?.flip) {
-                    bookRef.current.pageFlip.flip(j * 2);
+                  const findFlipMethod = (obj: any, depth = 0): any => {
+                    if (depth > 3) return null; 
+                    if (!obj || typeof obj !== 'object') return null;
+                    
+                    const keys = Object.keys(obj);
+                    
+                    for (const key of keys) {
+                      const value = obj[key];
+                      
+                      if (typeof value === 'function' && (key.includes('flip') || key.includes('page') || key.includes('go'))) {
+                        return value;
+                      }
+                      
+                      if (typeof value === 'object' && value !== null) {
+                        const found = findFlipMethod(value, depth + 1);
+                        if (found) return found;
+                      }
+                    }
+                    return null;
+                  };
+                  
+                  const flipMethod = findFlipMethod(bookRef.current);
+                  
+                  if (flipMethod) {
+                    const flipBookPage = j === 0 ? 0 : j * 2;
+                    
+                    try {
+                      
+                      flipMethod(flipBookPage);
+                      
+                      setCurrentPage(j + 1);
+                      
+                    } catch (error) {
+                      console.error('Error calling flip method:', error);
+                    }
+                  } else {
+                    console.log('No flip method found in entire bookRef structure');
                   }
                 }}
               />
