@@ -19,6 +19,7 @@ interface TaxCertData {
   resUserIdentiyNo?: string;
   resCompanyNm?: string;
   resCompanyIdentityNo?: string;
+  resPaymentTaxStatusCd?: string;
   resPaymentTaxStatus?: string;
   resUsePurpose?: string;
   resReceiptNo?: string;
@@ -45,6 +46,11 @@ export default function TaxCertResultDisplay() {
   // 데이터 파싱 및 상태 관리
   const [data, setData] = useState<TaxCertData | null>(null);
   const [parsedError, setParsedError] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<{
+    basicInfo: boolean;
+  }>({
+    basicInfo: false,
+  });
 
   useEffect(() => {
     if (result && result.success && result.data) {
@@ -66,6 +72,13 @@ export default function TaxCertResultDisplay() {
       setParsedError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
     }
   }, [result]);
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   // 로딩 상태
   if (isLoading) {
@@ -115,15 +128,13 @@ export default function TaxCertResultDisplay() {
     );
   }
 
-
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h3 className={styles.title}>📄 납세증명서 발급 결과</h3>
       </div>
 
-      {/* 기본 정보 */}
+      {/* 주요 정보 (위쪽에 배치) */}
       <div className={styles.infoGrid}>
         <div className={styles.infoSection}>
           <div className={styles.infoField}>
@@ -146,72 +157,10 @@ export default function TaxCertResultDisplay() {
               {data.resUserIdentiyNo || '-'}
             </p>
           </div>
-        </div>
-
-        <div className={styles.infoSection}>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>상호(법인명)</label>
-            <p className={styles.infoValue}>{data.resCompanyNm || '-'}</p>
-          </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>사업자등록번호</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resCompanyIdentityNo || '-'}
-            </p>
-          </div>
           <div className={styles.infoField}>
             <label className={styles.infoLabel}>납세상태</label>
             <p className={styles.infoValueSecondary}>
               {data.resPaymentTaxStatus || '-'}
-            </p>
-          </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>증명서 사용목적</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resUsePurpose || '-'}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 발급 정보 */}
-      <div className={styles.infoGrid}>
-        <div className={styles.infoSection}>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>접수번호</label>
-            <p className={styles.infoValue}>{data.resReceiptNo || '-'}</p>
-          </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>발급기관</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resIssueOgzNm || '-'}
-            </p>
-          </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>발급일자</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resIssueDate || '-'}
-            </p>
-          </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>담당부서</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resDepartmentName || '-'}
-            </p>
-          </div>
-        </div>
-
-        <div className={styles.infoSection}>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>담당자</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resUserNm1 || '-'}
-            </p>
-          </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>연락처</label>
-            <p className={styles.infoValueSecondary}>
-              {data.resPhoneNo || '-'}
             </p>
           </div>
           <div className={styles.infoField}>
@@ -220,20 +169,16 @@ export default function TaxCertResultDisplay() {
               {data.resValidPeriod || '-'}
             </p>
           </div>
-          <div className={styles.infoField}>
-            <label className={styles.infoLabel}>유효기간 사유</label>
-            <p className={styles.infoValueSecondary}>{data.resReason || '-'}</p>
-          </div>
         </div>
       </div>
 
-      {/* 징수유예등 또는 체납처분유예의 명세 */}
-      {data.resRespiteList && data.resRespiteList.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h4 className={styles.tableTitle}>
-            징수유예등 또는 체납처분유예의 명세
-          </h4>
-          <div className='overflow-x-auto'>
+      {/* 징수유예등 또는 체납처분유예의 명세 (위쪽에 배치) */}
+      <div className={styles.tableContainer}>
+        <h4 className={styles.tableTitle}>
+          징수유예등 또는 체납처분유예의 명세
+        </h4>
+        <div className='overflow-x-auto'>
+          {data.resRespiteList && data.resRespiteList.length > 0 ? (
             <table className={styles.table}>
               <thead className={styles.tableHeader}>
                 <tr>
@@ -276,116 +221,225 @@ export default function TaxCertResultDisplay() {
                 )}
               </tbody>
             </table>
-          </div>
+          ) : (
+            <div className="text-center py-8 border border-brand-light-gray rounded-lg">
+              <p className="text-gray-500">징수유예등 또는 체납처분유예의 명세가 없습니다.</p>
+              <p className="text-xs text-gray-400 mt-2">
+                resRespiteList: {JSON.stringify(data.resRespiteList)}
+              </p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
-      {/* 체납 List */}
-      {data.resArrearsList && data.resArrearsList.length > 0 && (
-        <div className={styles.tableContainer}>
-          <h4 className={styles.tableTitle}>체납 내역</h4>
-          <div className='overflow-x-auto'>
-            <table className={styles.table}>
-              <thead className={styles.tableHeader}>
-                <tr>
-                  <th className={styles.tableHeaderCell}>성명</th>
-                  <th className={styles.tableHeaderCell}>과세년도</th>
-                  <th className={styles.tableHeaderCell}>세목</th>
-                  <th className={styles.tableHeaderCell}>납부기한</th>
-                  <th className={styles.tableHeaderCell}>지방세액</th>
-                  <th className={styles.tableHeaderCell}>가산금</th>
-                </tr>
-              </thead>
-              <tbody className={styles.tableBody}>
-                {data.resArrearsList.map(
-                  (item: TaxCertArrearsItem, index: number) => (
-                    <tr key={index} className={styles.tableRow}>
-                      <td className={styles.tableCell}>
-                        {item.resUserNm || '-'}
-                      </td>
-                      <td className={styles.tableCell}>
-                        {item.resTaxYear || '-'}
-                      </td>
-                      <td className={styles.tableCell}>
-                        {item.resTaxItemName || '-'}
-                      </td>
-                      <td className={styles.tableCell}>
-                        {item.resPaymentDeadline || '-'}
-                      </td>
-                      <td className={styles.tableCell}>
-                        {item.resLocalTaxAmt || '-'}
-                      </td>
-                      <td className={styles.tableCell}>
-                        {item.resAdditionalCharges || '-'}
-                      </td>
-                    </tr>
-                  )
+      {/* 상세 정보 아코디언 (기본정보 + 발급정보 + 원문데이터 + 체납내역 통합) */}
+      <div className={`${styles.tableContainer} border border-brand-light-gray rounded-lg`}>
+        <button
+          className={`w-full text-left p-4 bg-brand-light-gray hover:bg-brand-light-blue transition-colors flex justify-between items-center`}
+          onClick={() => toggleSection('basicInfo')}
+        >
+          <span className="text-lg font-semibold text-brand-black">📋 상세 정보</span>
+          <span className="text-brand-dark-gray">
+            {expandedSections.basicInfo ? '▼' : '▶'}
+          </span>
+        </button>
+        {expandedSections.basicInfo && (
+          <div className="p-4 border-t border-brand-light-gray space-y-6">
+            {/* 기본 정보 섹션 */}
+            <div>
+              <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+                📋 기본 정보
+              </h5>
+              <div className={styles.infoGrid}>
+                <div className={styles.infoSection}>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>상호(법인명)</label>
+                    <p className={styles.infoValue}>{data.resCompanyNm || '-'}</p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>사업자등록번호</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resCompanyIdentityNo || '-'}
+                    </p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>증명서 사용목적</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resUsePurpose || '-'}
+                    </p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>유효기간 사유</label>
+                    <p className={styles.infoValueSecondary}>{data.resReason || '-'}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 발급 정보 섹션 */}
+            <div>
+              <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+                🏢 발급 정보
+              </h5>
+              <div className={styles.infoGrid}>
+                <div className={styles.infoSection}>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>접수번호</label>
+                    <p className={styles.infoValue}>{data.resReceiptNo || '-'}</p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>발급기관</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resIssueOgzNm || '-'}
+                    </p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>발급일자</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resIssueDate || '-'}
+                    </p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>담당부서</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resDepartmentName || '-'}
+                    </p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>담당자</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resUserNm1 || '-'}
+                    </p>
+                  </div>
+                  <div className={styles.infoField}>
+                    <label className={styles.infoLabel}>연락처</label>
+                    <p className={styles.infoValueSecondary}>
+                      {data.resPhoneNo || '-'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 체납 내역 섹션 */}
+            <div>
+              <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+                💰 체납 내역
+              </h5>
+              <div className='overflow-x-auto'>
+                {data.resArrearsList && data.resArrearsList.length > 0 ? (
+                  <table className={styles.table}>
+                    <thead className={styles.tableHeader}>
+                      <tr>
+                        <th className={styles.tableHeaderCell}>성명</th>
+                        <th className={styles.tableHeaderCell}>과세년도</th>
+                        <th className={styles.tableHeaderCell}>세목</th>
+                        <th className={styles.tableHeaderCell}>납부기한</th>
+                        <th className={styles.tableHeaderCell}>지방세액</th>
+                        <th className={styles.tableHeaderCell}>가산금</th>
+                      </tr>
+                    </thead>
+                    <tbody className={styles.tableBody}>
+                      {data.resArrearsList.map(
+                        (item: TaxCertArrearsItem, index: number) => (
+                          <tr key={index} className={styles.tableRow}>
+                            <td className={styles.tableCell}>
+                              {item.resUserNm || '-'}
+                            </td>
+                            <td className={styles.tableCell}>
+                              {item.resTaxYear || '-'}
+                            </td>
+                            <td className={styles.tableCell}>
+                              {item.resTaxItemName || '-'}
+                            </td>
+                            <td className={styles.tableCell}>
+                              {item.resPaymentDeadline || '-'}
+                            </td>
+                            <td className={styles.tableCell}>
+                              {item.resLocalTaxAmt || '-'}
+                            </td>
+                            <td className={styles.tableCell}>
+                              {item.resAdditionalCharges || '-'}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="text-center py-8 border border-brand-light-gray rounded-lg">
+                    <p className="text-gray-500">체납 내역이 없습니다.</p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      resArrearsList: {JSON.stringify(data.resArrearsList)}
+                    </p>
+                  </div>
                 )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+              </div>
+            </div>
 
-      {/* 원문 데이터 */}
-      {(data.resOriGinalData || data.resOriGinalData1) && (
-        <div className={styles.originalDataContainer}>
-          <h4 className={styles.originalDataTitle}>원문 데이터</h4>
-          
-          {/* XML 원문 */}
-          {data.resOriGinalData && (
-            <div className={styles.originalDataField}>
-              <div className={styles.originalDataHeader}>
-                <label className={styles.originalDataLabel}>
-                  XML 원문 (디코딩됨)
-                </label>
-                <button
-                  className={styles.copyButton}
-                  onClick={() => {
-                    navigator.clipboard.writeText(data.resOriGinalData || '');
-                    // 복사 완료 피드백 (선택사항)
-                    alert('XML 원문이 클립보드에 복사되었습니다.');
-                  }}
-                  title="클립보드에 복사"
-                >
-                  📋 복사
-                </button>
+            {/* 원문 데이터 섹션 */}
+            {(data.resOriGinalData || data.resOriGinalData1) && (
+              <div>
+                <h5 className="text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2">
+                  📄 원문 데이터
+                </h5>
+                {/* XML 원문 */}
+                {data.resOriGinalData && (
+                  <div className={styles.originalDataField}>
+                    <div className={styles.originalDataHeader}>
+                      <label className={styles.originalDataLabel}>
+                        XML 원문 (디코딩됨)
+                      </label>
+                      <button
+                        className={styles.copyButton}
+                        onClick={() => {
+                          navigator.clipboard.writeText(data.resOriGinalData || '');
+                          // 복사 완료 피드백 (선택사항)
+                          alert('XML 원문이 클립보드에 복사되었습니다.');
+                        }}
+                        title="클립보드에 복사"
+                      >
+                        📋 복사
+                      </button>
+                    </div>
+                    <pre className={styles.originalDataContent}>
+                      {data.resOriGinalData}
+                    </pre>
+                  </div>
+                )}
+                
+                {/* PDF 원문 - PdfViewer 컴포넌트 사용 */}
+                {data.resOriGinalData1 && (
+                  <div className={styles.originalDataField}>
+                    <div className={styles.originalDataHeader}>
+                      <label className={styles.originalDataLabel}>
+                        PDF 원문 (디코딩됨)
+                      </label>
+                      <button
+                        className={styles.copyButton}
+                        onClick={() => {
+                          navigator.clipboard.writeText(data.resOriGinalData1 || '');
+                          // 복사 완료 피드백 (선택사항)
+                          alert('PDF 원문이 클립보드에 복사되었습니다.');
+                        }}
+                        title="클립보드에 복사"
+                      >
+                        📋 복사
+                      </button>
+                    </div>
+                    
+                    {/* PDF 뷰어 및 다운로드 */}
+                    <PdfViewer 
+                      base64={data.resOriGinalData1} 
+                      fileName="납세증명서.pdf"
+                    />
+                  </div>
+                )}
               </div>
-              <pre className={styles.originalDataContent}>
-                {data.resOriGinalData}
-              </pre>
-            </div>
-          )}
-          
-          {/* PDF 원문 - PdfViewer 컴포넌트 사용 */}
-          {data.resOriGinalData1 && (
-            <div className={styles.originalDataField}>
-              <div className={styles.originalDataHeader}>
-                <label className={styles.originalDataLabel}>
-                  PDF 원문 (디코딩됨)
-                </label>
-                <button
-                  className={styles.copyButton}
-                  onClick={() => {
-                    navigator.clipboard.writeText(data.resOriGinalData1 || '');
-                    // 복사 완료 피드백 (선택사항)
-                    alert('PDF 원문이 클립보드에 복사되었습니다.');
-                  }}
-                  title="클립보드에 복사"
-                >
-                  📋 복사
-                </button>
-              </div>
-              
-              {/* PDF 뷰어 및 다운로드 */}
-              <PdfViewer 
-                base64={data.resOriGinalData1} 
-                fileName="납세증명서.pdf"
-              />
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
