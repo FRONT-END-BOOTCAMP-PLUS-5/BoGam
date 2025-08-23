@@ -15,13 +15,13 @@ export const styles = {
   riskLevel: 'px-3 py-1 rounded-full text-xs font-medium',
   riskLevelLOW: 'bg-brand-green/20 text-brand-green',
   riskLevelMEDIUM: 'bg-brand-gold/20 text-brand-gold',
-  riskLevelHIGH: 'bg-brand-purple/20 text-brand-purple',
+  riskLevelHIGH: 'bg-brand-error/20 text-brand-error',
   riskLevelCRITICAL: 'bg-brand-error/20 text-brand-error',
 
   // 위험도 레벨 배지 (인라인 스타일용)
   riskLevelBadge: 'px-2 py-1 rounded text-xs font-medium',
   riskLevelBadgeCRITICAL: 'bg-brand-error/20 text-brand-error',
-  riskLevelBadgeHIGH: 'bg-brand-purple/20 text-brand-purple',
+  riskLevelBadgeHIGH: 'bg-brand-error/20 text-brand-error',
   riskLevelBadgeMEDIUM: 'bg-brand-gold/20 text-brand-gold',
   riskLevelBadgeLOW: 'bg-brand-green/20 text-brand-green',
   riskFactorValue: 'text-sm text-brand-black mb-2 break-all',
