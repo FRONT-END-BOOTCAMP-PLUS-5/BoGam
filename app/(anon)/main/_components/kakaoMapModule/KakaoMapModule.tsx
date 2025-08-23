@@ -2,13 +2,9 @@
 
 import React, { useMemo } from 'react';
 import { useKakaoMap } from '@/hooks/main/useKakaoMap';
-import {
-  Location,
-  KakaoMapOptions,
-} from '@/(anon)/main/_components/types/map.types';
+import { KakaoMapOptions } from '@/(anon)/main/_components/types/map.types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useLocationManager } from '@/hooks/main/useLocationManager';
 
 interface KakaoMapModuleProps {
@@ -20,9 +16,8 @@ interface KakaoMapModuleProps {
 const KakaoMapModule: React.FC<KakaoMapModuleProps> = (props) => {
   // Store에서 필요한 데이터만 구독
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
-  const { mapCenter, adjustBounds, searchLocationMarker } = useMapStore();
-  const { transactionData } = useTransactionDataStore();
-  const { gpsLocation, gpsLoading, currentLocationType } = useLocationManager();
+  const { mapCenter } = useMapStore();
+  const { gpsLocation, currentLocationType } = useLocationManager();
 
   // 지도 중심점 결정 (위치 타입에 따라 결정)
   const effectiveMapCenter = useMemo(() => {
@@ -61,16 +56,7 @@ const KakaoMapModule: React.FC<KakaoMapModuleProps> = (props) => {
     }
 
     return { lat: 37.5665, lng: 126.978 };
-  }, [
-    currentLocationType,
-    selectedAddress?.id,
-    selectedAddress?.x,
-    selectedAddress?.y,
-    mapCenter?.lat,
-    mapCenter?.lng,
-    gpsLocation?.lat,
-    gpsLocation?.lng,
-  ]);
+  }, [currentLocationType, selectedAddress, mapCenter, gpsLocation]);
 
   // KakaoMap 옵션
   const mapOptions: KakaoMapOptions = {

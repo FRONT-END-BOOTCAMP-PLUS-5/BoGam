@@ -3,10 +3,10 @@ import { CheckRealEstateCopyExistsUsecase } from '@be/applications/realEstateCop
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { getUserAddressId } from '@utils/userAddress';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const nickname = searchParams.get('nickname');
+    const body = await request.json();
+    const { nickname } = body;
 
     if (!nickname) {
       return NextResponse.json(

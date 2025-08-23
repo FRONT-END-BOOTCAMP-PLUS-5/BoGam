@@ -8,43 +8,9 @@ import TextOnly from './contents/TextOnly';
 import Table from './contents/Table';
 import List from './contents/List';
 import RadioGroup from './contents/RadioGroup';
+import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
-
-interface ContentSection {
-  title?: string;
-  subtitles?: string[];
-  contents?: string[];
-  contentSections?: Array<{
-    subtitle: string;
-    contents: string[];
-  }>;
-  summary?: string;
-  image?: {
-    src: string;
-    alt: string;
-    width?: number;
-    height?: number;
-  };
-  button?: {
-    text: string;
-    onClick?: string;
-    variant?: 'primary' | 'secondary' | 'ghost';
-    href?: string;
-    fullWidth?: boolean;
-  };
-  buttons?: Array<{
-    text: string;
-    onClick?: string;
-    variant?: 'primary' | 'secondary' | 'ghost';
-    href?: string;
-    fullWidth?: boolean;
-  }>;
-}
-
-interface StepContentData {
-  dataType: string;
-  data: ContentSection[][];
-}
+import { LegacyContentSection, StepContentData } from './contents/types';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -69,7 +35,7 @@ export default function ModalContent() {
         );
         setStepContentData(contentModule.default);
         setDataType(contentModule.default.dataType || 'default');
-      } catch (error) {
+      } catch {
         console.log(
           `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
         );
@@ -81,8 +47,7 @@ export default function ModalContent() {
   }, [stepNumber, detail]);
 
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
-  const renderSwiperContent = (pageData: ContentSection[]) => {
-  
+  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
@@ -91,9 +56,20 @@ export default function ModalContent() {
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
-        return <DataGrid data={pageData as unknown as Record<string, string>} />;
+        return (
+          <DataGrid data={pageData as unknown as Record<string, string>} />
+        );
       case 'RadioGroup':
-        return <RadioGroup data={pageData}/>;
+        return <RadioGroup data={pageData} />;
+      case 'CombinedContent':
+        // CombinedContent의 경우 전체 stepContentData.sections를 전달
+        return stepContentData && stepContentData.sections ? (
+          <CombinedContent
+            sections={stepContentData.sections}
+            spacing='lg'
+            showDividers={true}
+          />
+        ) : null;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
@@ -129,7 +105,7 @@ export default function ModalContent() {
           }}
         >
           {stepContentData.data.map(
-            (pageData: ContentSection[], pageIndex: number) => (
+            (pageData: LegacyContentSection[], pageIndex: number) => (
               <SwiperSlide key={pageIndex}>
                 <div className={styles.mainContent}>
                   {renderSwiperContent(pageData)}

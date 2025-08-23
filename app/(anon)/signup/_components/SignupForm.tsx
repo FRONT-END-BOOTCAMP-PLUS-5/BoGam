@@ -100,7 +100,7 @@ export default function SignupForm() {
         setNicknameChecked(false);
         setNicknameCheckMessage('이미 사용 중인 닉네임입니다.');
       }
-    } catch (err) {
+    } catch {
       setNicknameChecked(false);
       setNicknameCheckMessage('중복 확인 중 오류 발생');
     } finally {

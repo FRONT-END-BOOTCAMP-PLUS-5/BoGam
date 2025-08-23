@@ -8,7 +8,7 @@ import { parseAddressString } from '@utils/main/addressUtils';
 import { styles } from '@/(anon)/main/_components/tabContainer/TransactionSearchTab.styles';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
-import { DanjiInfo } from '@libs/api_front/danjiSerialNumber.api';
+
 
 // 실제 API 응답 구조에 맞춘 타입
 interface ActualDanjiInfo {
@@ -33,7 +33,7 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
   });
   const [complexName, setComplexName] = useState('');
   const [selectedType, setSelectedType] = useState('0'); // 0: 아파트, 1: 연립/다세대, 2: 오피스텔
-  const [searchGbn, setSearchGbn] = useState('1'); // 0: 지번주소, 1: 도로명주소
+  // const [searchGbn, setSearchGbn] = useState('1'); // 0: 지번주소, 1: 도로명주소 - 사용하지 않음
   const [showDanjiModal, setShowDanjiModal] = useState(false);
 
   // 새로운 Hook들 사용
@@ -51,6 +51,7 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
         selectedAddress.completeAddress || selectedAddress.roadAddress || '';
       const parsed = parseAddressString(address);
       setParsedAddress(parsed);
+      console.log('주소 파싱 결과:', parsed);
     }
   }, [selectedAddress]);
 
