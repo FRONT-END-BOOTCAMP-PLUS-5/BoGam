@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { styles } from './CheckListGroup.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
@@ -38,9 +37,8 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
   // 초기화 여부를 추적하는 ref
   const hasInitialized = useRef(false);
   
-  const queryClient = useQueryClient();
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
-  const { createOrUpdateStepResult } = useStepResultMutations();
+  const { upsertStepResult, removeQueries } = useStepResultMutations();
 
   // URL에서 현재 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
@@ -86,7 +84,8 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
       // 로컬 상태도 즉시 업데이트
       setLocalStepDetails(uncheckedDetails);
       
-      createOrUpdateStepResult.mutate({
+      // DB 저장 (upsert 사용)
+      upsertStepResult.mutate({
         userAddressId: selectedAddress.id,
         stepNumber: stepNumber,
         detail: detail,
@@ -94,21 +93,20 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
       });
       
       // 쿼리 완전 중단
-      const queryKey = ['stepResults', selectedAddress.nickname, String(stepNumber), String(detail)];
-      queryClient.removeQueries({ queryKey });
+      removeQueries(selectedAddress.nickname, stepNumber, detail);
       
       hasInitialized.current = true;
     }
-  }, [isError, data, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, queryClient, createOrUpdateStepResult]);
+  }, [isError, data, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, upsertStepResult, removeQueries]);
 
   // Step Result 업데이트 핸들러 - 즉시 로컬 상태 업데이트 후 백그라운드에서 DB 저장
   const handleStepResultUpdate = (newDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>) => {
     // 즉시 로컬 상태 업데이트 (UI 반응성 향상)
     setLocalStepDetails(newDetails);
     
-    // 백그라운드에서 DB 저장
+    // 백그라운드에서 DB 저장 - upsert 직접 사용
     if (selectedAddress?.id) {
-      createOrUpdateStepResult.mutate({
+      upsertStepResult.mutate({
         userAddressId: selectedAddress.id,
         stepNumber: stepNumber,
         detail: detail,

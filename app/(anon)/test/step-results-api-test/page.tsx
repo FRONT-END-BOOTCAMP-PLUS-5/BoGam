@@ -59,20 +59,27 @@ const StepResultsApiTest = () => {
     setJsonInput(JSON.stringify(updatedData, null, 2));
   }, [defaultData, selectedAddress?.id]);
 
-  const handleCreateOrUpdateStepResult = async () => {
+  const handleUpsertStepResult = async () => {
+    if (!jsonInput.trim()) {
+      setError('JSON을 입력해주세요.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setResult('');
 
-    const parsedData = parseJsonInput();
-    if (!parsedData) {
-      setError('JSON 형식이 올바르지 않습니다. 필수 필드를 확인해주세요.');
+    let parsedData;
+    try {
+      parsedData = JSON.parse(jsonInput);
+    } catch (err) {
+      setError('잘못된 JSON 형식입니다.');
       setLoading(false);
       return;
     }
 
     try {
-      const response = await stepResultsApi.createOrUpdateStepResult(parsedData);
+      const response = await stepResultsApi.upsertStepResult(parsedData);
       
       if (response.success) {
         setResult(JSON.stringify(response.data, null, 2));
@@ -126,7 +133,7 @@ const StepResultsApiTest = () => {
       {/* API 호출 버튼 */}
       <div className="flex gap-4">
         <button
-          onClick={handleCreateOrUpdateStepResult}
+          onClick={handleUpsertStepResult}
           disabled={loading}
           className="px-4 py-2 bg-brand text-white rounded hover:bg-brand-90 disabled:opacity-50"
         >
