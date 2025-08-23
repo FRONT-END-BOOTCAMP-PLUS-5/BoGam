@@ -51,8 +51,8 @@ const RadioButtonGroup = ({
     <div className={clsx(styles.group, className)}>
       {showYesNoLabels && (
         <div className={styles.labelContainer}>
-          <span className={styles.label}>아니오</span>
-          <span className={styles.label}>예</span>
+          <span className={styles.label}>{options[0]?.label}</span>
+          <span className={styles.label}>{options[1]?.label}</span>
         </div>
       )}
       
