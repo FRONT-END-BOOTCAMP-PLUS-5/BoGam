@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
@@ -76,7 +75,6 @@ export default function MainPage() {
 
         <div className={styles.buttonArea}></div>
       </div>
-      <AuthLanding />
     </div>
   );
 }

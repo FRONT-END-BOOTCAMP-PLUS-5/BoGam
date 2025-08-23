@@ -1,6 +1,6 @@
 export const styles = {
   // 상단 섹션 컨테이너
-  topSection: 'bg-brand-white rounded-lg shadow-lg p-6 mb-3',
+  topSection: 'bg-brand-white p-6 mb-3',
 
   // 사용자 정보 영역
   userInfo: 'flex items-centermb-4',

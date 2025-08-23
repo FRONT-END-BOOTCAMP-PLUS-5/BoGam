@@ -1,14 +1,14 @@
 import React from 'react';
-import { useSession } from 'next-auth/react';
 import { styles } from './TopSection.styles';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
+import { useUserStore } from '@libs/stores/userStore';
 import { UserRound } from 'lucide-react';
 
-export const TopSection: React.FC = () => {
-  const { data: session } = useSession();
+export const TopSection = () => {
   const { userAddresses, handleAddressChangeWithTransaction } =
     useMainPageModule();
+  const { nickname } = useUserStore();
 
   // 주소 선택 핸들러
   const handleAddressSelect = (id: number) => {
@@ -32,7 +32,7 @@ export const TopSection: React.FC = () => {
       <div className={styles.userInfo}>
         <UserRound className={styles.userIcon} />
         <span className={styles.userName}>
-          {session?.user?.name || '사용자'} 님
+          {nickname || '사용자'} 님
         </span>
       </div>
 
