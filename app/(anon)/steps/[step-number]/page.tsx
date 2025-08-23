@@ -34,7 +34,7 @@ export default function MiddleStepPage() {
   const router = useRouter();
   const bookRef = useRef<{ pageFlip?: { flip: (page: number) => void } }>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1); 
   const [pages, setPages] = useState<PageData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -151,14 +151,48 @@ export default function MiddleStepPage() {
         showPageCorners={false}
         disableFlipByClick={true}
         onFlip={(e: { data: number }) => {
-          setCurrentPage(Math.floor((e.data + 1) / 2));
+          const currentFlipPage = flipPages[e.data];
+          if (currentFlipPage && typeof currentFlipPage === 'object' && 'key' in currentFlipPage) {
+            const key = currentFlipPage.key as string;
+            console.log('Current flip page key:', key);
+            
+            if (key && (key.startsWith('summary-') || key.startsWith('general-'))) {
+              let pageIndex = 1;
+              if (e.data === 0) {
+                pageIndex = 1; 
+              } else if (e.data === 2) {
+                pageIndex = 2; 
+              } else if (e.data === 4) {
+                pageIndex = 3; 
+              } else if (e.data === 6) {
+                pageIndex = 4; 
+              } else {
+                pageIndex = Math.floor(e.data/2) + 1;
+              }
+              setCurrentPage(pageIndex);
+            } else {
+              let nextContentPage = 1;
+              if (e.data === 1) {
+                nextContentPage = 2; 
+              } else if (e.data === 3) {
+                nextContentPage = 3; 
+              } else if (e.data === 5) {
+                nextContentPage = 4;
+              } else {
+                nextContentPage=(e.data+3)/2;
+              }
+              setCurrentPage(nextContentPage);
+            }
+          } else {
+            console.log('Invalid page data');
+          }
         }}
       >
         {flipPages}
       </HTMLFlipBook>
       <div className={styles.indicatorWrapper}>
         <div className={styles.indicatorLeft}>
-          {currentPage === 0 && Number(stepNumber) > 1 && (
+          {currentPage === 1 && Number(stepNumber) > 1 && (
             <button
               className={styles.indicatorArrowBtn}
               aria-label='이전 단계로 이동'
@@ -169,25 +203,31 @@ export default function MiddleStepPage() {
           )}
         </div>
         <div className={styles.indicatorDots}>
-          {Array.from({ length: totalPages }).map((_, j) => (
-            <button
-              key={j}
-              className={`${styles.dot} ${
-                j === currentPage ? styles.dotActive : ''
-              } ${styles.indicatorDotBtn}`}
-              aria-label={`slide ${j + 1}${
-                j === currentPage ? ' (current)' : ''
-              }`}
-              onClick={() => {
-                if (bookRef.current?.pageFlip?.flip) {
-                  bookRef.current.pageFlip.flip(j * 2);
-                }
-              }}
-            />
-          ))}
+          {Array.from({ length: totalPages }).map((_, j) => {
+            const isActive = (j + 1) === currentPage;
+            const baseClasses = 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out mx-[6px]';
+            const dotClasses = `${baseClasses} ${isActive ? 'bg-brand-black' : 'bg-brand-light-gray'}`;
+            console.log(`Dot ${j}: currentPage=${currentPage}, j=${j}, isActive=${isActive}, classes="${dotClasses}"`);
+            
+            return (
+              <button
+                key={j}
+                className={dotClasses}
+
+                aria-label={`slide ${j + 1}${
+                  isActive ? ' (current)' : ''
+                }`}
+                onClick={() => {
+                  if (bookRef.current?.pageFlip?.flip) {
+                    bookRef.current.pageFlip.flip(j * 2);
+                  }
+                }}
+              />
+            );
+          })}
         </div>
         <div className={styles.indicatorRight}>
-          {currentPage === totalPages - 1 && Number(stepNumber) < 7 && (
+          {currentPage === totalPages && Number(stepNumber) < 7 && (
             <button
               className={styles.indicatorArrowBtn}
               aria-label='다음 단계로 이동'
