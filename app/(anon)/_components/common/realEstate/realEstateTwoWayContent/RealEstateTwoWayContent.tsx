@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AddressListItem } from './types';
+import { AddressListItem } from '@/(anon)/_components/common/realEstate/types';
 import { styles } from './RealEstateTwoWayContent.styles';
 
 interface RealEstateTwoWayContentProps {
