@@ -42,10 +42,7 @@ export default function TaxCertForm({
         />
 
         {/* 공통 필드 */}
-        <CommonFields
-          formData={formData}
-          onInputChange={onInputChange}
-        />
+        <CommonFields formData={formData} onInputChange={onInputChange} />
 
         <div className={styles.buttonContainer}>
           <Button

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { styles } from './PdfViewer.styles';
+import { styles } from '@/(anon)/_components/common/pdfViewer/PdfViewer.styles';
 
 interface RealEstatePdfViewerProps {
   base64: string;
@@ -40,18 +40,20 @@ export function PdfViewer({
         setError('PDF 데이터를 처리하는 중 오류가 발생했습니다.');
         setIsLoading(false);
       }
-
-      // cleanup
-      return () => {
-        if (pdfUrl) {
-          URL.revokeObjectURL(pdfUrl);
-        }
-      };
     } else {
       setIsLoading(false);
       setError('PDF 데이터가 없습니다.');
     }
-  }, [base64, pdfUrl]);
+  }, [base64]);
+
+  // cleanup effect
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
 
   if (isLoading) {
     return (
