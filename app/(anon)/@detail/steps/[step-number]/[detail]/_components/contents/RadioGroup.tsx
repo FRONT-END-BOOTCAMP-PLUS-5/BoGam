@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import styles from './RadioGroup.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
@@ -340,9 +341,14 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
                 )}
                 {section.link && (
                   <div className={styles.linkContainer}>
-                    <a href={section.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
+                    <Link 
+                      href={section.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={styles.link}
+                    >
                       관련 링크 보기 →
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
