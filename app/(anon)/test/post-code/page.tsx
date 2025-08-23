@@ -21,17 +21,6 @@ interface DaumPostcodeSize {
   width: number;
 }
 
-interface DaumPostcode {
-  new (options: {
-    oncomplete: (data: DaumPostcodeData) => void;
-    onresize: (size: DaumPostcodeSize) => void;
-    width: string;
-    height: string;
-  }): {
-    embed: (element: HTMLDivElement | null) => void;
-  };
-}
-
 export default function PostCodePage() {
   const [postcode, setPostcode] = useState('');
   const [address, setAddress] = useState('');
