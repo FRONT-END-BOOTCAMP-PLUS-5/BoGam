@@ -32,7 +32,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     errorMessage?: string;
     links?: Array<{ title: string; url: string }>;
     data?: ContentSection[][];
-    sections?: any[]; // CombinedContent 타입에 대한 추가 필드
+    sections?: Record<string, unknown>[]; // CombinedContent 타입에 대한 추가 필드
     dataType?: string; // dataType 속성 추가
   } | null>(null);
   
@@ -68,7 +68,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
         // CombinedContent 타입인 경우 RadioGroup 섹션을 찾아서 처리
         if (contentModule.default.dataType === 'CombinedContent') {
           const radioGroupSection = contentModule.default.sections.find(
-            (section: any) => section.type === 'RadioGroup'
+            (section: Record<string, unknown>) => section.type === 'RadioGroup'
           );
           
           if (radioGroupSection) {
@@ -240,18 +240,19 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     if (contentData?.dataType === 'CombinedContent' && contentData.sections) {
       // CombinedContent 타입인 경우 sections에서 RadioGroup 섹션의 실제 질문들 추출
       const radioGroupSection = contentData.sections.find(section => section.type === 'RadioGroup');
-      if (radioGroupSection && radioGroupSection.data) {
-        allQuestionTitles = radioGroupSection.data
-          .filter((item: any) => item.title)
-          .map((item: any) => item.title);
+      if (radioGroupSection && Array.isArray(radioGroupSection.data)) {
+        allQuestionTitles = (radioGroupSection.data as Record<string, unknown>[])
+          .filter((item: Record<string, unknown>) => item.title)
+          .map((item: Record<string, unknown>) => item.title as string);
         totalQuestions = allQuestionTitles.length;
       }
     } else {
       // 기존 방식: data 배열에서 질문 제목 추출
-      totalQuestions = dataSource.flat().filter((section: ContentSection) => section.title).length;
-      allQuestionTitles = dataSource.flat()
+      const flatData = (dataSource as ContentSection[][]).flat();
+      totalQuestions = flatData.filter((section: ContentSection) => section.title).length;
+      allQuestionTitles = flatData
         .filter((section: ContentSection) => section.title)
-        .map(section => section.title);
+        .map(section => section.title as string);
     }
     
     console.log('🔍 전체 질문 수:', totalQuestions);

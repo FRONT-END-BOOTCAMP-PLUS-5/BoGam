@@ -194,6 +194,9 @@ export default function ModalContent() {
                     data={section.data as unknown as { left: string; right?: string }[]}
                   />
                 )}
+                {section.type === 'Checklist' && (
+                  <RadioGroup data={section.data} />
+                )}
               </div>
             </SwiperSlide>
           ))}

@@ -40,9 +40,12 @@ const CombinedContent = ({
       case 'DataGrid':
         content = <DataGrid data={section.data} />;
         break;
+      case 'Checklist':
+        content = <RadioGroup data={section.data} />;
+        break;
       default:
         console.warn(
-          `Unknown section type: ${(section as Record<string, unknown>).type}`
+          `Unknown section type: ${(section as unknown as Record<string, unknown>).type}`
         );
         return null;
     }
