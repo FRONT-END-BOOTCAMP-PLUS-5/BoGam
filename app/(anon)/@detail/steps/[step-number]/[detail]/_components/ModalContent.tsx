@@ -10,10 +10,8 @@ import List from './contents/List';
 import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import { 
-  LegacyContentSection, 
-  StepContentData 
-} from './contents/types';
+import { LegacyContentSection, StepContentData } from './contents/types';
+import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -38,7 +36,7 @@ export default function ModalContent() {
         );
         setStepContentData(contentModule.default);
         setDataType(contentModule.default.dataType || 'default');
-      } catch (error) {
+      } catch {
         console.log(
           `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
         );
@@ -49,28 +47,23 @@ export default function ModalContent() {
     loadContentData();
   }, [stepNumber, detail]);
 
-  // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
-  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
-  
-    switch (dataType) {
-      case 'TextOnly':
-        return <TextOnly data={pageData} />;
-      case 'Table':
-        return <Table data={pageData as unknown as Record<string, string>} />;
-      case 'List':
-        return <List data={pageData as unknown as Record<string, string>} />;
-      case 'DataGrid':
-        return <DataGrid data={pageData as unknown as Record<string, string>} />;
-      case 'RadioGroup':
-        return <RadioGroup data={pageData}/>;
-      case 'CombinedContent':
-        // CombinedContent는 상위에서 별도 처리되므로 여기서는 null 반환
-        return null;
-      default:
-        console.log('renderSwiperContent - default case, dataType:', dataType);
-        return null;
-    }
-  };
+  // 등기부등본 관련 특정 라우팅 조합들
+  const realEstateRoutes = [
+    { step: '1', detail: '1' },
+    { step: '2', detail: '2' },
+    { step: '6', detail: '3' },
+    { step: '5', detail: '2' },
+    { step: '4', detail: '1' },
+  ];
+
+  const isRealEstateRoute = realEstateRoutes.some(
+    (route) => route.step === stepNumber && route.detail === detail
+  );
+
+  // 등기부등본 관련 라우팅인 경우 해당 컴포넌트 렌더링
+  if (isRealEstateRoute) {
+    return <RealEstateContainer />;
+  }
 
   // CombinedContent 타입인 경우 각 섹션을 별도 페이지로 처리
   if (stepContentData && stepContentData.dataType === 'CombinedContent' && stepContentData.sections) {
@@ -123,105 +116,108 @@ export default function ModalContent() {
                   <RadioGroup data={section.data} />
                 )}
                 {section.type === 'Table' && (
-                  <Table data={section.data} />
+                  <Table
+                    data={section.data as unknown as { left: string; right?: string }[]}
+                  />
                 )}
                 {section.type === 'List' && (
-                  <List data={section.data} />
+                  <List
+                    data={section.data as unknown as { left: string; right?: string }[]}
+                  />
                 )}
                 {section.type === 'DataGrid' && (
-                  <DataGrid data={section.data} />
+                  <DataGrid
+                    data={section.data as unknown as { left: string; right?: string }[]}
+                  />
                 )}
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
 
-        {/* 페이지 인디케이터 */}
-        {stepContentData.sections.length > 1 && (
-          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.sections.map((_: unknown, index: number) => (
-              <button
-                key={index}
-                className={`${styles.pageDot} ${
-                  index === currentPage
-                    ? styles.pageDotActive
-                    : styles.pageDotInactive
-                }`}
-                aria-label={`페이지 ${index + 1}${
-                  index === currentPage ? ' (현재)' : ''
-                }`}
-                onClick={() => handlePageChange(index)}
-              />
-            ))}
-          </div>
-        )}
+        {/* 페이지 네비게이션 */}
+        <div className={styles.pageNavigation}>
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 0}
+            className={styles.navButton}
+          >
+            이전
+          </button>
+          <span className={styles.pageIndicator}>
+            {currentPage + 1} / {stepContentData.sections.length}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === stepContentData.sections.length - 1}
+            className={styles.navButton}
+          >
+            다음
+          </button>
+        </div>
       </>
     );
   }
 
-  // JSON 데이터가 있는 경우 JSON의 data 배열을 페이지로 사용
-  if (stepContentData && stepContentData.dataType && stepContentData.data) {
-    const handlePageChange = (page: number) => {
-      setCurrentPage(page);
-      if (swiperRef.current) {
-        swiperRef.current.slideTo(page);
-      }
+  // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
+  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
+    // LegacyContentSection[]를 { left: string; right?: string }[]로 변환하는 함수
+    const convertToTableData = (
+      data: LegacyContentSection[]
+    ): Array<{ left: string; right?: string }> => {
+      return data.map((item, index) => ({
+        left: item.title || `항목 ${index + 1}`,
+        right: item.summary || item.contents?.join(', ') || undefined,
+      }));
     };
 
+    switch (dataType) {
+      case 'TextOnly':
+        return <TextOnly data={pageData} />;
+      case 'Table':
+        return (
+          <Table
+            data={pageData as unknown as { left: string; right?: string }[]}
+          />
+        );
+      case 'List':
+        return (
+          <List
+            data={pageData as unknown as { left: string; right?: string }[]}
+          />
+        );
+      case 'DataGrid':
+        return (
+          <DataGrid
+            data={pageData as unknown as { left: string; right?: string }[]}
+          />
+        );
+      case 'RadioGroup':
+        return <RadioGroup data={pageData} />;
+      case 'CombinedContent':
+        // CombinedContent의 경우 전체 stepContentData.sections를 전달
+        return stepContentData && stepContentData.sections ? (
+          <CombinedContent
+            sections={stepContentData.sections}
+            spacing='lg'
+            showDividers={true}
+          />
+        ) : null;
+      default:
+        console.log('renderSwiperContent - default case, dataType:', dataType);
+        return null;
+    }
+  };
+
+  // 기본 렌더링 (기존 JSON 데이터 기반)
+  if (!stepContentData || !stepContentData.data) {
     return (
-      <>
-        {/* 공통 헤더 렌더링 */}
-        <div className={styles.stepHeader}>
-          <h2 className={styles.stepTitle}>
-            {`${stepNumber}-${detail}단계 상세 보기`}
-          </h2>
-        </div>
-
-        {/* Swiper로 JSON의 data 배열 항목 하나당 한 페이지 */}
-        <Swiper
-          spaceBetween={50}
-          slidesPerView={1}
-          className={styles.swiperContainer}
-          onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
-          onSwiper={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-        >
-          {stepContentData.data.map(
-            (pageData: LegacyContentSection[], pageIndex: number) => (
-              <SwiperSlide key={pageIndex}>
-                <div className={styles.mainContent}>
-                  {renderSwiperContent(pageData)}
-                </div>
-              </SwiperSlide>
-            )
-          )}
-        </Swiper>
-
-        {/* 페이지 인디케이터 */}
-        {stepContentData.data.length > 1 && (
-          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.data.map((_: unknown, index: number) => (
-              <button
-                key={index}
-                className={`${styles.pageDot} ${
-                  index === currentPage
-                    ? styles.pageDotActive
-                    : styles.pageDotInactive
-                }`}
-                aria-label={`페이지 ${index + 1}${
-                  index === currentPage ? ' (현재)' : ''
-                }`}
-                onClick={() => handlePageChange(index)}
-              />
-            ))}
-          </div>
-        )}
-      </>
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>로딩 중...</div>
+      </div>
     );
   }
 
-  // JSON 데이터가 없는 경우 기본 DataGrid 표시
   return (
     <>
       {/* 공통 헤더 렌더링 */}
@@ -231,9 +227,54 @@ export default function ModalContent() {
         </h2>
       </div>
 
-      {/* 기본 DataGrid 표시 */}
-      <div className={styles.mainContent}>
-        <DataGrid data={{}} />
+      {/* Swiper로 각 페이지를 별도 슬라이드로 렌더링 */}
+      <Swiper
+        spaceBetween={50}
+        slidesPerView={1}
+        className={styles.swiperContainer}
+        onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+        }}
+      >
+        {stepContentData.data.map((pageData, pageIndex) => (
+          <SwiperSlide key={pageIndex}>
+            <div className={styles.mainContent}>
+              {renderSwiperContent(pageData)}
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+
+      {/* 페이지 네비게이션 */}
+      <div className={styles.pageNavigation}>
+        <button
+          onClick={() => {
+            setCurrentPage(currentPage - 1);
+            if (swiperRef.current) {
+              swiperRef.current.slideTo(currentPage - 1);
+            }
+          }}
+          disabled={currentPage === 0}
+          className={styles.navButton}
+        >
+          이전
+        </button>
+        <span className={styles.pageIndicator}>
+          {currentPage + 1} / {stepContentData.data.length}
+        </span>
+        <button
+          onClick={() => {
+            setCurrentPage(currentPage + 1);
+            if (swiperRef.current) {
+              swiperRef.current.slideTo(currentPage + 1);
+            }
+          }}
+          disabled={currentPage === stepContentData.data.length - 1}
+          className={styles.navButton}
+        >
+          다음
+        </button>
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 export const styles = {
   // 컨테이너
-  container: 'flex gap-1.5 w-full',
+  container: 'flex gap-1.5 w-full justify-center',
 
   // 상태 아이템 - 고정 크기로 균등 배치
   item: 'flex items-center justify-evenly px-3 py-2 rounded-2xl flex-1 min-w-[6rem] max-w-[6rem]',

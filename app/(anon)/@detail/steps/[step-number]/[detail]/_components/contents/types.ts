@@ -66,21 +66,21 @@ export interface TableSection extends BaseContentSection {
 // List 전용 인터페이스
 export interface ListSection extends BaseContentSection {
   type: 'List';
-  data: Record<string, string>;
+  data: Array<{ left: string; right?: string }>;
 }
 
 // DataGrid 전용 인터페이스
 export interface DataGridSection extends BaseContentSection {
   type: 'DataGrid';
-  data: Record<string, string>;
+  data: Array<{ left: string; right?: string }>;
 }
 
 // 모든 섹션 타입을 유니온으로 정의
-export type ContentSection = 
-  | TextOnlySection 
-  | RadioGroupSection 
-  | TableSection 
-  | ListSection 
+export type ContentSection =
+  | TextOnlySection
+  | RadioGroupSection
+  | TableSection
+  | ListSection
   | DataGridSection;
 
 // CombinedContent용 인터페이스

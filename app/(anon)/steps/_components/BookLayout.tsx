@@ -46,8 +46,6 @@ export default function BookLayout({ onAllBooksLoaded, onLoadingProgress }: Book
   // 고정된 크기 설정
   return (
     <div className={styles.container}>
-
-
       {/* 계약전 섹션 */}
       <div className={styles.sectionLabel}>계약전</div>
       

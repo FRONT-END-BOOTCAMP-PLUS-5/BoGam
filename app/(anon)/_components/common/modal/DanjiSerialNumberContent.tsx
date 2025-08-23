@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, Building } from 'lucide-react';
+
 import { styles } from './DanjiSerialNumberContent.styles';
 import { useDanjiSerialNumber, ActualDanjiInfo } from './useDanjiSerialNumber';
 

@@ -1,7 +1,8 @@
 'use client';
 
-import { GeneralPageStyles } from './GeneralPage.styles';
+import { styles } from './GeneralPage.styles';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface pageType {
   title: string;
@@ -9,6 +10,7 @@ interface pageType {
   content: string;
   pageIdx: number;
   stepNumber: string;
+  currentPage: number;
 }
 
 export default function GeneralPage({
@@ -17,54 +19,49 @@ export default function GeneralPage({
   content,
   pageIdx,
   stepNumber,
+  currentPage,
 }: pageType) {
   const router = useRouter();
+  const [, setStepNum] = useState<string>('');
 
   const handleClick = async () => {
-    try {
-      // URL에서 step-number와 detail 파라미터 추출
-      const urlParams = new URLSearchParams(window.location.search);
-      const step = urlParams.get('step-number') || stepNumber;
-      const detail = urlParams.get('detail') || pageIdx.toString();
+    setStepNum(stepNumber);
 
-      // 프로그래밍 라우팅 플래그와 타임스탬프 설정
-      sessionStorage.setItem('programmatic-navigation', 'true');
-      sessionStorage.setItem('navigation-timestamp', Date.now().toString());
+    const newUrl = `/steps/${stepNumber}/${pageIdx}`;
 
-      // 페이지 이동 없이 URL만 변경 (슬롯만 표시)
-      const newUrl = `/steps/${step}/${detail}`;
-      window.history.pushState({}, '', newUrl);
+    // 현재 보고 있는 페이지 정보를 sessionStorage에 저장 (뒤로가기 시 복원용)
+    sessionStorage.setItem('saved-page', currentPage.toString());
+    sessionStorage.setItem('programmatic-navigation', 'true');
+    sessionStorage.setItem('navigation-timestamp', Date.now().toString());
+    window.dispatchEvent(new PopStateEvent('popstate'));
 
-      // Next.js router의 pathname 업데이트를 위해 강제로 리렌더링 트리거
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    } catch (error) {
-      console.error('파라미터 추출 중 오류:', error);
-      // 오류 발생 시 기본값으로 이동
-      router.push(`/steps/${stepNumber}/${pageIdx}`);
-    }
+    router.push(newUrl);
   };
 
   return (
-    <div className={GeneralPageStyles.generalWhitePage}>
-      <div>
-        <div className={GeneralPageStyles.smallFontDiv}>
-          <h3 className={GeneralPageStyles.smallFont}> {title} </h3>
-        </div>
-        <div className={GeneralPageStyles.borderBottomDiv}>
-          <h5 className={GeneralPageStyles.danger}> {category} </h5>
-          <p
-            className={GeneralPageStyles.content}
-            style={{ whiteSpace: 'pre-line' }}
-          >
-            {content}
-          </p>
-        </div>
-        <div className={GeneralPageStyles.goInsideDiv}>
-          <button className={GeneralPageStyles.goInside} onClick={handleClick}>
-            {' '}
-            바로가기{' '}
-          </button>
-        </div>
+    <div className={styles.contents}>
+      {/* 상단 */}
+      <div className={styles.topSection}>
+        <h3 className={styles.smallFont}> {title} </h3>
+      </div>
+      
+      {/* 중간 */}
+      <div className={styles.middleSection}>
+        <h5 className={styles.danger}> {category} </h5>
+        <p
+          className={styles.content}
+          style={{ whiteSpace: 'pre-line' }}
+        >
+          {content}
+        </p>
+      </div>
+      
+      {/* 하단 */}
+      <div className={styles.bottomSection}>
+        <button className={styles.goInside} onClick={handleClick}>
+          {' '}
+          바로가기{' '}
+        </button>
       </div>
     </div>
   );

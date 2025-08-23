@@ -2,7 +2,8 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    sans-serif;
 }
 
 .title {
@@ -258,7 +259,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .modalContent {
@@ -348,21 +349,21 @@
   .container {
     padding: 15px;
   }
-  
+
   .title {
     font-size: 1.5rem;
   }
-  
+
   .copyHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .buttonGroup {
     flex-direction: column;
   }
-  
+
   .modalContent {
     width: 95%;
     margin: 20px;
