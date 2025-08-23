@@ -212,11 +212,12 @@ export default function MiddleStepPage() {
         <div className={styles.indicatorWrapper}>
           <div className={styles.indicatorLeft}>
             <button
-              className={styles.indicatorArrowBtn}
+              className={`${styles.indicatorArrowBtn} ${Number(stepNumber) <= 1 ? styles.disabled : ''}`}
               aria-label='이전 단계로 이동'
-              onClick={() => router.push(`/steps/${Number(stepNumber) - 1}`)}
+              onClick={() => Number(stepNumber) > 1 && router.push(`/steps/${Number(stepNumber) - 1}`)}
+              disabled={Number(stepNumber) <= 1}
             >
-              <ChevronLeft size={22} color='#222' />
+              <ChevronLeft size={22} color={Number(stepNumber) <= 1 ? '#ccc' : '#222'} />
             </button>
           </div>
           <div className={styles.indicatorDots}>
@@ -258,11 +259,12 @@ export default function MiddleStepPage() {
           </div>
           <div className={styles.indicatorRight}>
             <button
-              className={styles.indicatorArrowBtn}
+              className={`${styles.indicatorArrowBtn} ${Number(stepNumber) >= 7 ? styles.disabled : ''}`}
               aria-label='다음 단계로 이동'
-              onClick={() => router.push(`/steps/${Number(stepNumber) + 1}`)}
+              onClick={() => Number(stepNumber) < 7 && router.push(`/steps/${Number(stepNumber) + 1}`)}
+              disabled={Number(stepNumber) >= 7}
             >
-              <ChevronRight size={22} color='#222' />
+              <ChevronRight size={22} color={Number(stepNumber) >= 7 ? '#ccc' : '#222'} />
             </button>
           </div>
         </div>

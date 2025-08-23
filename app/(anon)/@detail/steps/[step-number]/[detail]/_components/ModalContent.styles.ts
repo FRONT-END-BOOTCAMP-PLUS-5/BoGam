@@ -17,14 +17,6 @@ export const styles = {
 
   // 섹션 헤더 (CombinedContent용)
   sectionHeader: 'mb-6',
-  sectionTitle: 'text-lg font-semibold mb-2',
-  sectionSubtitle: 'text-sm text-brand-dark-gray',
-
-  // 페이지 네비게이션
-  pageNavigation: 'flex justify-center items-center gap-4 mt-4',
-  navButton: 'px-4 py-2 bg-brand-blue text-white rounded hover:bg-brand-dark-blue disabled:opacity-50 disabled:cursor-not-allowed',
-
-  // 컨테이너
-  container: 'w-full h-full',
-  loadingContainer: 'flex justify-center items-center h-full text-brand-dark-gray',
+  sectionTitle: 'text-lg font-bold mb-2 text-brand-black',
+  sectionSubtitle: 'text-base font-medium mb-2 text-brand-dark-gray',
 } as const;
