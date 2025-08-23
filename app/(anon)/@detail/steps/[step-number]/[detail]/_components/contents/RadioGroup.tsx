@@ -32,6 +32,8 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     errorMessage?: string;
     links?: Array<{ title: string; url: string }>;
     data?: ContentSection[][];
+    sections?: any[]; // CombinedContent 타입에 대한 추가 필드
+    dataType?: string; // dataType 속성 추가
   } | null>(null);
   
   // 초기화 여부를 추적하는 ref
@@ -70,10 +72,11 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           );
           
           if (radioGroupSection) {
-            // RadioGroup 섹션의 데이터를 contentData.data 형태로 변환
+            // RadioGroup 섹션의 데이터를 contentData.data 형태로 변환하고 sections도 저장
             const transformedData = {
               ...contentModule.default,
-              data: [radioGroupSection.data] // 2차원 배열로 변환
+              data: [radioGroupSection.data], // 2차원 배열로 변환
+              sections: contentModule.default.sections // sections 정보도 저장
             };
             console.log('✅ CombinedContent에서 RadioGroup 데이터 추출:', transformedData);
             setContentData(transformedData);
@@ -212,8 +215,16 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     console.log('🔍 contentData:', contentData);
     console.log('🔍 stepData:', stepData);
     
-    if (!contentData?.data) {
-      console.log('❌ contentData.data 없음');
+    // CombinedContent 타입인 경우 sections 사용, 아니면 data 사용
+    const dataSource = contentData?.dataType === 'CombinedContent' ? contentData.sections : contentData?.data;
+    
+    console.log('🔍 dataType:', contentData?.dataType);
+    console.log('🔍 dataSource:', dataSource);
+    console.log('🔍 contentData.sections:', contentData?.sections);
+    console.log('🔍 contentData.data:', contentData?.data);
+    
+    if (!dataSource) {
+      console.log('❌ dataSource 없음 (data 또는 sections)');
       return { allAnswered: false, hasMismatch: false };
     }
     
@@ -223,19 +234,45 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     }
     
     // 전체 질문 수 계산
-    const totalQuestions = contentData.data.flat().filter((section: ContentSection) => section.title).length;
-    console.log('🔍 전체 질문 수:', totalQuestions);
+    let totalQuestions = 0;
+    let allQuestionTitles: string[] = [];
     
-    // DB에서 모든 질문의 답변 상태 확인
-    const allQuestionTitles = contentData.data.flat()
-      .filter((section: ContentSection) => section.title)
-      .map(section => section.title);
+    if (contentData?.dataType === 'CombinedContent' && contentData.sections) {
+      // CombinedContent 타입인 경우 sections에서 RadioGroup 섹션의 실제 질문들 추출
+      const radioGroupSection = contentData.sections.find(section => section.type === 'RadioGroup');
+      if (radioGroupSection && radioGroupSection.data) {
+        allQuestionTitles = radioGroupSection.data
+          .filter((item: any) => item.title)
+          .map((item: any) => item.title);
+        totalQuestions = allQuestionTitles.length;
+      }
+    } else {
+      // 기존 방식: data 배열에서 질문 제목 추출
+      totalQuestions = dataSource.flat().filter((section: ContentSection) => section.title).length;
+      allQuestionTitles = dataSource.flat()
+        .filter((section: ContentSection) => section.title)
+        .map(section => section.title);
+    }
+    
+    console.log('🔍 전체 질문 수:', totalQuestions);
     console.log('🔍 모든 질문 제목:', allQuestionTitles);
     
+    // 각 질문의 답변 상태 상세 확인
+    console.log('🔍 stepData.jsonDetails 상세:', stepData.jsonDetails);
+    
+    const questionStatuses = allQuestionTitles.map(title => {
+      const status = title ? stepData.jsonDetails[title] : null;
+      console.log(`🔍 질문 "${title}" 상태:`, status);
+      return { title, status };
+    });
+    console.log('🔍 모든 질문 상태:', questionStatuses);
+    
     // 모든 질문이 답변되었는지 확인 (unchecked가 아닌지)
-    const allAnswered = allQuestionTitles.every(title => 
-      title && stepData.jsonDetails[title] && stepData.jsonDetails[title] !== 'unchecked'
-    );
+    const allAnswered = allQuestionTitles.every(title => {
+      const hasAnswer = title && stepData.jsonDetails[title] && stepData.jsonDetails[title] !== 'unchecked';
+      console.log(`🔍 질문 "${title}" 답변 여부:`, hasAnswer);
+      return hasAnswer;
+    });
     
     // mismatch가 있는지 확인
     const hasMismatch = allQuestionTitles.some(title => 
@@ -285,27 +322,30 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           
           {/* 선택에 따른 메시지 표시 */}
           {selectedAnswers[sectionIndex] && selectedAnswers[sectionIndex] !== 'unchecked' && selectedAnswers[sectionIndex] !== '' && (
-            <div className={styles.messagesContainer}>
-              {selectedAnswers[sectionIndex] === 'yes' && section.messages && (
-                // '예' 선택 시 경고 메시지
-                section.messages.map((message, messageIndex) => (
-                  <div key={messageIndex} className={styles.messageItem}>{message}</div>
-                ))
-              )}
-              {selectedAnswers[sectionIndex] === 'no' && section.successMessages && (
-                // '아니오' 선택 시 안전 메시지
-                section.successMessages.map((message, messageIndex) => (
-                  <div key={messageIndex} className={styles.messageItem}>{message}</div>
-                ))
-              )}
-              {section.link && (
-                <div className={styles.linkContainer}>
-                  <a href={section.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                    관련 링크 보기 →
-                  </a>
-                </div>
-              )}
-            </div>
+            (selectedAnswers[sectionIndex] === 'yes' && section.messages) || 
+            (selectedAnswers[sectionIndex] === 'no' && section.successMessages) ? (
+              <div className={styles.messagesContainer}>
+                {selectedAnswers[sectionIndex] === 'yes' && section.messages && (
+                  // '예' 선택 시 경고 메시지
+                  section.messages.map((message, messageIndex) => (
+                    <div key={messageIndex} className={styles.messageItem}>{message}</div>
+                  ))
+                )}
+                {selectedAnswers[sectionIndex] === 'no' && section.successMessages && (
+                  // '아니오' 선택 시 안전 메시지
+                  section.successMessages.map((message, messageIndex) => (
+                    <div key={messageIndex} className={styles.messageItem}>{message}</div>
+                  ))
+                )}
+                {section.link && (
+                  <div className={styles.linkContainer}>
+                    <a href={section.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
+                      관련 링크 보기 →
+                    </a>
+                  </div>
+                )}
+              </div>
+            ) : null
           )}
         </div>
       ))}
