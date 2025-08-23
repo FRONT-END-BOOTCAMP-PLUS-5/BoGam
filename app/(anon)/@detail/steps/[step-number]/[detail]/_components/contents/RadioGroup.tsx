@@ -15,6 +15,7 @@ interface ContentSection {
   subtitle?: string;
   contents?: string[];
   messages?: string[];
+  successMessages?: string[];
   link?: string;
   summary?: string;
 }
@@ -61,7 +62,29 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           `./data/step-${stepNumber}-${detail}-contents.json`
         );
         console.log('✅ JSON 파일 로드 성공:', contentModule.default);
-        setContentData(contentModule.default);
+        
+        // CombinedContent 타입인 경우 RadioGroup 섹션을 찾아서 처리
+        if (contentModule.default.dataType === 'CombinedContent') {
+          const radioGroupSection = contentModule.default.sections.find(
+            (section: any) => section.type === 'RadioGroup'
+          );
+          
+          if (radioGroupSection) {
+            // RadioGroup 섹션의 데이터를 contentData.data 형태로 변환
+            const transformedData = {
+              ...contentModule.default,
+              data: [radioGroupSection.data] // 2차원 배열로 변환
+            };
+            console.log('✅ CombinedContent에서 RadioGroup 데이터 추출:', transformedData);
+            setContentData(transformedData);
+          } else {
+            console.log('❌ RadioGroup 섹션을 찾을 수 없음');
+            setContentData(contentModule.default);
+          }
+        } else {
+          // 기존 RadioGroup 타입인 경우 그대로 사용
+          setContentData(contentModule.default);
+        }
       } catch (error) {
         console.log('❌ Content data not found:', error);
       }
@@ -260,12 +283,21 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           
           {section.summary && <div className={styles.summary}>{section.summary}</div>}
           
-          {/* '아니오' 선택 시 메시지 표시 */}
-          {selectedAnswers[sectionIndex] === 'no' && section.messages && (
+          {/* 선택에 따른 메시지 표시 */}
+          {selectedAnswers[sectionIndex] && selectedAnswers[sectionIndex] !== 'unchecked' && selectedAnswers[sectionIndex] !== '' && (
             <div className={styles.messagesContainer}>
-              {section.messages.map((message, messageIndex) => (
-                <div key={messageIndex} className={styles.messageItem}>{message}</div>
-              ))}
+              {selectedAnswers[sectionIndex] === 'yes' && section.messages && (
+                // '예' 선택 시 경고 메시지
+                section.messages.map((message, messageIndex) => (
+                  <div key={messageIndex} className={styles.messageItem}>{message}</div>
+                ))
+              )}
+              {selectedAnswers[sectionIndex] === 'no' && section.successMessages && (
+                // '아니오' 선택 시 안전 메시지
+                section.successMessages.map((message, messageIndex) => (
+                  <div key={messageIndex} className={styles.messageItem}>{message}</div>
+                ))
+              )}
               {section.link && (
                 <div className={styles.linkContainer}>
                   <a href={section.link} target="_blank" rel="noopener noreferrer" className={styles.link}>

@@ -64,19 +64,100 @@ export default function ModalContent() {
       case 'RadioGroup':
         return <RadioGroup data={pageData}/>;
       case 'CombinedContent':
-        // CombinedContent의 경우 전체 stepContentData.sections를 전달
-        return stepContentData && stepContentData.sections ? (
-          <CombinedContent 
-            sections={stepContentData.sections}
-            spacing="lg"
-            showDividers={true}
-          />
-        ) : null;
+        // CombinedContent는 상위에서 별도 처리되므로 여기서는 null 반환
+        return null;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
     }
   };
+
+  // CombinedContent 타입인 경우 각 섹션을 별도 페이지로 처리
+  if (stepContentData && stepContentData.dataType === 'CombinedContent' && stepContentData.sections) {
+    const handlePageChange = (page: number) => {
+      setCurrentPage(page);
+      if (swiperRef.current) {
+        swiperRef.current.slideTo(page);
+      }
+    };
+
+    return (
+      <>
+        {/* 공통 헤더 렌더링 */}
+        <div className={styles.stepHeader}>
+          <h2 className={styles.stepTitle}>
+            {`${stepNumber}-${detail}단계 상세 보기`}
+          </h2>
+        </div>
+
+        {/* Swiper로 각 섹션을 별도 페이지로 렌더링 */}
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={1}
+          className={styles.swiperContainer}
+          onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+        >
+          {stepContentData.sections.map((section, sectionIndex) => (
+            <SwiperSlide key={sectionIndex}>
+              <div className={styles.mainContent}>
+                {/* 각 섹션의 제목과 부제목 표시 */}
+                {(section.title || section.subtitle) && (
+                  <div className={styles.sectionHeader}>
+                    {section.title && (
+                      <h3 className={styles.sectionTitle}>{section.title}</h3>
+                    )}
+                    {section.subtitle && (
+                      <p className={styles.sectionSubtitle}>{section.subtitle}</p>
+                    )}
+                  </div>
+                )}
+                
+                {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
+                {section.type === 'TextOnly' && (
+                  <TextOnly data={section.data} />
+                )}
+                {section.type === 'RadioGroup' && (
+                  <RadioGroup data={section.data} />
+                )}
+                {section.type === 'Table' && (
+                  <Table data={section.data} />
+                )}
+                {section.type === 'List' && (
+                  <List data={section.data} />
+                )}
+                {section.type === 'DataGrid' && (
+                  <DataGrid data={section.data} />
+                )}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+
+        {/* 페이지 인디케이터 */}
+        {stepContentData.sections.length > 1 && (
+          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
+            {stepContentData.sections.map((_: unknown, index: number) => (
+              <button
+                key={index}
+                className={`${styles.pageDot} ${
+                  index === currentPage
+                    ? styles.pageDotActive
+                    : styles.pageDotInactive
+                }`}
+                aria-label={`페이지 ${index + 1}${
+                  index === currentPage ? ' (현재)' : ''
+                }`}
+                onClick={() => handlePageChange(index)}
+              />
+            ))}
+          </div>
+        )}
+      </>
+    );
+  }
 
   // JSON 데이터가 있는 경우 JSON의 data 배열을 페이지로 사용
   if (stepContentData && stepContentData.dataType && stepContentData.data) {

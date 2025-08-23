@@ -48,6 +48,7 @@ export interface RadioGroupSection extends BaseContentSection {
     subtitle?: string;
     contents?: string[];
     messages?: string[];
+    successMessages?: string[];
     link?: string;
     summary?: string;
   }>;
