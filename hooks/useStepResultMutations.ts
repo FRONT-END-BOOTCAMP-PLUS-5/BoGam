@@ -4,10 +4,10 @@ import { stepResultsApi, StepResultRequest, StepResultResponse } from '@libs/api
 export const useStepResultMutations = () => {
   const queryClient = useQueryClient();
 
-  // Step Result 생성/수정 뮤테이션
-  const createOrUpdateStepResult = useMutation({
+  // Step Result 생성/수정 뮤테이션 (upsert)
+  const upsertStepResult = useMutation({
     mutationFn: (data: StepResultRequest) => 
-      stepResultsApi.createOrUpdateStepResult(data),
+      stepResultsApi.upsertStepResult(data),
     onSuccess: (data: StepResultResponse) => {
       // 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ['stepResults'] });
@@ -21,10 +21,17 @@ export const useStepResultMutations = () => {
     },
   });
 
+  // 쿼리 중단 함수 (초기화 시 사용)
+  const removeQueries = (nickname: string, stepNumber: number, detail: number) => {
+    const queryKey = ['stepResults', nickname, String(stepNumber), String(detail)];
+    queryClient.removeQueries({ queryKey });
+  };
+
   return {
-    createOrUpdateStepResult,
-    isLoading: createOrUpdateStepResult.isPending,
-    isError: createOrUpdateStepResult.isError,
-    error: createOrUpdateStepResult.error,
+    upsertStepResult,
+    removeQueries,
+    isLoading: upsertStepResult.isPending,
+    isError: upsertStepResult.isError,
+    error: upsertStepResult.error,
   };
 };

@@ -32,9 +32,9 @@ class StepResultsApi {
   }
 
   /**
-   * step-results 생성/수정 (같은 URL에 POST 사용)
+   * step-results 생성/수정 (upsert)
    */
-  public async createOrUpdateStepResult(
+  public async upsertStepResult(
     stepResultData: StepResultRequest
   ): Promise<StepResultResponse> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();

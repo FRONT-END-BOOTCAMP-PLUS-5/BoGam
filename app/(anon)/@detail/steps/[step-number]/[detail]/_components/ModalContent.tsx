@@ -7,6 +7,7 @@ import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
 import Table from './contents/Table';
 import List from './contents/List';
+import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
@@ -18,8 +19,7 @@ import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContai
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [stepContentData, setStepContentData] =
-    useState<StepContentData | null>(null);
+  const [stepContentData, setStepContentData] = useState<StepContentData | null>(null);
   const [dataType, setDataType] = useState<string>('default');
 
   // URL에서 stepNumber와 detail 가져오기
@@ -68,6 +68,7 @@ export default function ModalContent() {
     }
   }, [stepNumber, detail, specialSteps]);
 
+
   // 특별한 컴포넌트 렌더링 함수
   const renderSpecialComponent = () => {
     if (specialSteps.taxCert) {
@@ -108,6 +109,8 @@ export default function ModalContent() {
             data={pageData as unknown as { left: string; right?: string }[]}
           />
         );
+      case 'CheckListGroup':
+        return <CheckListGroup data={pageData} />;
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
       case 'CombinedContent':
