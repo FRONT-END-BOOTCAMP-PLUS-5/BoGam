@@ -39,7 +39,6 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
     if (selectedAddress && isOpen) {
       // 주소 타입 판단: roadAddress가 있으면 도로명주소, 없으면 지번주소
       const isRoadAddress = !!selectedAddress.roadAddress;
-      const addressType = isRoadAddress ? '도로명주소' : '지번주소';
       const newSearchGbn = isRoadAddress ? '1' : '0'; // 1: 도로명주소, 0: 지번주소
 
       // 조회 구분 자동 설정 (주소 타입에 따라)
@@ -128,7 +127,7 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
       } else {
         setError('단지 검색에 실패했습니다.');
       }
-    } catch (err) {
+    } catch {
       setError('단지 검색 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);

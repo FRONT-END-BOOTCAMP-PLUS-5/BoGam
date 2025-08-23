@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSession } from 'next-auth/react';
-import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { styles } from './TopSection.styles';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';

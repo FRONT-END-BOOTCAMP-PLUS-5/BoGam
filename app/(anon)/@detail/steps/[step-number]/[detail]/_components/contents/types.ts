@@ -8,7 +8,7 @@ export interface BaseContentSection {
 // TextOnly 전용 인터페이스
 export interface TextOnlySection extends BaseContentSection {
   type: 'TextOnly';
-  data: any[];
+  data: Record<string, unknown>[];
   subtitles?: string[];
   contents?: string[];
   contentSections?: Array<{
@@ -40,7 +40,7 @@ export interface TextOnlySection extends BaseContentSection {
 // RadioGroup 전용 인터페이스
 export interface RadioGroupSection extends BaseContentSection {
   type: 'RadioGroup';
-  data: any[];
+  data: Record<string, unknown>[];
   contents?: string[];
   messages?: string[];
   link?: string;
@@ -49,27 +49,27 @@ export interface RadioGroupSection extends BaseContentSection {
 // Table 전용 인터페이스
 export interface TableSection extends BaseContentSection {
   type: 'Table';
-  data: Record<string, string>;
+  data: Array<{ left: string; right?: string }>;
 }
 
 // List 전용 인터페이스
 export interface ListSection extends BaseContentSection {
   type: 'List';
-  data: Record<string, string>;
+  data: Array<{ left: string; right?: string }>;
 }
 
 // DataGrid 전용 인터페이스
 export interface DataGridSection extends BaseContentSection {
   type: 'DataGrid';
-  data: Record<string, string>;
+  data: Array<{ left: string; right?: string }>;
 }
 
 // 모든 섹션 타입을 유니온으로 정의
-export type ContentSection = 
-  | TextOnlySection 
-  | RadioGroupSection 
-  | TableSection 
-  | ListSection 
+export type ContentSection =
+  | TextOnlySection
+  | RadioGroupSection
+  | TableSection
+  | ListSection
   | DataGridSection;
 
 // CombinedContent용 인터페이스
