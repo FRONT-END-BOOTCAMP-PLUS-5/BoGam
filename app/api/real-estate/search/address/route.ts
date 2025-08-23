@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
       isTwoWayAuth?: boolean;
     } = await request.json();
 
+    console.log('body', body);
+
     // 필수 필드 검증
     if (!body.password) {
       return NextResponse.json(
@@ -169,18 +171,7 @@ export async function POST(request: NextRequest) {
         const dbRepository = new RealEstateCopyRepositoryImpl();
         const dbUseCase = new CreateRealEstateCopyUsecase(dbRepository);
 
-        // userAddressId를 직접 사용하거나, 없으면 nickname으로 조회
-        let userAddressId: number | null = null;
-
-        if (!userAddressId) {
-          console.log(
-            '🔍 userAddressNickname으로 userAddressId 조회:',
-            body.userAddressNickname
-          );
-          userAddressId = await getUserAddressId(body.userAddressNickname);
-        }
-
-        console.log('🔍 최종 userAddressId:', userAddressId);
+        const userAddressId = await getUserAddressId(body.userAddressNickname);
 
         if (!userAddressId) {
           return NextResponse.json({
