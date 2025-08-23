@@ -1,42 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { RealEstateFormData, RealEstateInputProps } from './types';
+import {
+  RealEstateFormData,
+  RealEstateInputProps,
+} from '@/(anon)/_components/common/realEstate/types';
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from './RealEstateInput.styles';
-import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useRealEstateInput } from '@/hooks/useRealEstateInput';
 
 export const RealEstateInput = ({
   formData,
   onSubmit,
   loading,
 }: RealEstateInputProps) => {
-  const { selectedAddress } = useUserAddressStore();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    reset,
-  } = useForm<RealEstateFormData>({
-    defaultValues: formData,
-  });
-
-  // 선택된 주소가 변경되면 자동으로 address 필드 업데이트
-  useEffect(() => {
-    if (selectedAddress) {
-      const address = `${
-        selectedAddress.roadAddress
-          ? selectedAddress.roadAddress
-          : selectedAddress.lotAddress
-      } ${selectedAddress.dong}동 ${selectedAddress.ho}호`;
-      setValue('address', address);
-      setValue('userAddressNickname', selectedAddress.nickname);
-    }
-  }, [selectedAddress, setValue]);
+  const { selectedAddress, register, handleSubmit, errors, setValue, reset } =
+    useRealEstateInput({ formData });
 
   // 폼 제출 시에만 상위 컴포넌트에 데이터 전달
 
@@ -157,56 +136,7 @@ export const RealEstateInput = ({
               variant='primary'
               className={styles.submitButton}
             >
-              {loading ? '요청 중...' : 'API 호출'}
-            </Button>
-            <Button
-              type='button'
-              variant='secondary'
-              className={styles.resetButton}
-              onClick={() => {
-                // 폼 초기화 로직
-                reset({
-                  phoneNo: '01011111111',
-                  password: '1234',
-                  address: '',
-                  userAddressNickname: '',
-                  realtyType: '1',
-                  recordStatus: '0',
-                  startPageNo: '1',
-                  pageCount: '5',
-                  applicationType: '1',
-                  organization: '0002',
-                  inquiryType: '1',
-                  issueType: '1',
-                  jointMortgageJeonseYN: '0',
-                  tradingYN: '0',
-                  electronicClosedYN: '0',
-                  originDataYN: '1',
-                  warningSkipYN: '0',
-                  registerSummaryYN: '0',
-                  selectAddress: '0',
-                  isIdentityViewYn: '0',
-                  uniqueNo: '',
-                  addr_sido: '',
-                  addr_dong: '',
-                  addr_lotNumber: '',
-                  inputSelect: '',
-                  buildingName: '',
-                  dong: '101',
-                  ho: '101',
-                  addr_sigungu: '',
-                  addr_roadName: '',
-                  addr_buildingNumber: '',
-                  listNumber: '',
-                  ePrepayNo: '',
-                  ePrepayPass: '',
-                  originData: '',
-                  reqIdentity: '',
-                  identityList: [{ reqIdentity: '' }],
-                });
-              }}
-            >
-              초기화
+              {loading ? '요청 중...' : '등본 가져오기'}
             </Button>
           </div>
         </div>

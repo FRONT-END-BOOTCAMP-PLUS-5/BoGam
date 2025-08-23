@@ -20,7 +20,7 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     handleTouchEnd,
     handleMouseDown,
   } = useDragToClose(isOpen, onClose);
-  
+
   // 모달이 열릴 때 배경 스크롤 차단
   useEffect(() => {
     if (isOpen) {
@@ -51,7 +51,10 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
       <div
         ref={modalRef}
         className={styles.modalContent}
-        style={styles.modalContentWithTransform(dragState.translateY, dragState.isDragging)}
+        style={styles.modalContentWithTransform(
+          dragState.translateY,
+          dragState.isDragging
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <ModalDragHandle

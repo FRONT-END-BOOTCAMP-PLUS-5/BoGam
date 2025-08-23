@@ -1,7 +1,19 @@
+export interface RealEstateData {
+  resOriGinalData?: string;
+  [key: string]: unknown;
+}
+
+export interface RealEstateJson {
+  data: RealEstateData;
+}
+
 export interface ApiResponse {
   success: boolean;
   message: string;
-  data?: Record<string, unknown>;
+  data?: {
+    realEstateJson?: RealEstateJson;
+    [key: string]: unknown;
+  };
   error?: string;
   // 공식 API 문서에 따른 2-way 인증 응답 구조
   continue2Way?: boolean;
