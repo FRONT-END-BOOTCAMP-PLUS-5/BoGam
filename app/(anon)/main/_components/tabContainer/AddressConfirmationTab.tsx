@@ -32,7 +32,7 @@ export const AddressConfirmationTab: React.FC = () => {
   };
 
   // useMainPageState에서 상태와 setter 함수들 가져오기
-  const { dong, ho, setSearchQuery, setDong, setHo } = useMainPageState();
+  const { dong, ho, setDong, setHo } = useMainPageState();
 
   // 선택된 주소가 변경될 때 동 데이터만 업데이트 (호는 저장 시에만 사용)
   useEffect(() => {

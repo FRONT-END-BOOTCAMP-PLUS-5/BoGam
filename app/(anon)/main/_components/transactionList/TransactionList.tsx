@@ -28,12 +28,35 @@ interface RentTransactionData {
   종전월세: string;
 }
 
-// 타입 가드 함수
-const isRentData = (item: unknown): item is RentTransactionData => {
+// 일반 거래 데이터 타입 정의
+interface SaleTransactionData {
+  id: string;
+  아파트: string;
+  거래금액: string;
+  전용면적: string;
+  층: string;
+  건축년도: string;
+  년: string;
+  월: string;
+  일: string;
+  법정동: string;
+  지번: string;
+  location: Location | null;
+}
+
+// 통합 거래 데이터 타입
+type TransactionData = RentTransactionData | SaleTransactionData;
+
+// 타입 가드 함수 개선
+const isRentData = (item: TransactionData): item is RentTransactionData => {
   return (
-    typeof item === 'object' &&
-    item !== null &&
-    ('보증금' in item || '월세' in item)
+    '보증금' in item && 
+    '월세' in item && 
+    '계약구분' in item &&
+    '계약시작일' in item &&
+    '계약종료일' in item &&
+    '종전보증금' in item &&
+    '종전월세' in item
   );
 };
 
@@ -62,14 +85,6 @@ export const TransactionList: React.FC = () => {
   // 페이지 변경 함수들
   const goToPage = (page: number) => {
     setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  };
-  
-  const goToPreviousPage = () => {
-    setCurrentPage(prev => Math.max(1, prev - 1));
-  };
-  
-  const goToNextPage = () => {
-    setCurrentPage(prev => Math.min(totalPages, prev + 1));
   };
   
   const goToPreviousGroup = () => {
@@ -132,7 +147,7 @@ export const TransactionList: React.FC = () => {
 
           return (
             <div
-              key={index}
+              key={`${item.id || index}`}
               className={styles.transactionItem}
               onClick={() => {
                 if (item.location) {
@@ -208,48 +223,48 @@ export const TransactionList: React.FC = () => {
         })}
       </div>
       
-             {/* 페이지네이션 */}
-       {totalPages > 1 && (
-         <div className={styles.pagination}>
-           {/* 이전 그룹 버튼 */}
-           <button
-             onClick={goToPreviousGroup}
-             disabled={startPage === 1}
-             className={styles.paginationButton}
-             title="이전 5페이지"
-           >
-             <ChevronLeft size={16} />
-           </button>
-           
-           {/* 페이지 인디케이터 (5개만 표시) */}
-           <div className={styles.pageIndicators}>
-             {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
-               const pageNumber = startPage + index;
-               return (
-                 <button
-                   key={pageNumber}
-                   onClick={() => goToPage(pageNumber)}
-                   className={`${styles.pageIndicator} ${
-                     currentPage === pageNumber ? styles.activePageIndicator : ''
-                   }`}
-                 >
-                   {pageNumber}
-                 </button>
-               );
-             })}
-           </div>
-           
-           {/* 다음 그룹 버튼 */}
-           <button
-             onClick={goToNextGroup}
-             disabled={endPage === totalPages}
-             className={styles.paginationButton}
-             title="다음 5페이지"
-           >
-             <ChevronRight size={16} />
-           </button>
-         </div>
-       )}
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className={styles.pagination}>
+          {/* 이전 그룹 버튼 */}
+          <button
+            onClick={goToPreviousGroup}
+            disabled={startPage === 1}
+            className={styles.paginationButton}
+            title="이전 5페이지"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          
+          {/* 페이지 인디케이터 (5개만 표시) */}
+          <div className={styles.pageIndicators}>
+            {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
+              const pageNumber = startPage + index;
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => goToPage(pageNumber)}
+                  className={`${styles.pageIndicator} ${
+                    currentPage === pageNumber ? styles.activePageIndicator : ''
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
+          </div>
+          
+          {/* 다음 그룹 버튼 */}
+          <button
+            onClick={goToNextGroup}
+            disabled={endPage === totalPages}
+            className={styles.paginationButton}
+            title="다음 5페이지"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
