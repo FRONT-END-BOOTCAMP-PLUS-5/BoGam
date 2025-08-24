@@ -8,7 +8,9 @@ import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import Field from '@/(anon)/_components/common/forms/Field';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
+import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import { useRealEstateInput } from '@/hooks/useRealEstateInput';
+import { useState } from 'react';
 
 export const RealEstateInput = ({
   formData,
@@ -18,8 +20,21 @@ export const RealEstateInput = ({
   const { selectedAddress, register, handleSubmit, errors } =
     useRealEstateInput({ formData });
 
+  const [password, setPassword] = useState('');
+
   const handleFormSubmit = (data: RealEstateFormData) => {
-    onSubmit(data);
+    // 비밀번호 검증
+    if (password.length !== 4) {
+      return;
+    }
+
+    // 전화번호에서 '-' 제거
+    const cleanedData = {
+      ...data,
+      phoneNo: data.phoneNo.replace(/-/g, ''),
+      password: password, // OTP 입력값 사용
+    };
+    onSubmit(cleanedData);
   };
 
   return (
@@ -36,15 +51,10 @@ export const RealEstateInput = ({
         error={errors.phoneNo?.message}
       >
         <TextInput
-          {...register('phoneNo', {
-            required: '전화번호는 필수입니다.',
-            pattern: {
-              value:
-                /^(010|011|016|017|018|019|070|02|031|032|033|041|042|043|0502|0505|051|052|053|054|055|061|062|063|064)\d{7,8}$/,
-              message: '유효한 전화번호를 입력해주세요.',
-            },
-          })}
-          placeholder='010-1234-5678'
+          {...register('phoneNo')}
+          mask='phone'
+          inputMode='numeric'
+          placeholder='01012345678'
           error={!!errors.phoneNo}
         />
       </Field>
@@ -53,21 +63,9 @@ export const RealEstateInput = ({
         id='password'
         label='비밀번호 (4자리 숫자)'
         required
-        error={errors.password?.message}
+        error={password.length < 4 ? '4자리 숫자를 입력해주세요.' : undefined}
       >
-        <TextInput
-          {...register('password', {
-            required: '비밀번호는 필수입니다.',
-            pattern: {
-              value: /^[0-9]{4}$/,
-              message: '4자리 숫자를 입력해주세요.',
-            },
-          })}
-          type='password'
-          maxLength={4}
-          placeholder='0000'
-          error={!!errors.password}
-        />
+        <OtpInput length={4} onChange={(value) => setPassword(value)} />
       </Field>
 
       <Field id='realty-type' label='부동산 구분'>
