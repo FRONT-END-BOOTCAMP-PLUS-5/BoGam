@@ -55,52 +55,59 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
     }
   }, [stepData?.jsonDetails]);
 
-  // 에러 시 unchecked로 초기화
+  // json이 {}이거나 에러 시 unchecked로 초기화
   useEffect(() => {
-    if (!isError || data.length === 0 || hasInitialized.current) {
+    if (data.length === 0 || hasInitialized.current) {
       return;
     }
     
-    // 체크리스트 항목이 실제로 존재하는지 확인
-    let hasChecklistItems = false;
-    const uncheckedDetails: Record<string, 'unchecked'> = {};
+    // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
+    const shouldInitialize = (isError && !hasInitialized.current) || 
+                           (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
     
-    data.forEach((section) => {
-      if (section.checklistGroups) {
-        section.checklistGroups.forEach((group) => {
-          if (group.items && group.items.length > 0) {
-            hasChecklistItems = true;
-            group.items.forEach((item) => {
-              uncheckedDetails[item.id] = 'unchecked';
-            });
-          }
-        });
-      }
-    });
-    
-    // 체크리스트 항목이 실제로 존재할 때만 초기화 진행
-    if (hasChecklistItems && Object.keys(uncheckedDetails).length > 0 && selectedAddress?.id) {
-      console.log('🔍 CheckListGroup: 400 에러 시 초기화 진행', uncheckedDetails);
+    if (shouldInitialize && selectedAddress?.id) {
+      // 체크리스트 항목이 실제로 존재하는지 확인
+      let hasChecklistItems = false;
+      const uncheckedDetails: Record<string, 'unchecked'> = {};
       
-      // 로컬 상태도 즉시 업데이트
-      setLocalStepDetails(uncheckedDetails);
-      
-      // DB 저장 (upsert 사용)
-      upsertStepResult.mutate({
-        userAddressId: selectedAddress.id,
-        stepNumber: stepNumber,
-        detail: detail,
-        jsonDetails: uncheckedDetails
+      data.forEach((section) => {
+        if (section.checklistGroups) {
+          section.checklistGroups.forEach((group) => {
+            if (group.items && group.items.length > 0) {
+              hasChecklistItems = true;
+              group.items.forEach((item) => {
+                uncheckedDetails[item.id] = 'unchecked';
+              });
+            }
+          });
+        }
       });
       
-      // 쿼리 완전 중단
-      removeQueries(selectedAddress.nickname, stepNumber, detail);
-      
-      hasInitialized.current = true;
-    } else {
-      console.log('🔍 CheckListGroup: 체크리스트 항목이 없어 초기화 건너뜀', { data, uncheckedDetails });
+      // 체크리스트 항목이 실제로 존재할 때만 초기화 진행
+      if (hasChecklistItems && Object.keys(uncheckedDetails).length > 0) {
+        const logMessage = isError ? '400 에러 시 초기화 진행' : '빈 jsonDetails 시 초기화 진행';
+        console.log(`🔍 CheckListGroup: ${logMessage}`, uncheckedDetails);
+        
+        // 로컬 상태도 즉시 업데이트
+        setLocalStepDetails(uncheckedDetails);
+        
+        // DB 저장 (upsert 사용)
+        upsertStepResult.mutate({
+          userAddressId: selectedAddress.id,
+          stepNumber: stepNumber,
+          detail: detail,
+          jsonDetails: uncheckedDetails
+        });
+        
+        // 쿼리 완전 중단
+        removeQueries(selectedAddress.nickname, stepNumber, detail);
+        
+        hasInitialized.current = true;
+      } else {
+        console.log('🔍 CheckListGroup: 체크리스트 항목이 없어 초기화 건너뜀', { data, uncheckedDetails });
+      }
     }
-  }, [isError, data, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, upsertStepResult, removeQueries]);
+  }, [stepData, isError, data, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, upsertStepResult, removeQueries]);
 
   // Step Result 업데이트 핸들러 - 즉시 로컬 상태 업데이트 후 백그라운드에서 DB 저장
   const handleStepResultUpdate = (newDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>) => {
@@ -119,8 +126,19 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
   };
 
   // 로딩 중일 때
-  if (isLoading && !isError) {
+  if (isLoading) {
     return <div className={styles.container}><div className={styles.loadingContainer}>로딩 중...</div></div>;
+  }
+
+  // 에러 상태 (400 에러 시 초기화 진행 중)
+  if (isError && !hasInitialized.current) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...
+        </div>
+      </div>
+    );
   }
 
   return (
