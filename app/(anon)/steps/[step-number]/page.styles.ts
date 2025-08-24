@@ -5,7 +5,7 @@ export const styles = {
   clickButton: "bg-brand text-brand-white border-none py-3 px-6 rounded-lg text-base font-medium cursor-pointer transition-colors hover:bg-brand-dark-blue active:bg-brand-black",
 
   demoBook: 'mx-auto shadow-[10px_10px_15px_-5px_rgba(0,0,0,0.4)]',
-  page: 'bg-brand-white shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)] rounded-[8px] overflow-hidden relative',
+  page: 'bg-brand-white shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05)] overflow-hidden relative',
   pageCover: 'bg-brand-light-blue font-bold flex items-center justify-center',
   pageContent: 'p-8 min-h-[600px] flex flex-col justify-center items-center',
   pageHeader: 'text-[1.5rem] mb-4',
