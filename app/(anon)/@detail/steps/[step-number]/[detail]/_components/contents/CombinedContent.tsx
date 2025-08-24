@@ -6,7 +6,7 @@ import RadioGroup from './RadioGroup';
 import Table from './Table';
 import List from './List';
 import DataGrid from './DataGrid';
-import { ContentSection, CombinedContentProps } from './types';
+import { ContentSection, CombinedContentProps, LegacyContentSection } from './types';
 import { styles } from './CombinedContent.styles';
 
 const CombinedContent = ({
@@ -21,10 +21,10 @@ const CombinedContent = ({
     let content;
     switch (section.type) {
       case 'TextOnly':
-        content = <TextOnly data={section.data} />;
+        content = <TextOnly data={section.data as LegacyContentSection[]} />;
         break;
       case 'RadioGroup':
-        content = <RadioGroup data={section.data} />;
+        content = <RadioGroup data={section.data as LegacyContentSection[]} />;
         break;
       case 'Table':
         const tableData = Array.isArray(section.data) 
@@ -36,22 +36,10 @@ const CombinedContent = ({
         content = <Table data={tableData} />;
         break;
       case 'List':
-        const listData = Array.isArray(section.data) 
-          ? section.data.reduce((acc, item) => {
-              acc[item.left] = item.right || '';
-              return acc;
-            }, {} as Record<string, string>)
-          : (section.data as Record<string, string>);
-        content = <List data={listData} />;
+        content = <List data={section.data as Array<{ left: string; right?: string }>} />;
         break;
       case 'DataGrid':
-        const dataGridData = Array.isArray(section.data) 
-          ? section.data.reduce((acc, item) => {
-              acc[item.left] = item.right || '';
-              return acc;
-            }, {} as Record<string, string>)
-          : (section.data as Record<string, string>);
-        content = <DataGrid data={dataGridData} />;
+        content = <DataGrid data={section.data as Array<{ left: string; right?: string }>} />;
         break;
       default:
         console.warn(
