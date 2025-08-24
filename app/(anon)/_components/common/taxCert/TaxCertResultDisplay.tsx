@@ -12,8 +12,7 @@ import { useCheckTaxCertCopyExists } from '@/hooks/useTaxCert';
 import { useGetTaxCertCopy } from '@/hooks/useTaxCertQueries';
 import { useTaxCertRiskAssessment } from '@/hooks/useTaxCertRiskAssessment';
 import { RiskAssessmentDisplay } from '@/(anon)/_components/common/realEstate/riskAssessmentDisplay/RiskAssessmentDisplay';
-import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
-import { convertJsonToRiskAssessment } from '@utils/riskAssessmentUtils';
+import { useRiskAssessment } from '@/hooks/useRiskAssessment';
 
 
 // 납세증명서 데이터 타입 정의
@@ -51,18 +50,6 @@ export default function TaxCertResultDisplay() {
   const stepUrlData = pathname.match(/\/steps\/(\d+)\/(\d+)/);
   const stepNumber = stepUrlData ? parseInt(stepUrlData[1]) : 1;
   const detail = stepUrlData ? parseInt(stepUrlData[2]) : 5;
-
-  // 저장된 위험도 검사 결과 로드
-  const {
-    data: savedRiskData,
-    error: loadError,
-    isLoading: loadLoading,
-  } = useRiskAssessmentLoad({
-    stepNumber,
-    detail,
-    userAddressNickname,
-  });
-
 
   // 납세증명서 위험도 검사 hook 사용
   const riskAssessment = useTaxCertRiskAssessment(
@@ -183,12 +170,6 @@ export default function TaxCertResultDisplay() {
             }
             checklistItems={riskAssessment.checklistItems}
             onChecklistItemChange={handleChecklistItemChange}
-            stepNumber={stepNumber}
-            detail={detail}
-            userAddressNickname={userAddressNickname}
-            domain='taxCert'
-            initialJsonData={savedRiskData?.jsonData}
-
           />
         </>
       )}
