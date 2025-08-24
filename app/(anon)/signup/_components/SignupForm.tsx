@@ -21,6 +21,8 @@ export default function SignupForm() {
   const [nicknameCheckMessage, setNicknameCheckMessage] = useState('');
   const [checking, setChecking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+  const [signupError, setSignupError] = useState<string>('');
   const {
     register,
     handleSubmit,
@@ -37,6 +39,8 @@ export default function SignupForm() {
 
   const onSubmit = async (data: SignupInput) => {
     console.log('onSubmit 실행');
+    setSignupError(''); // 이전 에러 메시지 초기화
+    
     try {
       await axiosInstance.post('/auth/signup', data);
       setIsModalOpen(true);
@@ -63,18 +67,26 @@ export default function SignupForm() {
         };
 
         if (errRes.response.status === 409) {
-          console.log('중복 오류:', errRes.response.data.message);
+          const errorMessage = errRes.response.data.message || '이미 존재하는 닉네임, 유저이름 또는 전화번호입니다.';
+          setSignupError(errorMessage);
+          setIsErrorModalOpen(true);
+          console.log('중복 오류:', errorMessage);
         } else if (Array.isArray(errRes.response.data.issues)) {
-          errRes.response.data.issues.forEach((issue) => {
-            console.log(`유효성 오류: ${issue.path[0]} - ${issue.message}`);
-          });
+          const validationErrors = errRes.response.data.issues.map(issue => 
+            `${issue.path[0]}: ${issue.message}`
+          ).join(', ');
+          setSignupError(`입력 정보를 확인해주세요: ${validationErrors}`);
+          setIsErrorModalOpen(true);
+          console.log('유효성 오류:', validationErrors);
         } else {
-          console.log(
-            '기타 오류:',
-            errRes.response.data.message || '회원가입 실패'
-          );
+          const errorMessage = errRes.response.data.message || '회원가입에 실패했습니다.';
+          setSignupError(errorMessage);
+          setIsErrorModalOpen(true);
+          console.log('기타 오류:', errorMessage);
         }
       } else {
+        setSignupError('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+        setIsErrorModalOpen(true);
         console.log('알 수 없는 오류 발생');
       }
     }
@@ -210,7 +222,7 @@ export default function SignupForm() {
         )}
       </Field>
 
-      {errors.root?.message && (
+      {errors.root && (
         <p className={styles.error}>{errors.root.message}</p>
       )}
 
@@ -224,17 +236,37 @@ export default function SignupForm() {
 
       <ConfirmModal
         isOpen={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
+        onCancel={() => {
+          setIsModalOpen(false);
+          // 회원가입 완료 상태를 취소하고 폼으로 돌아가기
+          // 폼을 초기화하거나 다른 처리가 필요하다면 여기에 추가
+        }}
         title='회원가입 완료'
         onConfirm={() => {
           setIsModalOpen(false);
           router.push('/signin');
         }}
         confirmText='로그인하기'
-        cancelText='닫기'
         icon='success'
       >
         회원가입이 완료되었습니다!
+      </ConfirmModal>
+
+      <ConfirmModal
+        isOpen={isErrorModalOpen}
+        onCancel={() => {
+          setIsErrorModalOpen(false);
+          setSignupError('');
+        }}
+        title='회원가입 오류'
+        onConfirm={() => {
+          setIsErrorModalOpen(false);
+          setSignupError('');
+        }}
+        confirmText='수정'
+        icon='error'
+      >
+        {signupError}
       </ConfirmModal>
     </form>
   );
