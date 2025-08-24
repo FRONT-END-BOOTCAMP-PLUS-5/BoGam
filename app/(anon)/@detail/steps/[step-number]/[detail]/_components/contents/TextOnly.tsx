@@ -67,19 +67,23 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     detail: stepInfo?.detail?.toString() || ''
   });
 
-  // 에러 시 기본값으로 초기화
+  // json이 {}이거나 에러 시 기본값으로 초기화
   useEffect(() => {
-    if (!isError || data.length === 0 || hasInitialized.current) {
+    if (data.length === 0 || hasInitialized.current) {
       return;
     }
     
-    // 에러 시 바로 POST 요청
-    if (selectedAddress?.id && stepInfo?.stepNumber && stepInfo?.detail) {
+    // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
+    const shouldInitialize = (isError && !hasInitialized.current) || 
+                           (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+    
+    if (shouldInitialize && selectedAddress?.id && stepInfo?.stepNumber && stepInfo?.detail) {
       const defaultDetails: Record<string, 'match'> = {
         '열람': 'match' // TextOnly는 기본적으로 열람 완료 상태
       };
       
-      console.log('🔍 TextOnly: 400 에러 시 기본값 초기화 진행', defaultDetails);
+      const logMessage = isError ? '400 에러 시 기본값 초기화 진행' : '빈 jsonDetails 시 기본값 초기화 진행';
+      console.log(`🔍 TextOnly: ${logMessage}`, defaultDetails);
       
       // DB 저장
       upsertStepResult.mutate({
@@ -94,7 +98,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       
       hasInitialized.current = true;
     }
-  }, [isError, data, selectedAddress?.id, selectedAddress?.nickname, stepInfo?.stepNumber, stepInfo?.detail, upsertStepResult, removeQueries]);
+  }, [stepData, isError, data, selectedAddress?.id, selectedAddress?.nickname, stepInfo?.stepNumber, stepInfo?.detail, upsertStepResult, removeQueries]);
 
   // 로딩 상태
   if (isLoading) {
@@ -107,12 +111,12 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       );
   }
 
-  // 에러 상태 (400 에러 시 기본값으로 초기화 진행 중)
+  // 에러 상태 (400 에러 시 데이터를 찾을 수 없다고 표시)
   if (isError && !hasInitialized.current) {
     return (
       <div className={styles.container}>
         <div className={styles.errorContainer}>
-          데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...
+          데이터를 찾을 수 없습니다.
         </div>
       </div>
     );
