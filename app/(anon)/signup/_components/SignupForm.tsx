@@ -12,6 +12,7 @@ import Button from '@/(anon)/_components/common/button/Button';
 import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import PasswordInput from '@/(anon)/_components/common/forms/PasswordInput';
+import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 export default function SignupForm() {
@@ -19,6 +20,7 @@ export default function SignupForm() {
   const [nicknameChecked, setNicknameChecked] = useState(false);
   const [nicknameCheckMessage, setNicknameCheckMessage] = useState('');
   const [checking, setChecking] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -37,8 +39,7 @@ export default function SignupForm() {
     console.log('onSubmit 실행');
     try {
       await axiosInstance.post('/auth/signup', data);
-      alert('회원가입이 완료되었습니다!');
-      router.push('/signin');
+      setIsModalOpen(true);
     } catch (error) {
       console.log('회원가입 요청 에러:', error);
 
@@ -220,6 +221,21 @@ export default function SignupForm() {
       <Button variant='ghost' href='/signin' fullWidth>
         로그인
       </Button>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        title='회원가입 완료'
+        onConfirm={() => {
+          setIsModalOpen(false);
+          router.push('/signin');
+        }}
+        confirmText='로그인하기'
+        cancelText='닫기'
+        icon='success'
+      >
+        회원가입이 완료되었습니다!
+      </ConfirmModal>
     </form>
   );
 }

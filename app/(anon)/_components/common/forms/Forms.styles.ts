@@ -34,6 +34,8 @@ export const styles = {
   otpRow: "mt-2 flex items-center gap-2",
   
   otpBox: "w-12 h-12 text-center rounded-xl border text-lg border-brand-light-gray focus:shadow-[0_0_0_3px_var(--brand-shadow)] focus:border-brand",
+
+  otpEyeBtn: "flex items-center text-brand-dark-gray w-10 ml-2",
   
   // 그리드 레이아웃(선택)
   formRow: "grid grid-cols-1 gap-6 w-[90%] mx-auto"
