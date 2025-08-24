@@ -9,6 +9,7 @@ interface LoadRiskAssessmentParams {
   stepNumber: number;
   detail: number;
   userAddressNickname: string;
+  domain?: 'realEstate' | 'broker' | 'taxCert';
 }
 
 interface LoadRiskAssessmentResult {
@@ -70,7 +71,10 @@ export const useRiskAssessmentLoad = (params: LoadRiskAssessmentParams) => {
         // jsonDetails 없이 직접 위험도 검사 데이터 사용
         const loadResult = {
           jsonData: details as RiskAssessmentJsonData,
-          domain: 'realEstate' as const, // 기본값으로 설정 (실제로는 URL에서 추출 가능)
+          domain: (params.domain || 'realEstate') as
+            | 'realEstate'
+            | 'broker'
+            | 'taxCert',
           savedAt: new Date().toISOString(),
         };
 

@@ -28,6 +28,7 @@ export const useRiskAssessmentSave = (
       ): Promise<SaveRiskAssessmentResult> => {
         try {
           // API 요청
+          console.log('🔍 위험도 검사 저장 훅 호출', params);
           const result = await saveRiskAssessmentAPI(params);
 
           if (!result.success) {
