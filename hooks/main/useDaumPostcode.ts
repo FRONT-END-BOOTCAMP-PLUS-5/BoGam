@@ -6,7 +6,8 @@ import {
 
 export const useDaumPostcode = (
   onComplete: (data: DaumPostcodeData) => void,
-  setShowPostcode: (show: boolean) => void
+  setShowPostcode: (show: boolean) => void,
+  onError?: (error: string) => void
 ) => {
   const postcodeRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +29,12 @@ export const useDaumPostcode = (
   // Daum Postcode 실행 함수
   const execDaumPostcode = useCallback(() => {
     if (!window.daum) {
-      alert('Daum Postcode 스크립트가 로드되지 않았습니다.');
+      const errorMessage = 'Daum Postcode 스크립트가 로드되지 않았습니다.';
+      if (onError) {
+        onError(errorMessage);
+      } else {
+        console.error(errorMessage);
+      }
       return;
     }
 
@@ -52,7 +58,7 @@ export const useDaumPostcode = (
         }).embed(postcodeRef.current);
       }
     }, 100);
-  }, [onComplete, setShowPostcode]);
+  }, [onComplete, setShowPostcode, onError]);
 
   return {
     postcodeRef,

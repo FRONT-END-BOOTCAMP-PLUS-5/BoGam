@@ -4,7 +4,9 @@ import React, { useEffect } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useMainPageState } from '@/hooks/main/useMainPageState';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useModalStore } from '@libs/stores/modalStore';
 import { DaumPostcodeModal } from '@/(anon)/main/_components/daumPostcodeModal/DaumPostcodeModal';
+import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
@@ -13,6 +15,9 @@ import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapMod
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
   const { selectedAddress } = useUserAddressStore();
+
+  // 모달 스토어
+  const { isOpen, content, closeModal, confirmModal, cancelModal } = useModalStore();
 
   // useMainPageModule에서 필요한 함수들만 가져오기
   const {
@@ -117,7 +122,20 @@ export const AddressConfirmationTab: React.FC = () => {
         postcodeRef={postcodeRef}
         showPostcode={showPostcode}
         onClose={() => setShowPostcode(false)}
-      /> 
+      />
+
+      {/* 공통 모달 */}
+      <ConfirmModal
+        isOpen={isOpen}
+        title={content?.title || ''}
+        onConfirm={confirmModal}
+        onCancel={cancelModal}
+        confirmText={content?.confirmText}
+        cancelText={content?.cancelText}
+        icon={content?.icon || 'info'}
+      >
+        {content?.content}
+      </ConfirmModal>
     </div>
   );
 };

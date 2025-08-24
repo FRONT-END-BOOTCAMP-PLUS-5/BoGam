@@ -11,6 +11,7 @@ import { AddressDropDownProps } from './types';
 import { AddressDropDownList } from './AddressDropDownList';
 import { formatAddress } from '@utils/addressUtils';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useModalStore } from '@libs/stores/modalStore';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { LoadingState } from './_components/LoadingState';
 import { AuthRequiredState } from './_components/AuthRequiredState';
@@ -57,6 +58,9 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 모달 스토어
+  const { openModal } = useModalStore();
 
   // React Query 제거 - Zustand store만 사용
   // const { isLoading, isAuthenticated } = useUserAddresses();
@@ -109,6 +113,37 @@ export function AddressDropDown(props: AddressDropDownProps) {
         addresses,
       });
     }
+  };
+
+  // 삭제 확인 모달을 띄우는 함수
+  const handleDeleteWithConfirmation = (id: number) => {
+    const address = addresses.find((addr: UserAddress) => addr.id === id);
+    if (!address) return;
+
+    openModal({
+      title: '주소 삭제',
+      content: `"${address.nickname}" 주소를 정말로 삭제하시겠습니까?`,
+      icon: 'warning',
+      confirmText: '삭제',
+      cancelText: '취소',
+      onConfirm: async () => {
+        try {
+          if (onDelete) {
+            await onDelete(id);
+          } else {
+            await deleteAddress(id);
+          }
+          // 삭제 성공 시 모달이 자동으로 닫힘 (useModalStore의 기본 동작)
+        } catch (error) {
+          console.error('주소 삭제 실패:', error);
+          openModal({
+            title: '오류',
+            content: '주소 삭제 중 오류가 발생했습니다.',
+            icon: 'error',
+          });
+        }
+      },
+    });
   };
 
   const handleToggleExpand = () => {
@@ -178,7 +213,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
       <AddressDropDownList
         addresses={addresses}
         selectedAddress={selectedAddress}
-        onDelete={onDelete || deleteAddress}
+        onDelete={handleDeleteWithConfirmation}
         onToggleFavorite={onToggleFavorite || toggleFavorite}
         onSelect={onSelect || handleSelect}
         showFavoriteToggle={showFavoriteToggle}

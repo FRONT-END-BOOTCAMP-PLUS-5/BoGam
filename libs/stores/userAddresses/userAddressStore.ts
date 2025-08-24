@@ -54,34 +54,34 @@ export const useUserAddressStore = create<UserAddressStore>()(
         initializeFromQuery: (data) => {
           const currentState = get();
 
-          console.log('🔄 initializeFromQuery 호출:', {
-            dataLength: data.length,
-            currentUserAddressesLength: currentState.userAddresses.length,
-            currentSelectedAddress: currentState.selectedAddress?.nickname,
-            volatileAddressesCount: currentState.userAddresses.filter(
-              (addr) => addr.isVolatile
-            ).length,
-          });
+          // console.log('🔄 initializeFromQuery 호출:', {
+          //   dataLength: data.length,
+          //   currentUserAddressesLength: currentState.userAddresses.length,
+          //   currentSelectedAddress: currentState.selectedAddress?.nickname,
+          //   volatileAddressesCount: currentState.userAddresses.filter(
+          //     (addr) => addr.isVolatile
+          //   ).length,
+          // });
 
           // 기존 휘발성 주소들 보존
           const volatileAddresses = currentState.userAddresses.filter(
             (addr) => addr.isVolatile
           );
 
-          console.log(
-            '💾 휘발성 주소 보존:',
-            volatileAddresses.map((addr) => addr.nickname)
-          );
+          // console.log(
+          //   '💾 휘발성 주소 보존:',
+          //   volatileAddresses.map((addr) => addr.nickname)
+          // );
 
           // DB 데이터와 휘발성 주소를 합침
           const mergedAddresses = [...data, ...volatileAddresses];
 
-          console.log(
-            '🔗 병합된 주소 목록:',
-            mergedAddresses.map(
-              (addr) => `${addr.nickname}${addr.isVolatile ? ' (휘발성)' : ''}`
-            )
-          );
+          // console.log(
+          //   '🔗 병합된 주소 목록:',
+          //   mergedAddresses.map(
+          //     (addr) => `${addr.nickname}${addr.isVolatile ? ' (휘발성)' : ''}`
+          //   )
+          // );
 
           // selectedAddress를 보존하면서 userAddresses만 업데이트
           set(
@@ -97,7 +97,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
           if (!currentState.selectedAddress) {
             const primaryAddress = data.find((addr) => addr.isPrimary);
             if (primaryAddress) {
-              console.log('⭐ 대표 주소 선택:', primaryAddress.nickname);
+              // console.log('⭐ 대표 주소 선택:', primaryAddress.nickname);
               set(
                 (state) => ({ selectedAddress: primaryAddress }),
                 false,
@@ -105,16 +105,16 @@ export const useUserAddressStore = create<UserAddressStore>()(
               );
             }
           } else {
-            console.log(
-              '✅ 기존 선택된 주소 유지:',
-              currentState.selectedAddress.nickname
-            );
+            // console.log(
+            //   '✅ 기존 선택된 주소 유지:',
+            //   currentState.selectedAddress.nickname
+            // );
           }
         },
 
         // 휘발성 주소 추가 (DB 저장 없음)
         addVolatileAddress: (newAddress: UserAddress) => {
-          console.log('🆕 휘발성 주소 추가 및 자동 선택:', newAddress.nickname);
+          // console.log('🆕 휘발성 주소 추가 및 자동 선택:', newAddress.nickname);
 
           // 즉시 UI 업데이트 및 자동 선택
           set(
@@ -168,8 +168,13 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
           try {
             // 서버에 저장
+            // 주소 닉네임 포맷팅: 주소 + (동이 있으면) " xx동" + (호가 있으면) " xx호"
+            const dongPart = newAddress.dong ? ` ${newAddress.dong}동` : '';
+            const hoPart = newAddress.ho ? ` ${newAddress.ho}호` : '';
+            const addressNickname = `${newAddress.roadAddress}${dongPart}${hoPart}`;
+
             const apiRequestData = {
-              addressNickname: `${newAddress.roadAddress}${newAddress.dong}${newAddress.ho}`,
+              addressNickname,
               latitude: newAddress.y,
               longitude: newAddress.x,
               legalDistrictCode: newAddress.legalDistrictCode || '',
@@ -197,7 +202,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
               throw new Error(response.message || '주소 추가 실패');
             }
           } catch (error) {
-            console.error('❌ 주소 추가 실패:', error);
+            // console.error('❌ 주소 추가 실패:', error);
             // 롤백
             set(
               (state) => ({
@@ -364,7 +369,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
             false,
             'clearAll'
           );
-          console.log('🧹 user-address-store 초기화');
+          // console.log('🧹 user-address-store 초기화');
         },
 
         // 에러 처리
