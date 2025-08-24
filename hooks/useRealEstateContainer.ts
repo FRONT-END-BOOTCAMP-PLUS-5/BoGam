@@ -23,7 +23,7 @@ export const useRealEstateContainer = () => {
     pageCount: '5',
     applicationType: '1',
     organization: '0002',
-    phoneNo: '01011111111',
+    phoneNo: '',
     inquiryType: '1', // 간편검색으로 고정
     issueType: '1',
     jointMortgageJeonseYN: '0',
@@ -102,7 +102,8 @@ export const useRealEstateContainer = () => {
   // exists 데이터가 없으면 Output 탭으로 이동하지 못하도록 방지
   useEffect(() => {
     if (activeTab === 'output' && existsData?.success && !existsData.exists) {
-      setActiveTab('input');
+      //테스트용 임시 비활성화
+      //setActiveTab('input');
     }
   }, [activeTab, existsData]);
 

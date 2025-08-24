@@ -6,6 +6,7 @@ import {
 } from '@/(anon)/_components/common/realEstate/types';
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import { styles } from './RealEstateInput.styles';
 import { useRealEstateInput } from '@/hooks/useRealEstateInput';
 
@@ -20,7 +21,12 @@ export const RealEstateInput = ({
   // 폼 제출 시에만 상위 컴포넌트에 데이터 전달
 
   const handleFormSubmit = (data: RealEstateFormData) => {
-    onSubmit(data);
+    // 전화번호에서 하이픈 제거
+    const cleanData = {
+      ...data,
+      phoneNo: data.phoneNo.replace(/-/g, '')
+    };
+    onSubmit(cleanData);
   };
 
   return (
@@ -36,12 +42,11 @@ export const RealEstateInput = ({
                 {...register('phoneNo', {
                   required: '전화번호는 필수입니다.',
                   pattern: {
-                    value:
-                      /^(010|011|016|017|018|019|070|02|031|032|033|041|042|043|0502|0505|051|052|053|054|055|061|062|063|064)\d{7,8}$/,
+                    value: /^(010|011|016|017|018|019|070|02|031|032|033|041|042|043|0502|0505|051|052|053|054|055|061|062|063|064)-\d{3,4}-\d{4}$/,
                     message: '유효한 전화번호를 입력해주세요.',
                   },
                 })}
-                placeholder='010-1234-5678'
+                placeholder='필수:전화번호'
                 mask='phone'
                 className={errors.phoneNo ? styles.inputError : styles.input}
               />
@@ -54,18 +59,9 @@ export const RealEstateInput = ({
               <label htmlFor='password' className={styles.requiredLabel}>
                 비밀번호 (4자리 숫자)
               </label>
-              <TextInput
-                {...register('password', {
-                  required: '비밀번호는 필수입니다.',
-                  pattern: {
-                    value: /^[0-9]{4}$/,
-                    message: '4자리 숫자를 입력해주세요.',
-                  },
-                })}
-                type='password'
-                maxLength={4}
-                placeholder='0000'
-                className={errors.password ? styles.inputError : styles.input}
+              <OtpInput
+                length={4}
+                onChange={(value) => setValue('password', value)}
               />
               {errors.password && (
                 <p className={styles.errorMessage}>{errors.password.message}</p>
@@ -109,7 +105,7 @@ export const RealEstateInput = ({
                     ? selectedAddress.nickname
                     : '주소를 선택하세요'
                 }
-                className={errors.address ? styles.inputError : styles.input}
+                className={errors.address ? styles.inputError : styles.addressinput}
                 readOnly
               />
               {errors.address && (

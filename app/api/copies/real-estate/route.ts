@@ -3,10 +3,10 @@ import { GetRealEstateCopyusecase } from '@be/applications/realEstateCopies/usec
 import { RealEstateCopyRepositoryImpl } from '@be/infrastructure/repository/RealEstateCopyRepositoryImpl';
 import { getUserAddressId } from '@utils/userAddress';
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { userAddressNickname } = body;
+    const { searchParams } = new URL(request.url);
+    const userAddressNickname = searchParams.get('userAddressNickname');
 
     if (!userAddressNickname) {
       return NextResponse.json(
@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // userAddress 닉네임으로부터 ID 가져오기
     const userAddressId = await getUserAddressId(userAddressNickname);
-    console.log('userAddressNickname', userAddressId);
+    console.log('userAddressId', userAddressId);
 
     if (!userAddressId) {
       return NextResponse.json(

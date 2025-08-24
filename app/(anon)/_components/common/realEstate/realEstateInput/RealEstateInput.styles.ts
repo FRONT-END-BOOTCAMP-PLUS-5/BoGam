@@ -24,6 +24,7 @@ export const styles = {
     'w-full px-3 py-2 border border-brand-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent transition-colors',
   inputError:
     'w-full px-3 py-2 border border-brand-error rounded-md focus:outline-none focus:ring-2 focus:ring-brand-error focus:border-transparent transition-colors',
+  addressinput: '!bg-brand-light-blue',
 
   // 셀렉트 박스
   select:

@@ -17,9 +17,7 @@ export const useCheckRealEstateExists = (nickname?: string) => {
 
       const response = await frontendAxiosInstance
         .getAxiosInstance()
-        .post(`/api/real-estate/exists`, {
-          nickname,
-        });
+        .get(`/api/real-estate/exists?nickname=${nickname}`);
 
       return response.data as { success: boolean; exists: boolean };
     },
@@ -36,9 +34,7 @@ export const useGetRealEstateFromDB = (userAddressNickname?: string) => {
 
       const response = await frontendAxiosInstance
         .getAxiosInstance()
-        .post(`/api/copies/real-estate`, {
-          userAddressNickname,
-        });
+        .get(`/api/copies/real-estate?userAddressNickname=${userAddressNickname}`);
 
       return response.data as ApiResponse;
     },
