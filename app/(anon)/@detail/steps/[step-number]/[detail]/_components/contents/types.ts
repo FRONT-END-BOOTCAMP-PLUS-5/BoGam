@@ -57,10 +57,7 @@ export interface RadioGroupSection extends BaseContentSection {
 // Table 전용 인터페이스
 export interface TableSection extends BaseContentSection {
   type: 'Table';
-  data: Array<{
-    left: string;
-    right?: string;
-  }>;
+  data: Array<{ left: string; right?: string; center?: string }>;
 }
 
 // List 전용 인터페이스
@@ -114,6 +111,9 @@ export interface StepContentData {
   dataType: string;
   data: ContentSection[][];
   sections?: ContentSection[]; // CombinedContent용
+  columns?: 2 | 3;
+  title?: string;
+  emptyRows?: number;
 }
 
 // 기존 ContentSection과의 호환성을 위한 타입

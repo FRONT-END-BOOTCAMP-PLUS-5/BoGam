@@ -9,6 +9,9 @@ import Table from './contents/Table';
 import List from './contents/List';
 import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
+import Link from './contents/Link';
+import BrokerForm from './contents/BrokerForm';
+import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { LegacyContentSection, StepContentData } from './contents/types';
 import TaxCertResultDisplay from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay';
@@ -90,11 +93,7 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return (
-          <Table
-            data={pageData as unknown as { left: string; right?: string }[]}
-          />
-        );
+        return <Table data={pageData as Array<{ left: string; right?: string; center?: string }>} columns={stepContentData?.columns || 2} title={stepContentData?.title || '제출 서류'} emptyRows={stepContentData?.emptyRows || 0} />;
       case 'List':
         return (
           <List
@@ -110,7 +109,19 @@ export default function ModalContent() {
       case 'CheckListGroup':
         return <CheckListGroup data={pageData} />;
       case 'RadioGroup':
-        return <RadioGroup data={pageData} />;
+        return <RadioGroup data={pageData}/>;
+      case 'Link':
+        return <Link data={pageData as Array<{ title: string; url: string; description?: string }>} title={stepContentData?.title} />;
+      case 'BrokerForm':
+        return <BrokerForm data={pageData as Array<{ businessName: string; agentName: string; description: string }>} title={stepContentData?.title} />;
+      case 'CombinedContent':
+        return stepContentData && stepContentData.sections ? (
+          <CombinedContent
+            sections={stepContentData.sections}
+            spacing='lg'
+            showDividers={true}
+          />
+        ) : null;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
@@ -291,7 +302,7 @@ export default function ModalContent() {
         {/* 페이지 인디케이터 */}
         {stepContentData.data.length > 1 && (
           <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.data.map((_: unknown, index: number) => (
+            {stepContentData.data.map((_: LegacyContentSection[], index: number) => (
               <button
                 key={index}
                 className={`${styles.pageDot} ${

@@ -26,23 +26,29 @@ const CombinedContent = ({
     let content;
     switch (section.type) {
       case 'TextOnly':
-        content = <TextOnly data={section.data} />;
+        content = <TextOnly data={section.data as LegacyContentSection[]} />;
         break;
       case 'RadioGroup':
-        content = <RadioGroup data={section.data} />;
+        content = <RadioGroup data={section.data as LegacyContentSection[]} />;
         break;
       case 'Table':
-        content = <Table data={section.data} />;
+        const tableData = Array.isArray(section.data) 
+          ? section.data 
+          : Object.entries(section.data).map(([key, value]) => ({
+              left: key,
+              right: value as string
+            }));
+        content = <Table data={tableData} />;
         break;
       case 'List':
-        content = <List data={section.data} />;
+        content = <List data={section.data as Array<{ left: string; right?: string }>} />;
         break;
       case 'DataGrid':
-        content = <DataGrid data={section.data} />;
+        content = <DataGrid data={section.data as Array<{ left: string; right?: string }>} />;
         break;
       default:
         console.warn(
-          `Unknown section type: ${(section as unknown as Record<string, unknown>).type}`
+          `Unknown section type: ${(section as { type: string }).type}`
         );
         return null;
     }
