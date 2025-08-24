@@ -121,7 +121,7 @@ class UserAddressApi {
   public async deleteAddress(id: number): Promise<void> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
-    await axiosInstance.delete(`/api/user-address/${id}`);
+    await axiosInstance.delete(`/api/user-address?userAddressId=${id}`);
   }
 
   /**
