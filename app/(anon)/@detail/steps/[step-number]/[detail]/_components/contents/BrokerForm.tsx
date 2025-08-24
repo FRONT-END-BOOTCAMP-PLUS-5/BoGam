@@ -105,7 +105,6 @@ export default function BrokerForm({ title, data }: BrokerFormProps) {
         });
       }
     } catch (error) {
-      console.error('API 호출 오류:', error);
       setResult({
         type: 'mismatch',
         message: `입력하신 중개업자명과 사업자상호로 임대인을 찾을 수 없습니다.`,

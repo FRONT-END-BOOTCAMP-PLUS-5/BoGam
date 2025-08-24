@@ -9,7 +9,7 @@ const styles = {
   description: 'text-center text-brand-dark-gray mt-4 text-sm',
   resultContainer: 'mt-6 p-4 rounded-lg border',
   resultSuccess: 'bg-brand-light-blue border-brand text-brand-black',
-  resultWarning: 'bg-red-50 border-red-200 text-red-800',
+  resultWarning: 'bg-brand-light-blue border-brand text-brand-dark-blue',
   resultText: 'text-center font-medium'
 };
 
