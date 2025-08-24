@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import AuthLanding from '@/(anon)/main/_components/AuthLanding';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
-import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
 import FloatingButton from '@/(anon)/main/_components/floatingButton/FloatingButton';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { styles } from './main.styles';
@@ -64,19 +62,11 @@ export default function MainPage() {
 
           {/* 탭 컨테이너 */}
           <TabContainer activeTab={activeTab} onTabChange={handleTabChange} />
-
-          {/* 지도 컴포넌트 - 첫 번째 탭에서만 표시 */}
-          {activeTab === 0 && (
-            <div className={styles.mapContainer}>
-              <KakaoMapModule showTransactionMarkers={true} />
-            </div>
-          )}
         </div>
         <FloatingButton />
 
         <div className={styles.buttonArea}></div>
       </div>
-      <AuthLanding />
     </div>
   );
 }

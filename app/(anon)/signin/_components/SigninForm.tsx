@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useUserStore } from '@libs/stores/userStore';
 
 import Field from '@/(anon)/_components/common/forms/Field';
 import Button from '@/(anon)/_components/common/button/Button';
@@ -21,6 +22,8 @@ type SigninInput = z.infer<typeof signinSchema>;
 
 export default function SigninForm() {
   const router = useRouter();
+  const setNickname = useUserStore((state) => state.setNickname);
+  
   const {
     register,
     handleSubmit,
@@ -42,6 +45,18 @@ export default function SigninForm() {
         message: '아이디 또는 비밀번호가 올바르지 않습니다.',
       });
     } else {
+      // 로그인 성공 시 세션에서 nickname을 가져와서 userStore에 설정
+      if (res?.ok) {
+        // next-auth 세션이 업데이트될 때까지 잠시 대기
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // 세션에서 nickname 가져오기
+        const session = await fetch('/api/auth/session').then(res => res.json());
+        if (session?.user?.nickname) {
+          setNickname(session.user.nickname);
+        }
+      }
+      
       router.push('/main'); // 로그인 후 메인 페이지로 이동
     }
   };

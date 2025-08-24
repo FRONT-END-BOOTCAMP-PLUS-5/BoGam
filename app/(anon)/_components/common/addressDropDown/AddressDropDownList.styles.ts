@@ -1,7 +1,7 @@
 export const styles = {
   // 드롭다운 컨테이너
   dropdownContainer:
-    'absolute top-[calc(100%+1rem)] left-0 right-0 z-10 bg-brand-white rounded-lg border border-brand-light-gray shadow-lg max-h-0 overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out opacity-0',
+    'absolute top-[calc(100%+1rem)] left-0 right-0 z-50 bg-brand-white rounded-lg border border-brand-light-gray shadow-lg max-h-0 overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out opacity-0',
   dropdownContainerExpanded: 'max-h-[300px] opacity-100',
 
   // 드롭다운 목록

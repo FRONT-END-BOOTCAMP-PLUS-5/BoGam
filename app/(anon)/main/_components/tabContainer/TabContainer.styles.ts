@@ -1,6 +1,6 @@
 export const styles = {
   // 컨테이너
-  container: 'w-full',
+  container: 'w-full h-full',
 
   // 탭 네비게이션
   tabNavigation: 'flex justify-between mb-0',
@@ -10,7 +10,7 @@ export const styles = {
 
   // 활성 탭
   activeTab:
-    'bg-brand-white text-brand-black border-b-2 border-brand-white relative z-10 shadow-sm',
+    'bg-brand-90 text-brand-white border-b-2 border-brand-white relative z-10 shadow-sm',
 
   // 비활성 탭
   inactiveTab:
@@ -18,5 +18,5 @@ export const styles = {
 
   // 탭 컨텐츠
   tabContent:
-    'w-full bg-brand-white border border-brand-light-gray rounded-b-lg p-6 min-h-[300px]',
+    'w-full h-full bg-brand-white border border-brand-light-gray rounded-b-lg p-6 min-h-80',
 } as const;

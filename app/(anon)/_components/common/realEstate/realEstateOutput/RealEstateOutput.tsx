@@ -14,10 +14,7 @@ export const RealEstateOutput = ({
   existsData,
 }: RealEstateOutputProps) => {
   const {
-    selectedAddress,
-    currentStep,
     displayResponse,
-    dbLoading,
     riskAssessment,
     loading: totalLoading,
     hasData,
