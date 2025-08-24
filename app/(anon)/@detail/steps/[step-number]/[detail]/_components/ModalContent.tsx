@@ -61,16 +61,6 @@ export default function ModalContent() {
   // dataType에 따라 SwiperSlide 안에 들어갈 컴포넌트 결정
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
 
-    // LegacyContentSection[]를 { left: string; right?: string }[]로 변환하는 함수
-    const convertToTableData = (
-      data: LegacyContentSection[]
-    ): Array<{ left: string; right?: string }> => {
-      return data.map((item, index) => ({
-        left: item.title || `항목 ${index + 1}`,
-        right: item.summary || item.contents?.join(', ') || undefined,
-      }));
-    };
-
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;

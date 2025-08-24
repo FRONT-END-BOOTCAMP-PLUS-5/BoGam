@@ -143,6 +143,7 @@ export function ConfirmModal({
 
         {/* 버튼 */}
         <div className={styles.buttonContainer}>
+<<<<<<< HEAD
           {cancelText && (
             <Button
               variant='secondary'
@@ -162,6 +163,27 @@ export function ConfirmModal({
           >
             {confirmText}
           </Button>
+=======
+          <Button
+            variant='secondary'
+            onClick={handleCancel}
+            disabled={isLoading}
+            className={styles.modalButton}
+          >
+            {cancelText}
+          </Button>
+          {onConfirm && (
+            <Button
+              variant='primary'
+              onClick={handleConfirm}
+              disabled={isLoading}
+              isLoading={isLoading}
+              className={styles.modalButton}
+            >
+              {confirmText}
+            </Button>
+          )}
+>>>>>>> ccd7912 (Feat: 메인페이지 스타일 개선, 리팩토링 /#245 (#255))
         </div>
       </div>
     </div>

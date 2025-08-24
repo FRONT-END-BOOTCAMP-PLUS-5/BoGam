@@ -14,7 +14,7 @@ export const RealEstateInput = ({
   onSubmit,
   loading,
 }: RealEstateInputProps) => {
-  const { selectedAddress, register, handleSubmit, errors, setValue, reset } =
+  const { selectedAddress, register, handleSubmit, errors } =
     useRealEstateInput({ formData });
 
   // 폼 제출 시에만 상위 컴포넌트에 데이터 전달
