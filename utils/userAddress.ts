@@ -44,8 +44,12 @@ export async function getUserAddressId(
   nickname: string
 ): Promise<number | null> {
   try {
+    console.log('🔍 getUserAddressId 호출:', { nickname });
+    
     // 세션에서 user nickname 추출
     const userNickname = await getUserNicknameFromSession();
+    console.log('🔍 세션에서 추출한 userNickname:', userNickname);
+    
     if (!userNickname) {
       console.error('❌ 세션에서 user nickname을 가져올 수 없습니다.');
       return null;
@@ -53,12 +57,15 @@ export async function getUserAddressId(
 
     // user nickname으로 user id 추출
     const userId = await getUserIdByNickname(userNickname);
+    console.log('🔍 userNickname으로 조회한 userId:', userId);
+    
     if (!userId) {
       console.error('❌ user ID를 가져올 수 없습니다.');
       return null;
     }
 
     // userAddress 조회
+    console.log('🔍 userAddress 조회 파라미터:', { nickname, userId });
     const userAddress = await prisma.userAddress.findFirst({
       where: { 
         nickname,
@@ -66,6 +73,7 @@ export async function getUserAddressId(
       },
       select: { id: true }
     });
+    console.log('🔍 조회된 userAddress:', userAddress);
 
     return userAddress?.id || null;
   } catch (error) {

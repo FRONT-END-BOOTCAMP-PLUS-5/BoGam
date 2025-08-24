@@ -5,68 +5,59 @@ import { RealEstateInput } from '@/(anon)/_components/common/realEstate/realEsta
 import { RealEstateOutput } from '@/(anon)/_components/common/realEstate/realEstateOutput/RealEstateOutput';
 import { RealEstateTwoWayContent } from '@/(anon)/_components/common/realEstate/realEstateTwoWayContent/RealEstateTwoWayContent';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
-import { styles } from './RealEstateContainer.styles';
+import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useRealEstateContainer } from '@/hooks/useRealEstateContainer';
 
 export const RealEstateContainer = () => {
   const {
-    activeTab,
-    setActiveTab,
     formData,
     response,
     twoWaySelectedAddress,
     showTwoWayModal,
-    selectedAddress,
     existsData,
     createRealEstateMutation,
-    twoWayAuthMutation,
     handleAddressSelect,
     handleCloseTwoWayModal,
     handleSubmit,
   } = useRealEstateContainer();
 
+  // 입력 컴포넌트
+  const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
+    <RealEstateInput
+      formData={formData}
+      onSubmit={handleSubmit}
+      loading={createRealEstateMutation.isPending}
+    />
+  );
+
+  // 결과 컴포넌트
+  const outputComponent = (
+    <RealEstateOutput
+      response={response}
+      loading={createRealEstateMutation.isPending}
+      existsData={existsData}
+    />
+  );
+
+  // 존재 여부 쿼리 객체 생성
+  const checkExistsQuery = {
+    data: existsData
+      ? { success: true, data: { exists: existsData.exists } }
+      : undefined,
+    isLoading: false, // useCheckRealEstateExists에서 로딩 상태를 제공하지 않으므로 false로 설정
+    refetch: () => {
+      // existsData를 다시 확인하는 로직이 필요하다면 여기에 구현
+    },
+  };
+
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>부동산등기부등본 조회</h1>
-
-      {/* 탭 네비게이션 */}
-      <div className={styles.tabContainer}>
-        <button
-          onClick={() => setActiveTab('input')}
-          className={`${styles.tab} ${
-            activeTab === 'input' ? styles.activeTab : styles.inactiveTab
-          }`}
-        >
-          입력
-        </button>
-        <button
-          onClick={() => setActiveTab('output')}
-          className={`${styles.tab} ${
-            activeTab === 'output' ? styles.activeTab : styles.inactiveTab
-          }`}
-        >
-          결과
-        </button>
-      </div>
-
-      {/* 탭 컨텐츠 */}
-      <div className={styles.tabContent}>
-        {activeTab === 'input' && (
-          <RealEstateInput
-            formData={formData}
-            onSubmit={handleSubmit}
-            loading={createRealEstateMutation.isPending}
-          />
-        )}
-
-        {activeTab === 'output' && (
-          <RealEstateOutput
-            response={response}
-            loading={createRealEstateMutation.isPending}
-            existsData={existsData}
-          />
-        )}
-      </div>
+    <>
+      <DataContainer
+        title='부동산등기부등본 조회'
+        inputComponent={inputComponent}
+        outputComponent={outputComponent}
+        checkExistsQuery={checkExistsQuery}
+      />
 
       {/* 2-way 인증 모달 */}
       <ConfirmModal
@@ -84,6 +75,6 @@ export const RealEstateContainer = () => {
           onAddressSelect={handleAddressSelect}
         />
       </ConfirmModal>
-    </div>
+    </>
   );
 };

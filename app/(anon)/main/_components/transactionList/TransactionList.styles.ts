@@ -1,12 +1,12 @@
 export const styles = {
   // 거래 목록 컨테이너
-  transactionList: 'w-full bg-brand-white rounded-lg shadow-lg p-6',
+  transactionList: 'w-full bg-brand-white flex flex-col h-full',
 
   // 제목
   title: 'text-lg font-semibold text-brand-black mb-4',
 
   // 헤더
-  transactionHeader: 'flex items-center justify-between mb-4',
+  transactionHeader: 'flex items-center justify-between mb-4 flex-shrink-0',
   transactionCount: 'text-sm text-brand-blue font-medium',
 
   // 빈 상태
@@ -19,7 +19,7 @@ export const styles = {
   loadingNote: 'text-xs text-brand-dark-gray mt-2',
 
   // 거래 아이템들 컨테이너
-  transactionItems: 'space-y-3',
+  transactionItems: 'space-y-3 overflow-y-auto flex-1',
 
   // 거래 아이템
   transactionItem:
@@ -35,4 +35,11 @@ export const styles = {
 
   transactionDate: 'text-sm text-brand-blue font-medium mb-1',
   transactionAddress: 'text-sm text-brand-dark-gray font-medium',
+
+  // 페이지네이션
+  pagination: 'flex items-center justify-center gap-4 mt-4 pt-4 border-t border-brand-light-gray flex-shrink-0',
+  paginationButton: 'flex items-center justify-center w-8 h-8 rounded-lg border border-brand-light-gray bg-brand-white text-brand-dark-gray hover:bg-brand-light-gray hover:text-brand-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
+  pageIndicators: 'flex items-center gap-2',
+  pageIndicator: 'flex items-center justify-center w-8 h-8 rounded-lg border border-brand-light-gray bg-brand-white text-brand-dark-gray hover:bg-brand-light-gray hover:text-brand-black transition-colors',
+  activePageIndicator: 'bg-brand-90 text-brand-white border-brand-blue',
 } as const;

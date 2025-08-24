@@ -46,7 +46,6 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
-  console.log('TextOnly - data:', data);
 
   // 전역 store에서 선택된 주소 가져오기
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);

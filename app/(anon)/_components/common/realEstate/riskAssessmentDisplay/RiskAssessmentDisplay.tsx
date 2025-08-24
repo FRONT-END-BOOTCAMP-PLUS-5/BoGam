@@ -9,30 +9,32 @@ import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
   displayResponse: ApiResponse | null;
+  checklistItems?: Array<{
+    id: string;
+    label: string;
+    checked: boolean;
+    description: string;
+  }>;
+  onChecklistItemChange?: (itemId: string, checked: boolean) => void;
 }
 
 export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   riskAssessment,
   displayResponse,
+  checklistItems,
+  onChecklistItemChange,
 }) => {
   return (
     <div className={styles.riskSection}>
       <div className={styles.headerContainer}>
         <div className={styles.titleContainer}>
           <h3 className={styles.riskTitle}>위험도 확인 결과</h3>
-          <span
-            className={`${styles.riskLevel} ${
-              styles[`riskLevel${riskAssessment.riskLevel}`]
-            }`}
-          >
-            {riskAssessment.riskLevel}
-          </span>
         </div>
 
         {/* 원문보기 버튼 */}
-        {displayResponse && (
+        {displayResponse ? (
           <OriginalDocumentButton displayResponse={displayResponse} />
-        )}
+        ) : null}
       </div>
       <div className={styles.riskScore}>
         안전도: {riskAssessment.passedKeywords}/{riskAssessment.totalKeywords}{' '}
@@ -43,19 +45,19 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         %)
       </div>
 
-      {riskAssessment.riskFactors.length > 0 ? (
+      {riskAssessment.riskFactors.length > 0 ||
+      (checklistItems && checklistItems.some((item) => !item.checked)) ? (
         <>
           {/* 경고 표시 */}
           <div className={styles.warningContainer}>
             <div className={styles.warningHeader}>
               <span className={styles.warningIcon}>⚠️</span>
-              <h4 className={styles.warningTitle}>
-                위험 키워드가 감지되었습니다!
-              </h4>
+              <h4 className={styles.warningTitle}>확인이 필요합니다 !</h4>
             </div>
             <p className={styles.warningText}>
-              등기부등본에서 {riskAssessment.riskFactors.length}개의 위험 요소가
-              발견되었습니다.
+              {riskAssessment.riskFactors.length > 0
+                ? `등기부등본에서 ${riskAssessment.riskFactors.length}개의 위험 요소가 발견되었습니다.`
+                : '체크리스트에서 확인이 필요한 항목이 있습니다.'}
             </p>
           </div>
 
@@ -142,17 +144,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         </div>
       )}
 
-      <div className={styles.recommendations}>
-        <h4 className={styles.recommendationsTitle}>권장사항:</h4>
-        <ul className={styles.recommendationsList}>
-          {riskAssessment.recommendations.map((rec, index) => (
-            <li key={index} className={styles.recommendationItem}>
-              {rec}
-            </li>
-          ))}
-        </ul>
-      </div>
-
       {/* 키워드별 체크 결과 */}
       <div className={styles.keywordChecksSection}>
         <h4 className={styles.keywordChecksTitle}>위험 키워드 체크 결과</h4>
@@ -200,6 +191,65 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
             ))}
         </div>
       </div>
+
+      {/* 체크리스트 섹션 */}
+      {checklistItems && checklistItems.length > 0 && (
+        <div className={styles.checklistSection}>
+          <h4 className={styles.checklistTitle}>체크리스트 확인</h4>
+          <div className={styles.checklistGrid}>
+            {checklistItems.map((item) => (
+              <div
+                key={item.id}
+                className={`${styles.checklistItem} ${
+                  item.checked
+                    ? styles.checklistItemChecked
+                    : styles.checklistItemUnchecked
+                }`}
+                onClick={() => {
+                  if (onChecklistItemChange) {
+                    onChecklistItemChange(item.id, !item.checked);
+                  }
+                }}
+              >
+                <div className={styles.checklistItemHeader}>
+                  <div className={styles.checklistItemControls}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type='checkbox'
+                        checked={item.checked}
+                        onChange={(e) => {
+                          console.log(
+                            '체크박스 클릭:',
+                            item.id,
+                            '현재 상태:',
+                            item.checked,
+                            '새로운 상태:',
+                            e.target.checked
+                          );
+                          if (onChecklistItemChange) {
+                            onChecklistItemChange(item.id, e.target.checked);
+                          }
+                        }}
+                        className={styles.checkboxInput}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <span className={styles.checkboxText}>
+                        {item.checked ? '✅ 통과' : '❌ 실패'}
+                      </span>
+                    </label>
+                  </div>
+                  <span className={styles.checklistItemLabel}>
+                    {item.label}
+                  </span>
+                </div>
+                <div className={styles.checklistItemDescription}>
+                  {item.description}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

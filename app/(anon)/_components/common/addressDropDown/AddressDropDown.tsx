@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Star, ChevronDown } from 'lucide-react';
 import {
   styles,
@@ -56,6 +56,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
   } = props;
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // React Query 제거 - Zustand store만 사용
   // const { isLoading, isAuthenticated } = useUserAddresses();
@@ -68,6 +69,23 @@ export function AddressDropDown(props: AddressDropDownProps) {
     deleteAddress,
     toggleFavorite,
   } = useUserAddressStore();
+
+  // 외부 클릭으로 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsExpanded(false);
+      }
+    };
+
+    if (isExpanded) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isExpanded]);
 
   // props로 전달된 주소가 있으면 그것을 우선 사용, 없으면 Store 데이터 사용
   const addresses =
@@ -115,7 +133,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
   }
 
   return (
-    <div className={`${styles.container} ${className}`}>
+    <div ref={dropdownRef} className={`${styles.container} ${className}`}>
       {/* 헤더 */}
       <div className={styles.header} onClick={handleToggleExpand}>
         <div className={styles.headerContent}>

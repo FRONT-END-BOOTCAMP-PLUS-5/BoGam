@@ -26,6 +26,9 @@ export const styles = {
   // 인디케이터 화살표 버튼 스타일
   indicatorArrowBtn: 'bg-none border-none p-0 cursor-pointer h-6 flex items-center',
   
+  // 인디케이터 화살표 버튼 비활성화 스타일
+  disabled: 'cursor-not-allowed opacity-50',
+  
   // 인디케이터 점 기본 스타일
   dot: 'h-2 w-2 rounded-full transition-all duration-200 ease-in-out bg-brand-light-gray mx-1.5',
   
