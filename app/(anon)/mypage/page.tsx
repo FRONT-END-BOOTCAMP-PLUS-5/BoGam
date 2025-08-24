@@ -1,42 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useUserStore } from '@libs/stores/userStore';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
 import { styles } from './page.styles';
 import { mockData } from './_data/mockData';
+import Profile from '@/(anon)/_components/common/profile/Profile';
 
 export default function MyPage() {
-  const [selectedAddressId, setSelectedAddressId] = useState<number>(1);
-  const [addresses, setAddresses] = useState(mockData.addresses);
-
-  const selectedAddress = addresses.find(
-    (addr) => addr.id === selectedAddressId
-  );
-
-  const handleAddressSelect = (id: number) => {
-    setSelectedAddressId(id);
-  };
-
-  const handleAddressToggleFavorite = (id: number) => {
-    setAddresses((prev) =>
-      prev.map((addr) =>
-        addr.id === id ? { ...addr, isPrimary: !addr.isPrimary } : addr
-      )
-    );
-  };
-
-  const handleAddressDelete = (id: number) => {
-    setAddresses((prev) => prev.filter((addr) => addr.id !== id));
-    // 삭제된 주소가 선택된 주소였다면 첫 번째 주소로 변경
-    if (id === selectedAddressId) {
-      const remainingAddresses = addresses.filter((addr) => addr.id !== id);
-      if (remainingAddresses.length > 0) {
-        setSelectedAddressId(remainingAddresses[0].id);
-      }
-    }
-  };
+  const nickname = useUserStore((state) => state.nickname);
+  const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
 
   return (
     <div className={styles.container}>
@@ -46,11 +21,9 @@ export default function MyPage() {
       {/* 프로필 헤더 (임시) */}
       <div className={styles.profileHeader}>
         <div className={styles.profileContent}>
-          <div className={styles.avatar}>
-            {mockData.profile.avatar}
-          </div>
-          <div className={styles.profileInfo}>
-            <span className={styles.profileName}>{mockData.profile.name}</span>
+          <Profile size="md" />
+          <div>
+            <span className={styles.profileName}>{nickname}</span>
           </div>
         </div>
       </div>
@@ -58,11 +31,14 @@ export default function MyPage() {
       <div className={styles.content}>
         {/* 주소 */}
         <AddressDropDown
-          addresses={addresses}
+          addresses={userAddresses}
           selectedAddress={selectedAddress}
-          onDelete={handleAddressDelete}
-          onToggleFavorite={handleAddressToggleFavorite}
-          onSelect={handleAddressSelect}
+          onDelete={deleteAddress}
+          onToggleFavorite={toggleFavorite}
+          onSelect={(id: number) => {
+            const address = userAddresses.find(addr => addr.id === id);
+            if (address) selectAddress(address);
+          }}
         />
 
         {/* 문서 카드 */}

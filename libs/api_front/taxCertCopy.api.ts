@@ -43,7 +43,7 @@ class TaxCertCopyApi {
     params: TaxCertCopyRequestParams
   ): Promise<TaxCertCopyApiResponse> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
-
+    
     const response = await axiosInstance.get<TaxCertCopyApiResponse>(
       `/api/copies/tax-cert?userAddressNickname=${encodeURIComponent(params.userAddressNickname)}`
     );

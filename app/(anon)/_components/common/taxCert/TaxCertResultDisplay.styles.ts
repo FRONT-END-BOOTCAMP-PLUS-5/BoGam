@@ -14,11 +14,11 @@ export const styles = {
   
   // 상태 컨테이너
   statusContainer: "p-4 rounded-lg mb-4",
-  statusWarning: "bg-brand-warning border border-brand-warning",
+  statusWarning: "bg-brand-error border border-brand-error",
   
   // 상태 텍스트
   statusText: "text-sm font-medium",
-  statusTextWarning: "text-brand-warning-dark",
+  statusTextWarning: "text-brand-error",
   
   // 원본 데이터 컨테이너
   originalDataContent: "bg-brand-light-gray border border-brand-light-gray rounded-lg p-4",
@@ -77,5 +77,23 @@ export const styles = {
   originalDataLabel: "text-sm font-medium text-brand-dark-gray",
   
   // 복사 버튼
-  copyButton: "px-3 py-1 text-xs font-medium text-brand bg-brand-light-blue border border-brand rounded hover:bg-brand-90 transition-colors",
+  copyButton: "px-3 py-1 text-xs font-medium text-brand-white bg-brand border border-brand rounded hover:bg-brand-90 transition-colors",
+  
+  // 추가 스타일들
+  noDataContainer: "text-center py-8 border border-brand-light-gray rounded-lg",
+  noDataText: "text-brand-dark-gray",
+  noDataSubText: "text-xs text-brand-dark-gray mt-2",
+  
+  // 아코디언 스타일
+  accordionContainer: "border border-brand-light-gray rounded-lg",
+  accordionButton: "w-full text-left p-4 bg-brand-light-gray hover:bg-brand-light-blue transition-colors flex justify-between items-center",
+  accordionTitle: "text-lg font-semibold text-brand-black",
+  accordionIcon: "text-brand-dark-gray",
+  accordionContent: "p-4 border-t border-brand-light-gray space-y-6",
+  
+  // 섹션 스타일
+  sectionTitle: "text-md font-semibold text-brand-black mb-3 border-b border-brand-light-gray pb-2",
+  
+  // 오버플로우 컨테이너
+  overflowContainer: "overflow-x-auto",
 } as const;
