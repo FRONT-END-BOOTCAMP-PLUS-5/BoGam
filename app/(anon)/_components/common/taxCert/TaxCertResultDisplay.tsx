@@ -8,10 +8,12 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { TaxCertInput } from '@/(anon)/_components/common/taxCert/TaxCertInput';
-import { useCheckTaxCertCopyExists, useGetTaxCertCopy } from '@/hooks/useTaxCert';
+import { useCheckTaxCertCopyExists } from '@/hooks/useTaxCert';
+import { useGetTaxCertCopy } from '@/hooks/useTaxCertQueries';
 import { useTaxCertRiskAssessment } from '@/hooks/useTaxCertRiskAssessment';
 import { RiskAssessmentDisplay } from '@/(anon)/_components/common/realEstate/riskAssessmentDisplay/RiskAssessmentDisplay';
-import { OriginalDocumentButton } from '../realEstate/originalDocumentButton/OriginalDocumentButton';
+import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
+import { convertJsonToRiskAssessment } from '@utils/riskAssessmentUtils';
 
 // 납세증명서 데이터 타입 정의
 interface TaxCertData {
@@ -28,22 +30,37 @@ interface TaxCertData {
 export default function TaxCertResultDisplay() {
   const { selectedAddress } = useUserAddressStore();
   const userAddressNickname = selectedAddress?.nickname || '';
-  
-  // useGetTaxCertCopy 훅 사용
-  const { data: result, isLoading, error: apiError } = useGetTaxCertCopy(userAddressNickname);
 
-  // 타입 가드 함수
-  const isValidResult = (data: unknown): data is { success: boolean; data: unknown; message?: string } => {
-    return data && typeof data === 'object' && 'success' in data;
-  };
+  // useGetTaxCertCopy 훅 사용
+  const {
+    data: result,
+    isLoading,
+    error: queryError,
+  } = useGetTaxCertCopy(userAddressNickname);
 
   // 데이터 파싱 및 상태 관리
   const [data, setData] = useState<TaxCertData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [parsedError, setParsedError] = useState<string | null>(null);
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>(
     {}
   );
+
+  // URL에서 stepNumber와 detail 가져오기
+  const pathname = window.location.pathname;
+  const stepUrlData = pathname.match(/\/steps\/(\d+)\/(\d+)/);
+  const stepNumber = stepUrlData ? parseInt(stepUrlData[1]) : 1;
+  const detail = stepUrlData ? parseInt(stepUrlData[2]) : 5;
+
+  // 저장된 위험도 검사 결과 로드
+  const {
+    data: savedRiskData,
+    error: loadError,
+    isLoading: loadLoading,
+  } = useRiskAssessmentLoad({
+    stepNumber,
+    detail,
+    userAddressNickname,
+  });
 
   // 납세증명서 위험도 검사 hook 사용
   const riskAssessment = useTaxCertRiskAssessment(
@@ -83,73 +100,30 @@ export default function TaxCertResultDisplay() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (isValidResult(result) && result.success && result.data) {
-        try {
-          setLoading(true);
-          const response = await fetch(
-            `/api/copies/tax-cert?userAddressNickname=${encodeURIComponent(
-              userAddressNickname
-            )}`
-          );
-          const fetchResult = await response.json();
-
-          if (fetchResult.success && fetchResult.data) {
-            // DB에서 조회된 데이터를 파싱
-            // GetTaxCertCopyUsecase에서 반환하는 taxCertJson 필드 사용
-            if (fetchResult.data.taxCertJson) {
-              try {
-                // 이미 복호화된 JSON 객체이므로 파싱 불필요
-                setData(fetchResult.data.taxCertJson);
-              } catch {
-                setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-              }
-            } else if (fetchResult.data.data && fetchResult.data.data.taxCertJson) {
-              try {
-                // 실제 납세증명서 데이터는 fetchResult.data.data.taxCertJson.data에 있음
-                if (fetchResult.data.data.taxCertJson.data) {
-                  setData(fetchResult.data.data.taxCertJson.data);
-                } else {
-                  // data 필드가 없으면 전체 taxCertJson 사용
-                  setData(fetchResult.data.data.taxCertJson);
-                }
-              } catch {
-                setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-              }
-            } else if (fetchResult.data.taxCertData) {
-              // taxCertData 필드가 있는 경우 (암호화된 데이터)
-              try {
-                const taxCertData = JSON.parse(fetchResult.data.taxCertData);
-                setData(taxCertData);
-              } catch {
-                setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-              }
-            } else {
-              setError('납세증명서 데이터가 올바르지 않습니다.');
-            }
-          } else {
-            setError('납세증명서 데이터가 올바르지 않습니다.');
+    if (result && result.success && result.data) {
+      try {
+        // DB에서 조회된 데이터를 파싱
+        // taxCertJson 필드에서 납세증명서 데이터 추출
+        if (result.data.taxCertJson) {
+          try {
+            // 이미 복호화된 JSON 객체이므로 파싱 불필요
+            setData(result.data.taxCertJson);
+            setParsedError(null);
+          } catch {
+            setParsedError('납세증명서 데이터 형식이 올바르지 않습니다.');
           }
-          setLoading(false);
-        } catch {
-          setError('납세증명서 데이터 형식이 올바르지 않습니다.');
-          setLoading(false);
+        } else {
+          setParsedError('납세증명서 데이터가 올바르지 않습니다.');
         }
-      } else if (isValidResult(result) && !result.success) {
-        setError(result.message || '납세증명서 데이터를 조회할 수 없습니다.');
-        setLoading(false);
+      } catch {
+        setParsedError('납세증명서 데이터 형식이 올바르지 않습니다.');
       }
-    };
-
-    fetchData();
-  }, [result, userAddressNickname]);
-
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+    } else if (result && !result.success) {
+      setParsedError(
+        result.message || '납세증명서 데이터를 조회할 수 없습니다.'
+      );
+    }
+  }, [result]);
 
   // 입력 컴포넌트
   const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
@@ -162,16 +136,18 @@ export default function TaxCertResultDisplay() {
   // 결과 컴포넌트
   const outputComponent = (
     <>
-      {loading ? (
+      {isLoading ? (
         <LoadingOverlay
           isVisible={true}
           title='납세증명서 데이터를 불러오는 중이에요!'
           currentStep={1}
           totalSteps={1}
         />
-      ) : error ? (
+      ) : queryError || parsedError ? (
         <div className={styles.emptyContainer}>
-          <p className={styles.emptyText}>❌ {error}</p>
+          <p className={styles.emptyText}>
+            ❌ {queryError?.message || parsedError}
+          </p>
         </div>
       ) : !data ? (
         <div className={styles.emptyContainer}>
@@ -202,6 +178,11 @@ export default function TaxCertResultDisplay() {
             }
             checklistItems={riskAssessment.checklistItems}
             onChecklistItemChange={handleChecklistItemChange}
+            stepNumber={stepNumber}
+            detail={detail}
+            userAddressNickname={userAddressNickname}
+            domain='taxCert'
+            initialJsonData={savedRiskData?.jsonData}
           />
         </>
       )}
