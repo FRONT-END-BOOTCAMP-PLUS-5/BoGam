@@ -24,31 +24,7 @@ const StepResultsApiTest = () => {
     }
   }), [selectedAddress?.id]);
 
-  // JSON 입력을 파싱하여 StepResultRequest로 변환
-  const parseJsonInput = (): StepResultRequest | null => {
-    try {
-      const parsed = JSON.parse(jsonInput);
-      
-             // 필수 필드 검증
-       if (typeof parsed.userAddressId !== 'number' || 
-           typeof parsed.stepNumber !== 'number' || 
-           typeof parsed.detail !== 'number' || 
-           !parsed.jsonDetails || typeof parsed.jsonDetails !== 'object') {
-         throw new Error('필수 필드가 누락되었거나 타입이 잘못되었습니다.');
-       }
 
-       // jsonDetails의 값들이 올바른 타입인지 검증
-       for (const [key, value] of Object.entries(parsed.jsonDetails)) {
-         if (!['match', 'mismatch', 'unchecked'].includes(value as string)) {
-           throw new Error(`jsonDetails.${key}의 값이 올바르지 않습니다. 'match', 'mismatch', 'unchecked' 중 하나여야 합니다.`);
-         }
-       }
-
-      return parsed as StepResultRequest;
-    } catch {
-      return null;
-    }
-  };
 
   // 선택된 주소가 변경될 때마다 JSON 입력 업데이트
   useEffect(() => {
@@ -59,20 +35,27 @@ const StepResultsApiTest = () => {
     setJsonInput(JSON.stringify(updatedData, null, 2));
   }, [defaultData, selectedAddress?.id]);
 
-  const handleCreateOrUpdateStepResult = async () => {
+  const handleUpsertStepResult = async () => {
+    if (!jsonInput.trim()) {
+      setError('JSON을 입력해주세요.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setResult('');
 
-    const parsedData = parseJsonInput();
-    if (!parsedData) {
-      setError('JSON 형식이 올바르지 않습니다. 필수 필드를 확인해주세요.');
+    let parsedData;
+    try {
+      parsedData = JSON.parse(jsonInput);
+    } catch {
+      setError('잘못된 JSON 형식입니다.');
       setLoading(false);
       return;
     }
 
     try {
-      const response = await stepResultsApi.createOrUpdateStepResult(parsedData);
+      const response = await stepResultsApi.upsertStepResult(parsedData);
       
       if (response.success) {
         setResult(JSON.stringify(response.data, null, 2));
@@ -126,7 +109,7 @@ const StepResultsApiTest = () => {
       {/* API 호출 버튼 */}
       <div className="flex gap-4">
         <button
-          onClick={handleCreateOrUpdateStepResult}
+          onClick={handleUpsertStepResult}
           disabled={loading}
           className="px-4 py-2 bg-brand text-white rounded hover:bg-brand-90 disabled:opacity-50"
         >

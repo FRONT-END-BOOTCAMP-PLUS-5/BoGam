@@ -93,6 +93,7 @@ class TaxCertApi {
   ): Promise<TaxCertApiResponse> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
+    console.log('issueData', issueData);
     const response = await axiosInstance.post<TaxCertApiResponse>(
       '/api/tax-cert',
       issueData

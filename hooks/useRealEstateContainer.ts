@@ -1,21 +1,17 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import { RealEstateFormData, ApiResponse, AddressListItem } from './types';
-import { RealEstateInput } from './RealEstateInput';
-import { RealEstateOutput } from './RealEstateOutput';
-import { RealEstateTwoWayContent } from './RealEstateTwoWayContent';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
-import { styles } from './RealEstateContainer.styles';
+import { useState, useEffect } from 'react';
+import {
+  RealEstateFormData,
+  ApiResponse,
+  AddressListItem,
+} from '@/(anon)/_components/common/realEstate/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import {
   useCheckRealEstateExists,
   useCreateRealEstate,
   useTwoWayAuth,
 } from '@/hooks/useRealEstate';
-import Button from '@/(anon)/_components/common/button/Button';
 
-export const RealEstateContainer = () => {
+export const useRealEstateContainer = () => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
   const [formData] = useState<RealEstateFormData>({
     userAddressNickname: '',
@@ -210,67 +206,19 @@ export const RealEstateContainer = () => {
     }
   };
 
-  return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>부동산등기부등본 조회</h1>
-
-      {/* 탭 네비게이션 */}
-      <div className={styles.tabContainer}>
-        <Button
-          onClick={() => setActiveTab('input')}
-          variant={activeTab === 'input' ? 'primary' : 'ghost'}
-          className={`${styles.tab} ${
-            activeTab === 'input' ? styles.activeTab : styles.inactiveTab
-          }`}
-        >
-          입력
-        </Button>
-        <Button
-          onClick={() => setActiveTab('output')}
-          variant={activeTab === 'output' ? 'primary' : 'ghost'}
-          className={`${styles.tab} ${
-            activeTab === 'output' ? styles.activeTab : styles.inactiveTab
-          }`}
-        >
-          결과
-        </Button>
-      </div>
-
-      {/* 탭 컨텐츠 */}
-      <div className={styles.tabContent}>
-        {activeTab === 'input' && (
-          <RealEstateInput
-            formData={formData}
-            onSubmit={handleSubmit}
-            loading={createRealEstateMutation.isPending}
-          />
-        )}
-
-        {activeTab === 'output' && (
-          <RealEstateOutput
-            response={response}
-            loading={createRealEstateMutation.isPending}
-            existsData={existsData}
-          />
-        )}
-      </div>
-
-      {/* 2-way 인증 모달 */}
-      <ConfirmModal
-        isOpen={showTwoWayModal}
-        title='부동산 목록에서 선택하세요'
-        onCancel={handleCloseTwoWayModal}
-        cancelText='취소'
-        icon='info'
-        isLoading={false}
-        onConfirm={undefined}
-      >
-        <RealEstateTwoWayContent
-          resAddrList={response?.resAddrList || []}
-          selectedAddress={twoWaySelectedAddress}
-          onAddressSelect={handleAddressSelect}
-        />
-      </ConfirmModal>
-    </div>
-  );
+  return {
+    activeTab,
+    setActiveTab,
+    formData,
+    response,
+    twoWaySelectedAddress,
+    showTwoWayModal,
+    selectedAddress,
+    existsData,
+    createRealEstateMutation,
+    twoWayAuthMutation,
+    handleAddressSelect,
+    handleCloseTwoWayModal,
+    handleSubmit,
+  };
 };

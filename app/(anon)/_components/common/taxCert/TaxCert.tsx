@@ -34,10 +34,21 @@ export default function TaxCert() {
 
   // 커스텀 훅들 사용
   const { validateFormData } = useTaxCertValidation();
-  const { isLoading, error, response, setError, submitTaxCert, submitTwoWayAuth } = useTaxCertApi();
-  const { showSimpleAuthModal, setShowSimpleAuthModal, handleFirstRequestComplete } = useTaxCertTwoWay();
-  
-  const { handleInputChange, handleLoginTypeLevelChange, handleSubmit, handleSimpleAuthApprove, handleSimpleAuthCancel } = useTaxCertHandlers(
+  const { isLoading, error, setError, submitTaxCert, submitTwoWayAuth } =
+    useTaxCertApi();
+  const {
+    showSimpleAuthModal,
+    setShowSimpleAuthModal,
+    handleFirstRequestComplete,
+  } = useTaxCertTwoWay();
+
+  const {
+    handleInputChange,
+    handleLoginTypeLevelChange,
+    handleSubmit,
+    handleSimpleAuthApprove,
+    handleSimpleAuthCancel,
+  } = useTaxCertHandlers(
     formData,
     setFormData,
     submitTaxCert,
@@ -65,16 +76,16 @@ export default function TaxCert() {
         isOpen={showSimpleAuthModal}
         onConfirm={handleSimpleAuthApprove}
         onCancel={handleSimpleAuthCancel}
-        title="🔐 간편인증 추가인증"
-        confirmText="✅ 승인"
-        cancelText="❌ 취소"
-        icon="info"
+        title='🔐 간편인증 추가인증'
+        confirmText='✅ 승인'
+        cancelText='❌ 취소'
+        icon='info'
         isLoading={isLoading}
       >
-        <div className="space-y-3">
+        <div className='space-y-3'>
           <p>📱 모바일에서 카카오 인증을 완료해주세요.</p>
           <p>✅ 인증 완료 후 아래 버튼을 클릭하여 승인해주세요.</p>
-          <p className="text-sm text-gray-600">
+          <p className='text-sm text-gray-600'>
             * 4분 30초 내에 승인/취소를 완료해주세요.
           </p>
         </div>
