@@ -54,7 +54,7 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'Table':
-        return <Table data={pageData as any} columns={stepContentData?.columns || 2} title={stepContentData?.title || '제출 서류'} emptyRows={stepContentData?.emptyRows || 0} />;
+        return <Table data={pageData as Array<{ left: string; right?: string; center?: string }>} columns={stepContentData?.columns || 2} title={stepContentData?.title || '제출 서류'} emptyRows={stepContentData?.emptyRows || 0} />;
       case 'List':
         return <List data={pageData as unknown as Record<string, string>} />;
       case 'DataGrid':
@@ -64,9 +64,9 @@ export default function ModalContent() {
       case 'RadioGroup':
         return <RadioGroup data={pageData}/>;
       case 'Link':
-        return <Link data={pageData as any} title={stepContentData?.title} />;
+        return <Link data={pageData as Array<{ title: string; url: string; description?: string }>} title={stepContentData?.title} />;
       case 'BrokerForm':
-        return <BrokerForm data={pageData as any} title={stepContentData?.title} />;
+        return <BrokerForm data={pageData as Array<{ businessName: string; agentName: string; description: string }>} title={stepContentData?.title} />;
       case 'CombinedContent':
         // CombinedContent의 경우 전체 stepContentData.sections를 전달
         return stepContentData && stepContentData.sections ? (
@@ -124,7 +124,7 @@ export default function ModalContent() {
         {/* 페이지 인디케이터 */}
         {stepContentData.data.length > 1 && (
           <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.data.map((_: unknown, index: number) => (
+            {stepContentData.data.map((_: LegacyContentSection[], index: number) => (
               <button
                 key={index}
                 className={`${styles.pageDot} ${

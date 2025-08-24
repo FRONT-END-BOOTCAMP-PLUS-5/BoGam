@@ -55,7 +55,7 @@ const CombinedContent = ({
         break;
       default:
         console.warn(
-          `Unknown section type: ${(section as Record<string, unknown>).type}`
+          `Unknown section type: ${(section as { type: string }).type}`
         );
         return null;
     }

@@ -8,7 +8,7 @@ export interface BaseContentSection {
 // TextOnly 전용 인터페이스
 export interface TextOnlySection extends BaseContentSection {
   type: 'TextOnly';
-  data: Record<string, unknown>[];
+  data: Array<{ left: string; right?: string }>;
   subtitles?: string[];
   contents?: string[];
   contentSections?: Array<{
@@ -40,7 +40,7 @@ export interface TextOnlySection extends BaseContentSection {
 // RadioGroup 전용 인터페이스
 export interface RadioGroupSection extends BaseContentSection {
   type: 'RadioGroup';
-  data: Record<string, unknown>[];
+  data: Array<{ left: string; right?: string }>;
   contents?: string[];
   messages?: string[];
   link?: string;
@@ -49,7 +49,7 @@ export interface RadioGroupSection extends BaseContentSection {
 // Table 전용 인터페이스
 export interface TableSection extends BaseContentSection {
   type: 'Table';
-  data: Array<{ left: string; right?: string }>;
+  data: Array<{ left: string; right?: string; center?: string }>;
 }
 
 // List 전용 인터페이스

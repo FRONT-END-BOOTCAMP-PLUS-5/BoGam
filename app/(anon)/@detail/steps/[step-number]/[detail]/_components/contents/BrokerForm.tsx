@@ -16,10 +16,25 @@ interface BrokerFormProps {
   data: BrokerFormData[];
 }
 
+interface BrokerData {
+  brkrAsortCodeNm: string;
+  brkrAsortCode: string;
+  jurirno: string;
+  crqfcAcqdt: string;
+  ofcpsSeCodeNm: string;
+  ofcpsSeCode: string;
+  brkrNm: string;
+  lastUpdtDt: string;
+  IdCodeNm: string;
+  IdCode: string;
+  crqfcNo: string;
+  bsnmCmpnm: string;
+}
+
 interface BrokerResult {
   type: 'match' | 'mismatch' | 'unchecked';
   message: string;
-  data?: any;
+  data?: BrokerData | BrokerData[];
 }
 
 export default function BrokerForm({ title, data }: BrokerFormProps) {
@@ -75,13 +90,13 @@ export default function BrokerForm({ title, data }: BrokerFormProps) {
         throw new Error('Empty response from server');
       }
 
-      const data = JSON.parse(responseText);
+      const responseData: { success: boolean; data?: BrokerData | BrokerData[] } = JSON.parse(responseText);
       
-      if (data.success && data.data && (Array.isArray(data.data) ? data.data.length > 0 : data.data)) {
+      if (responseData.success && responseData.data && (Array.isArray(responseData.data) ? responseData.data.length > 0 : responseData.data)) {
         setResult({
           type: 'match',
           message: '입력하신 중개업자명과 사업자상호로 임대인을 찾았습니다.',
-          data: data.data
+          data: responseData.data
         });
       } else {
         setResult({
