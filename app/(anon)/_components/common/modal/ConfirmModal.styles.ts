@@ -1,7 +1,7 @@
 export const styles = {
   // 모달 오버레이 (배경 흐림 처리)
   overlay:
-    'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] animate-fadeIn',
+    'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] animate-fadeIn pointer-events-auto',
 
   // 모달 컨테이너
   modalContainer:

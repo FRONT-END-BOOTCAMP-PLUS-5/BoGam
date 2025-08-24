@@ -39,16 +39,15 @@ export const useAddressManagement = () => {
   // 메인 페이지 상태
   const {
     roadAddress,
-    dong,
-    ho,
     searchQuery,
     savedLawdCode,
     setRoadAddress,
-    setDong,
-    setHo,
     setSearchQuery,
     setSavedLawdCode,
   } = useMainPageState();
+
+  // UserAddressStore에서 동/호 상태 가져오기
+  const { dong, ho, setDong, setHo } = useUserAddressStore();
 
   // 지도 관련 Store
   const { setMapCenter, setSearchLocationMarker, setAdjustBounds } =
@@ -86,8 +85,8 @@ export const useAddressManagement = () => {
       // 드롭다운 주소로 메인 상태 업데이트
       setRoadAddress(baseAddress);
       // 동만 업데이트 (호는 기존 값 유지)
-      setDong(dong || extractedDong);
-      setHo(ho || '');
+      setDong(extractedDong || '');
+      setHo('');
       setSearchQuery(storeSelectedAddress.completeAddress);
       setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
 
@@ -152,9 +151,9 @@ export const useAddressManagement = () => {
       return;
     }
 
-    // 전달받은 값 우선 사용, 없으면 상태값 사용
-    const currentDong = dongValue || storeSelectedAddress.dong || dong || '';
-    const currentHo = hoValue || storeSelectedAddress.ho || ho || '';
+    // 전달받은 값 우선 사용, 없으면 store의 상태값 사용
+    const currentDong = dongValue || dong || '';
+    const currentHo = hoValue || ho || '';
 
     if (!currentDong) {
       openModal({
@@ -247,7 +246,7 @@ export const useAddressManagement = () => {
 
   // 지도 이동 전용 (실거래가 데이터 없이) - 호 데이터 사용하지 않음
   const handleMoveToAddressOnly = async (currentDong?: string) => {
-    // 전달받은 동 값 사용 (없으면 DOM에서 가져오기)
+    // 전달받은 동 값 사용 (없으면 store의 상태값 사용)
     const dongValue = currentDong || dong || '';
 
     if (!dongValue) {

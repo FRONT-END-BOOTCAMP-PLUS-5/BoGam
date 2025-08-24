@@ -57,6 +57,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
   } = props;
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // 모달 스토어
@@ -72,7 +73,14 @@ export function AddressDropDown(props: AddressDropDownProps) {
     selectAddress,
     deleteAddress,
     toggleFavorite,
+    getPersistentAddresses,
+    getPersistentSelectedAddress,
   } = useUserAddressStore();
+
+  // 클라이언트 마운트 확인
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // 외부 클릭으로 드롭다운 닫기
   useEffect(() => {
@@ -91,10 +99,9 @@ export function AddressDropDown(props: AddressDropDownProps) {
     };
   }, [isExpanded]);
 
-  // props로 전달된 주소가 있으면 그것을 우선 사용, 없으면 Store 데이터 사용
-  const addresses =
-    propAddresses && propAddresses.length > 0 ? propAddresses : userAddresses;
-  const selectedAddress = propSelectedAddress || storeSelectedAddress;
+  // 스토어의 데이터만 사용 (휘발성 주소 제외)
+  const addresses = isClient ? getPersistentAddresses() : [];
+  const selectedAddress = isClient ? getPersistentSelectedAddress() : null;
 
   // Store 액션을 위한 래퍼 함수들
   const handleSelect = (id: number) => {
@@ -175,8 +182,18 @@ export function AddressDropDown(props: AddressDropDownProps) {
           <span className={styles.headerTitle}>{title}</span>
           {selectedAddress ? (
             <div className={styles.selectedAddress}>
-              {showFavoriteToggle && (
-                <StarIcon filled={selectedAddress.isPrimary || false} />
+              {showFavoriteToggle && isClient && (
+                <div 
+                  onClick={(e) => {
+                    e.stopPropagation(); // 드롭다운 토글 방지
+                    if (selectedAddress) {
+                      toggleFavorite(selectedAddress.id);
+                    }
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <StarIcon filled={selectedAddress.isPrimary || false} />
+                </div>
               )}
               <div className={styles.selectedAddressText}>
                 {(() => {
@@ -220,6 +237,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
         showDeleteButton={showDeleteButton}
         isExpanded={isExpanded}
         maxHeight={maxHeight}
+        isClient={isClient}
       />
     </div>
   );

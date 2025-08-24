@@ -114,7 +114,7 @@ export const useMainPageModule = () => {
     }
   };
 
-  const { execDaumPostcode, postcodeRef } = useDaumPostcode(
+  const { execDaumPostcode, executePostcode, postcodeRef } = useDaumPostcode(
     handleDaumPostcodeComplete,
     mainPageState.setShowPostcode,
     (errorMessage: string) => {
@@ -132,8 +132,6 @@ export const useMainPageModule = () => {
     selectedAddress: addressManagement.selectedAddress,
     searchQuery: addressManagement.searchQuery,
     roadAddress: addressManagement.roadAddress,
-    dong: addressManagement.dong,
-    ho: addressManagement.ho,
     savedLawdCode: addressManagement.savedLawdCode,
     buildingType: mainPageState.buildingType,
     selectedYear: mainPageState.selectedYear,
@@ -149,10 +147,8 @@ export const useMainPageModule = () => {
 
     // 상태 설정 함수
     setSearchQuery: mainPageState.setSearchQuery,
-    setDong: mainPageState.setDong,
-    setHo: mainPageState.setHo,
     setBuildingType: mainPageState.setBuildingType,
-    setSelectedYear: mainPageState.setSelectedYear,
+    setSelectedYear: mainPageState.selectedYear,
     setSelectedMonth: mainPageState.setSelectedMonth,
     setShowPostcode: mainPageState.setShowPostcode,
 
@@ -162,6 +158,7 @@ export const useMainPageModule = () => {
     handleMoveToAddress: transactionManagement.handleMoveToAddress,
     handleMoveToAddressOnly: addressManagement.handleMoveToAddressOnly,
     onSearch: execDaumPostcode,
+    executePostcode,
     postcodeRef,
 
     // 위치 관리 액션 함수

@@ -113,6 +113,7 @@ export function ConfirmModal({
     <div
       className={styles.overlay}
       onClick={isLoading ? undefined : handleCancel}
+      style={{ pointerEvents: 'auto' }}
     >
       <div
         className={styles.modalContainer}

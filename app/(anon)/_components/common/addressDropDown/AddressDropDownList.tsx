@@ -18,6 +18,7 @@ interface AddressDropDownListProps {
   showDeleteButton?: boolean;
   isExpanded: boolean;
   maxHeight?: string;
+  isClient?: boolean;
 }
 
 export function AddressDropDownList({
@@ -30,15 +31,16 @@ export function AddressDropDownList({
   showDeleteButton = true,
   isExpanded,
   maxHeight = '300px',
+  isClient = false,
 }: AddressDropDownListProps) {
   // 빈 상태 체크
   const isEmpty = !addresses || addresses.length === 0;
 
-  // 휘발성 주소를 최상단에 정렬
-  const sortedAddresses = [
+  // 클라이언트 상태에 따라 주소 정렬
+  const sortedAddresses = isClient ? [
     ...addresses.filter((addr) => addr.isVolatile), // 휘발성 주소 최상단
     ...addresses.filter((addr) => !addr.isVolatile), // 일반 주소
-  ];
+  ] : [];
 
   return (
     <div

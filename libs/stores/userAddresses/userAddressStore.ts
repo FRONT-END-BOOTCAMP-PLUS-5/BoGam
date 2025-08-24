@@ -14,6 +14,10 @@ interface UserAddressStore {
   dong: string;
   ho: string;
 
+  // getter - 휘발성 주소 제외
+  getPersistentAddresses: () => UserAddress[];
+  getPersistentSelectedAddress: () => UserAddress | null;
+
   // 초기화 (React Query에서 받은 데이터로)
   initializeFromQuery: (data: UserAddress[]) => void;
 
@@ -282,22 +286,14 @@ export const useUserAddressStore = create<UserAddressStore>()(
               );
               const isCurrentlyPrimary = targetAddress?.isPrimary || false;
 
-              // 대표 주소를 변경하는 경우 (현재 대표 주소가 아닌 주소를 대표로 설정)
-              if (!isCurrentlyPrimary) {
-                return {
-                  userAddresses: state.userAddresses.map((addr) => ({
-                    ...addr,
-                    isPrimary: addr.id === id, // 클릭된 주소만 true, 나머지는 false
-                  })),
-                };
-              } else {
-                // 대표 주소 해제하는 경우 (현재 대표 주소를 해제)
-                return {
-                  userAddresses: state.userAddresses.map((addr) =>
-                    addr.id === id ? { ...addr, isPrimary: false } : addr
-                  ),
-                };
-              }
+              // 현재 주소의 isPrimary 상태만 토글 (다른 주소에는 영향 없음)
+              return {
+                userAddresses: state.userAddresses.map((addr) =>
+                  addr.id === id 
+                    ? { ...addr, isPrimary: !isCurrentlyPrimary } 
+                    : addr
+                ),
+              };
             },
             false,
             'toggleFavorite'
@@ -375,6 +371,13 @@ export const useUserAddressStore = create<UserAddressStore>()(
         // 에러 처리
         setError: (error) => set({ error }, false, 'setError'),
         clearError: () => set({ error: null }, false, 'clearError'),
+
+        // getter - 휘발성 주소 제외
+        getPersistentAddresses: () => get().userAddresses.filter(addr => !addr.isVolatile),
+        getPersistentSelectedAddress: () => {
+          const current = get();
+          return current.selectedAddress && !current.selectedAddress.isVolatile ? current.selectedAddress : null;
+        },
       }),
       {
         name: 'user-address-store',
