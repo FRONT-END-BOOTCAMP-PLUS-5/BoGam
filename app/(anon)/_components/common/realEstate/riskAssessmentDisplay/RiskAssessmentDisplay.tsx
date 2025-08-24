@@ -1,10 +1,21 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import { styles } from './RiskAssessmentDisplay.styles';
 import { OriginalDocumentButton } from '@/(anon)/_components/common/realEstate/originalDocumentButton/OriginalDocumentButton';
+import { RiskAssessmentSaveButton } from './RiskAssessmentSaveButton';
 import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
+import {
+  RiskAssessmentJsonData,
+  convertRealEstateRiskAssessmentToJson,
+  convertBrokerRiskAssessmentToJson,
+  convertTaxCertRiskAssessmentToJson,
+  isRiskAssessmentModified,
+} from '@utils/riskAssessmentUtils';
+import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { BrokerRiskAssessmentResult } from '@/hooks/useBrokerRiskAssessment';
+import { TaxCertRiskAssessmentResult } from '@/hooks/useTaxCertRiskAssessment';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
@@ -16,6 +27,12 @@ interface RiskAssessmentDisplayProps {
     description: string;
   }>;
   onChecklistItemChange?: (itemId: string, checked: boolean) => void;
+  stepNumber?: number;
+  detail?: number;
+  userAddressNickname?: string;
+  domain?: 'realEstate' | 'broker' | 'taxCert';
+  initialJsonData?: RiskAssessmentJsonData;
+  showSaveButton?: boolean;
 }
 
 export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
@@ -23,7 +40,102 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   displayResponse,
   checklistItems,
   onChecklistItemChange,
+  stepNumber,
+  detail,
+  userAddressNickname,
+  domain = 'realEstate',
+  initialJsonData,
+  showSaveButton = true,
 }) => {
+  const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
+    // 저장 성공 시 원본 데이터 업데이트
+    if (data.success && currentJsonData) {
+      setOriginalJsonData(currentJsonData);
+      setIsModified(false);
+    }
+  });
+  const [currentJsonData, setCurrentJsonData] =
+    useState<RiskAssessmentJsonData | null>(null);
+  const [originalJsonData, setOriginalJsonData] =
+    useState<RiskAssessmentJsonData | null>(null);
+  const [isModified, setIsModified] = useState(false);
+
+  // 초기 JSON 데이터 설정
+  useEffect(() => {
+    if (initialJsonData) {
+      setCurrentJsonData(initialJsonData);
+      setOriginalJsonData(initialJsonData);
+    } else {
+      // 새로운 위험도 검사 결과를 JSON으로 변환
+      let newJsonData: RiskAssessmentJsonData;
+
+      switch (domain) {
+        case 'realEstate':
+          newJsonData = convertRealEstateRiskAssessmentToJson(riskAssessment);
+          break;
+        case 'broker':
+          newJsonData = convertBrokerRiskAssessmentToJson(
+            riskAssessment as unknown as BrokerRiskAssessmentResult
+          );
+          break;
+        case 'taxCert':
+          newJsonData = convertTaxCertRiskAssessmentToJson(
+            riskAssessment as unknown as TaxCertRiskAssessmentResult
+          );
+          break;
+        default:
+          newJsonData = convertRealEstateRiskAssessmentToJson(riskAssessment);
+      }
+
+      setCurrentJsonData(newJsonData);
+      setOriginalJsonData(newJsonData);
+    }
+  }, [riskAssessment, initialJsonData]);
+
+  // 수정 여부 확인
+  useEffect(() => {
+    if (currentJsonData && originalJsonData) {
+      const modified = isRiskAssessmentModified(
+        originalJsonData,
+        currentJsonData
+      );
+      setIsModified(modified);
+    }
+  }, [currentJsonData, originalJsonData]);
+
+  // 저장 핸들러
+  const handleSave = async () => {
+    if (!currentJsonData || !stepNumber || !detail || !userAddressNickname) {
+      throw new Error('저장에 필요한 데이터가 누락되었습니다.');
+    }
+
+    saveRiskAssessmentMutation.mutate({
+      stepNumber,
+      detail,
+      jsonData: currentJsonData,
+      domain,
+      userAddressNickname,
+    });
+  };
+
+  // 체크리스트 항목 변경 핸들러 (납세증명서용)
+  const handleChecklistItemChange = (itemId: string, checked: boolean) => {
+    if (onChecklistItemChange) {
+      onChecklistItemChange(itemId, checked);
+    }
+
+    // JSON 데이터도 함께 업데이트
+    if (currentJsonData) {
+      const checklistItem = checklistItems?.find((item) => item.id === itemId);
+      if (checklistItem) {
+        const updatedJsonData: RiskAssessmentJsonData = {
+          ...currentJsonData,
+          [checklistItem.label]: checked ? 'match' : 'mismatch',
+        };
+        setCurrentJsonData(updatedJsonData);
+      }
+    }
+  };
   return (
     <div className={styles.riskSection}>
       <div className={styles.headerContainer}>
@@ -31,10 +143,23 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           <h3 className={styles.riskTitle}>위험도 확인 결과</h3>
         </div>
 
-        {/* 원문보기 버튼 */}
-        {displayResponse ? (
-          <OriginalDocumentButton displayResponse={displayResponse} />
-        ) : null}
+        {/* 원문보기 버튼과 저장 버튼 */}
+        <div className={styles.buttonContainer}>
+          {displayResponse ? (
+            <OriginalDocumentButton displayResponse={displayResponse} />
+          ) : null}
+          {showSaveButton && stepNumber && detail && userAddressNickname && (
+            <RiskAssessmentSaveButton
+              isEnabled={
+                (isModified || showSaveButton) &&
+                (riskAssessment.keywordChecks.length > 0 ||
+                  (checklistItems ? checklistItems.length > 0 : false))
+              }
+              onSave={handleSave}
+              disabled={saveRiskAssessmentMutation.isPending}
+            />
+          )}
+        </div>
       </div>
       <div className={styles.riskScore}>
         안전도: {riskAssessment.passedKeywords}/{riskAssessment.totalKeywords}{' '}
@@ -206,9 +331,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
                     : styles.checklistItemUnchecked
                 }`}
                 onClick={() => {
-                  if (onChecklistItemChange) {
-                    onChecklistItemChange(item.id, !item.checked);
-                  }
+                  handleChecklistItemChange(item.id, !item.checked);
                 }}
               >
                 <div className={styles.checklistItemHeader}>

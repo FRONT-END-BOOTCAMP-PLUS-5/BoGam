@@ -68,7 +68,7 @@ export const useRealEstateContainer = () => {
   );
 
   // 데이터 생성 mutation
-  const createRealEstateMutation = useCreateRealEstate((data) => {
+  const createRealEstateMutation = useCreateRealEstate(async (data) => {
     // 일반 API 요청 성공 후 탭 전환 (2-way 인증이 필요 없는 경우)
     if (!data.requiresTwoWayAuth) {
       // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
@@ -80,7 +80,7 @@ export const useRealEstateContainer = () => {
     }
   });
 
-  const twoWayAuthMutation = useTwoWayAuth(() => {
+  const twoWayAuthMutation = useTwoWayAuth(async (data) => {
     // 2-way 인증 성공 후 탭 전환
     // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
     setTimeout(() => {

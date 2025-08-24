@@ -21,11 +21,13 @@ export async function getUserNicknameFromSession(): Promise<string | null> {
  * @param nickname user nickname
  * @returns user id 또는 null
  */
-export async function getUserIdByNickname(nickname: string): Promise<string | null> {
+export async function getUserIdByNickname(
+  nickname: string
+): Promise<string | null> {
   try {
     const user = await prisma.user.findFirst({
       where: { nickname },
-      select: { id: true }
+      select: { id: true },
     });
 
     return user?.id || null;
@@ -35,15 +37,12 @@ export async function getUserIdByNickname(nickname: string): Promise<string | nu
   }
 }
 
-/**
- * user address nickname으로 userAddress ID를 조회하는 함수 (세션에서 자동으로 userId 추출)
- * @param nickname userAddress 닉네임
- * @returns userAddress ID 또는 null
- */
 export async function getUserAddressId(
-  nickname: string
+  userAddressNickname: string
 ): Promise<number | null> {
   try {
+    console.log('🔍 getUserAddressId 호출됨:', { userAddressNickname });
+
     // 세션에서 user nickname 추출
     const userNickname = await getUserNicknameFromSession();
     if (!userNickname) {
@@ -60,11 +59,17 @@ export async function getUserAddressId(
 
     // userAddress 조회
     const userAddress = await prisma.userAddress.findFirst({
-      where: { 
-        nickname,
-        userId 
+      where: {
+        nickname: userAddressNickname, // userAddressNickname 사용
+        userId,
       },
-      select: { id: true }
+      select: { id: true },
+    });
+
+    console.log('🔍 userAddress 조회 결과:', {
+      userAddressNickname,
+      userId,
+      userAddressId: userAddress?.id,
     });
 
     return userAddress?.id || null;

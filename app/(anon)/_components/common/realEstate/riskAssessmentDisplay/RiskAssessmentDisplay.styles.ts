@@ -59,6 +59,7 @@ export const styles = {
   // 헤더 레이아웃
   headerContainer: 'flex items-center justify-between mb-4',
   titleContainer: 'flex items-center gap-2',
+  buttonContainer: 'flex items-center gap-2',
 
   // 경고 표시
   warningContainer:
