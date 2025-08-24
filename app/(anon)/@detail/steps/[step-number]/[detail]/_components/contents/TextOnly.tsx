@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import styles from './TextOnly.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
@@ -53,6 +54,12 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   const pathname = window.location.pathname;
   const stepInfo = parseStepUrl(pathname);
   
+  // 초기화 여부를 추적하는 ref
+  const hasInitialized = useRef(false);
+  
+  // useStepResultMutations 훅 사용
+  const { upsertStepResult, removeQueries } = useStepResultMutations();
+  
   // useGetStepResult 훅 사용
   const { data: stepData, isLoading, isError } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
@@ -60,43 +67,74 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     detail: stepInfo?.detail?.toString() || ''
   });
 
-  // 로딩 상태 - 정적 JSON 데이터가 있으면 로딩을 기다리지 않음
-  if (isLoading && (!data || data.length === 0)) {
+  // 에러 시 기본값으로 초기화
+  useEffect(() => {
+    if (!isError || data.length === 0 || hasInitialized.current) {
+      return;
+    }
+    
+    // 에러 시 바로 POST 요청
+    if (selectedAddress?.id && stepInfo?.stepNumber && stepInfo?.detail) {
+      const defaultDetails: Record<string, 'match'> = {
+        '열람': 'match' // TextOnly는 기본적으로 열람 완료 상태
+      };
+      
+      console.log('🔍 TextOnly: 400 에러 시 기본값 초기화 진행', defaultDetails);
+      
+      // DB 저장
+      upsertStepResult.mutate({
+        userAddressId: selectedAddress.id,
+        stepNumber: stepInfo.stepNumber,
+        detail: stepInfo.detail,
+        jsonDetails: defaultDetails
+      });
+      
+      // 쿼리 완전 중단
+      removeQueries(selectedAddress.nickname, stepInfo.stepNumber, stepInfo.detail);
+      
+      hasInitialized.current = true;
+    }
+  }, [isError, data, selectedAddress?.id, selectedAddress?.nickname, stepInfo?.stepNumber, stepInfo?.detail, upsertStepResult, removeQueries]);
+
+  // 로딩 상태
+  if (isLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingContainer}>
           <div>로딩 중...</div>
         </div>
       </div>
-    );
+      );
   }
 
-  // 에러 상태 - API 호출 실패 시에도 정적 JSON 데이터는 표시
-  if (isError || !stepData) {
-    console.log('API 호출 실패, 정적 JSON 데이터만 표시');
-  }
-
-  // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
-  const renderStepData = () => {
-    if (!stepData) return null;
-    
+  // 에러 상태 (400 에러 시 기본값으로 초기화 진행 중)
+  if (isError && !hasInitialized.current) {
     return (
-      <div className={styles.stepDataSection}>
-        <div className={styles.stepDataTitle}>스텝 데이터</div>
-        <div>
-          <div className={styles.badgeContainer}>
-            {Object.entries(stepData.jsonDetails).map(([key, value]) => (
-              <CircularIconBadge 
-                key={key} 
-                type={value as 'match' | 'mismatch' | 'unchecked'} 
-                size="xsm" 
-              />
-            ))}
-          </div>
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...
         </div>
       </div>
     );
-  };
+  }
+
+  // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
+  const renderStepData = () => (
+    <div className={styles.stepDataSection}>
+      <div className={styles.stepDataTitle}>스텝 데이터</div>
+      <div>
+        <div className={styles.badgeContainer}>
+          {Object.entries(stepData?.jsonDetails || {}).map(([key, value]) => (
+            <CircularIconBadge 
+              key={key} 
+              type={value as 'match' | 'mismatch' | 'unchecked'} 
+              size="xsm" 
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   // data가 배열인 경우만 처리
   if (Array.isArray(data) && data.length > 0) {

@@ -34,8 +34,8 @@ export default function ModalContent() {
       (stepNumber === '5' && detail === '1'),
     broker: stepNumber === '3' && detail === '1',
     realEstate: [
-      { step: '1', detail: '1' },
-      { step: '2', detail: '2' },
+      { step: '1', detail: '3' },
+      { step: '2', detail: '3' },
       { step: '6', detail: '3' },
       { step: '5', detail: '2' },
       { step: '4', detail: '1' },

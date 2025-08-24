@@ -61,20 +61,26 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
       return;
     }
     
-    // 에러 시 바로 POST 요청
-    if (selectedAddress?.id) {
-      const uncheckedDetails: Record<string, 'unchecked'> = {};
-      
-      // 모든 체크리스트 항목을 unchecked로 설정 (ID 사용)
-      data.forEach((section) => {
-        if (section.checklistGroups) {
-          section.checklistGroups.forEach((group) => {
+    // 체크리스트 항목이 실제로 존재하는지 확인
+    let hasChecklistItems = false;
+    const uncheckedDetails: Record<string, 'unchecked'> = {};
+    
+    data.forEach((section) => {
+      if (section.checklistGroups) {
+        section.checklistGroups.forEach((group) => {
+          if (group.items && group.items.length > 0) {
+            hasChecklistItems = true;
             group.items.forEach((item) => {
               uncheckedDetails[item.id] = 'unchecked';
             });
-          });
-        }
-      });
+          }
+        });
+      }
+    });
+    
+    // 체크리스트 항목이 실제로 존재할 때만 초기화 진행
+    if (hasChecklistItems && Object.keys(uncheckedDetails).length > 0 && selectedAddress?.id) {
+      console.log('🔍 CheckListGroup: 400 에러 시 초기화 진행', uncheckedDetails);
       
       // 로컬 상태도 즉시 업데이트
       setLocalStepDetails(uncheckedDetails);
@@ -91,6 +97,8 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
       removeQueries(selectedAddress.nickname, stepNumber, detail);
       
       hasInitialized.current = true;
+    } else {
+      console.log('🔍 CheckListGroup: 체크리스트 항목이 없어 초기화 건너뜀', { data, uncheckedDetails });
     }
   }, [isError, data, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, upsertStepResult, removeQueries]);
 
