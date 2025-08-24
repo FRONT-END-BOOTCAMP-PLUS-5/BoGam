@@ -176,9 +176,17 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     }
   }, [stepData, data]);
 
-  // 에러 시 unchecked로 초기화
+  // json이 {}이거나 에러 시 unchecked로 초기화
   useEffect(() => {
-    if (isError && data.length > 0 && !hasInitializedFromError && !hasInitialized.current) {
+    if (data.length === 0 || hasInitializedFromError || hasInitialized.current) {
+      return;
+    }
+    
+    // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
+    const shouldInitialize = (isError && !hasInitializedFromError && !hasInitialized.current) || 
+                           (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+    
+    if (shouldInitialize && selectedAddress?.id && stepNumber && detail) {
       const uncheckedAnswers: { [key: number]: string } = {};
       
       data.forEach((section, index) => {
@@ -189,15 +197,16 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       setHasInitializedFromError(true);
       hasInitialized.current = true;
       
-      // 에러 시 바로 POST 요청
-      if (selectedAddress?.id && stepNumber && detail) {
-        saveToDatabase(uncheckedAnswers);
-        
-        // 쿼리 완전 중단
-        removeQueries(selectedAddress.nickname, stepNumber, detail);
-      }
+      const logMessage = isError ? '400 에러 시 초기화 진행' : '빈 jsonDetails 시 초기화 진행';
+      console.log(`🔍 RadioGroup: ${logMessage}`, uncheckedAnswers);
+      
+      // POST 요청
+      saveToDatabase(uncheckedAnswers);
+      
+      // 쿼리 완전 중단
+      removeQueries(selectedAddress.nickname, stepNumber, detail);
     }
-  }, [isError, data, hasInitializedFromError, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, saveToDatabase, removeQueries]);
+  }, [stepData, isError, data, hasInitializedFromError, selectedAddress?.id, selectedAddress?.nickname, stepNumber, detail, saveToDatabase, removeQueries]);
 
   // 전체 결과 상태 계산 (모든 페이지 데이터 종합)
   const calculateOverallResult = useCallback(() => {
@@ -278,8 +287,19 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
   const { allAnswered, hasMismatch } = calculateOverallResult();
 
   // 로딩 상태
-  if (typeof window === 'undefined' || (isLoading && !isError)) {
+  if (typeof window === 'undefined' || isLoading) {
     return <div className={styles.container}><div className={styles.loadingContainer}>로딩 중...</div></div>;
+  }
+
+    // 에러 상태 (400 에러 시 초기화 진행 중)
+  if (isError && !hasInitialized.current) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...
+        </div>
+      </div>
+    );
   }
 
   // 메인 렌더링
