@@ -8,42 +8,50 @@ export interface BaseContentSection {
 // TextOnly 전용 인터페이스
 export interface TextOnlySection extends BaseContentSection {
   type: 'TextOnly';
-  data: Array<{ left: string; right?: string }>;
-  subtitles?: string[];
-  contents?: string[];
-  contentSections?: Array<{
-    subtitle: string;
-    contents: string[];
-  }>;
-  image?: {
-    src: string;
-    alt: string;
-    width?: number;
-    height?: number;
-  };
-  button?: {
-    text: string;
-    onClick?: string;
-    variant?: 'primary' | 'secondary' | 'ghost';
-    href?: string;
-    fullWidth?: boolean;
-  };
-  buttons?: Array<{
-    text: string;
-    onClick?: string;
-    variant?: 'primary' | 'secondary' | 'ghost';
-    href?: string;
-    fullWidth?: boolean;
+  data: Array<{
+    title?: string;
+    subtitles?: string[];
+    contents?: string[];
+    contentSections?: Array<{
+      subtitle: string;
+      contents: string[];
+    }>;
+    summary?: string;
+    image?: {
+      src: string;
+      alt: string;
+      width?: number;
+      height?: number;
+    };
+    button?: {
+      text: string;
+      onClick?: string;
+      variant?: 'primary' | 'secondary' | 'ghost';
+      href?: string;
+      fullWidth?: boolean;
+    };
+    buttons?: Array<{
+      text: string;
+      onClick?: string;
+      variant?: 'primary' | 'secondary' | 'ghost';
+      href?: string;
+      fullWidth?: boolean;
+    }>;
   }>;
 }
 
 // RadioGroup 전용 인터페이스
 export interface RadioGroupSection extends BaseContentSection {
   type: 'RadioGroup';
-  data: Array<{ left: string; right?: string }>;
-  contents?: string[];
-  messages?: string[];
-  link?: string;
+  data: Array<{
+    title?: string;
+    subtitle?: string;
+    contents?: string[];
+    messages?: string[];
+    successMessages?: string[];
+    link?: string;
+    summary?: string;
+  }>;
 }
 
 // Table 전용 인터페이스
@@ -64,13 +72,32 @@ export interface DataGridSection extends BaseContentSection {
   data: Array<{ left: string; right?: string }>;
 }
 
+// CheckListGroup 전용 인터페이스
+export interface CheckListGroupSection extends BaseContentSection {
+  type: 'CheckListGroup';
+  data: Array<{
+    title?: string;
+    description?: string[];
+    checklistGroups?: Array<{
+      title: string;
+      items: Array<{
+        id: string;
+        text: string;
+      }>;
+    }>;
+    summary?: string;
+    link?: string;
+  }>;
+}
+
 // 모든 섹션 타입을 유니온으로 정의
 export type ContentSection =
   | TextOnlySection
   | RadioGroupSection
   | TableSection
   | ListSection
-  | DataGridSection;
+  | DataGridSection
+  | CheckListGroupSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {

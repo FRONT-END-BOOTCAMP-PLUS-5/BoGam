@@ -14,6 +14,11 @@ const CombinedContent = ({
   spacing = 'md',
   showDividers = true,
 }: CombinedContentProps) => {
+  // sections가 없으면 빈 배열 반환
+  if (!sections || sections.length === 0) {
+    return <div>콘텐츠가 없습니다.</div>;
+  }
+
   // 각 섹션을 렌더링하는 함수
   const renderSection = (section: ContentSection, index: number) => {
     const isLast = index === sections.length - 1;
