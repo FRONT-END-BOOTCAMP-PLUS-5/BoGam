@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import styles from './TextOnly.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
@@ -45,7 +46,6 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
-  console.log('TextOnly - data:', data);
 
   // 전역 store에서 선택된 주소 가져오기
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
@@ -54,12 +54,51 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   const pathname = window.location.pathname;
   const stepInfo = parseStepUrl(pathname);
   
+  // 초기화 여부를 추적하는 ref
+  const hasInitialized = useRef(false);
+  
+  // useStepResultMutations 훅 사용
+  const { upsertStepResult, removeQueries } = useStepResultMutations();
+  
   // useGetStepResult 훅 사용
   const { data: stepData, isLoading, isError } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
     stepNumber: stepInfo?.stepNumber?.toString() || '',
     detail: stepInfo?.detail?.toString() || ''
   });
+
+  // json이 {}이거나 에러 시 기본값으로 초기화
+  useEffect(() => {
+    if (data.length === 0 || hasInitialized.current) {
+      return;
+    }
+    
+    // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
+    const shouldInitialize = (isError && !hasInitialized.current) || 
+                           (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+    
+    if (shouldInitialize && selectedAddress?.id && stepInfo?.stepNumber && stepInfo?.detail) {
+      const defaultDetails: Record<string, 'match'> = {
+        '열람': 'match' // TextOnly는 기본적으로 열람 완료 상태
+      };
+      
+      const logMessage = isError ? '400 에러 시 기본값 초기화 진행' : '빈 jsonDetails 시 기본값 초기화 진행';
+      console.log(`🔍 TextOnly: ${logMessage}`, defaultDetails);
+      
+      // DB 저장
+      upsertStepResult.mutate({
+        userAddressId: selectedAddress.id,
+        stepNumber: stepInfo.stepNumber,
+        detail: stepInfo.detail,
+        jsonDetails: defaultDetails
+      });
+      
+      // 쿼리 완전 중단
+      removeQueries(selectedAddress.nickname, stepInfo.stepNumber, stepInfo.detail);
+      
+      hasInitialized.current = true;
+    }
+  }, [stepData, isError, data, selectedAddress?.id, selectedAddress?.nickname, stepInfo?.stepNumber, stepInfo?.detail, upsertStepResult, removeQueries]);
 
   // 로딩 상태
   if (isLoading) {
@@ -69,15 +108,15 @@ const TextOnly = ({ data }: TextOnlyProps) => {
           <div>로딩 중...</div>
         </div>
       </div>
-    );
+      );
   }
 
-  // 에러 상태
-  if (isError || !stepData) {
+  // 에러 상태 (400 에러 시 데이터를 찾을 수 없다고 표시)
+  if (isError && !hasInitialized.current) {
     return (
       <div className={styles.container}>
         <div className={styles.errorContainer}>
-          데이터를 불러오는 중 오류가 발생했습니다.
+          데이터를 찾을 수 없습니다.
         </div>
       </div>
     );
@@ -89,7 +128,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       <div className={styles.stepDataTitle}>스텝 데이터</div>
       <div>
         <div className={styles.badgeContainer}>
-          {Object.entries(stepData.jsonDetails).map(([key, value]) => (
+          {Object.entries(stepData?.jsonDetails || {}).map(([key, value]) => (
             <CircularIconBadge 
               key={key} 
               type={value as 'match' | 'mismatch' | 'unchecked'} 

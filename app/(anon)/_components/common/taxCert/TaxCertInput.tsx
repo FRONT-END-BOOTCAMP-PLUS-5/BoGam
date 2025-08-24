@@ -5,13 +5,11 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import Field from '@/(anon)/_components/common/forms/Field';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
-import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
 import { TaxCertInputProps } from './types';
 import { styles } from './TaxCertInput.styles';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import Image from 'next/image';
 
-// 간편인증 방법 데이터
 const authMethods = [
   {
     id: '1',
@@ -66,13 +64,11 @@ const authMethods = [
 export const TaxCertInput = ({
   formData,
   onSubmit,
-  loading,
   onSuccess,
 }: TaxCertInputProps) => {
   const { selectedAddress } = useUserAddressStore();
   const [error, setError] = useState<string | null>(null);
   const [isAuthMethodModalOpen, setIsAuthMethodModalOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // 폼 데이터 상태
   const [localFormData, setLocalFormData] = useState({
@@ -103,7 +99,6 @@ export const TaxCertInput = ({
   // 선택된 주소가 변경되면 주소 정보 업데이트
   const handleAddressChange = () => {
     if (selectedAddress) {
-      // 주소 변경 시 필요한 로직이 있다면 여기에 추가
     }
   };
 
@@ -124,13 +119,11 @@ export const TaxCertInput = ({
     setIsAuthMethodModalOpen(false);
   };
 
-  // 간편인증 방법 선택 핸들러 (SimpleAuthForm과 동일)
   const handleSelectAuthMethod = (methodId: string) => {
     setLocalFormData((prev) => ({
       ...prev,
       loginTypeLevel: methodId,
     }));
-    // 모달은 닫지 않고 선택만 변경
   };
 
   // 모달 닫기 핸들러
@@ -138,12 +131,10 @@ export const TaxCertInput = ({
     setIsAuthMethodModalOpen(false);
   };
 
-  // 폼 제출 핸들러
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // 필수 필드 검증
     if (!localFormData.userName.trim()) {
       setError('이름을 입력해주세요.');
       return;
@@ -279,7 +270,6 @@ export const TaxCertInput = ({
         )}
       </FormContainer>
 
-      {/* 간편인증 방법 선택 모달 */}
       <ConfirmModal
         isOpen={isAuthMethodModalOpen}
         title='간편인증 로그인 구분 선택'

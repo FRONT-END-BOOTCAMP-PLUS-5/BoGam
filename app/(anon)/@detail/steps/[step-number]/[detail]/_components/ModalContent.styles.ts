@@ -18,4 +18,9 @@ export const styles = {
   pageDot: 'w-2 h-2 mx-1 rounded-full transition-all duration-200',
   pageDotActive: 'bg-brand-blue',
   pageDotInactive: 'bg-brand-light-gray',
+
+  // 섹션 헤더 (CombinedContent용)
+  sectionHeader: 'mb-6',
+  sectionTitle: 'text-lg font-bold mb-2 text-brand-black',
+  sectionSubtitle: 'text-base font-medium mb-2 text-brand-dark-gray',
 } as const;

@@ -143,14 +143,16 @@ export function ConfirmModal({
 
         {/* 버튼 */}
         <div className={styles.buttonContainer}>
-          <Button
-            variant='secondary'
-            onClick={handleCancel}
-            disabled={isLoading}
-            className={styles.modalButton}
-          >
-            {cancelText}
-          </Button>
+          {cancelText && (
+            <Button
+              variant='secondary'
+              onClick={handleCancel}
+              disabled={isLoading}
+              className={styles.modalButton}
+            >
+              {cancelText}
+            </Button>
+          )}
           {onConfirm && (
             <Button
               variant='primary'

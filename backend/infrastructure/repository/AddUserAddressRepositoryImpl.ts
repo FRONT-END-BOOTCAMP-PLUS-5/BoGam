@@ -102,6 +102,15 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
       },
     });
 
+    // 새 사용자 주소가 생성된 경우에만 stepResult 레코드들 생성
+    await prisma.stepResult.createMany({
+      data: Array.from({ length: 22 }, (_, i) => ({
+        userAddressId: userAddress.id,
+        stepId: i + 1,
+        details: {},
+      })),
+    });
+
     return {
       userAddress: mapUserAddressToUserAddressInfo(userAddress),
       isNew: true,

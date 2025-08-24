@@ -11,6 +11,22 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ReactNode } from 'react';
 
+// HTMLFlipBook 인스턴스 타입 정의
+interface FlipBookInstance {
+  object: {
+    flip: (pageIndex: number) => void;
+    turnToPage: (pageIndex: number) => void;
+  };
+}
+
+// bookRef 타입 정의
+type BookRefType = {
+  object: {
+    flip: (pageIndex: number) => void;
+    turnToPage: (pageIndex: number) => void;
+  };
+} | null;
+
 interface PageContent {
   subtitle: string;
   items: string[];
@@ -33,13 +49,13 @@ type PageData = SummaryPageData | GeneralPageData;
 
 export default function MiddleStepPage() {
   const router = useRouter();
-  const bookRef = useRef<typeof HTMLFlipBook | null>(null);
+  const bookRef = useRef<BookRefType>(null);
   const [marginLeft, setMarginLeft] = useState('-73%');
   const [currentPage, setCurrentPage] = useState(0);
   const [pages, setPages] = useState<PageData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isManualFlip, setIsManualFlip] = useState(false);
-  const [flipBookInstance, setFlipBookInstance] = useState<any>(null); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [flipBookInstance, setFlipBookInstance] = useState<FlipBookInstance | null>(null);
   
   // 딱 1번만 실행하기 위한 ref
   const hasInitialized = useRef(false);
@@ -182,7 +198,7 @@ export default function MiddleStepPage() {
           swipeDistance={30}
           showPageCorners={false}
           disableFlipByClick={false}
-          onInit={(flipBook: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+          onInit={(flipBook: FlipBookInstance) => {
             // flipBook 객체를 별도로 저장
             setFlipBookInstance(flipBook);
             bookRef.current = flipBook;
@@ -212,11 +228,12 @@ export default function MiddleStepPage() {
         <div className={styles.indicatorWrapper}>
           <div className={styles.indicatorLeft}>
             <button
-              className={styles.indicatorArrowBtn}
+              className={`${styles.indicatorArrowBtn} ${Number(stepNumber) <= 1 ? styles.disabled : ''}`}
               aria-label='이전 단계로 이동'
-              onClick={() => router.push(`/steps/${Number(stepNumber) - 1}`)}
+              onClick={() => Number(stepNumber) > 1 && router.push(`/steps/${Number(stepNumber) - 1}`)}
+              disabled={Number(stepNumber) <= 1}
             >
-              <ChevronLeft size={22} color='#222' />
+              <ChevronLeft size={22} color={Number(stepNumber) <= 1 ? '#ccc' : '#222'} />
             </button>
           </div>
           <div className={styles.indicatorDots}>
@@ -258,11 +275,12 @@ export default function MiddleStepPage() {
           </div>
           <div className={styles.indicatorRight}>
             <button
-              className={styles.indicatorArrowBtn}
+              className={`${styles.indicatorArrowBtn} ${Number(stepNumber) >= 7 ? styles.disabled : ''}`}
               aria-label='다음 단계로 이동'
-              onClick={() => router.push(`/steps/${Number(stepNumber) + 1}`)}
+              onClick={() => Number(stepNumber) < 7 && router.push(`/steps/${Number(stepNumber) + 1}`)}
+              disabled={Number(stepNumber) >= 7}
             >
-              <ChevronRight size={22} color='#222' />
+              <ChevronRight size={22} color={Number(stepNumber) >= 7 ? '#ccc' : '#222'} />
             </button>
           </div>
         </div>
