@@ -3,7 +3,7 @@ export const styles = {
   header: "relative flex justify-center",
   center: "text-center",
   icon: "w-5 h-5 text-brand-dark-gray cursor-pointer",
-  arrow: "absolute left-[1rems] top-1/2 -translate-y-1/2",
+  arrow: "absolute left-[1rem] top-1/2 -translate-y-1/2",
   title: "text-base font-semibold leading-none",
   desc: "mt-2 text-[.75rem] text-brand-dark-gray",
 };

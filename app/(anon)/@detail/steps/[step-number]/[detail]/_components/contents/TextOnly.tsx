@@ -45,7 +45,6 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
-  console.log('TextOnly - data:', data);
 
   // 전역 store에서 선택된 주소 가져오기
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
@@ -61,8 +60,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     detail: stepInfo?.detail?.toString() || ''
   });
 
-  // 로딩 상태
-  if (isLoading) {
+  // 로딩 상태 - 정적 JSON 데이터가 있으면 로딩을 기다리지 않음
+  if (isLoading && (!data || data.length === 0)) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingContainer}>
@@ -72,34 +71,32 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     );
   }
 
-  // 에러 상태
+  // 에러 상태 - API 호출 실패 시에도 정적 JSON 데이터는 표시
   if (isError || !stepData) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.errorContainer}>
-          데이터를 불러오는 중 오류가 발생했습니다.
-        </div>
-      </div>
-    );
+    console.log('API 호출 실패, 정적 JSON 데이터만 표시');
   }
 
   // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
-  const renderStepData = () => (
-    <div className={styles.stepDataSection}>
-      <div className={styles.stepDataTitle}>스텝 데이터</div>
-      <div>
-        <div className={styles.badgeContainer}>
-          {Object.entries(stepData.jsonDetails).map(([key, value]) => (
-            <CircularIconBadge 
-              key={key} 
-              type={value as 'match' | 'mismatch' | 'unchecked'} 
-              size="xsm" 
-            />
-          ))}
+  const renderStepData = () => {
+    if (!stepData) return null;
+    
+    return (
+      <div className={styles.stepDataSection}>
+        <div className={styles.stepDataTitle}>스텝 데이터</div>
+        <div>
+          <div className={styles.badgeContainer}>
+            {Object.entries(stepData.jsonDetails).map(([key, value]) => (
+              <CircularIconBadge 
+                key={key} 
+                type={value as 'match' | 'mismatch' | 'unchecked'} 
+                size="xsm" 
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // data가 배열인 경우만 처리
   if (Array.isArray(data) && data.length > 0) {

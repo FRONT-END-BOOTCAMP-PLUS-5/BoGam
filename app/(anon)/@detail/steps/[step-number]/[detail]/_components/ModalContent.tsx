@@ -9,7 +9,6 @@ import Table from './contents/Table';
 import List from './contents/List';
 import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
-import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { LegacyContentSection, StepContentData } from './contents/types';
 import TaxCertResultDisplay from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay';
@@ -47,7 +46,6 @@ export default function ModalContent() {
   useEffect(() => {
     const shouldLoadJsonData =
       !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate;
-
     if (shouldLoadJsonData) {
       const loadContentData = async () => {
         try {
@@ -113,14 +111,6 @@ export default function ModalContent() {
         return <CheckListGroup data={pageData} />;
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
-      case 'CombinedContent':
-        return stepContentData && stepContentData.sections ? (
-          <CombinedContent
-            sections={stepContentData.sections}
-            spacing='lg'
-            showDividers={true}
-          />
-        ) : null;
       default:
         console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
@@ -153,6 +143,119 @@ export default function ModalContent() {
         <div className={styles.scrollableContent}>
           <div className={styles.mainContent}>{specialComponent}</div>
         </div>
+      </>
+    );
+  }
+
+  // CombinedContent 타입인 경우 sections를 사용
+  if (stepContentData && stepContentData.dataType === 'CombinedContent' && stepContentData.sections) {
+    const handlePageChange = (page: number) => {
+      setCurrentPage(page);
+      if (swiperRef.current) {
+        swiperRef.current.slideTo(page);
+      }
+    };
+
+    return (
+      <>
+        <StepHeader />
+
+        <div className={styles.scrollableContent}>
+          <Swiper
+            spaceBetween={50}
+            slidesPerView={1}
+            className={styles.swiperContainer}
+            onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+          >
+            {stepContentData.data.map(
+              (pageData: LegacyContentSection[], pageIndex: number) => (
+                <SwiperSlide key={pageIndex}>
+                  <div className={styles.mainContent}>
+                    {renderSwiperContent(pageData)}
+                  </div>
+                </SwiperSlide>
+              )
+            )}
+          </Swiper>
+        </div>
+
+        {/* Swiper로 각 섹션을 별도 슬라이드로 렌더링 */}
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={1}
+          className={styles.swiperContainer}
+          onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+        >
+          {stepContentData.sections.map((section, sectionIndex) => (
+            <SwiperSlide key={sectionIndex}>
+              <div className={styles.mainContent}>
+                {/* 각 섹션의 제목과 부제목 표시 */}
+                {(section.title || section.subtitle) && (
+                  <div className={styles.sectionHeader}>
+                    {section.title && (
+                      <h3 className={styles.sectionTitle}>{section.title}</h3>
+                    )}
+                    {section.subtitle && (
+                      <p className={styles.sectionSubtitle}>{section.subtitle}</p>
+                    )}
+                  </div>
+                )}
+                
+                {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
+                {section.type === 'TextOnly' && (
+                  <TextOnly data={section.data} />
+                )}
+                {section.type === 'RadioGroup' && (
+                  <RadioGroup data={section.data} />
+                )}
+                {section.type === 'Table' && (
+                  <Table
+                    data={section.data as unknown as { left: string; right?: string }[]}
+                  />
+                )}
+                {section.type === 'List' && (
+                  <List
+                    data={section.data as unknown as { left: string; right?: string }[]}
+                  />
+                )}
+                {section.type === 'DataGrid' && (
+                  <DataGrid
+                    data={section.data as unknown as { left: string; right?: string }[]}
+                  />
+                )}
+                {section.type === 'CheckListGroup' && (
+                  <CheckListGroup data={section.data} />
+                )}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        
+        {/* 페이지 인디케이터 */}
+        {stepContentData.sections.length > 1 && (
+          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
+            {stepContentData.sections.map((_: unknown, index: number) => (
+              <button
+                key={index}
+                className={`${styles.pageDot} ${
+                  index === currentPage
+                    ? styles.pageDotActive
+                    : styles.pageDotInactive
+                }`}
+                aria-label={`페이지 ${index + 1}${
+                  index === currentPage ? ' (현재)' : ''
+                }`}
+                onClick={() => handlePageChange(index)}
+              />
+            ))}
+          </div>
+        )}
       </>
     );
   }

@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import styles from './RadioGroup.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
@@ -8,18 +10,10 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { parseStepUrl } from '@utils/stepUrlParser';
 import RadioButtonGroup from '@/(anon)/_components/common/radioButtonGroup/RadioButtonGroup';
 import Button from '@/(anon)/_components/common/button/Button';
-
-interface ContentSection {
-  title?: string;
-  subtitle?: string;
-  contents?: string[];
-  messages?: string[];
-  link?: string;
-  summary?: string;
-}
+import { LegacyContentSection } from './types';
 
 interface RadioGroupProps {
-  data: ContentSection[];
+  data: LegacyContentSection[];
 }
 
 const RadioGroup = ({ data }: RadioGroupProps) => {
@@ -29,7 +23,9 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     successMessage?: string;
     errorMessage?: string;
     links?: Array<{ title: string; url: string }>;
-    data?: ContentSection[][];
+    data?: LegacyContentSection[][];
+    sections?: Record<string, unknown>[]; // CombinedContent 타입에 대한 추가 필드
+    dataType?: string; // dataType 속성 추가
   } | null>(null);
   
   // 초기화 여부를 추적하는 ref
@@ -59,7 +55,30 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           `./data/step-${stepNumber}-${detail}-contents.json`
         );
         console.log('✅ JSON 파일 로드 성공:', contentModule.default);
-        setContentData(contentModule.default);
+        
+        // CombinedContent 타입인 경우 RadioGroup 섹션을 찾아서 처리
+        if (contentModule.default.dataType === 'CombinedContent') {
+          const radioGroupSection = contentModule.default.sections.find(
+            (section: Record<string, unknown>) => section.type === 'RadioGroup'
+          );
+          
+          if (radioGroupSection) {
+            // RadioGroup 섹션의 데이터를 contentData.data 형태로 변환하고 sections도 저장
+            const transformedData = {
+              ...contentModule.default,
+              data: [radioGroupSection.data], // 2차원 배열로 변환
+              sections: contentModule.default.sections // sections 정보도 저장
+            };
+            console.log('✅ CombinedContent에서 RadioGroup 데이터 추출:', transformedData);
+            setContentData(transformedData);
+          } else {
+            console.log('❌ RadioGroup 섹션을 찾을 수 없음');
+            setContentData(contentModule.default);
+          }
+        } else {
+          // 기존 RadioGroup 타입인 경우 그대로 사용
+          setContentData(contentModule.default);
+        }
       } catch (error) {
         console.log('❌ Content data not found:', error);
       }
@@ -186,8 +205,16 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     console.log('🔍 contentData:', contentData);
     console.log('🔍 stepData:', stepData);
     
-    if (!contentData?.data) {
-      console.log('❌ contentData.data 없음');
+    // CombinedContent 타입인 경우 sections 사용, 아니면 data 사용
+    const dataSource = contentData?.dataType === 'CombinedContent' ? contentData.sections : contentData?.data;
+    
+    console.log('🔍 dataType:', contentData?.dataType);
+    console.log('🔍 dataSource:', dataSource);
+    console.log('🔍 contentData.sections:', contentData?.sections);
+    console.log('🔍 contentData.data:', contentData?.data);
+    
+    if (!dataSource) {
+      console.log('❌ dataSource 없음 (data 또는 sections)');
       return { allAnswered: false, hasMismatch: false };
     }
     
@@ -197,19 +224,46 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     }
     
     // 전체 질문 수 계산
-    const totalQuestions = contentData.data.flat().filter((section: ContentSection) => section.title).length;
-    console.log('🔍 전체 질문 수:', totalQuestions);
+    let totalQuestions = 0;
+    let allQuestionTitles: string[] = [];
     
-    // DB에서 모든 질문의 답변 상태 확인
-    const allQuestionTitles = contentData.data.flat()
-      .filter((section: ContentSection) => section.title)
-      .map(section => section.title);
+    if (contentData?.dataType === 'CombinedContent' && contentData.sections) {
+      // CombinedContent 타입인 경우 sections에서 RadioGroup 섹션의 실제 질문들 추출
+      const radioGroupSection = contentData.sections.find(section => section.type === 'RadioGroup');
+      if (radioGroupSection && Array.isArray(radioGroupSection.data)) {
+        allQuestionTitles = (radioGroupSection.data as Record<string, unknown>[])
+          .filter((item: Record<string, unknown>) => item.title)
+          .map((item: Record<string, unknown>) => item.title as string);
+        totalQuestions = allQuestionTitles.length;
+      }
+    } else {
+      // 기존 방식: data 배열에서 질문 제목 추출
+      const flatData = (dataSource as LegacyContentSection[][]).flat();
+      totalQuestions = flatData.filter((section: LegacyContentSection) => section.title).length;
+      allQuestionTitles = flatData
+        .filter((section: LegacyContentSection) => section.title)
+        .map(section => section.title as string);
+    }
+    
+    console.log('🔍 전체 질문 수:', totalQuestions);
     console.log('🔍 모든 질문 제목:', allQuestionTitles);
     
+    // 각 질문의 답변 상태 상세 확인
+    console.log('🔍 stepData.jsonDetails 상세:', stepData.jsonDetails);
+    
+    const questionStatuses = allQuestionTitles.map(title => {
+      const status = title ? stepData.jsonDetails[title] : null;
+      console.log(`🔍 질문 "${title}" 상태:`, status);
+      return { title, status };
+    });
+    console.log('🔍 모든 질문 상태:', questionStatuses);
+    
     // 모든 질문이 답변되었는지 확인 (unchecked가 아닌지)
-    const allAnswered = allQuestionTitles.every(title => 
-      title && stepData.jsonDetails[title] && stepData.jsonDetails[title] !== 'unchecked'
-    );
+    const allAnswered = allQuestionTitles.every(title => {
+      const hasAnswer = title && stepData.jsonDetails[title] && stepData.jsonDetails[title] !== 'unchecked';
+      console.log(`🔍 질문 "${title}" 답변 여부:`, hasAnswer);
+      return hasAnswer;
+    });
     
     // mismatch가 있는지 확인
     const hasMismatch = allQuestionTitles.some(title => 
@@ -234,7 +288,9 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       {data.map((section, sectionIndex) => (
         <div key={sectionIndex} className={styles.section}>
           {section.title && <div className={styles.sectionTitle}>{section.title}</div>}
-          {section.subtitle && <div className={styles.sectionSubtitle}>{section.subtitle}</div>}
+          {section.subtitles && section.subtitles.length > 0 && (
+            <div className={styles.sectionSubtitle}>{section.subtitles[0]}</div>
+          )}
           
           <div className={styles.contentRow}>
             <div className={styles.contentColumn}>
@@ -257,20 +313,35 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           
           {section.summary && <div className={styles.summary}>{section.summary}</div>}
           
-          {/* '아니오' 선택 시 메시지 표시 */}
-          {selectedAnswers[sectionIndex] === 'no' && section.messages && (
-            <div className={styles.messagesContainer}>
-              {section.messages.map((message, messageIndex) => (
-                <div key={messageIndex} className={styles.messageItem}>{message}</div>
-              ))}
-              {section.link && (
-                <div className={styles.linkContainer}>
-                  <a href={section.link} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                    관련 링크 보기 →
-                  </a>
-                </div>
-              )}
-            </div>
+          {/* 선택에 따른 메시지 표시 */}
+          {selectedAnswers[sectionIndex] && selectedAnswers[sectionIndex] !== 'unchecked' && selectedAnswers[sectionIndex] !== '' && (
+            (selectedAnswers[sectionIndex] === 'yes' && section.messages) || 
+            (selectedAnswers[sectionIndex] === 'no') ? (
+              <div className={styles.messagesContainer}>
+                {selectedAnswers[sectionIndex] === 'yes' && section.messages && (
+                  // '예' 선택 시 경고 메시지
+                  section.messages.map((message: string, messageIndex: number) => (
+                    <div key={messageIndex} className={styles.messageItem}>{message}</div>
+                  ))
+                )}
+                {selectedAnswers[sectionIndex] === 'no' && (
+                  // '아니오' 선택 시 기본 메시지
+                  <div className={styles.messageItem}>안전합니다.</div>
+                )}
+                {section.link && (
+                  <div className={styles.linkContainer}>
+                    <Link 
+                      href={section.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className={styles.link}
+                    >
+                      관련 링크 보기 →
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ) : null
           )}
         </div>
       ))}
@@ -302,9 +373,9 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
               ) : (
                 <div className={styles.successMessage}>
                   {contentData.successMessage || ''}
-                    {contentData.links && contentData.links.length > 0 && (
+                                           {contentData.links && contentData.links.length > 0 && (
                      <div className={styles.linksContainer}>
-                       {contentData.links.map((link: { title: string; url: string }, index: number) => (
+                       {contentData.links.map((link, index: number) => (
                          <Button 
                            key={index}
                            href={link.url} 

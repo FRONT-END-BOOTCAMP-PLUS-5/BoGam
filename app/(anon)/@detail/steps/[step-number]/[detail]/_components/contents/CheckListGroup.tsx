@@ -7,6 +7,7 @@ import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import { CheckListGroupSection } from './types';
 
 interface ChecklistItem {
   id: string;
@@ -18,13 +19,7 @@ interface ChecklistGroup {
   items: ChecklistItem[];
 }
 
-interface ContentSection {
-  title?: string;
-  description?: string[];
-  checklistGroups?: ChecklistGroup[];
-  summary?: string;
-  link?: string;
-}
+type ContentSection = CheckListGroupSection['data'][0];
 
 interface CheckListGroupProps {
   data: ContentSection[];
