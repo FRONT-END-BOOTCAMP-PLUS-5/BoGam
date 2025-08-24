@@ -177,6 +177,7 @@ export const TaxCertInput = ({
     try {
       await onSubmit({
         ...localFormData,
+        phoneNo: localFormData.phoneNo.replace(/-/g, ''), // 전화번호에서 '-' 제거
         userAddressNickname: selectedAddress.nickname,
       });
       onSuccess?.();
@@ -225,7 +226,9 @@ export const TaxCertInput = ({
             <TextInput
               value={localFormData.phoneNo}
               onChange={(e) => handleInputChange('phoneNo', e.target.value)}
-              placeholder='휴대폰번호 11자리'
+              placeholder='01012345678'
+              mask='phone'
+              inputMode='numeric'
               maxLength={11}
             />
           </Field>

@@ -23,7 +23,7 @@ export const useRealEstateContainer = () => {
     pageCount: '5',
     applicationType: '1',
     organization: '0002',
-    phoneNo: '01011111111',
+    phoneNo: '',
     inquiryType: '1', // 간편검색으로 고정
     issueType: '1',
     jointMortgageJeonseYN: '0',
