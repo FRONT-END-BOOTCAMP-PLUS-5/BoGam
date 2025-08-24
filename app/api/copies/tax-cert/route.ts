@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
     const repository = new TaxCertCopyRepositoryImpl();
     const usecase = new GetTaxCertCopyUsecase(repository);
 
-    const taxCert = await usecase.getTaxCertCopy({ userAddressId });
+    const result = await usecase.getTaxCertCopy({ userAddressId });
 
-    if (!taxCert) {
+    if (!result) {
       return NextResponse.json(
         {
           success: false,
@@ -43,19 +43,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      message: '납세증명서 조회가 성공적으로 완료되었습니다.',
-      data: taxCert,
-    });
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error('❌ 납세증명서 조회 API 오류:', error);
     return NextResponse.json(
-      {
-        success: false,
-        message: '납세증명서 조회 중 오류가 발생했습니다.',
-        error: error instanceof Error ? error.message : '알 수 없는 오류',
-      },
+      { success: false, error: '서버 오류가 발생했습니다.' }, 
       { status: 500 }
     );
   }
