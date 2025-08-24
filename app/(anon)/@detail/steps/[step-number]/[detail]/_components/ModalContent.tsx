@@ -148,7 +148,6 @@ export default function ModalContent() {
     );
   }
 
-<<<<<<< HEAD
   // CombinedContent 타입인 경우 sections를 사용
   if (stepContentData && stepContentData.dataType === 'CombinedContent' && stepContentData.sections) {
     const handlePageChange = (page: number) => {
