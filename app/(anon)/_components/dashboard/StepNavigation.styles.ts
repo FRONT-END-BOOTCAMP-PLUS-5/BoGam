@@ -7,5 +7,5 @@ export const styles = {
   completedStep: "text-brand",
   stepNumber: "text-sm font-medium text-brand-dark-gray",
   stepTitle: "text-xs text-brand-dark-gray mt-1",
-  logoutButton: "mt-auto p-3 text-sm text-brand hover:text-brand-90 transition-colors text-left border-t border-brand-light-gray pt-4 cursor-pointer"
+  logoutButton: "mt-auto p-3 text-sm text-brand hover:text-brand transition-colors text-left border-t border-brand-light-gray pt-4 cursor-pointer"
 };

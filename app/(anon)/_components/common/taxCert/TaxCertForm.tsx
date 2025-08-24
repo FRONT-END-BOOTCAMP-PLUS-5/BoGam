@@ -30,8 +30,6 @@ export default function TaxCertForm({
 }: TaxCertFormProps) {
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.formTitle}>📄 납세증명서 발급</h2>
-
       <form onSubmit={onSubmit} className={styles.form}>
         {/* 로그인 타입별 필드 */}
         <SimpleAuthForm

@@ -9,15 +9,6 @@ export const styles = {
 
   // 그리드 레이아웃 (한 줄에 한 개씩)
   gridContainer: 'grid grid-cols-1 gap-4',
-  fullWidthField: 'col-span-1',
-
-  // 필드 컨테이너
-  fieldContainer: 'space-y-1',
-
-  // 라벨
-  label: 'block text-sm font-medium text-brand-black mb-1',
-  requiredLabel:
-    'block text-sm font-medium text-brand-black mb-1 after:content-["_*"] after:text-brand-error after:font-bold',
 
   // 입력 필드
   input:
@@ -29,10 +20,6 @@ export const styles = {
   // 셀렉트 박스
   select:
     'w-full px-3 py-2 border border-brand-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent bg-brand-white appearance-none transition-colors',
-
-  // 텍스트에어리어
-  textarea:
-    'w-full px-3 py-2 border border-brand-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent resize-vertical transition-colors',
 
   // 에러 메시지
   errorMessage: 'text-brand-error text-sm mt-1',

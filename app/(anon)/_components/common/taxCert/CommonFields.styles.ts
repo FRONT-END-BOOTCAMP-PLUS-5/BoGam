@@ -14,15 +14,8 @@ export const styles = {
   // 아코디언 콘텐츠
   accordionContent: "p-4 space-y-4 bg-brand-white",
   
-  // 필드 레이아웃
-  field: "w-full space-y-2",
-  
-  // 레이블 스타일
-  label: "block text-sm font-medium text-brand-dark-gray",
-  labelRequired: "block text-sm font-medium text-brand-dark-gray",
-  
   // 그리드 레이아웃
-  gridTwo: "grid grid-cols-2 gap-4",
+  gridOne: "grid grid-cols-1 gap-4",
   
   // 선택 필드 스타일
   select: "w-full px-3 py-2 border border-brand-light-gray rounded-md focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent",

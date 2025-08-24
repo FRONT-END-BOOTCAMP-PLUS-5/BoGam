@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { styles } from './PdfViewer.styles';
+import Button from '@/(anon)/_components/common/button/Button';
 
 interface RealEstatePdfViewerProps {
   base64: string;
@@ -40,18 +42,20 @@ export function PdfViewer({
         setError('PDF 데이터를 처리하는 중 오류가 발생했습니다.');
         setIsLoading(false);
       }
-
-      // cleanup
-      return () => {
-        if (pdfUrl) {
-          URL.revokeObjectURL(pdfUrl);
-        }
-      };
     } else {
       setIsLoading(false);
       setError('PDF 데이터가 없습니다.');
     }
-  }, [base64, pdfUrl]);
+  }, [base64]);
+
+  // cleanup effect를 별도로 분리
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl);
+      }
+    };
+  }, [pdfUrl]);
 
   if (isLoading) {
     return (
@@ -90,22 +94,24 @@ export function PdfViewer({
 
       {/* 다운로드 버튼 */}
       <div className={styles.downloadButtonContainer}>
-        <a href={pdfUrl} download={fileName} className={styles.downloadButton}>
-          <svg
-            className={styles.downloadIcon}
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
-            />
-          </svg>
-          PDF 다운로드
-        </a>
+        <Link href={pdfUrl} download={fileName}>
+          <Button className="flex items-center gap-2">
+            <svg
+              className="w-5 h-5"
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+              />
+            </svg>
+            PDF 다운로드
+          </Button>
+        </Link>
       </div>
     </div>
   );

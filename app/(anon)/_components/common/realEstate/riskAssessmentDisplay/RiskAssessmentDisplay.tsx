@@ -3,7 +3,7 @@
 import React from 'react';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import { styles } from './RiskAssessmentDisplay.styles';
-import { OriginalDocumentButton } from '@/(anon)/_components/common/realEstate/originalDocumentButton/OriginalDocumentButton';
+import { OriginalDocumentButton } from '@/(anon)/_components/common/button/OriginalDocumentButton';
 import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
 
 interface RiskAssessmentDisplayProps {
@@ -30,8 +30,8 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         </div>
 
         {/* 원문보기 버튼 */}
-        {displayResponse && (
-          <OriginalDocumentButton displayResponse={displayResponse} />
+        {displayResponse?.data?.realEstateJson?.data?.resOriGinalData && (
+          <OriginalDocumentButton pdfData={displayResponse.data.realEstateJson.data.resOriGinalData as string} />
         )}
       </div>
       <div className={styles.riskScore}>

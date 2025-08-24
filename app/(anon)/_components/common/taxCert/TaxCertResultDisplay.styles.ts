@@ -6,26 +6,11 @@ export const styles = {
   // 메인 컨테이너
   container: "max-w-4xl mx-auto p-6",
   
-  // 헤더
-  header: "mb-6",
+  // 폼 컨테이너 (RealEstateInput과 동일)
+  formContainer: "bg-brand-white p-6 rounded-lg shadow-sm border border-brand-light-gray",
   
-  // 제목
-  title: "text-2xl font-bold text-brand-black mb-4",
-  
-  // 상태 컨테이너
-  statusContainer: "p-4 rounded-lg mb-4",
-  statusWarning: "bg-brand-error border border-brand-error",
-  
-  // 상태 텍스트
-  statusText: "text-sm font-medium",
-  statusTextWarning: "text-brand-error",
-  
-  // 원본 데이터 컨테이너
-  originalDataContent: "bg-brand-light-gray border border-brand-light-gray rounded-lg p-4",
-  originalDataTitle: "text-lg font-semibold text-brand-black mb-3",
-  
-  // 정보 그리드
-  infoGrid: "grid grid-cols-1 md:grid-cols-2 gap-6 mb-6",
+  // 정보 그리드 (1줄에 1개씩)
+  infoGrid: "grid grid-cols-1 gap-4 mb-6",
   
   // 정보 섹션
   infoSection: "space-y-4",
@@ -63,21 +48,6 @@ export const styles = {
   
   // 테이블 셀
   tableCell: "px-4 py-3 text-sm text-brand-black border-b border-brand-light-gray",
-  
-  // 원본 데이터 컨테이너
-  originalDataContainer: "space-y-4",
-  
-  // 원본 데이터 필드
-  originalDataField: "bg-brand-light-gray border border-brand-light-gray rounded-lg p-4",
-  
-  // 원본 데이터 헤더
-  originalDataHeader: "flex justify-between items-center mb-3",
-  
-  // 원본 데이터 라벨
-  originalDataLabel: "text-sm font-medium text-brand-dark-gray",
-  
-  // 복사 버튼
-  copyButton: "px-3 py-1 text-xs font-medium text-brand-white bg-brand border border-brand rounded hover:bg-brand-90 transition-colors",
   
   // 추가 스타일들
   noDataContainer: "text-center py-8 border border-brand-light-gray rounded-lg",

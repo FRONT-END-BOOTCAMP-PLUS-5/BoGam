@@ -27,7 +27,7 @@ export default function JeonseGuarantee() {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="bg-brand hover:bg-brand-90 text-brand-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors duration-200"
+            className="bg-brand hover:bg-brand text-brand-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors duration-200"
           >
             다시 조회하기
           </button>

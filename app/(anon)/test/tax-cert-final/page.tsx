@@ -1,5 +1,5 @@
-import TaxCert from '@/(anon)/_components/common/taxCert/TaxCert';
+import { TaxCertContainer }   from '@/(anon)/_components/common/taxCert/TaxCertContainer';
 
 export default function TaxCertFinalTestPage() {
-  return <TaxCert />;
+  return <TaxCertContainer />;
 }

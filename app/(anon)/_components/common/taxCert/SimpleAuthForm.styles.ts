@@ -1,13 +1,4 @@
 export const styles = {
-  // 필드 레이아웃
-  field: "w-full space-y-2",
-  
-  // 레이블 스타일
-  label: "block text-sm font-medium text-brand-dark-gray",
-  
-  // 필수 표시
-  require: "text-brand-error",
-  
   // 간편인증 그리드 컨테이너
   authGrid: "grid grid-cols-3 gap-4",
   
@@ -28,9 +19,6 @@ export const styles = {
   
   // 간편인증 텍스트
   authText: "text-xs font-medium text-brand-dark-gray",
-  
-  // 그리드 레이아웃
-  gridTwo: "grid grid-cols-2 gap-4",
   
   // 간격
   mt4: "mt-4",

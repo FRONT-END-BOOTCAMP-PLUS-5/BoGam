@@ -30,5 +30,5 @@ export const styles = {
   buttonContainer: "flex items-center justify-center mt-8",
   
   // 제출 버튼 스타일
-  button: "bg-brand hover:bg-brand-90 disabled:bg-brand-light-gray text-brand-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors duration-200"
+  button: "bg-brand hover:bg-brand disabled:bg-brand-light-gray text-brand-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors duration-200"
 };

@@ -10,7 +10,7 @@ export const styles = {
   successIcon: "w-5 h-5 text-brand flex-shrink-0 mt-0.5",
   warningIcon: "w-5 h-5 text-brand flex-shrink-0 mt-0.5",
   errorIcon: "w-5 h-5 text-brand flex-shrink-0 mt-0.5",
-  actionButton: "flex items-center gap-2 mt-3 p-2 text-brand hover:text-brand-90 hover:bg-brand-light-blue rounded-lg transition-colors",
+  actionButton: "flex items-center gap-2 mt-3 p-2 text-brand hover:text-brand hover:bg-brand-light-blue rounded-lg transition-colors",
   actionIcon: "w-4 h-4",
   actionText: "text-sm font-medium underline"
 };

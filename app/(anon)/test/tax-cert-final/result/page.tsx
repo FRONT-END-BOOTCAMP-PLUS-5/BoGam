@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import TaxCertResultDisplay from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay';
+import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 
 export default function TaxCertResultPage() {
   return (
-      <TaxCertResultDisplay />
+    <RealEstateContainer />
   );
 }

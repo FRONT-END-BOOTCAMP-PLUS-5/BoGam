@@ -31,7 +31,4 @@ export const styles = {
 
   // 다운로드 버튼 스타일
   downloadButtonContainer: 'flex justify-center',
-  downloadButton:
-    'inline-flex items-center px-4 py-2 bg-brand-blue text-brand-white rounded-lg hover:bg-brand-90 transition-colors',
-  downloadIcon: 'w-4 h-4 mr-2',
 } as const;

@@ -7,7 +7,7 @@ export const styles = {
   searchInput:
     'flex-1 px-4 py-3 border border-brand-light-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent',
   searchButton:
-    'px-4 py-2 bg-brand text-brand-white rounded-lg hover:bg-brand-90 transition-colors duration-200 disabled:bg-brand-light-gray disabled:cursor-not-allowed text-sm font-medium',
+    'px-4 py-2 bg-brand text-brand-white rounded-lg hover:bg-brand transition-colors duration-200 disabled:bg-brand-light-gray disabled:cursor-not-allowed text-sm font-medium',
 
   // 주소 상세 행
   addressDetailRow: 'space-y-4',

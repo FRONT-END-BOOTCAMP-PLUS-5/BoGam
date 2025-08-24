@@ -31,5 +31,5 @@ export const styles = {
   pdfDownloadContainer: "flex justify-center",
   
   // PDF 다운로드 버튼
-  pdfDownloadButton: "inline-flex items-center px-6 py-3 bg-brand text-brand-white font-medium rounded-lg hover:bg-brand-90 transition-colors",
+  pdfDownloadButton: "inline-flex items-center px-6 py-3 bg-brand text-brand-white font-medium rounded-lg hover:bg-brand transition-colors",
 } as const;

@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { GetTaxCertRequestDto } from '@be/applications/taxCert/dtos/GetTaxCertRequestDto';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import PasswordInput from '@/(anon)/_components/common/forms/PasswordInput';
 import Button from '@/(anon)/_components/common/button/Button';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
+import Field from '@/(anon)/_components/common/forms/Field';
 import { styles } from './SimpleAuthForm.styles';
 
 // 간편인증 방법 데이터
@@ -96,10 +98,11 @@ export default function SimpleAuthForm({
 
   return (
     <>
-      <div className={styles.field}>
-        <label className={styles.label}>
-          사용자 이름 <span className={styles.require}>*</span>
-        </label>
+      <Field
+        id="userName"
+        label="사용자 이름"
+        required
+      >
         <TextInput
           name='userName'
           value={formData.userName || ''}
@@ -107,116 +110,97 @@ export default function SimpleAuthForm({
           required
           placeholder='필수: 사용자 이름'
         />
-      </div>
+      </Field>
 
-      <div className={styles.field}>
-        <label className={styles.label}>
-          사용자 주민번호 <span className={styles.require}>*</span>
-        </label>
-        <TextInput
+      <Field
+        id="loginIdentity"
+        label="사용자 주민번호"
+        required
+      >
+        <PasswordInput
+          id='loginIdentity'
           name='loginIdentity'
           value={formData.loginIdentity || ''}
           onChange={onInputChange}
           required
           placeholder='필수: 사용자 주민번호'
           maxLength={13}
-          inputMode='numeric'
         />
-      </div>
+      </Field>
 
-      <div className={styles.field}>
-        <label className={styles.label}>
-          주민등록번호 뒷자리 암호화 여부
-        </label>
-        <select
-          name='identityEncYn'
-          value={formData.identityEncYn || ''}
-          onChange={onInputChange}
-        >
-          <option value='N'>비암호화</option>
-          <option value='Y'>암호화</option>
-        </select>
-      </div>
 
-      {formData.identityEncYn === 'Y' && (
-        <div className={styles.field}>
-          <label className={styles.label}>
-            생년월일 <span className={styles.require}>*</span>
-          </label>
-          <TextInput
-            name='loginBirthDate'
-            value={formData.loginBirthDate || ''}
-            onChange={onInputChange}
-            placeholder='960413'
-            required
-            maxLength={6}
-            inputMode='numeric'
-          />
-        </div>
-      )}
 
       {/* 간편인증 로그인 구분 - 모달 버튼 */}
       <div className={`${styles.mt6} ${styles.spaceY3}`}>
-        <label className={styles.label}>
-          간편인증 로그인 구분 <span className={styles.require}>*</span>
-        </label>
-        <Button
-          variant="secondary"
-          fullWidth
-          onClick={handleOpenAuthMethodModal}
-          className={styles.authMethodButton}
+        <Field
+          id="loginTypeLevel"
+          label="간편인증 로그인 구분"
+          required
         >
-          {selectedMethod ? (
-            <div className={styles.selectedAuthMethod}>
-              <Image
-                src={selectedMethod.image}
-                alt={selectedMethod.alt}
-                width={24}
-                height={24}
-                className={styles.authIconSmall}
-              />
-              <span className={styles.selectedAuthText}>{selectedMethod.name}</span>
-            </div>
-          ) : (
-            <span className={styles.placeholderText}>간편인증 방법을 선택해주세요</span>
-          )}
-          <span className={styles.dropdownArrow}>▼</span>
-        </Button>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={handleOpenAuthMethodModal}
+            className={styles.authMethodButton}
+          >
+            {selectedMethod ? (
+              <div className={styles.selectedAuthMethod}>
+                <Image
+                  src={selectedMethod.image}
+                  alt={selectedMethod.alt}
+                  width={24}
+                  height={24}
+                  className={styles.authIconSmall}
+                />
+                <span className={styles.selectedAuthText}>{selectedMethod.name}</span>
+              </div>
+            ) : (
+              <span className={styles.placeholderText}>간편인증 방법을 선택해주세요</span>
+            )}
+            <span className={styles.dropdownArrow}>▼</span>
+          </Button>
+        </Field>
       </div>
 
       {/* 통신사 (통신사인증서 선택 시에만 표시) */}
       {formData.loginTypeLevel === '5' && (
         <div className={`${styles.mt4} ${styles.spaceY3}`}>
-          <label className={styles.label}>
-            통신사 <span className={styles.require}>*</span>
-          </label>
-          <select
-            name='telecom'
-            value={formData.telecom || ''}
-            onChange={onInputChange}
+          <Field
+            id="telecom"
+            label="통신사"
             required
           >
-            <option value=''>통신사 선택</option>
-            <option value='0'>SKT</option>
-            <option value='1'>KT</option>
-            <option value='2'>LG U+</option>
-          </select>
+            <select
+              name='telecom'
+              value={formData.telecom || ''}
+              onChange={onInputChange}
+              required
+            >
+              <option value=''>통신사 선택</option>
+              <option value='0'>SKT</option>
+              <option value='1'>KT</option>
+              <option value='2'>LG U+</option>
+            </select>
+          </Field>
         </div>
       )}
 
       {/* 전화번호 */}
       <div className={`${styles.mt4} ${styles.spaceY3}`}>
-        <label className={styles.label}>
-          전화번호 <span className={styles.require}>*</span>
-        </label>
-        <TextInput
-          name='phoneNo'
-          value={formData.phoneNo || ''}
-          onChange={onInputChange}
+        <Field
+          id="phoneNo"
+          label="전화번호"
           required
-          placeholder='필수: 전화번호'
-          mask='phone'
-        />
+        >
+          <TextInput
+            name='phoneNo'
+            value={formData.phoneNo || ''}
+            onChange={onInputChange}
+            required
+            placeholder='필수: 전화번호'
+            mask='phone'
+          />
+        </Field>
       </div>
 
       {/* 간편인증 방법 선택 모달 */}
