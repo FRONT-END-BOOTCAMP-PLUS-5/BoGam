@@ -8,14 +8,9 @@ import { RiskAssessmentSaveButton } from './RiskAssessmentSaveButton';
 import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
 import {
   RiskAssessmentJsonData,
-  convertRealEstateRiskAssessmentToJson,
-  convertBrokerRiskAssessmentToJson,
-  convertTaxCertRiskAssessmentToJson,
   isRiskAssessmentModified,
 } from '@utils/riskAssessmentUtils';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
-import { BrokerRiskAssessmentResult } from '@/hooks/useBrokerRiskAssessment';
-import { TaxCertRiskAssessmentResult } from '@/hooks/useTaxCertRiskAssessment';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
@@ -60,37 +55,56 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
     useState<RiskAssessmentJsonData | null>(null);
   const [isModified, setIsModified] = useState(false);
 
+  // 키워드 상태 관리를 위한 state
+  const [keywordStates, setKeywordStates] = useState<
+    Record<string, 'unchecked' | 'match' | 'mismatch'>
+  >({});
+
   // 초기 JSON 데이터 설정
   useEffect(() => {
     if (initialJsonData) {
       setCurrentJsonData(initialJsonData);
       setOriginalJsonData(initialJsonData);
+
+      // 저장된 데이터에서 키워드 상태 복원
+      const savedKeywordStates: Record<
+        string,
+        'unchecked' | 'match' | 'mismatch'
+      > = {};
+      riskAssessment.keywordChecks.forEach((check) => {
+        const savedStatus = initialJsonData[check.keyword];
+        if (
+          savedStatus === 'match' ||
+          savedStatus === 'unchecked' ||
+          savedStatus === 'mismatch'
+        ) {
+          savedKeywordStates[check.keyword] = savedStatus;
+        } else {
+          // 저장된 데이터가 없으면 riskAssessment의 status 값 사용
+          savedKeywordStates[check.keyword] = check.status;
+        }
+      });
+      setKeywordStates(savedKeywordStates);
     } else {
-      // 새로운 위험도 검사 결과를 JSON으로 변환
-      let newJsonData: RiskAssessmentJsonData;
+      // 초기 키워드 상태 설정 (저장된 데이터가 없는 경우)
+      const initialKeywordStates: Record<
+        string,
+        'unchecked' | 'match' | 'mismatch'
+      > = {};
 
-      switch (domain) {
-        case 'realEstate':
-          newJsonData = convertRealEstateRiskAssessmentToJson(riskAssessment);
-          break;
-        case 'broker':
-          newJsonData = convertBrokerRiskAssessmentToJson(
-            riskAssessment as unknown as BrokerRiskAssessmentResult
-          );
-          break;
-        case 'taxCert':
-          newJsonData = convertTaxCertRiskAssessmentToJson(
-            riskAssessment as unknown as TaxCertRiskAssessmentResult
-          );
-          break;
-        default:
-          newJsonData = convertRealEstateRiskAssessmentToJson(riskAssessment);
-      }
+      // currentJsonData를 riskAssessment 데이터로 초기화
+      const newJsonData: RiskAssessmentJsonData = {};
+      riskAssessment.keywordChecks.forEach((check) => {
+        // riskAssessment의 status 값을 그대로 사용
+        initialKeywordStates[check.keyword] = check.status;
+        newJsonData[check.keyword] = check.status;
+      });
 
+      setKeywordStates(initialKeywordStates);
       setCurrentJsonData(newJsonData);
       setOriginalJsonData(newJsonData);
     }
-  }, [riskAssessment, initialJsonData]);
+  }, [initialJsonData, riskAssessment.keywordChecks]);
 
   // 수정 여부 확인
   useEffect(() => {
@@ -102,6 +116,26 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       setIsModified(modified);
     }
   }, [currentJsonData, originalJsonData]);
+
+  // 키워드 상태 변경 핸들러
+  const handleKeywordStateChange = (
+    keyword: string,
+    newStatus: 'unchecked' | 'match' | 'mismatch'
+  ) => {
+    setKeywordStates((prev) => ({
+      ...prev,
+      [keyword]: newStatus,
+    }));
+
+    // JSON 데이터도 함께 업데이트 (저장을 위해)
+    if (currentJsonData) {
+      const updatedJsonData: RiskAssessmentJsonData = {
+        ...currentJsonData,
+        [keyword]: newStatus,
+      };
+      setCurrentJsonData(updatedJsonData);
+    }
+  };
 
   // 저장 핸들러
   const handleSave = async () => {
@@ -130,7 +164,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       if (checklistItem) {
         const updatedJsonData: RiskAssessmentJsonData = {
           ...currentJsonData,
-          [checklistItem.label]: checked ? 'match' : 'mismatch',
+          [checklistItem.label]: checked ? 'match' : 'unchecked',
         };
         setCurrentJsonData(updatedJsonData);
       }
@@ -162,109 +196,56 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         </div>
       </div>
       <div className={styles.riskScore}>
-        안전도: {riskAssessment.passedKeywords}/{riskAssessment.totalKeywords}{' '}
-        통과 (
-        {Math.round(
-          (riskAssessment.passedKeywords / riskAssessment.totalKeywords) * 100
-        )}
-        %)
+        안전도:{' '}
+        {(() => {
+          // 키워드 통과 개수 계산 (match 상태만 통과)
+          const passedKeywords = riskAssessment.keywordChecks.reduce(
+            (count, check) => {
+              const userStatus = keywordStates[check.keyword];
+              const isPassed = userStatus === 'match';
+              return count + (isPassed ? 1 : 0);
+            },
+            0
+          );
+
+          const totalKeywords = riskAssessment.totalKeywords;
+          const totalChecklistItems = checklistItems
+            ? checklistItems.length
+            : 0;
+          const totalItems = totalKeywords + totalChecklistItems;
+          const percentage = Math.round((passedKeywords / totalItems) * 100);
+
+          return `${passedKeywords}/${totalItems} 통과 (${percentage}%)`;
+        })()}
       </div>
 
       {riskAssessment.riskFactors.length > 0 ||
-      (checklistItems && checklistItems.some((item) => !item.checked)) ? (
+      (checklistItems && checklistItems.some((item) => !item.checked)) ||
+      riskAssessment.keywordChecks.some((check) => {
+        const userStatus = keywordStates[check.keyword];
+        // unchecked 상태가 있으면 확인이 필요
+        if (userStatus === 'unchecked') {
+          return true;
+        }
+        // match가 아니면 확인이 필요
+        return userStatus !== 'match';
+      }) ? (
         <>
           {/* 경고 표시 */}
           <div className={styles.warningContainer}>
-            <div className={styles.warningHeader}>
-              <span className={styles.warningIcon}>⚠️</span>
-              <h4 className={styles.warningTitle}>확인이 필요합니다 !</h4>
+            <div className={styles.warningIcon}>⚠️</div>
+            <div className={styles.warningText}>확인이 필요합니다 !</div>
+            <div className={styles.warningSubText}>
+              확인이 필요한 항목이 있습니다.
             </div>
-            <p className={styles.warningText}>
-              {riskAssessment.riskFactors.length > 0
-                ? `등기부등본에서 ${riskAssessment.riskFactors.length}개의 위험 요소가 발견되었습니다.`
-                : '체크리스트에서 확인이 필요한 항목이 있습니다.'}
-            </p>
-          </div>
-
-          {/* 감지된 단어별 상세 분석 */}
-          <div className={styles.riskFactors}>
-            <h4 className={styles.riskFactorsTitle}>
-              감지된 위험 키워드 상세 분석:
-            </h4>
-
-            {/* 모든 감지된 키워드를 수집 */}
-            {(() => {
-              const allKeywords = new Set<string>();
-              riskAssessment.riskFactors.forEach((factor) => {
-                factor.foundKeywords.forEach((keyword) =>
-                  allKeywords.add(keyword)
-                );
-              });
-
-              return Array.from(allKeywords).map((keyword, keywordIndex) => {
-                // 해당 키워드가 발견된 모든 필드들을 찾기
-                const relatedFactors = riskAssessment.riskFactors.filter(
-                  (factor) => factor.foundKeywords.includes(keyword)
-                );
-
-                return (
-                  <div
-                    key={keywordIndex}
-                    className={styles.keywordAnalysisContainer}
-                  >
-                    <div className={styles.keywordAnalysisHeader}>
-                      <span className={styles.keywordAnalysisIcon}>🔍</span>
-                      <h5 className={styles.keywordAnalysisTitle}>
-                        감지된 키워드: &ldquo;{keyword}&rdquo;
-                      </h5>
-                      <span className={styles.keywordAnalysisBadge}>
-                        {relatedFactors.length}개 위치에서 발견
-                      </span>
-                    </div>
-
-                    {/* 해당 키워드가 발견된 각 위치별 상세 정보 */}
-                    <div className={styles.keywordAnalysisContent}>
-                      {relatedFactors.map((factor, factorIndex) => (
-                        <div
-                          key={factorIndex}
-                          className={styles.keywordDetailItem}
-                        >
-                          <div className={styles.keywordDetailHeader}>
-                            <span className={styles.keywordDetailField}>
-                              📍 {factor.fieldName}
-                            </span>
-                            <span
-                              className={`${styles.riskLevelBadge} ${
-                                styles[`riskLevelBadge${factor.riskLevel}`]
-                              }`}
-                            >
-                              {factor.riskLevel}
-                            </span>
-                          </div>
-                          <div className={styles.keywordDetailLabel}>
-                            <strong>발견된 내용:</strong>
-                          </div>
-                          <div className={styles.keywordDetailContent}>
-                            {factor.fieldValue}
-                          </div>
-                          <div className={styles.keywordDetailDescription}>
-                            <strong>영향도:</strong> {factor.description}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              });
-            })()}
           </div>
         </>
       ) : (
         <div className={styles.safeContainer}>
           <div className={styles.safeIcon}>✅</div>
-          <div className={styles.safeText}>안전합니다!</div>
+          <div className={styles.safeText}>모두 확인 되었습니다 !</div>
           <div className={styles.safeSubText}>
-            등기부등본에서 위험 요소가 발견되지 않았습니다.
+            위험 요소가 발견 되지 않았습니다.
           </div>
         </div>
       )}
@@ -280,40 +261,45 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
               if (a.passed && !b.passed) return 1;
               return 0;
             })
-            .map((check, index) => (
-              <div
-                key={index}
-                className={`${styles.keywordCheckItem} ${
-                  !check.passed ? styles.keywordClickable : ''
-                }`}
-                onClick={() => {
-                  if (!check.passed) {
-                    window.open(
-                      `/real-estate-data?keyword=${encodeURIComponent(
-                        check.keyword
-                      )}`,
-                      '_blank'
-                    );
-                  }
-                }}
-              >
-                <div className={styles.keywordCheckHeader}>
-                  <span className={styles.keywordName}>{check.keyword}</span>
-                  <span
-                    className={`${styles.keywordStatus} ${
-                      check.passed ? styles.keywordPassed : styles.keywordFailed
-                    }`}
-                  >
-                    {check.passed ? '✅ 통과' : '❌ 발견'}
-                  </span>
-                </div>
-                {!check.passed && (
-                  <div className={styles.keywordFoundCount}>
-                    {check.foundCount}회 발견됨
+            .map((check, index) => {
+              // 키워드 상태 결정 - keywordStates에서 직접 가져오기
+              const userStatus = keywordStates[check.keyword];
+              const isPassed = userStatus === 'match';
+              const isUnchecked = userStatus === 'unchecked';
+
+              return (
+                <div
+                  key={index}
+                  className={`${
+                    isPassed
+                      ? styles.keywordCheckItemChecked
+                      : styles.keywordCheckItemUnchecked
+                  } ${styles.keywordClickable}`}
+                  onClick={() => {
+                    // 통과 상태의 키워드는 클릭해도 변경되지 않음
+                    if (userStatus === 'match') {
+                      return;
+                    }
+
+                    // 미확인 상태만 통과로 변경
+                    if (userStatus === 'unchecked') {
+                      handleKeywordStateChange(check.keyword, 'match');
+                    }
+                  }}
+                >
+                  <div className={styles.keywordCheckHeader}>
+                    <span className={styles.keywordName}>{check.keyword}</span>
+                    <span
+                      className={`${styles.keywordStatus} ${
+                        isPassed ? styles.keywordPassed : styles.keywordFailed
+                      }`}
+                    >
+                      {isUnchecked ? '🔍 미확인' : '✅ 통과'}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
         </div>
       </div>
 

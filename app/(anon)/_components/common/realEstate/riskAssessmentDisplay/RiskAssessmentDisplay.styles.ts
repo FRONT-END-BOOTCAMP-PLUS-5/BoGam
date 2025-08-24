@@ -47,12 +47,16 @@ export const styles = {
   keywordChecksGrid: 'grid grid-cols-2 gap-3',
   keywordCheckItem:
     'bg-brand-white p-3 rounded-lg border border-brand-light-gray',
+  keywordCheckItemChecked:
+    'bg-brand-green/10 p-3 rounded-lg border border-brand-green/30',
+  keywordCheckItemUnchecked:
+    'bg-brand-gold/10 p-3 rounded-lg border border-brand-gold/30',
   keywordCheckHeader: 'flex flex-col items-center gap-2',
   keywordName: 'font-medium text-brand-black text-sm text-center',
   keywordStatus: 'text-xs font-medium px-2 py-1 rounded-full',
   keywordPassed: 'bg-brand-green/20 text-brand-green',
-  keywordFailed: 'bg-brand-error/20 text-brand-error',
-  keywordFoundCount: 'text-xs text-brand-error font-medium text-center',
+  keywordFailed: 'bg-brand-gold/20 text-brand-gold',
+  keywordFoundCount: 'text-xs text-brand-gold font-medium text-center',
   keywordClickable:
     'cursor-pointer hover:bg-brand-light-gray/50 transition-colors',
 
@@ -63,11 +67,10 @@ export const styles = {
 
   // 경고 표시
   warningContainer:
-    'mb-6 p-4 bg-brand-error/10 border border-brand-error/20 rounded-lg',
-  warningHeader: 'flex items-center gap-2 mb-3',
-  warningIcon: 'text-2xl',
-  warningTitle: 'text-lg font-semibold text-brand-error',
-  warningText: 'text-brand-error/80 text-sm',
+    'bg-brand-error/10 p-6 rounded-lg border border-brand-error/20 text-center',
+  warningIcon: 'text-4xl mb-3',
+  warningText: 'text-xl font-semibold text-brand-error mb-2',
+  warningSubText: 'text-brand-error/80',
 
   // 키워드 분석
   keywordAnalysisContainer:

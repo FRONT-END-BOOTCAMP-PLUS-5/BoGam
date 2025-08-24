@@ -105,7 +105,10 @@ export const useCreateRealEstate = (
 };
 
 // 2-way 인증 요청
-export const useTwoWayAuth = (onSuccess?: (data: ApiResponse) => void) => {
+export const useTwoWayAuth = (
+  onSuccess?: (data: ApiResponse) => void,
+  onError?: (error: Error) => void
+) => {
   const queryClient = useQueryClient();
 
   return useMutation<ApiResponse, Error, Record<string, unknown>>({
@@ -135,6 +138,12 @@ export const useTwoWayAuth = (onSuccess?: (data: ApiResponse) => void) => {
       // 콜백 실행
       if (onSuccess) {
         onSuccess(data);
+      }
+    },
+    onError: (error) => {
+      // 에러 콜백 실행
+      if (onError) {
+        onError(error);
       }
     },
   });

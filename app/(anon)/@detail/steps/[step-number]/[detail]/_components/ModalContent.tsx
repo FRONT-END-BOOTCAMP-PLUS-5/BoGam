@@ -12,14 +12,15 @@ import RadioGroup from './contents/RadioGroup';
 import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { LegacyContentSection, StepContentData } from './contents/types';
-import TaxCertResultDisplay from '@/(anon)/_components/common/taxCert/TaxCertResultDisplay';
+import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
-  const [stepContentData, setStepContentData] = useState<StepContentData | null>(null);
+  const [stepContentData, setStepContentData] =
+    useState<StepContentData | null>(null);
   const [dataType, setDataType] = useState<string>('default');
 
   // URL에서 stepNumber와 detail 가져오기
@@ -68,11 +69,10 @@ export default function ModalContent() {
     }
   }, [stepNumber, detail, specialSteps]);
 
-
   // 특별한 컴포넌트 렌더링 함수
   const renderSpecialComponent = () => {
     if (specialSteps.taxCert) {
-      return <TaxCertResultDisplay />;
+      return <TaxCertContainer />;
     }
 
     if (specialSteps.broker) {

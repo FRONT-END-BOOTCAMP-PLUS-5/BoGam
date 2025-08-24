@@ -27,15 +27,6 @@ export const useRiskAssessmentSave = (
         params: SaveRiskAssessmentParams
       ): Promise<SaveRiskAssessmentResult> => {
         try {
-          // 저장 요청 데이터 로깅
-          console.log('🔍 위험도 검사 저장 요청 데이터:', {
-            stepNumber: params.stepNumber,
-            detail: params.detail,
-            domain: params.domain,
-            userAddressNickname: params.userAddressNickname,
-            jsonData: params.jsonData,
-          });
-
           // API 요청
           const result = await saveRiskAssessmentAPI(params);
 
@@ -48,7 +39,6 @@ export const useRiskAssessmentSave = (
             data: result.data,
           };
         } catch (error) {
-          console.error('위험도 검사 결과 저장 오류:', error);
           throw error;
         }
       },

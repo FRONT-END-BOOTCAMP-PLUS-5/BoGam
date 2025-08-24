@@ -8,7 +8,7 @@ import { RealEstateEntity } from '@be/domain/entities/RealEstate';
 interface UseRealEstateOutputProps {
   response: ApiResponse | null;
   loading: boolean;
-  existsData: any;
+  existsData: { success: boolean; exists: boolean } | null | undefined;
 }
 
 export const useRealEstateOutput = ({
@@ -35,10 +35,12 @@ export const useRealEstateOutput = ({
     }
   }, []);
 
-  // 위험도 측정
+  // 위험도 측정 - 새로운 데이터 구조 우선 사용
+  const realEstateData =
+    displayResponse?.data?.data || displayResponse?.data?.realEstateJson?.data;
   const riskAssessment = useRiskAssessment(
     currentStep,
-    displayResponse?.data?.realEstateJson?.data as RealEstateEntity,
+    realEstateData as RealEstateEntity,
     null
   );
 

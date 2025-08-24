@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { RealEstateEntity } from '@be/domain/entities/RealEstate';
+import { DANGEROUS_KEYWORDS } from '@utils/constants/riskAssessment';
 
 export interface RiskFactor {
   fieldName: string; // 필드명 (한글)
@@ -13,6 +14,7 @@ export interface KeywordCheck {
   keyword: string;
   passed: boolean;
   foundCount: number;
+  status: 'unchecked' | 'match' | 'mismatch'; // 미확인, 통과, 실패
 }
 
 export interface RiskAssessmentResult {
@@ -26,41 +28,10 @@ export interface RiskAssessmentResult {
   passedKeywords: number;
 }
 
-// 위험 키워드 정의
-const DANGEROUS_KEYWORDS = [
-  '압류',
-  '가압류',
-  '경매',
-  '강제집행',
-  '체납',
-  '미납',
-  '부도',
-  '파산',
-  '해지',
-  '취소',
-];
-
-// 필드명 매핑 (영문 -> 한글)
-const FIELD_NAME_MAPPING: Record<string, string> = {
-  resDocTitle: '문서제목',
-  resRealty: '부동산명',
-  resPublishDate: '발행일자',
-  resPublishRegistryOffice: '발행등기소',
-  resUserNm: '소유자명',
-  commUniqueNo: '고유번호',
-  commAddrLotNumber: '소재지번',
-  resState: '상태',
-  resType: '구분',
-  resIssueNo: '발급번호',
-  resPublishNo: '발행번호',
-  resWarningMessage: '경고메시지',
-  resOriginalData: '원문데이터',
-};
-
 export const useRiskAssessment = (
   stepNumber: number,
   realEstateData: RealEstateEntity | null,
-  additionalData?: any
+  additionalData?: unknown
 ): RiskAssessmentResult => {
   return useMemo(() => {
     if (!realEstateData) {
@@ -74,6 +45,7 @@ export const useRiskAssessment = (
           keyword,
           passed: true,
           foundCount: 0,
+          status: 'unchecked' as const,
         })),
         totalKeywords: DANGEROUS_KEYWORDS.length,
         passedKeywords: DANGEROUS_KEYWORDS.length,
@@ -97,7 +69,7 @@ export const useRiskAssessment = (
     // 각 필드별로 위험 키워드 검색
     const searchInField = (
       fieldName: string,
-      fieldValue: any,
+      fieldValue: unknown,
       displayName: string
     ) => {
       if (!fieldValue || typeof fieldValue !== 'string') return;
@@ -186,11 +158,24 @@ export const useRiskAssessment = (
     // 키워드별 체크 결과 생성
     const keywordChecks: KeywordCheck[] = DANGEROUS_KEYWORDS.map((keyword) => {
       const foundCount = foundKeywords.filter((k) => k === keyword).length;
+      const passed = foundCount === 0; // 위험 키워드를 발견하지 않으면 통과로 판단
       return {
         keyword,
-        passed: foundCount === 0,
+        passed,
         foundCount,
+        status: passed ? ('match' as const) : ('unchecked' as const), // 통과 또는 미확인
       };
+    });
+
+    // 위험도 체크 결과 콘솔 출력
+    console.log('🔍 위험도 체크 결과:', {
+      foundKeywords,
+      keywordChecks: keywordChecks.map((check) => ({
+        keyword: check.keyword,
+        foundCount: check.foundCount,
+        passed: check.passed,
+        status: check.status,
+      })),
     });
 
     const passedKeywords = keywordChecks.filter((check) => check.passed).length;

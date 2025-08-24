@@ -58,6 +58,7 @@ export const useRealEstateContainer = () => {
   const [twoWaySelectedAddress, setTwoWaySelectedAddress] =
     useState<AddressListItem | null>(null);
   const [showTwoWayModal, setShowTwoWayModal] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
 
   // selectedAddress 변경 시 데이터 존재 여부 확인
   const { selectedAddress } = useUserAddressStore();
@@ -69,35 +70,41 @@ export const useRealEstateContainer = () => {
 
   // 데이터 생성 mutation
   const createRealEstateMutation = useCreateRealEstate(async (data) => {
+    setIsDataLoading(true);
     // 일반 API 요청 성공 후 탭 전환 (2-way 인증이 필요 없는 경우)
     if (!data.requiresTwoWayAuth) {
-      // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
-      setTimeout(() => {
-        if (existsData?.success && existsData.exists) {
-          setActiveTab('output');
-        }
-      }, 100);
+      // existsData 업데이트를 기다림 (useEffect에서 처리)
     }
   });
 
-  const twoWayAuthMutation = useTwoWayAuth(async (data) => {
-    // 2-way 인증 성공 후 탭 전환
-    // exists 데이터를 다시 확인하여 데이터가 있을 때만 Output 탭으로 이동
-    setTimeout(() => {
-      if (existsData?.success && existsData.exists) {
-        setActiveTab('output');
-      }
-    }, 100);
-  });
+  const twoWayAuthMutation = useTwoWayAuth(
+    async (data) => {
+      setResponse(data);
+      setIsDataLoading(true);
+    },
+    (error) => {
+      setResponse({
+        success: false,
+        message: '2-way 인증 API 호출 중 오류가 발생했습니다.',
+        error: error.message,
+        userAddressNickname: selectedAddress?.nickname || '',
+      });
+      setIsDataLoading(false);
+    }
+  );
 
   // 데이터 존재 여부에 따라 탭 설정
   useEffect(() => {
-    if (existsData?.success && existsData.exists) {
+    if (!existsData) return;
+
+    if (existsData.success && existsData.exists) {
       setActiveTab('output');
-    } else if (existsData?.success && !existsData.exists) {
+      setIsDataLoading(false);
+    } else if (existsData.success && !existsData.exists) {
       setActiveTab('input');
+      setIsDataLoading(false);
     }
-  }, [existsData]);
+  }, [existsData, isDataLoading]);
 
   // exists 데이터가 없으면 Output 탭으로 이동하지 못하도록 방지
   useEffect(() => {
@@ -127,40 +134,30 @@ export const useRealEstateContainer = () => {
       return;
     }
 
-    try {
-      // 2-way 인증 요청 데이터 준비
-      const twoWayRequestData = Object.fromEntries(
-        Object.entries(formData).filter(([key]) => key !== 'uniqueNo')
-      );
+    // 2-way 인증 요청 데이터 준비
+    const twoWayRequestData = Object.fromEntries(
+      Object.entries(formData).filter(([key]) => key !== 'uniqueNo')
+    );
 
-      // 필수 컬럼 dong, ho 추가
-      twoWayRequestData.dong = formData.dong || '101';
-      twoWayRequestData.ho = formData.ho || '101';
-      twoWayRequestData.userAddressNickname = selectedAddress.nickname;
+    // 필수 컬럼 dong, ho 추가
+    twoWayRequestData.dong = formData.dong || '101';
+    twoWayRequestData.ho = formData.ho || '101';
+    twoWayRequestData.userAddressNickname = selectedAddress.nickname;
 
-      const twoWayRequest = {
-        // 2-way 인증 필수 파라미터
-        uniqueNo: address.commUniqueNo,
-        jobIndex: response.twoWayInfo.jobIndex,
-        threadIndex: response.twoWayInfo.threadIndex,
-        jti: response.twoWayInfo.jti,
-        twoWayTimestamp: response.twoWayInfo.twoWayTimestamp,
-        isTwoWayAuth: true,
+    const twoWayRequest = {
+      // 2-way 인증 필수 파라미터
+      uniqueNo: address.commUniqueNo,
+      jobIndex: response.twoWayInfo.jobIndex,
+      threadIndex: response.twoWayInfo.threadIndex,
+      jti: response.twoWayInfo.jti,
+      twoWayTimestamp: response.twoWayInfo.twoWayTimestamp,
+      isTwoWayAuth: true,
 
-        // 원본 요청 파라미터들
-        ...twoWayRequestData,
-      };
+      // 원본 요청 파라미터들
+      ...twoWayRequestData,
+    };
 
-      const data = await twoWayAuthMutation.mutateAsync(twoWayRequest);
-      setResponse(data);
-    } catch (error) {
-      setResponse({
-        success: false,
-        message: '2-way 인증 API 호출 중 오류가 발생했습니다.',
-        error: error instanceof Error ? error.message : '알 수 없는 오류',
-        userAddressNickname: selectedAddress.nickname,
-      });
-    }
+    twoWayAuthMutation.mutate(twoWayRequest);
   };
 
   const handleCloseTwoWayModal = () => {
@@ -177,13 +174,8 @@ export const useRealEstateContainer = () => {
     const requestData = {
       ...data,
       userAddressNickname: selectedAddress.nickname,
-      userAddressId: selectedAddress.id, // userAddressId도 함께 전달
+      userAddressId: selectedAddress.id,
     };
-
-    // userAddressNickname이 없으면 명시적으로 추가
-    if (!requestData.userAddressNickname) {
-      requestData.userAddressNickname = selectedAddress.nickname;
-    }
 
     try {
       const responseData = await createRealEstateMutation.mutateAsync(
@@ -192,7 +184,6 @@ export const useRealEstateContainer = () => {
 
       setResponse(responseData);
 
-      // 2-way 인증이 필요한 경우 모달 표시
       if (responseData.requiresTwoWayAuth && responseData.resAddrList) {
         setShowTwoWayModal(true);
       }
@@ -217,6 +208,7 @@ export const useRealEstateContainer = () => {
     existsData,
     createRealEstateMutation,
     twoWayAuthMutation,
+    isDataLoading,
     handleAddressSelect,
     handleCloseTwoWayModal,
     handleSubmit,

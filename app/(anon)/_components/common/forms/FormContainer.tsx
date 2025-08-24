@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { styles } from '@/(anon)/_components/common/forms/FormContainer.styles';
+import Button from '../button/Button';
 
 interface FormContainerProps {
   title?: string;
@@ -17,7 +18,7 @@ export const FormContainer = ({
   children,
   onSubmit,
   isLoading = false,
-  submitText = '제출',
+  submitText = '발급 받기',
   disabled = false,
 }: FormContainerProps) => {
   return (
@@ -28,13 +29,15 @@ export const FormContainer = ({
         <div className={styles.formContent}>{children}</div>
 
         <div className={styles.buttonContainer}>
-          <button
+          <Button
             type='submit'
+            variant='primary'
+            fullWidth
             disabled={disabled || isLoading}
-            className={styles.submitButton}
+            isLoading={isLoading}
           >
             {isLoading ? '처리 중...' : submitText}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

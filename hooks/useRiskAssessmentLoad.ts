@@ -44,25 +44,38 @@ export const useRiskAssessmentLoad = (params: LoadRiskAssessmentParams) => {
           );
         }
 
-        // JSON 데이터 추출
-        const stepResult = result.data as { details?: unknown };
-        if (!stepResult || !stepResult.details) {
+        // JSON 데이터 추출 - 다양한 데이터 구조 처리
+        let stepResult = result.data;
+
+        // stepResult가 배열인 경우 첫 번째 항목 사용
+        if (Array.isArray(stepResult)) {
+          stepResult = stepResult[0];
+        }
+
+        // stepResult가 객체가 아니거나 details가 없는 경우
+        if (
+          !stepResult ||
+          typeof stepResult !== 'object' ||
+          !('details' in stepResult)
+        ) {
+          console.log('❌ step_result에 저장된 위험도 검사 데이터가 없습니다.');
           throw new Error('저장된 위험도 검사 데이터가 없습니다.');
         }
 
-        const details = stepResult.details;
+        const details = (stepResult as { details: unknown }).details;
         if (!details || typeof details !== 'object') {
           throw new Error('위험도 검사 데이터 형식이 올바르지 않습니다.');
         }
 
         // jsonDetails 없이 직접 위험도 검사 데이터 사용
-        return {
+        const loadResult = {
           jsonData: details as RiskAssessmentJsonData,
-          domain: 'realEstate', // 기본값으로 설정 (실제로는 URL에서 추출 가능)
+          domain: 'realEstate' as const, // 기본값으로 설정 (실제로는 URL에서 추출 가능)
           savedAt: new Date().toISOString(),
         };
+
+        return loadResult;
       } catch (error) {
-        console.error('위험도 검사 데이터 로드 실패:', error);
         throw error;
       }
     },
