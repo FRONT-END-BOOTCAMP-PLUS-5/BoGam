@@ -32,7 +32,8 @@ export const TopSection = () => {
       <div className={styles.userInfo}>
         <UserRound className={styles.userIcon} />
         <span className={styles.userName}>
-          {nickname || '사용자'} 님
+          <span className={styles.nickname}>{nickname || '사용자'}</span>
+          <span className={styles.nim}> 님</span>
         </span>
       </div>
 
