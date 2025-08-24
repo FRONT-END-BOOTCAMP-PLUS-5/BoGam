@@ -15,7 +15,7 @@ export const saveRiskAssessmentAPI = async (params: {
       userAddressNickname: params.userAddressNickname,
       stepNumber: params.stepNumber,
       detail: params.detail,
-      ...params.jsonData, // jsonDetails 없이 직접 저장
+      jsonDetails: params.jsonData, // jsonDetails 필드로 저장
     });
 
   return response.data as {

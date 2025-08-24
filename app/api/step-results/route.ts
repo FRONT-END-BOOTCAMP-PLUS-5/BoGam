@@ -104,21 +104,12 @@ export async function POST(request: NextRequest) {
       body.userAddressId = userAddressId;
     }
 
-    // 위험도 검사 항목들만 추출
-    const {
-      userAddressNickname,
-      stepNumber,
-      detail,
-      userAddressId: id,
-      ...riskData
-    } = body;
-
     // 백엔드에 전달할 데이터 구성 (메타데이터 + 위험도 검사 데이터)
     const backendData = {
-      userAddressId: id,
-      stepNumber,
-      detail,
-      jsonDetails: riskData, // 위험도 검사 데이터를 jsonDetails에 저장
+      userAddressId: body.userAddressId,
+      stepNumber: body.stepNumber,
+      detail: body.detail,
+      jsonDetails: body.jsonDetails, // jsonDetails 필드에서 위험도 검사 데이터 가져오기
     };
 
     const repository = new StepResultRepositoryImpl();

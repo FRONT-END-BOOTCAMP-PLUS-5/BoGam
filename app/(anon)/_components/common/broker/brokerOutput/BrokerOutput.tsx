@@ -46,8 +46,9 @@ export const BrokerOutput = ({
     stepNumber,
     detail,
     userAddressNickname: selectedAddress?.nickname || '',
-    domain: 'broker',
   });
+
+  console.log('🔍 savedRiskData', savedRiskData);
 
   // 위험도 검사 저장 훅
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
@@ -71,8 +72,12 @@ export const BrokerOutput = ({
   // 새로운 데이터가 로드되었는지 추적하는 state
   const [dataChanged, setDataChanged] = useState(false);
 
-  // 중개업자 안전도 검사 hook 사용
-  const brokerRiskAssessment = useBrokerRiskAssessment(selectedBroker || null);
+  // 중개업자 안전도 검사 hook 사용 (selectedBroker 또는 저장된 broker 데이터 사용)
+  const brokerData =
+    selectedBroker ||
+    (brokerCopyQuery.data?.data as { brokerData?: BrokerData })?.brokerData ||
+    null;
+  const brokerRiskAssessment = useBrokerRiskAssessment(brokerData);
 
   // BrokerRiskAssessmentResult를 RiskAssessmentResult로 변환하는 함수
   const convertToRiskAssessmentResult = (
@@ -94,6 +99,9 @@ export const BrokerOutput = ({
       passedKeywords: brokerResult.passedKeywords,
     };
   };
+
+  // 변환된 위험도 검사 결과
+  const riskAssessment = convertToRiskAssessmentResult(brokerRiskAssessment);
 
   // 체크리스트 항목들 추출 및 상태 관리
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>(
@@ -123,8 +131,6 @@ export const BrokerOutput = ({
     checked: checklistState[item.id] ?? item.checked,
   }));
 
-  const riskAssessment = convertToRiskAssessmentResult(brokerRiskAssessment);
-
   // 새로운 데이터가 로드되었을 때 기존 위험도 검사 데이터 무효화
   useEffect(() => {
     const currentData = selectedBroker;
@@ -149,12 +155,18 @@ export const BrokerOutput = ({
   // 위험도 검사 결과가 없을 때 자동으로 위험도 검사 실행
   useEffect(() => {
     const performRiskAssessment = async () => {
+      // step-result 데이터가 있으면 위험도 검사 실행하지 않음
+      if (savedRiskData?.jsonData) {
+        return;
+      }
+
+      // step-result 데이터가 없고, 원문 데이터가 있을 때만 위험도 검사 실행
       if (
         !loadLoading &&
-        (!savedRiskData || dataChanged) &&
+        !savedRiskData?.jsonData &&
         !isPerformingRiskAssessment &&
         !hasPerformedRiskAssessment.current &&
-        selectedBroker &&
+        brokerData && // brokerData가 있으면 (selectedBroker 또는 저장된 broker 데이터)
         selectedAddress?.nickname
       ) {
         try {
@@ -167,7 +179,9 @@ export const BrokerOutput = ({
           // 데이터 변경 플래그 리셋
           setDataChanged(false);
         } catch (error) {
-          // 위험도 검사 실행 중 오류 발생
+          // 위험도 검사 실행 중 오류 발생 시 상태 리셋
+          hasPerformedRiskAssessment.current = false;
+          setIsPerformingRiskAssessment(false);
         } finally {
           setIsPerformingRiskAssessment(false);
         }
@@ -180,7 +194,7 @@ export const BrokerOutput = ({
     savedRiskData,
     dataChanged,
     isPerformingRiskAssessment,
-    selectedBroker,
+    brokerData,
     selectedAddress,
     stepNumber,
     detail,
@@ -210,13 +224,13 @@ export const BrokerOutput = ({
     );
   }
 
-  // 데이터가 없을 때
-  if (!selectedBroker) {
+  // step-result 데이터와 원문 데이터가 모두 없을 때
+  if (!savedRiskData?.jsonData && !selectedBroker && !brokerData) {
     return (
       <div className={styles.outputSection}>
         <h2 className={styles.outputTitle}>응답 결과</h2>
         <div className={styles.emptyState}>
-          <p>안전도를 검사할 중개업자를 선택해주세요.</p>
+          <p>안전도를 검사할 중개업자 데이터가 없어요!</p>
           <p className='text-sm text-brand-dark-gray mt-2'>
             Input 탭에서 중개업자를 조회하고 선택하시면 안전도 검사 결과를
             확인할 수 있습니다.
@@ -228,7 +242,13 @@ export const BrokerOutput = ({
 
   console.log('🔍 calculatedRiskAssessment', calculatedRiskAssessment);
   console.log('🔍 riskAssessment', riskAssessment);
+  console.log('🔍 brokerRiskAssessment', brokerRiskAssessment);
   console.log('🔍 savedRiskData', savedRiskData);
+  console.log(
+    '🔍 brokerRiskAssessment.checklistItems',
+    brokerRiskAssessment.checklistItems
+  );
+  console.log('🔍 checklistItems (updated)', checklistItems);
 
   return (
     <div>

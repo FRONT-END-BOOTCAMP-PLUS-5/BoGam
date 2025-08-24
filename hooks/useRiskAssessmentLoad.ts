@@ -9,7 +9,6 @@ interface LoadRiskAssessmentParams {
   stepNumber: number;
   detail: number;
   userAddressNickname: string;
-  domain?: 'realEstate' | 'broker' | 'taxCert';
 }
 
 interface LoadRiskAssessmentResult {
@@ -39,10 +38,10 @@ export const useRiskAssessmentLoad = (params: LoadRiskAssessmentParams) => {
           detail: params.detail,
         });
 
+        console.log('🔍 result', result);
+
         if (!result.success) {
-          throw new Error(
-            result.error || '데이터 조회 중 오류가 발생했습니다.'
-          );
+          return null;
         }
 
         // JSON 데이터 추출 - 다양한 데이터 구조 처리
@@ -57,30 +56,28 @@ export const useRiskAssessmentLoad = (params: LoadRiskAssessmentParams) => {
         if (
           !stepResult ||
           typeof stepResult !== 'object' ||
-          !('details' in stepResult)
+          !('jsonDetails' in stepResult)
         ) {
           console.log('❌ step_result에 저장된 위험도 검사 데이터가 없습니다.');
-          throw new Error('저장된 위험도 검사 데이터가 없습니다.');
+          return null;
         }
 
-        const details = (stepResult as { details: unknown }).details;
-        if (!details || typeof details !== 'object') {
-          throw new Error('위험도 검사 데이터 형식이 올바르지 않습니다.');
+        const jsonDetails = (
+          stepResult as { jsonDetails: RiskAssessmentJsonData }
+        ).jsonDetails;
+        if (!jsonDetails) {
+          return null;
         }
 
-        // jsonDetails 없이 직접 위험도 검사 데이터 사용
         const loadResult = {
-          jsonData: details as RiskAssessmentJsonData,
-          domain: (params.domain || 'realEstate') as
-            | 'realEstate'
-            | 'broker'
-            | 'taxCert',
+          jsonData: jsonDetails,
+          domain: 'realEstate' as const,
           savedAt: new Date().toISOString(),
         };
 
         return loadResult;
       } catch (error) {
-        throw error;
+        return null;
       }
     },
     enabled: !!(

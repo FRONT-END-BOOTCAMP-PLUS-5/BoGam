@@ -109,9 +109,15 @@ export const TaxCertOutput = ({
   // 위험도 검사 결과가 없을 때 자동으로 위험도 검사 실행
   useEffect(() => {
     const performRiskAssessment = async () => {
+      // step-result 데이터가 있으면 위험도 검사 실행하지 않음
+      if (savedRiskData?.jsonData) {
+        return;
+      }
+
+      // step-result 데이터가 없고, 원문 데이터가 있을 때만 위험도 검사 실행
       if (
         !loadLoading &&
-        (!savedRiskData || dataChanged) &&
+        !savedRiskData?.jsonData &&
         !isPerformingRiskAssessment &&
         !hasPerformedRiskAssessment.current &&
         hasData &&
@@ -138,7 +144,9 @@ export const TaxCertOutput = ({
 
           setDataChanged(false);
         } catch (error) {
-          // 위험도 검사 실행 중 오류 발생
+          // 위험도 검사 실행 중 오류 발생 시 상태 리셋
+          hasPerformedRiskAssessment.current = false;
+          setIsPerformingRiskAssessment(false);
         } finally {
           setIsPerformingRiskAssessment(false);
         }
@@ -152,7 +160,7 @@ export const TaxCertOutput = ({
     dataChanged,
     isPerformingRiskAssessment,
     hasData,
-    displayResponse,
+    displayResponse?.data?.taxCertJson,
     selectedAddress,
     stepNumber,
     detail,
@@ -182,28 +190,18 @@ export const TaxCertOutput = ({
     );
   }
 
-  // 데이터가 없을 때
-  if (!hasData) {
+  // step-result 데이터와 원문 데이터가 모두 없을 때
+  if (!savedRiskData?.jsonData && !hasData) {
     return (
       <div className={styles.container}>
         <h2 className={styles.title}>응답 결과</h2>
         <div className={styles.emptyContainer}>
-          <p className={styles.emptyText}>납세증명서 데이터가 없어요 !</p>
           <p className={styles.emptyText}>
-            {(
-              existsData as
-                | { success: boolean; exists: boolean }
-                | null
-                | undefined
-            )?.success &&
-            !(
-              existsData as
-                | { success: boolean; exists: boolean }
-                | null
-                | undefined
-            )?.exists
-              ? '해당 주소에 대한 납세증명서 데이터가 없습니다. Input 탭에서 데이터를 조회해주세요.'
-              : '혹시 주소를 선택하지 않으셨나요?'}
+            안전도를 검사할 납세증명서 데이터가 없어요!
+          </p>
+          <p className={styles.emptyText}>
+            Input 탭에서 납세증명서를 조회하고 선택하시면 안전도 검사 결과를
+            확인할 수 있습니다.
           </p>
         </div>
       </div>

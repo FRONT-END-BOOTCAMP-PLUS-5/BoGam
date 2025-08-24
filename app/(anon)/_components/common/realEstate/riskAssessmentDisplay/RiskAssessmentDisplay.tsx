@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import { styles } from './RiskAssessmentDisplay.styles';
 import { OriginalDocumentButton } from '@/(anon)/_components/common/realEstate/originalDocumentButton/OriginalDocumentButton';
@@ -60,10 +60,56 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
     Record<string, 'unchecked' | 'match' | 'mismatch'>
   >({});
 
-  // 초기 JSON 데이터 설정
+  // 초기화 완료 여부를 추적하는 ref
+  const isInitialized = React.useRef(false);
+
+  // 키워드 상태 초기화 (한 번만 실행)
+  useEffect(() => {
+    if (isInitialized.current) return;
+
+    console.log('🔍 키워드 상태 초기화 useEffect 실행');
+
+    if (initialJsonData) {
+      // 저장된 데이터에서 키워드 상태 복원
+      const savedKeywordStates: Record<
+        string,
+        'unchecked' | 'match' | 'mismatch'
+      > = {};
+      riskAssessment.keywordChecks.forEach((check) => {
+        const savedStatus = initialJsonData[check.keyword];
+        if (
+          savedStatus === 'match' ||
+          savedStatus === 'unchecked' ||
+          savedStatus === 'mismatch'
+        ) {
+          savedKeywordStates[check.keyword] = savedStatus;
+        } else {
+          // 저장된 데이터가 없으면 riskAssessment의 status 값 사용
+          savedKeywordStates[check.keyword] = check.status;
+        }
+      });
+      setKeywordStates(savedKeywordStates);
+    } else {
+      // 초기 키워드 상태 설정 (저장된 데이터가 없는 경우)
+      const initialKeywordStates: Record<
+        string,
+        'unchecked' | 'match' | 'mismatch'
+      > = {};
+
+      riskAssessment.keywordChecks.forEach((check) => {
+        // riskAssessment의 status 값을 그대로 사용
+        initialKeywordStates[check.keyword] = check.status;
+      });
+      setKeywordStates(initialKeywordStates);
+    }
+
+    isInitialized.current = true;
+  }, [initialJsonData, riskAssessment.keywordChecks]);
+
+  // JSON 데이터 초기화 (checklistItems와 독립적으로 실행)
   useEffect(() => {
     console.log(
-      '🔍 useEffect 실행 - initialJsonData:',
+      '🔍 JSON 데이터 초기화 useEffect 실행 - initialJsonData:',
       !!initialJsonData,
       'checklistItems:',
       checklistItems?.length
@@ -111,42 +157,12 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       );
       setCurrentJsonData(processedJsonData);
       setOriginalJsonData(processedJsonData);
-
-      // 저장된 데이터에서 키워드 상태 복원
-      const savedKeywordStates: Record<
-        string,
-        'unchecked' | 'match' | 'mismatch'
-      > = {};
-      riskAssessment.keywordChecks.forEach((check) => {
-        const savedStatus = initialJsonData[check.keyword];
-        if (
-          savedStatus === 'match' ||
-          savedStatus === 'unchecked' ||
-          savedStatus === 'mismatch'
-        ) {
-          savedKeywordStates[check.keyword] = savedStatus;
-        } else {
-          // 저장된 데이터가 없으면 riskAssessment의 status 값 사용
-          savedKeywordStates[check.keyword] = check.status;
-        }
-      });
-      setKeywordStates(savedKeywordStates);
-
-      // 체크리스트 상태 복원은 별도 useEffect에서 처리
     } else {
-      // 초기 키워드 상태 설정 (저장된 데이터가 없는 경우)
-      const initialKeywordStates: Record<
-        string,
-        'unchecked' | 'match' | 'mismatch'
-      > = {};
-
       // currentJsonData를 riskAssessment 데이터로 초기화
       const newJsonData: RiskAssessmentJsonData = {};
 
       // 키워드 데이터 추가 (모든 키워드 포함)
       riskAssessment.keywordChecks.forEach((check) => {
-        // riskAssessment의 status 값을 그대로 사용
-        initialKeywordStates[check.keyword] = check.status;
         newJsonData[check.keyword] = check.status;
       });
 
@@ -165,11 +181,10 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         '🔍 초기 JSON 데이터 설정 (새로 생성 - 모든 항목 포함):',
         newJsonData
       );
-      setKeywordStates(initialKeywordStates);
       setCurrentJsonData(newJsonData);
       setOriginalJsonData(newJsonData);
     }
-  }, [initialJsonData, riskAssessment.keywordChecks, checklistItems]);
+  }, [initialJsonData, riskAssessment.keywordChecks]);
 
   // 체크리스트 상태 복원 (별도 useEffect로 무한 루프 방지)
   useEffect(() => {

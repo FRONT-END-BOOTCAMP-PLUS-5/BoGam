@@ -154,7 +154,7 @@ export class StepResultUsecase {
         undefined, // mismatch - DB 트리거가 계산
         undefined, // match - DB 트리거가 계산
         undefined, // unchecked - DB 트리거가 계산
-        dto.jsonDetails, // jsonDetails로 고정
+        dto.jsonDetails, // jsonDetails를 details 컬럼에 저장
         new Date()
       );
 
