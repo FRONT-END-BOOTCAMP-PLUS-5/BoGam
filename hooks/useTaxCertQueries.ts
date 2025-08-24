@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { taxCertApi, TaxCertIssueRequest } from '@libs/api_front/taxCert.api';
-import { taxCertCopyApi } from '@libs/api_front/taxCertCopy.api';
+import { frontendAxiosInstance } from '@libs/api_front/axiosInstance';
 
 export const useCheckTaxCertExists = (nickname: string) => {
   return useQuery({
@@ -10,11 +10,24 @@ export const useCheckTaxCertExists = (nickname: string) => {
   });
 };
 
-export const useGetTaxCertCopy = (userAddressNickname: string) => {
+// 납세증명서 복사본 조회
+export const useGetTaxCertCopy = (nickname: string | null) => {
   return useQuery({
-    queryKey: ['taxCertCopy', userAddressNickname],
-    queryFn: () => taxCertCopyApi.getTaxCertCopy({ userAddressNickname }),
-    enabled: !!userAddressNickname,
+    queryKey: ['taxCertCopy', nickname],
+    queryFn: async () => {
+      if (!nickname) {
+        return null;
+      }
+      const response = await frontendAxiosInstance
+        .getAxiosInstance()
+        .get(
+          `/api/copies/tax-cert?userAddressNickname=${encodeURIComponent(
+            nickname
+          )}`
+        );
+      return response.data;
+    },
+    enabled: !!nickname,
   });
 };
 

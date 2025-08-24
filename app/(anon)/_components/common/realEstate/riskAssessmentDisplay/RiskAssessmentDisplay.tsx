@@ -62,9 +62,41 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
   // 초기 JSON 데이터 설정
   useEffect(() => {
+    console.log(
+      '🔍 useEffect 실행 - initialJsonData:',
+      !!initialJsonData,
+      'checklistItems:',
+      checklistItems?.length
+    );
+
     if (initialJsonData) {
-      setCurrentJsonData(initialJsonData);
-      setOriginalJsonData(initialJsonData);
+      // 저장된 데이터에서 체크리스트 항목의 'unchecked'를 'mismatch'로 변환
+      const processedJsonData = { ...initialJsonData };
+
+      if (checklistItems) {
+        checklistItems.forEach((item) => {
+          if (processedJsonData[item.label] === 'unchecked') {
+            processedJsonData[item.label] = 'mismatch';
+          }
+        });
+      }
+
+      // 기존 currentJsonData가 있으면 사용자 변경사항 보존
+      if (currentJsonData) {
+        Object.keys(currentJsonData).forEach((key) => {
+          if (processedJsonData[key] !== undefined) {
+            // 사용자가 변경한 데이터는 보존
+            processedJsonData[key] = currentJsonData[key];
+          }
+        });
+      }
+
+      console.log(
+        '🔍 초기 JSON 데이터 설정 (저장된 데이터 + 사용자 변경사항):',
+        processedJsonData
+      );
+      setCurrentJsonData(processedJsonData);
+      setOriginalJsonData(processedJsonData);
 
       // 저장된 데이터에서 키워드 상태 복원
       const savedKeywordStates: Record<
@@ -85,6 +117,8 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         }
       });
       setKeywordStates(savedKeywordStates);
+
+      // 체크리스트 상태 복원은 별도 useEffect에서 처리
     } else {
       // 초기 키워드 상태 설정 (저장된 데이터가 없는 경우)
       const initialKeywordStates: Record<
@@ -94,17 +128,57 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
       // currentJsonData를 riskAssessment 데이터로 초기화
       const newJsonData: RiskAssessmentJsonData = {};
+
+      // 키워드 데이터 추가
       riskAssessment.keywordChecks.forEach((check) => {
         // riskAssessment의 status 값을 그대로 사용
         initialKeywordStates[check.keyword] = check.status;
         newJsonData[check.keyword] = check.status;
       });
 
+      // 체크리스트 데이터 추가 (기존 데이터가 있으면 유지, 없으면 새로 생성)
+      checklistItems?.forEach((item) => {
+        if (currentJsonData && currentJsonData[item.label] !== undefined) {
+          // 기존 데이터가 있으면 유지
+          newJsonData[item.label] = currentJsonData[item.label];
+        } else {
+          // 기존 데이터가 없으면 새로 생성
+          newJsonData[item.label] = item.checked ? 'match' : 'mismatch';
+        }
+      });
+
+      console.log('🔍 초기 JSON 데이터 설정 (새로 생성):', newJsonData);
       setKeywordStates(initialKeywordStates);
       setCurrentJsonData(newJsonData);
       setOriginalJsonData(newJsonData);
     }
-  }, [initialJsonData, riskAssessment.keywordChecks]);
+  }, [initialJsonData, riskAssessment.keywordChecks, checklistItems]);
+
+  // 체크리스트 상태 복원 (별도 useEffect로 무한 루프 방지)
+  useEffect(() => {
+    if (initialJsonData && onChecklistItemChange && checklistItems) {
+      const hasRestoredData = Object.keys(initialJsonData).some((key) =>
+        checklistItems.some((item) => item.label === key)
+      );
+
+      if (hasRestoredData) {
+        checklistItems.forEach((item) => {
+          const savedStatus = initialJsonData[item.label];
+          if (
+            savedStatus === 'match' ||
+            savedStatus === 'mismatch' ||
+            savedStatus === 'unchecked'
+          ) {
+            const isChecked = savedStatus === 'match';
+            // 현재 상태와 다를 때만 업데이트
+            if (item.checked !== isChecked) {
+              onChecklistItemChange(item.id, isChecked);
+            }
+          }
+        });
+      }
+    }
+  }, [initialJsonData]); // initialJsonData만 의존성으로 설정
 
   // 수정 여부 확인
   useEffect(() => {
@@ -143,6 +217,8 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       throw new Error('저장에 필요한 데이터가 누락되었습니다.');
     }
 
+    console.log('🔍 저장할 JSON 데이터:', currentJsonData);
+
     saveRiskAssessmentMutation.mutate({
       stepNumber,
       detail,
@@ -160,16 +236,52 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
     // JSON 데이터도 함께 업데이트
     if (currentJsonData) {
-      const checklistItem = checklistItems?.find((item) => item.id === itemId);
+      const checklistItem = checklistItems?.find(
+        (item) => item.id === itemId
+      ) || {
+        label: '',
+        id: '',
+        checked: false,
+        description: '',
+      };
       if (checklistItem) {
+        const newStatus = checked ? 'match' : 'mismatch';
+
         const updatedJsonData: RiskAssessmentJsonData = {
           ...currentJsonData,
-          [checklistItem.label]: checked ? 'match' : 'unchecked',
+          [checklistItem.label]: newStatus,
         };
+        console.log(
+          '🔍 체크리스트 변경:',
+          itemId,
+          checked,
+          '→',
+          checklistItem.label,
+          newStatus
+        );
+        console.log('🔍 업데이트된 JSON 데이터:', updatedJsonData);
+        setCurrentJsonData(updatedJsonData);
+      } else {
+        const newStatus = checked ? 'match' : 'mismatch';
+
+        const updatedJsonData: RiskAssessmentJsonData = {
+          ...currentJsonData,
+          [itemId]: newStatus,
+        };
+        console.log(
+          '🔍 체크리스트 변경 (fallback):',
+          itemId,
+          checked,
+          '→',
+          itemId,
+          newStatus
+        );
+        console.log('🔍 업데이트된 JSON 데이터 (fallback):', updatedJsonData);
         setCurrentJsonData(updatedJsonData);
       }
     }
   };
+
   return (
     <div className={styles.riskSection}>
       <div className={styles.headerContainer}>
@@ -195,60 +307,59 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           )}
         </div>
       </div>
-      <div className={styles.riskScore}>
-        안전도:{' '}
-        {(() => {
-          // 키워드 통과 개수 계산 (match 상태만 통과)
-          const passedKeywords = riskAssessment.keywordChecks.reduce(
-            (count, check) => {
-              const userStatus = keywordStates[check.keyword];
-              const isPassed = userStatus === 'match';
-              return count + (isPassed ? 1 : 0);
-            },
-            0
-          );
+      {(() => {
+        // 키워드 통과 개수 계산 (match 상태만 통과)
+        const passedKeywords = riskAssessment.keywordChecks.reduce(
+          (count, check) => {
+            const userStatus = keywordStates[check.keyword];
+            const isPassed = userStatus === 'match';
+            return count + (isPassed ? 1 : 0);
+          },
+          0
+        );
 
-          const totalKeywords = riskAssessment.totalKeywords;
-          const totalChecklistItems = checklistItems
-            ? checklistItems.length
-            : 0;
-          const totalItems = totalKeywords + totalChecklistItems;
-          const percentage = Math.round((passedKeywords / totalItems) * 100);
+        // 체크리스트 통과 개수 계산 (checked 상태만 통과)
+        const passedChecklistItems = checklistItems
+          ? checklistItems.filter((item) => item.checked).length
+          : 0;
 
-          return `${passedKeywords}/${totalItems} 통과 (${percentage}%)`;
-        })()}
-      </div>
+        // 전체 통과 개수
+        const totalPassed = passedKeywords + passedChecklistItems;
 
-      {riskAssessment.riskFactors.length > 0 ||
-      (checklistItems && checklistItems.some((item) => !item.checked)) ||
-      riskAssessment.keywordChecks.some((check) => {
-        const userStatus = keywordStates[check.keyword];
-        // unchecked 상태가 있으면 확인이 필요
-        if (userStatus === 'unchecked') {
-          return true;
-        }
-        // match가 아니면 확인이 필요
-        return userStatus !== 'match';
-      }) ? (
-        <>
-          {/* 경고 표시 */}
-          <div className={styles.warningContainer}>
-            <div className={styles.warningIcon}>⚠️</div>
-            <div className={styles.warningText}>확인이 필요합니다 !</div>
-            <div className={styles.warningSubText}>
-              확인이 필요한 항목이 있습니다.
+        const totalKeywords = riskAssessment.totalKeywords;
+        const totalChecklistItems = checklistItems ? checklistItems.length : 0;
+        const totalItems = totalKeywords + totalChecklistItems;
+        const percentage = Math.round((totalPassed / totalItems) * 100);
+
+        return (
+          <>
+            <div className={styles.riskScore}>
+              안전도: {totalPassed}/{totalItems} 통과 ({percentage}%)
             </div>
-          </div>
-        </>
-      ) : (
-        <div className={styles.safeContainer}>
-          <div className={styles.safeIcon}>✅</div>
-          <div className={styles.safeText}>모두 확인 되었습니다 !</div>
-          <div className={styles.safeSubText}>
-            위험 요소가 발견 되지 않았습니다.
-          </div>
-        </div>
-      )}
+
+            {percentage < 100 ? (
+              <>
+                {/* 경고 표시 */}
+                <div className={styles.warningContainer}>
+                  <div className={styles.warningIcon}>⚠️</div>
+                  <div className={styles.warningText}>확인이 필요합니다 !</div>
+                  <div className={styles.warningSubText}>
+                    확인이 필요한 항목이 있습니다.
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className={styles.safeContainer}>
+                <div className={styles.safeIcon}>✅</div>
+                <div className={styles.safeText}>모두 확인 되었습니다 !</div>
+                <div className={styles.safeSubText}>
+                  위험 요소가 발견 되지 않았습니다.
+                </div>
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       {/* 키워드별 체크 결과 */}
       <div className={styles.keywordChecksSection}>
@@ -317,7 +428,12 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
                     : styles.checklistItemUnchecked
                 }`}
                 onClick={() => {
-                  handleChecklistItemChange(item.id, !item.checked);
+                  // 통과된 항목은 클릭해도 변경되지 않음
+                  if (item.checked) {
+                    return;
+                  }
+                  // 미통과 항목만 통과로 변경
+                  handleChecklistItemChange(item.id, true);
                 }}
               >
                 <div className={styles.checklistItemHeader}>
@@ -327,6 +443,11 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
                         type='checkbox'
                         checked={item.checked}
                         onChange={(e) => {
+                          // 통과된 항목은 체크박스를 클릭해도 변경되지 않음
+                          if (item.checked) {
+                            return;
+                          }
+
                           console.log(
                             '체크박스 클릭:',
                             item.id,
