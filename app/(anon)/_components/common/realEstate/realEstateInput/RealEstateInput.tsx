@@ -15,7 +15,7 @@ export const RealEstateInput = ({
   onSubmit,
   loading,
 }: RealEstateInputProps) => {
-  const { selectedAddress, register, handleSubmit, errors, setValue, reset } =
+  const { selectedAddress, register, handleSubmit, errors } =
     useRealEstateInput({ formData });
 
   const handleFormSubmit = (data: RealEstateFormData) => {

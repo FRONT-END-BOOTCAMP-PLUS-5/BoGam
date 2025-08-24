@@ -8,6 +8,7 @@ import { DaumPostcodeModal } from '@/(anon)/main/_components/daumPostcodeModal/D
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
+import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
 
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
@@ -31,7 +32,7 @@ export const AddressConfirmationTab: React.FC = () => {
   };
 
   // useMainPageState에서 상태와 setter 함수들 가져오기
-  const { dong, ho, setSearchQuery, setDong, setHo } = useMainPageState();
+  const { dong, ho, setDong, setHo } = useMainPageState();
 
   // 선택된 주소가 변경될 때 동 데이터만 업데이트 (호는 저장 시에만 사용)
   useEffect(() => {
@@ -49,65 +50,74 @@ export const AddressConfirmationTab: React.FC = () => {
       {/* 첫 번째 줄: 버튼들 */}
       <div className={styles.buttonRow}>
         <Button
-          onClick={handleAddressSearch}
+          onClick={() => handleMoveToAddressOnly(dong)}
+          disabled={!dong.trim()}
           variant='primary'
-          className={styles.searchButton}
+          className={styles.confirmButton}
         >
-          주소 검색
+          지도에서 확인하기
         </Button>
-        <div className={styles.actionButtons}>
-          <Button
-            onClick={() => handleMoveToAddressOnly(dong)}
-            disabled={!dong.trim()}
-            variant='primary'
-            className={styles.confirmButton}
-          >
-            확인하기
-          </Button>
-          <Button
-            onClick={() => {
-              saveAddressToUser(dong, ho);
-            }}
-            disabled={!dong.trim()}
-            variant='secondary'
-            className={styles.saveButton}
-          >
-            저장하기
-          </Button>
-        </div>
+        <Button
+          onClick={() => {
+            saveAddressToUser(dong, ho);
+          }}
+          disabled={!dong.trim()}
+          variant='secondary'
+          className={styles.saveButton}
+        >
+          저장하기
+        </Button>
       </div>
 
-      {/* 두 번째 줄: 입력 필드들 */}
-      <div className={styles.inputRow}>
-        <TextInput
-          placeholder='주소 검색으로 주소를 검색 해주세요'
-          value={displaySearchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className={styles.searchInput}
-          readOnly
-        />
-        <div className={styles.dongHoInputs}>
+             {/* 두 번째 줄: 주소 검색 결과 */}
+       <div className={styles.addressSearchRow}>
+         <div className={styles.addressContainer}>
+           <span className={styles.addressValue}>
+             {displaySearchQuery || '주소 검색으로 주소를 검색 해주세요'}
+           </span>
+         </div>
+         <Button
+           onClick={handleAddressSearch}
+           variant='primary'
+           className={styles.searchButton}
+         >
+           주소 검색
+         </Button>
+       </div>
+
+      {/* 세 번째 줄: 동/호 입력 필드 */}
+      <div className={styles.dongHoInputs}>
+        <div className={styles.dongHoContainer}>
           <TextInput
             placeholder='동'
             value={dong}
             onChange={(e) => setDong(e.target.value)}
             className={styles.dongField}
           />
+          <span className={styles.dongHoLabel}>동</span>
+        </div>
+        <div className={styles.dongHoContainer}>
           <TextInput
-            placeholder='호 (저장 시에만 사용)'
+            placeholder='호'
             value={ho}
             onChange={(e) => setHo(e.target.value)}
             className={styles.hoField}
           />
+          <span className={styles.dongHoLabel}>호</span>
         </div>
       </div>
 
+      {/* 네 번째 줄: 카카오맵 */}
+      <div className={styles.mapContainer}>
+        <KakaoMapModule showTransactionMarkers={true} />
+      </div>
+      
       {/* Daum 우편번호 검색 모달 */}
       <DaumPostcodeModal
         postcodeRef={postcodeRef}
         showPostcode={showPostcode}
         onClose={() => setShowPostcode(false)}
-      />
+      /> 
     </div>
   );
 };

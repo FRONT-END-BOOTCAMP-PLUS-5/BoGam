@@ -1,35 +1,33 @@
 export const styles = {
-  // 컨테이너
-  container: 'w-full space-y-6',
+  // 컨테이너 - 4개 요소를 세로로 배치
+  container: 'w-full flex flex-col gap-8',
 
   // 첫 번째 줄: 버튼들
-  buttonRow:
-    'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4',
-  actionButtons: 'flex flex-col sm:flex-row gap-2 w-full sm:w-auto',
+  buttonRow: 'flex flex-row items-center gap-2',
 
-  // 두 번째 줄: 입력 필드들
-  inputRow: 'flex flex-col lg:flex-row gap-4 items-start lg:items-center',
-  dongHoInputs: 'flex gap-2 w-full lg:w-auto',
+  // 두 번째 줄: 주소 검색 결과
+  addressContainer: 'flex justify-center w-full h-12 p-3 bg-brand-light-blue rounded-lg',
+  addressValue: 'flex text-sm text-brand-black items-center',
+  addressSearchRow: 'flex gap-2',
 
-  // 메인 행 (주소 검색 + 동/호 입력)
-  mainRow: 'flex flex-col lg:flex-row gap-4 items-start lg:items-center',
-  searchSection:
-    'flex flex-col sm:flex-row gap-2 items-start sm:items-center flex-1 w-full',
-  dongHoSection: 'flex gap-2 items-center w-full lg:w-auto',
+  // 세 번째 줄: 동/호 입력 필드들
+  dongHoInputs: 'flex flex-row gap-12 w-full',
 
   // 주소 검색 행
-  searchRow:
-    'flex flex-col sm:flex-row gap-2 items-start sm:items-center w-full',
-  searchButton: 'w-full sm:w-auto',
-  searchInput: 'w-full',
+  searchButton: '!mt-0 w-[40%]',
 
-  // 동/호 입력 행
-  dongHoRow: 'flex items-center gap-2',
+  // 동/호 입력 필드
   dongField: 'w-10',
   hoField: 'w-10',
-  dongHoSeparator: 'text-sm text-brand-dark-gray font-medium whitespace-nowrap',
 
   // 버튼 행
-  confirmButton: 'w-full sm:w-auto',
-  saveButton: 'w-full sm:w-auto',
+  confirmButton: '!mt-0 w-full px-2 py-1 text-xs',
+  saveButton: '!mt-0 w-full px-2 py-1 text-xs',
+
+  // 동/호 입력 컨테이너
+  dongHoContainer: 'flex items-center gap-4',
+  dongHoLabel: 'text-sm text-brand-dark-gray',
+
+  // 지도 컨테이너
+  mapContainer: 'w-full',
 } as const;
