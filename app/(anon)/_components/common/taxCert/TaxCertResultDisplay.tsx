@@ -15,6 +15,7 @@ import { RiskAssessmentDisplay } from '@/(anon)/_components/common/realEstate/ri
 import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { convertJsonToRiskAssessment } from '@utils/riskAssessmentUtils';
 
+
 // 납세증명서 데이터 타입 정의
 interface TaxCertData {
   resIssueNo?: string;
@@ -61,6 +62,7 @@ export default function TaxCertResultDisplay() {
     detail,
     userAddressNickname,
   });
+
 
   // 납세증명서 위험도 검사 hook 사용
   const riskAssessment = useTaxCertRiskAssessment(
@@ -111,6 +113,7 @@ export default function TaxCertResultDisplay() {
             setParsedError(null);
           } catch {
             setParsedError('납세증명서 데이터 형식이 올바르지 않습니다.');
+
           }
         } else {
           setParsedError('납세증명서 데이터가 올바르지 않습니다.');
@@ -137,6 +140,7 @@ export default function TaxCertResultDisplay() {
   const outputComponent = (
     <>
       {isLoading ? (
+
         <LoadingOverlay
           isVisible={true}
           title='납세증명서 데이터를 불러오는 중이에요!'
@@ -155,6 +159,7 @@ export default function TaxCertResultDisplay() {
             해당 사용자 주소에 대한 납세증명서 데이터가 없어요!
           </p>
         </div>
+
       ) : (
         <>
           {/* 위험도 측정 결과 표시 */}
@@ -183,6 +188,7 @@ export default function TaxCertResultDisplay() {
             userAddressNickname={userAddressNickname}
             domain='taxCert'
             initialJsonData={savedRiskData?.jsonData}
+
           />
         </>
       )}

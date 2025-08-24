@@ -46,7 +46,6 @@ export default function ModalContent() {
   useEffect(() => {
     const shouldLoadJsonData =
       !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate;
-
     if (shouldLoadJsonData) {
       const loadContentData = async () => {
         try {
@@ -159,11 +158,28 @@ export default function ModalContent() {
 
     return (
       <>
-        {/* 공통 헤더 렌더링 */}
-        <div className={styles.stepHeader}>
-          <h2 className={styles.stepTitle}>
-            {`${stepNumber}-${detail}단계 상세 보기`}
-          </h2>
+        <StepHeader />
+
+        <div className={styles.scrollableContent}>
+          <Swiper
+            spaceBetween={50}
+            slidesPerView={1}
+            className={styles.swiperContainer}
+            onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+            onSwiper={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+          >
+            {stepContentData.data.map(
+              (pageData: LegacyContentSection[], pageIndex: number) => (
+                <SwiperSlide key={pageIndex}>
+                  <div className={styles.mainContent}>
+                    {renderSwiperContent(pageData)}
+                  </div>
+                </SwiperSlide>
+              )
+            )}
+          </Swiper>
         </div>
 
         {/* Swiper로 각 섹션을 별도 슬라이드로 렌더링 */}
@@ -220,7 +236,7 @@ export default function ModalContent() {
             </SwiperSlide>
           ))}
         </Swiper>
-
+        
         {/* 페이지 인디케이터 */}
         {stepContentData.sections.length > 1 && (
           <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
