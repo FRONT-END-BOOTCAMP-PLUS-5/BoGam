@@ -90,6 +90,7 @@ export default function MiddleStepPage() {
             content={page.content ?? ''}
             pageIdx={idx}
             stepNumber={stepNumber}
+            bookRef={bookRef}
           />
         </div>
       );
