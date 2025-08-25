@@ -72,9 +72,6 @@ class PublicDataAxiosInstance {
       // 요청 인터셉터 추가 (로깅용)
       PublicDataAxiosInstance.instance.interceptors.request.use(
         (config: AxiosConfigType) => {
-          console.log(
-            `[API Request] ${config.method?.toUpperCase()} ${config.url}`
-          );
           return config;
         },
         (error: AxiosErrorType) => {
@@ -86,9 +83,6 @@ class PublicDataAxiosInstance {
       // 응답 인터셉터 추가 (로깅용)
       PublicDataAxiosInstance.instance.interceptors.response.use(
         (response: AxiosResponseType) => {
-          console.log(
-            `[API Response] ${response.status} ${response.config.url}`
-          );
           return response;
         },
         (error: AxiosErrorType) => {

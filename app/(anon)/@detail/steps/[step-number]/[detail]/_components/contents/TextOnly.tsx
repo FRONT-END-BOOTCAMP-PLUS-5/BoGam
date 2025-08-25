@@ -98,7 +98,6 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       const logMessage = isError
         ? '400 에러 시 기본값 초기화 진행'
         : '빈 jsonDetails 시 기본값 초기화 진행';
-      console.log(`🔍 TextOnly: ${logMessage}`, defaultDetails);
 
       // DB 저장
       upsertStepResult.mutate({
@@ -239,7 +238,6 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                   href={section.button.href}
                   onClick={() => {
                     if (section.button?.onClick) {
-                      console.log('Button clicked:', section.button.onClick);
                       // 여기에 onClick 로직 추가 가능
                     }
                   }}

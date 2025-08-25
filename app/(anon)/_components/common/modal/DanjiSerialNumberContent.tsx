@@ -24,7 +24,6 @@ export function DanjiSerialNumberContent({
     isLoading,
     error,
   } = useDanjiSerialNumber(searchParams);
-  console.log('🔍 단지 목록:', searchParams);
   const handleDanjiSelect = (danji: ActualDanjiInfo) => {
     onSelect?.(danji);
   };

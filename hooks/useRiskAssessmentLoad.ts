@@ -38,7 +38,7 @@ export const useRiskAssessmentLoad = (params: LoadRiskAssessmentParams) => {
           detail: params.detail,
         });
 
-        console.log('🔍 result', result);
+
 
         if (!result.success) {
           return null;
@@ -58,7 +58,6 @@ export const useRiskAssessmentLoad = (params: LoadRiskAssessmentParams) => {
           typeof stepResult !== 'object' ||
           !('jsonDetails' in stepResult)
         ) {
-          console.log('❌ step_result에 저장된 위험도 검사 데이터가 없습니다.');
           return null;
         }
 

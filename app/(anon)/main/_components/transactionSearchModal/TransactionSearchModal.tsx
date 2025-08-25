@@ -64,11 +64,8 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
         address = selectedAddress.completeAddress;
       }
 
-      console.log('🔍 파싱할 주소:', address);
-
       if (address) {
         const parsed = parseAddress(address);
-        console.log('🔍 파싱된 주소:', parsed);
         setAddrSido(parsed.addrSido);
         setAddrSigungu(parsed.addrSigungu);
         setAddrDong(parsed.addrDong);

@@ -15,7 +15,6 @@ export const TopSection = () => {
     // 빈 주소 항목 선택 시 (id가 -1인 경우)
     if (id === -1) {
       // 선택된 주소를 초기화
-      console.log('📍 TopSection - 빈 주소 항목 선택됨');
       return;
     }
 

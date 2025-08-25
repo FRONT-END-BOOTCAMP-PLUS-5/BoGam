@@ -32,8 +32,6 @@ export const useTaxCertHandlers = (
       e.preventDefault();
     }
 
-    console.log('🚀 폼 제출 시작');
-
     // 폼 데이터 유효성 검사
     const validation = validateFormData(formData);
     if (!validation.isValid) {
@@ -49,7 +47,6 @@ export const useTaxCertHandlers = (
       
       if (!needsTwoWay) {
         // 추가인증이 필요하지 않은 경우 처리
-        console.log('✅ 추가인증 없이 완료');
       }
     } catch (error) {
       console.error('❌ 폼 제출 오류:', error);

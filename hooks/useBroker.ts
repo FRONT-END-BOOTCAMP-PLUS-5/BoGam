@@ -33,7 +33,6 @@ export const useSearchBrokers = () => {
     mutationFn: (params: BrokerSearchParams) => brokerApi.searchBrokers(params),
     onSuccess: (data) => {
       if (data.success) {
-        console.log('중개사 정보 조회 성공:', data.message);
       } else {
         console.error('중개사 정보 조회 실패:', data.error);
       }
@@ -51,7 +50,6 @@ export const useCreateBrokerCopy = () => {
       brokerApi.createBrokerCopy(params),
     onSuccess: (data) => {
       if (data.success) {
-        console.log('중개사 복사본 저장 성공:', data.message);
       } else {
         console.error('중개사 복사본 저장 실패:', data.error);
       }

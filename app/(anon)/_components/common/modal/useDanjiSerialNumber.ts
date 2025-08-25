@@ -38,12 +38,10 @@ export const useDanjiSerialNumber = (
       const response = await danjiSerialNumberApi.getDanjiSerialNumber(params);
 
       if (response.data) {
-        console.log('단지 목록 데이터:', response.data);
         // response.data가 배열인지 확인하고, 배열이 아니면 빈 배열로 설정
         const dataArray = Array.isArray(response.data) ? response.data : [];
         return dataArray;
       } else {
-        console.log('API 에러:', response.result.message);
         throw new Error(
           response.result.message || '단지 목록 조회에 실패했습니다.'
         );

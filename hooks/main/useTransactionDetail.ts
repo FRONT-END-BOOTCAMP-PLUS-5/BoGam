@@ -14,7 +14,6 @@ export const useTransactionDetail = () => {
   // 아파트 계열 실거래가 상세조회
   const fetchTransactionDetailApartMutation = useMutation({
     onMutate: () => {
-      console.log('🔍 fetchTransactionDetailApart 시작');
       setLoading(true);
       setError(null);
     },
@@ -40,7 +39,6 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log('🔍 fetchTransactionDetailApart 성공 - 원본 데이터:', data);
 
       try {
         const transformedData = parseTransactionDetailApart(data);
@@ -49,7 +47,6 @@ export const useTransactionDetail = () => {
         setTimeout(() => {
           setTransactionData(transformedData);
           setLoading(false);
-          console.log('🔍 setTransactionData 완료');
         }, 0);
       } catch (error) {
         console.error('❌ 실거래가 데이터 파싱 실패:', error);
@@ -73,7 +70,6 @@ export const useTransactionDetail = () => {
   // 단독/다가구 실거래가 상세조회
   const fetchTransactionDetailSingleMutation = useMutation({
     onMutate: () => {
-      console.log('🔍 fetchTransactionDetailSingle 시작');
       setLoading(true);
       setError(null);
     },
@@ -105,7 +101,6 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log('🔍 fetchTransactionDetailSingle 성공 - 원본 데이터:', data);
 
       try {
         const transformedData = parseTransactionDetailSingle(data);
@@ -114,7 +109,6 @@ export const useTransactionDetail = () => {
         setTimeout(() => {
           setTransactionData(transformedData);
           setLoading(false);
-          console.log('🔍 setTransactionData 완료');
         }, 0);
       } catch (error) {
         console.error('❌ 실거래가 데이터 파싱 실패:', error);

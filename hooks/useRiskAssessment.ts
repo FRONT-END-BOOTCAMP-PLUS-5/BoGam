@@ -167,16 +167,7 @@ export const useRiskAssessment = (
       };
     });
 
-    // 위험도 체크 결과 콘솔 출력
-    console.log('🔍 위험도 체크 결과:', {
-      foundKeywords,
-      keywordChecks: keywordChecks.map((check) => ({
-        keyword: check.keyword,
-        foundCount: check.foundCount,
-        passed: check.passed,
-        status: check.status,
-      })),
-    });
+
 
     const passedKeywords = keywordChecks.filter((check) => check.passed).length;
 

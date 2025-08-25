@@ -13,28 +13,18 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
-          console.log('Credentials missing');
           return null;
         }
 
         try {
-          console.log('Attempting login for username:', credentials.username);
-
           // 사용자 찾기
           const user = await prisma.user.findFirst({
             where: { username: credentials.username },
           });
 
           if (!user) {
-            console.log('User not found');
             return null;
           }
-
-          console.log('User found:', {
-            id: user.id,
-            username: user.username,
-            nickname: user.nickname,
-          });
 
           // 비밀번호 검증
           if (user.password) {
@@ -44,12 +34,9 @@ export const authOptions: NextAuthOptions = {
             );
 
             if (!isValidPassword) {
-              console.log('Invalid password');
               return null;
             }
           }
-
-          console.log('Login successful');
 
           // NextAuth 세션에 포함할 사용자 정보
           return {
