@@ -20,6 +20,7 @@ import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertCon
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
+import TaxCertWrapper from './contents/TaxCertWrapper';
 
 // DateData 타입 정의 (기존 호환성을 위해 유지)
 interface RegionData {
@@ -55,9 +56,6 @@ export default function ModalContent() {
 
   // 특별한 컴포넌트를 사용할 단계들 정의
   const specialSteps = {
-    taxCert:
-      (stepNumber === '1' && detail === '5') ||
-      (stepNumber === '5' && detail === '1'),
     broker: stepNumber === '3' && detail === '1',
     realEstate: [
       { step: '1', detail: '3' },
@@ -70,8 +68,7 @@ export default function ModalContent() {
 
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
-    const shouldLoadJsonData =
-      !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate;
+    const shouldLoadJsonData = !specialSteps.broker && !specialSteps.realEstate;
     if (shouldLoadJsonData) {
       const loadContentData = async () => {
         try {
@@ -95,10 +92,6 @@ export default function ModalContent() {
 
   // 특별한 컴포넌트 렌더링 함수
   const renderSpecialComponent = () => {
-    if (specialSteps.taxCert) {
-      return <TaxCertContainer />;
-    }
-
     if (specialSteps.broker) {
       return <BrokerContainer />;
     }
@@ -288,6 +281,13 @@ export default function ModalContent() {
                       )}
                       {section.type === 'CheckListGroup' && (
                         <CheckListGroup data={section.data} />
+                      )}
+                      {(section.type === 'TaxCertIntro' ||
+                        section.type === 'TaxCertContainer') && (
+                        <TaxCertWrapper
+                          sectionIndex={sectionIndex}
+                          section={section}
+                        />
                       )}
                     </>
                   )}

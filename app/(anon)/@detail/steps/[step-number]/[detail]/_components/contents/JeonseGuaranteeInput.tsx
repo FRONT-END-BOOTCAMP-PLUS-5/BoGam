@@ -12,10 +12,10 @@ import {
 } from '@utils/constants/jeonseGuarantee';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
-import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
 import Field from '@/(anon)/_components/common/forms/Field';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { formatToKoreanUnit } from '@utils/formatUtils';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 
 interface JeonseGuaranteeInputProps {
   formData: GetJeonseGuaranteeRequestDto;
@@ -111,25 +111,18 @@ export default function JeonseGuaranteeInput({
           </Field>
 
           {/* 결혼상태 */}
-          <Field
+          <DropDown
             id='weddStcd'
             label={FIELD_LABELS.weddStcd}
             required
             error={errors.weddStcd}
-          >
-            <FormSelect
-              value={formData.weddStcd}
-              onChange={(e) => onInputChange('weddStcd', e.target.value)}
-              hasError={!!errors.weddStcd}
-            >
-              <option value=''>{FIELD_PLACEHOLDERS.weddStcd}</option>
-              {MARRIAGE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </FormSelect>
-          </Field>
+            options={
+              MARRIAGE_OPTIONS as unknown as { value: string; label: string }[]
+            }
+            value={formData.weddStcd}
+            onChange={(value) => onInputChange('weddStcd', value)}
+            placeholder={FIELD_PLACEHOLDERS.weddStcd}
+          />
 
           {/* 소득금액 */}
           <Field
@@ -192,27 +185,21 @@ export default function JeonseGuaranteeInput({
           </Field>
 
           {/* 보유주택수 */}
-          <Field
+          <DropDown
             id='ownHsCnt'
             label={FIELD_LABELS.ownHsCnt}
             required
             error={errors.ownHsCnt}
-          >
-            <FormSelect
-              value={formData.ownHsCnt.toString()}
-              onChange={(e) =>
-                onInputChange('ownHsCnt', parseInt(e.target.value))
-              }
-              hasError={!!errors.ownHsCnt}
-            >
-              <option value=''>{FIELD_PLACEHOLDERS.ownHsCnt}</option>
-              {HOUSE_COUNT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </FormSelect>
-          </Field>
+            options={
+              HOUSE_COUNT_OPTIONS as unknown as {
+                value: string;
+                label: string;
+              }[]
+            }
+            value={formData.ownHsCnt.toString()}
+            onChange={(value) => onInputChange('ownHsCnt', parseInt(value))}
+            placeholder={FIELD_PLACEHOLDERS.ownHsCnt}
+          />
 
           {/* 월세금액 */}
           <Field
@@ -222,20 +209,18 @@ export default function JeonseGuaranteeInput({
             error={errors.mmrtAmt}
           >
             <div className='flex gap-2'>
-              <FormSelect
+              <DropDown
+                options={[
+                  { value: 'none', label: '없음' },
+                  { value: 'direct', label: '직접 입력' },
+                ]}
                 value={inputModes.mmrtAmt}
-                onChange={(e) =>
-                  onInputModeChange(
-                    'mmrtAmt',
-                    e.target.value as 'none' | 'direct'
-                  )
+                onChange={(value) =>
+                  onInputModeChange('mmrtAmt', value as 'none' | 'direct')
                 }
-                hasError={!!errors.mmrtAmt}
+                error={errors.mmrtAmt}
                 className='w-1/3'
-              >
-                <option value='none'>없음</option>
-                <option value='direct'>직접 입력</option>
-              </FormSelect>
+              />
               {inputModes.mmrtAmt === 'direct' && (
                 <div className='relative flex-1'>
                   <TextInput

@@ -7,7 +7,17 @@ import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useTaxCertContainer } from '@/hooks/useTaxCertContainer';
 
-export const TaxCertContainer = () => {
+interface TaxCertContainerProps {
+  jsonData?: Record<string, 'match' | 'mismatch' | 'unchecked'>;
+  onJsonDataChange?: (
+    newData: Record<string, 'match' | 'mismatch' | 'unchecked'>
+  ) => Promise<void>;
+}
+
+export const TaxCertContainer = ({
+  jsonData,
+  onJsonDataChange,
+}: TaxCertContainerProps) => {
   const {
     formData,
     response,
@@ -43,6 +53,8 @@ export const TaxCertContainer = () => {
         submitTwoWayAuthMutation.isPending
       }
       existsData={existsData}
+      jsonData={jsonData}
+      onJsonDataChange={onJsonDataChange}
     />
   );
 
