@@ -9,8 +9,10 @@ import {
   createSingleParams,
   validateTransactionSearch,
 } from '@utils/main/transactionUtils';
+import { useModalStore } from '@libs/stores/modalStore';
 
 export const useTransactionManagement = () => {
+  const { openModal } = useModalStore();
   // 실거래가 데이터 Store
   const {
     transactionData,
@@ -121,7 +123,11 @@ export const useTransactionManagement = () => {
       }
     } catch (error) {
       console.error('실거래가 조회 실패:', error);
-      alert('실거래가 조회 중 오류가 발생했습니다.');
+      openModal({
+        title: '오류',
+        content: '실거래가 조회 중 오류가 발생했습니다.',
+        icon: 'error',
+      });
     }
   };
 
@@ -179,7 +185,11 @@ export const useTransactionManagement = () => {
         });
       }
     } catch (error) {
-      alert('실거래가 조회 중 오류가 발생했습니다.');
+      openModal({
+        title: '오류',
+        content: '실거래가 조회 중 오류가 발생했습니다.',
+        icon: 'error',
+      });
     }
   };
 

@@ -51,7 +51,9 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
     if (selectedAddress) {
       const address =
         selectedAddress.completeAddress || selectedAddress.roadAddress || '';
+      console.log('🔍 선택된 주소:', address);
       const parsed = parseAddressString(address);
+      console.log('🔍 파싱된 주소:', parsed);
       setParsedAddress(parsed);
     }
   }, [selectedAddress]);

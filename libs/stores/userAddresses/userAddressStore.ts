@@ -14,6 +14,10 @@ interface UserAddressStore {
   dong: string;
   ho: string;
 
+  // getter - 휘발성 주소 제외
+  getPersistentAddresses: () => UserAddress[];
+  getPersistentSelectedAddress: () => UserAddress | null;
+
   // 초기화 (React Query에서 받은 데이터로)
   initializeFromQuery: (data: UserAddress[]) => void;
 
@@ -54,34 +58,34 @@ export const useUserAddressStore = create<UserAddressStore>()(
         initializeFromQuery: (data) => {
           const currentState = get();
 
-          console.log('🔄 initializeFromQuery 호출:', {
-            dataLength: data.length,
-            currentUserAddressesLength: currentState.userAddresses.length,
-            currentSelectedAddress: currentState.selectedAddress?.nickname,
-            volatileAddressesCount: currentState.userAddresses.filter(
-              (addr) => addr.isVolatile
-            ).length,
-          });
+          // console.log('🔄 initializeFromQuery 호출:', {
+          //   dataLength: data.length,
+          //   currentUserAddressesLength: currentState.userAddresses.length,
+          //   currentSelectedAddress: currentState.selectedAddress?.nickname,
+          //   volatileAddressesCount: currentState.userAddresses.filter(
+          //     (addr) => addr.isVolatile
+          //   ).length,
+          // });
 
           // 기존 휘발성 주소들 보존
           const volatileAddresses = currentState.userAddresses.filter(
             (addr) => addr.isVolatile
           );
 
-          console.log(
-            '💾 휘발성 주소 보존:',
-            volatileAddresses.map((addr) => addr.nickname)
-          );
+          // console.log(
+          //   '💾 휘발성 주소 보존:',
+          //   volatileAddresses.map((addr) => addr.nickname)
+          // );
 
           // DB 데이터와 휘발성 주소를 합침
           const mergedAddresses = [...data, ...volatileAddresses];
 
-          console.log(
-            '🔗 병합된 주소 목록:',
-            mergedAddresses.map(
-              (addr) => `${addr.nickname}${addr.isVolatile ? ' (휘발성)' : ''}`
-            )
-          );
+          // console.log(
+          //   '🔗 병합된 주소 목록:',
+          //   mergedAddresses.map(
+          //     (addr) => `${addr.nickname}${addr.isVolatile ? ' (휘발성)' : ''}`
+          //   )
+          // );
 
           // selectedAddress를 보존하면서 userAddresses만 업데이트
           set(
@@ -97,7 +101,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
           if (!currentState.selectedAddress) {
             const primaryAddress = data.find((addr) => addr.isPrimary);
             if (primaryAddress) {
-              console.log('⭐ 대표 주소 선택:', primaryAddress.nickname);
+              // console.log('⭐ 대표 주소 선택:', primaryAddress.nickname);
               set(
                 (state) => ({ selectedAddress: primaryAddress }),
                 false,
@@ -105,16 +109,16 @@ export const useUserAddressStore = create<UserAddressStore>()(
               );
             }
           } else {
-            console.log(
-              '✅ 기존 선택된 주소 유지:',
-              currentState.selectedAddress.nickname
-            );
+            // console.log(
+            //   '✅ 기존 선택된 주소 유지:',
+            //   currentState.selectedAddress.nickname
+            // );
           }
         },
 
         // 휘발성 주소 추가 (DB 저장 없음)
         addVolatileAddress: (newAddress: UserAddress) => {
-          console.log('🆕 휘발성 주소 추가 및 자동 선택:', newAddress.nickname);
+          // console.log('🆕 휘발성 주소 추가 및 자동 선택:', newAddress.nickname);
 
           // 즉시 UI 업데이트 및 자동 선택
           set(
@@ -168,8 +172,13 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
           try {
             // 서버에 저장
+            // 주소 닉네임 포맷팅: 주소 + (동이 있으면) " xx동" + (호가 있으면) " xx호"
+            const dongPart = newAddress.dong ? ` ${newAddress.dong}동` : '';
+            const hoPart = newAddress.ho ? ` ${newAddress.ho}호` : '';
+            const addressNickname = `${newAddress.roadAddress}${dongPart}${hoPart}`;
+
             const apiRequestData = {
-              addressNickname: `${newAddress.roadAddress}${newAddress.dong}${newAddress.ho}`,
+              addressNickname,
               latitude: newAddress.y,
               longitude: newAddress.x,
               legalDistrictCode: newAddress.legalDistrictCode || '',
@@ -197,7 +206,7 @@ export const useUserAddressStore = create<UserAddressStore>()(
               throw new Error(response.message || '주소 추가 실패');
             }
           } catch (error) {
-            console.error('❌ 주소 추가 실패:', error);
+            // console.error('❌ 주소 추가 실패:', error);
             // 롤백
             set(
               (state) => ({
@@ -277,22 +286,14 @@ export const useUserAddressStore = create<UserAddressStore>()(
               );
               const isCurrentlyPrimary = targetAddress?.isPrimary || false;
 
-              // 대표 주소를 변경하는 경우 (현재 대표 주소가 아닌 주소를 대표로 설정)
-              if (!isCurrentlyPrimary) {
-                return {
-                  userAddresses: state.userAddresses.map((addr) => ({
-                    ...addr,
-                    isPrimary: addr.id === id, // 클릭된 주소만 true, 나머지는 false
-                  })),
-                };
-              } else {
-                // 대표 주소 해제하는 경우 (현재 대표 주소를 해제)
-                return {
-                  userAddresses: state.userAddresses.map((addr) =>
-                    addr.id === id ? { ...addr, isPrimary: false } : addr
-                  ),
-                };
-              }
+              // 현재 주소의 isPrimary 상태만 토글 (다른 주소에는 영향 없음)
+              return {
+                userAddresses: state.userAddresses.map((addr) =>
+                  addr.id === id 
+                    ? { ...addr, isPrimary: !isCurrentlyPrimary } 
+                    : addr
+                ),
+              };
             },
             false,
             'toggleFavorite'
@@ -364,12 +365,19 @@ export const useUserAddressStore = create<UserAddressStore>()(
             false,
             'clearAll'
           );
-          console.log('🧹 user-address-store 초기화');
+          // console.log('🧹 user-address-store 초기화');
         },
 
         // 에러 처리
         setError: (error) => set({ error }, false, 'setError'),
         clearError: () => set({ error: null }, false, 'clearError'),
+
+        // getter - 휘발성 주소 제외
+        getPersistentAddresses: () => get().userAddresses.filter(addr => !addr.isVolatile),
+        getPersistentSelectedAddress: () => {
+          const current = get();
+          return current.selectedAddress && !current.selectedAddress.isVolatile ? current.selectedAddress : null;
+        },
       }),
       {
         name: 'user-address-store',

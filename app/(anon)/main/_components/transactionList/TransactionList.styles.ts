@@ -41,5 +41,5 @@ export const styles = {
   paginationButton: 'flex items-center justify-center w-8 h-8 rounded-lg border border-brand-light-gray bg-brand-white text-brand-dark-gray hover:bg-brand-light-gray hover:text-brand-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
   pageIndicators: 'flex items-center gap-2',
   pageIndicator: 'flex items-center justify-center w-8 h-8 rounded-lg border border-brand-light-gray bg-brand-white text-brand-dark-gray hover:bg-brand-light-gray hover:text-brand-black transition-colors',
-  activePageIndicator: 'bg-brand-90 text-brand-white border-brand-blue',
+  activePageIndicator: '!bg-brand-90 text-brand-white border-brand-blue',
 } as const;

@@ -67,7 +67,7 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
 
       if (address) {
         const parsed = parseAddress(address);
-
+        console.log('🔍 파싱된 주소:', parsed);
         setAddrSido(parsed.addrSido);
         setAddrSigungu(parsed.addrSigungu);
         setAddrDong(parsed.addrDong);

@@ -11,6 +11,7 @@ import { AddressDropDownProps } from './types';
 import { AddressDropDownList } from './AddressDropDownList';
 import { formatAddress } from '@utils/addressUtils';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useModalStore } from '@libs/stores/modalStore';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { LoadingState } from './_components/LoadingState';
 import { AuthRequiredState } from './_components/AuthRequiredState';
@@ -56,7 +57,11 @@ export function AddressDropDown(props: AddressDropDownProps) {
   } = props;
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // 모달 스토어
+  const { openModal } = useModalStore();
 
   // React Query 제거 - Zustand store만 사용
   // const { isLoading, isAuthenticated } = useUserAddresses();
@@ -68,7 +73,14 @@ export function AddressDropDown(props: AddressDropDownProps) {
     selectAddress,
     deleteAddress,
     toggleFavorite,
+    getPersistentAddresses,
+    getPersistentSelectedAddress,
   } = useUserAddressStore();
+
+  // 클라이언트 마운트 확인
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // 외부 클릭으로 드롭다운 닫기
   useEffect(() => {
@@ -87,10 +99,9 @@ export function AddressDropDown(props: AddressDropDownProps) {
     };
   }, [isExpanded]);
 
-  // props로 전달된 주소가 있으면 그것을 우선 사용, 없으면 Store 데이터 사용
-  const addresses =
-    propAddresses && propAddresses.length > 0 ? propAddresses : userAddresses;
-  const selectedAddress = propSelectedAddress || storeSelectedAddress;
+  // 스토어의 데이터만 사용 (휘발성 주소 제외)
+  const addresses = isClient ? getPersistentAddresses() : [];
+  const selectedAddress = isClient ? getPersistentSelectedAddress() : null;
 
   // Store 액션을 위한 래퍼 함수들
   const handleSelect = (id: number) => {
@@ -109,6 +120,37 @@ export function AddressDropDown(props: AddressDropDownProps) {
         addresses,
       });
     }
+  };
+
+  // 삭제 확인 모달을 띄우는 함수
+  const handleDeleteWithConfirmation = (id: number) => {
+    const address = addresses.find((addr: UserAddress) => addr.id === id);
+    if (!address) return;
+
+    openModal({
+      title: '주소 삭제',
+      content: `"${address.nickname}" 주소를 정말로 삭제하시겠습니까?`,
+      icon: 'warning',
+      confirmText: '삭제',
+      cancelText: '취소',
+      onConfirm: async () => {
+        try {
+          if (onDelete) {
+            await onDelete(id);
+          } else {
+            await deleteAddress(id);
+          }
+          // 삭제 성공 시 모달이 자동으로 닫힘 (useModalStore의 기본 동작)
+        } catch (error) {
+          console.error('주소 삭제 실패:', error);
+          openModal({
+            title: '오류',
+            content: '주소 삭제 중 오류가 발생했습니다.',
+            icon: 'error',
+          });
+        }
+      },
+    });
   };
 
   const handleToggleExpand = () => {
@@ -140,8 +182,18 @@ export function AddressDropDown(props: AddressDropDownProps) {
           <span className={styles.headerTitle}>{title}</span>
           {selectedAddress ? (
             <div className={styles.selectedAddress}>
-              {showFavoriteToggle && (
-                <StarIcon filled={selectedAddress.isPrimary || false} />
+              {showFavoriteToggle && isClient && (
+                <div 
+                  onClick={(e) => {
+                    e.stopPropagation(); // 드롭다운 토글 방지
+                    if (selectedAddress) {
+                      toggleFavorite(selectedAddress.id);
+                    }
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <StarIcon filled={selectedAddress.isPrimary || false} />
+                </div>
               )}
               <div className={styles.selectedAddressText}>
                 {(() => {
@@ -178,13 +230,14 @@ export function AddressDropDown(props: AddressDropDownProps) {
       <AddressDropDownList
         addresses={addresses}
         selectedAddress={selectedAddress}
-        onDelete={onDelete || deleteAddress}
+        onDelete={handleDeleteWithConfirmation}
         onToggleFavorite={onToggleFavorite || toggleFavorite}
         onSelect={onSelect || handleSelect}
         showFavoriteToggle={showFavoriteToggle}
         showDeleteButton={showDeleteButton}
         isExpanded={isExpanded}
         maxHeight={maxHeight}
+        isClient={isClient}
       />
     </div>
   );
