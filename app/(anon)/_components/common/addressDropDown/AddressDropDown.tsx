@@ -232,7 +232,17 @@ export function AddressDropDown(props: AddressDropDownProps) {
         selectedAddress={selectedAddress}
         onDelete={handleDeleteWithConfirmation}
         onToggleFavorite={onToggleFavorite || toggleFavorite}
-        onSelect={onSelect || handleSelect}
+        onSelect={(id) => {
+          // 상위 컴포넌트의 onSelect가 있으면 호출
+          if (onSelect) {
+            onSelect(id);
+          } else {
+            // 없으면 기본 handleSelect 호출
+            handleSelect(id);
+          }
+          // 항상 드롭다운 닫기
+          setIsExpanded(false);
+        }}
         showFavoriteToggle={showFavoriteToggle}
         showDeleteButton={showDeleteButton}
         isExpanded={isExpanded}
