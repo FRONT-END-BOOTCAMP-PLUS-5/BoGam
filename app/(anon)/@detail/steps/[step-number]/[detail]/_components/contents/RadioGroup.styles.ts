@@ -26,7 +26,7 @@ const styles = {
   badgeContainer: 'flex flex-wrap gap-2',
   
   // 메시지 표시 스타일
-  messagesContainer: 'mt-4 p-4 border border-brand-error rounded-lg bg-brand-error/10',
+  messagesContainer: 'mt-4 p-4 border border-brand-gold rounded-lg bg-brand-gold/10',
   messageItem: 'text-sm text-black mb-2 last:mb-0',
   linkContainer: 'mt-3 pt-3 border-t border-brand-error',
   link: 'text-sm text-brand-error hover:text-brand-dark-gray underline',
