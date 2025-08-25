@@ -12,11 +12,6 @@ export const useUserAddresses = () => {
   // initializeFromQuery를 useCallback으로 메모이제이션
   const memoizedInitializeFromQuery = useCallback(
     (data: UserAddress[]) => {
-      console.log(
-        '🔄 React Query 데이터로 store 초기화:',
-        data.length,
-        '개 주소'
-      );
       initializeFromQuery(data);
     },
     [initializeFromQuery]

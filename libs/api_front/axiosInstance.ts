@@ -97,11 +97,6 @@ class FrontendAxiosInstance {
     // 응답 인터셉터
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        console.log(
-          `[Frontend API Response] ${(response as { status: number }).status} ${
-            (response as { config?: { url?: string } }).config?.url
-          }`
-        );
         return response;
       },
       (error: unknown) => {
