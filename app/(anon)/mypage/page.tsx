@@ -7,8 +7,16 @@ import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
 import { styles } from './page.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { StepResultData } from '@libs/api_front/stepResultQueries.api';
 import Profile from '@/(anon)/_components/common/profile/Profile';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
+
+// 가이드 요약 데이터 타입 정의
+interface GuideSummaryData {
+  totalMatch: number;
+  totalMismatch: number;
+  totalUnchecked: number;
+}
 
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
@@ -19,11 +27,46 @@ export default function MyPage() {
     detail: ''
   });
 
+  // 타입 가드 함수들
+  const isStepResultArray = (data: unknown): data is StepResultData[] => {
+    return Array.isArray(data) && data.every(item => 
+      typeof item === 'object' && 
+      item !== null && 
+      'id' in item && 
+      'match' in item && 
+      'mismatch' in item && 
+      'unchecked' in item
+    );
+  };
+
+  const isStepResultSingle = (data: unknown): data is StepResultData => {
+    return typeof data === 'object' && 
+      data !== null && 
+      'id' in data && 
+      'match' in data && 
+      'mismatch' in data && 
+      'unchecked' in data;
+  };
+
   // guideSteps와 guideSummary 데이터 처리
-  const guideSteps = Array.isArray(stepResultsData) ? stepResultsData : 
-    (stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : []);
-  const guideSummary = stepResultsData && typeof stepResultsData === 'object' && 'summary' in stepResultsData ? (stepResultsData as any).summary : { match: 0, mismatch: 0, unchecked: 0 };
+  const guideSteps: StepResultData[] = isStepResultArray(stepResultsData) 
+    ? stepResultsData 
+    : isStepResultSingle(stepResultsData) 
+      ? [stepResultsData] 
+      : [];
+
+  // 요약 데이터 계산
+  const guideSummary: GuideSummaryData = guideSteps.reduce(
+    (summary, step) => ({
+      totalMatch: summary.totalMatch + (step.match || 0),
+      totalMismatch: summary.totalMismatch + (step.mismatch || 0),
+      totalUnchecked: summary.totalUnchecked + (step.unchecked || 0),
+    }),
+    { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 }
+  );
+
   console.log('guideSummary', guideSummary);
+
   // 로딩 상태 처리
   if (isLoading) {
     return (

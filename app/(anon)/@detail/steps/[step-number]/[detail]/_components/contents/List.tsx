@@ -7,7 +7,7 @@ interface AccordionItem {
 }
 
 interface ListProps {
-  data: AccordionItem[] | string[];
+  data: AccordionItem[] | string[] | Array<{ left: string; right?: string }>;
 }
 
 const List = ({ data }: ListProps) => {
@@ -20,7 +20,12 @@ const List = ({ data }: ListProps) => {
           title: item,
           content: `${item}에 대한 상세 설명입니다.`,
         }))
-      : (data as AccordionItem[]);
+      : Array.isArray(data) && typeof data[0] === 'object' && 'left' in data[0]
+        ? (data as Array<{ left: string; right?: string }>).map((item) => ({
+            title: item.left,
+            content: item.right || `${item.left}에 대한 상세 설명입니다.`,
+          }))
+        : (data as AccordionItem[]);
 
   const toggleItem = (index: number) => {
     setOpenItems((prev) =>

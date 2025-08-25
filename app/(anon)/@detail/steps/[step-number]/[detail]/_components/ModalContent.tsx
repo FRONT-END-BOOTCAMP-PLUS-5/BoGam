@@ -1,7 +1,7 @@
 import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
@@ -9,7 +9,6 @@ import Table from './contents/Table';
 import List from './contents/List';
 import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
-import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import {
   LegacyContentSection,
@@ -22,23 +21,12 @@ import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
 import TaxCertWrapper from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
-// DateData 타입 정의 (기존 호환성을 위해 유지)
+// RegionData 타입 정의 (기존 호환성을 위해 유지)
 interface RegionData {
   region: string;
   depositRange: string;
   priorityAmount: string;
   option: string;
-}
-
-interface DateData {
-  date: string;
-  regions: RegionData[];
-}
-
-// 새로운 Table 데이터 타입 정의
-interface TableData {
-  depositRange: string[];
-  priorityAmount: string[];
 }
 
 export default function ModalContent() {
@@ -55,7 +43,7 @@ export default function ModalContent() {
   const detail = stepUrlData?.detail?.toString() || '1';
 
   // 특별한 컴포넌트를 사용할 단계들 정의
-  const specialSteps = {
+  const specialSteps = useMemo(() => ({
     broker: stepNumber === '3' && detail === '1',
     realEstate: [
       { step: '1', detail: '4' },
@@ -65,7 +53,7 @@ export default function ModalContent() {
       { step: '4', detail: '1' },
     ].some((route) => route.step === stepNumber && route.detail === detail),
     transactionSearch: stepNumber === '1' && detail === '2',
-  };
+  }), [stepNumber, detail]);
 
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
@@ -109,8 +97,7 @@ export default function ModalContent() {
 
   // Swiper 콘텐츠 렌더링 함수
   const renderSwiperContent = (
-    pageData: LegacyContentSection[],
-    pageIndex: number
+    pageData: LegacyContentSection[]
   ) => {
     switch (dataType) {
       case 'TextOnly':
@@ -360,7 +347,7 @@ export default function ModalContent() {
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
                   <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
-                    {renderSwiperContent(pageData, pageIndex)}
+                                         {renderSwiperContent(pageData)}
                   </div>
                 </SwiperSlide>
               )

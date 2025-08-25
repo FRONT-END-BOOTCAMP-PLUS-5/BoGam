@@ -7,11 +7,7 @@ import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useTaxCertContainer } from '@/hooks/useTaxCertContainer';
 
-interface TaxCertContainerProps {
-  // onJsonDataChange 제거
-}
-
-export const TaxCertContainer = ({}: TaxCertContainerProps) => {
+export const TaxCertContainer = () => {
   const {
     formData,
     response,

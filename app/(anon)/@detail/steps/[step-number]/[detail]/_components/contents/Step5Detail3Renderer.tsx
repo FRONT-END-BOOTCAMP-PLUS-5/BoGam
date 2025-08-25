@@ -28,10 +28,15 @@ export default function Step5Detail3Renderer({
   section,
   allSections,
 }: Step5Detail3RendererProps) {
+  // 타입 가드 함수들
+  const hasData = (section: ContentSection): section is ContentSection & { data: unknown } => {
+    return 'data' in section && section.data !== undefined;
+  };
+
   // 슬라이드별 렌더링 로직
   switch (sectionIndex) {
     case 0:
-      return <RadioGroup data={section.data as LegacyContentSection[]} />;
+      return hasData(section) ? <RadioGroup data={section.data as LegacyContentSection[]} /> : null;
 
     case 1:
       return (
@@ -43,7 +48,7 @@ export default function Step5Detail3Renderer({
       );
 
     case 2:
-      return <List data={section.data as string[]} />;
+      return hasData(section) ? <List data={section.data as string[]} /> : null;
 
     default:
       // 기본 렌더링 로직
@@ -64,13 +69,13 @@ export default function Step5Detail3Renderer({
           )}
 
           {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
-          {section.type === 'TextOnly' && <TextOnly data={section.data} />}
-          {section.type === 'RadioGroup' && <RadioGroup data={section.data} />}
-          {section.type === 'Table' && (
-            <Table data={section.data as unknown as RegionData[]} />
+          {section.type === 'TextOnly' && hasData(section) && <TextOnly data={section.data} />}
+          {section.type === 'RadioGroup' && hasData(section) && <RadioGroup data={section.data} />}
+          {section.type === 'Table' && hasData(section) && (
+            <Table data={section.data as RegionData[]} />
           )}
-          {section.type === 'List' && (
-            <List data={section.data as unknown as string[]} />
+          {section.type === 'List' && hasData(section) && (
+            <List data={section.data as Array<{ left: string; right?: string }>} />
           )}
         </>
       );

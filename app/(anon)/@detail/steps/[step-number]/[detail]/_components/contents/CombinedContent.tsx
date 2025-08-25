@@ -41,16 +41,16 @@ const CombinedContent = ({
         );
         break;
       case 'List':
-        content = <List data={section.data} />;
+        // ListSection의 data를 string[]로 변환
+        const listData = (section.data as Array<{ left: string; right?: string }>).map(item => item.left);
+        content = <List data={listData} />;
         break;
       case 'DataGrid':
         content = <DataGrid data={section.data} />;
         break;
       default:
         console.warn(
-          `Unknown section type: ${
-            (section as unknown as Record<string, unknown>).type
-          }`
+          `Unknown section type: ${section.type}`
         );
         return null;
     }
