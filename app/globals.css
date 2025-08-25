@@ -123,24 +123,24 @@ img {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--brand-light-gray);
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--brand-dark-gray);
   border-radius: 3px;
   transition: background 0.2s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--brand-dark-blue);
 }
 
 /* Firefox 스크롤바 스타일 */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #c1c1c1 #f1f1f1;
+  scrollbar-color: var(--brand-dark-gray) var(--brand-light-gray);
 }
 
 /* ==== PWA App Shell ==== */

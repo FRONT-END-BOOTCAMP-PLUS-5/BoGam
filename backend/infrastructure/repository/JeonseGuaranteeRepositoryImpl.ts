@@ -47,15 +47,13 @@ export class JeonseGuaranteeRepositoryImpl
       if (response.status !== 200) {
         throw new Error(`API 요청 실패: ${response.status}`);
       }
-
-      console.log('response', response.data);
-
-      interface ApiResponse {
-        header?: {
+      // API 응답 데이터 타입 정의
+      interface JeonseGuaranteeApiResponse {
+        header: {
           resultCode: string;
           resultMsg: string;
         };
-        body?: {
+        body: {
           pageNo: number;
           totalCount: number;
           numOfRows: number;
@@ -68,7 +66,12 @@ export class JeonseGuaranteeRepositoryImpl
         };
       }
 
-      const data = response.data as ApiResponse;
+      const data = response.data as JeonseGuaranteeApiResponse;
+
+      console.log(
+        '전세자금보증상품 API 응답 데이터:',
+        JSON.stringify(data, null, 2)
+      );
 
       // 원본 데이터를 직접 Entity로 변환
       return new JeonseGuaranteeEntity(

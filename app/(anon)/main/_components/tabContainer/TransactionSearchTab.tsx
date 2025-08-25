@@ -9,6 +9,7 @@ import { styles } from '@/(anon)/main/_components/tabContainer/TransactionSearch
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
 import Button from '@/(anon)/_components/common/button/Button';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 
 
 // 실제 API 응답 구조에 맞춘 타입
@@ -100,32 +101,34 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
       {/* 조회 년도 */}
       <div className={styles.yearContainer}>
         <label className={styles.label}>조회 년도:</label>
-        <select
+        <DropDown
+          options={[
+            { value: '2025', label: '2025년' },
+            { value: '2024', label: '2024년' },
+            { value: '2023', label: '2023년' },
+            { value: '2022', label: '2022년' },
+            { value: '2021', label: '2021년' },
+            { value: '2020', label: '2020년' }
+          ]}
           value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-          className={styles.select}
-        >
-          <option value='2025'>2025</option>
-          <option value='2024'>2024</option>
-          <option value='2023'>2023</option>
-          <option value='2022'>2022</option>
-          <option value='2021'>2021</option>
-          <option value='2020'>2020</option>
-        </select>
+          onChange={setSelectedYear}
+          placeholder="조회 년도를 선택하세요"
+        />
       </div>
 
       {/* 건물 타입 */}
       <div className={styles.buildingTypeContainer}>
         <label className={styles.label}>건물 타입:</label>
-        <select
+        <DropDown
+          options={[
+            { value: '0', label: '아파트' },
+            { value: '1', label: '연립/다세대' },
+            { value: '2', label: '오피스텔' }
+          ]}
           value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-          className={styles.select}
-        >
-          <option value='0'>아파트</option>
-          <option value='1'>연립/다세대</option>
-          <option value='2'>오피스텔</option>
-        </select>
+          onChange={setSelectedType}
+          placeholder="건물 타입을 선택하세요"
+        />
       </div>
 
       {/* 단지명 */}

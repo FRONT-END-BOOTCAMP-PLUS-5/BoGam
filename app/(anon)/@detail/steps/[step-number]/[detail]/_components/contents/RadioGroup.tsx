@@ -103,6 +103,10 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     detail: String(detail),
   });
 
+  // stepData가 배열인지 단일 객체인지 확인하고 jsonDetails 추출
+  const stepResultData = Array.isArray(stepData) ? stepData[0] : stepData;
+  const jsonDetails = stepResultData?.jsonDetails;
+
   // DB 저장 (useCallback으로 메모이제이션) - 전체 질문 저장
   const saveToDatabase = useCallback(
     async (answers: { [key: number]: string }) => {
@@ -144,7 +148,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
                   : 'unchecked';
             } else {
               // 기존 저장된 답변 유지 (없으면 unchecked)
-              const existingAnswer = stepData?.jsonDetails?.[section.title];
+              const existingAnswer = jsonDetails?.[section.title];
               jsonDetails[section.title] = existingAnswer || 'unchecked';
             }
           }
@@ -187,12 +191,12 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
   // 정상 데이터로 초기화 (한 번만 실행)
   useEffect(() => {
-    if (stepData?.jsonDetails && data.length > 0 && !hasInitialized.current) {
+    if (jsonDetails && data.length > 0 && !hasInitialized.current) {
       const initialAnswers: { [key: number]: string } = {};
 
       data.forEach((section, index) => {
         if (section.title) {
-          const matchingKey = Object.keys(stepData.jsonDetails).find(
+          const matchingKey = Object.keys(jsonDetails).find(
             (key) =>
               key === section.title ||
               (section.title && key.includes(section.title)) ||
@@ -200,7 +204,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           );
 
           if (matchingKey) {
-            const status = stepData.jsonDetails[matchingKey];
+            const status = jsonDetails[matchingKey];
             if (status === 'match') initialAnswers[index] = 'yes';
             else if (status === 'mismatch') initialAnswers[index] = 'no';
           }
@@ -211,7 +215,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       setHasInitializedFromError(false);
       hasInitialized.current = true;
     }
-  }, [stepData, data]);
+  }, [jsonDetails, data]);
 
   // json이 {}이거나 에러 시 unchecked로 초기화
   useEffect(() => {
@@ -226,7 +230,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
     const shouldInitialize =
       (isError && !hasInitializedFromError && !hasInitialized.current) ||
-      (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+      (jsonDetails && Object.keys(jsonDetails).length === 0);
 
     if (shouldInitialize && selectedAddress?.id && stepNumber && detail) {
       const uncheckedAnswers: { [key: number]: string } = {};
@@ -251,7 +255,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       removeQueries(selectedAddress.nickname, stepNumber, detail);
     }
   }, [
-    stepData,
+    jsonDetails,
     isError,
     data,
     hasInitializedFromError,
@@ -285,8 +289,8 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       return { allAnswered: false, hasMismatch: false };
     }
 
-    if (!stepData?.jsonDetails) {
-      console.log('❌ stepData.jsonDetails 없음');
+    if (!jsonDetails) {
+      console.log('❌ jsonDetails 없음');
       return { allAnswered: false, hasMismatch: false };
     }
 
@@ -322,10 +326,10 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     console.log('🔍 모든 질문 제목:', allQuestionTitles);
 
     // 각 질문의 답변 상태 상세 확인
-    console.log('🔍 stepData.jsonDetails 상세:', stepData.jsonDetails);
+    console.log('🔍 jsonDetails 상세:', jsonDetails);
 
     const questionStatuses = allQuestionTitles.map((title) => {
-      const status = title ? stepData.jsonDetails[title] : null;
+      const status = title ? jsonDetails[title] : null;
       console.log(`🔍 질문 "${title}" 상태:`, status);
       return { title, status };
     });
@@ -335,22 +339,22 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     const allAnswered = allQuestionTitles.every((title) => {
       const hasAnswer =
         title &&
-        stepData.jsonDetails[title] &&
-        stepData.jsonDetails[title] !== 'unchecked';
+        jsonDetails[title] &&
+        jsonDetails[title] !== 'unchecked';
       console.log(`🔍 질문 "${title}" 답변 여부:`, hasAnswer);
       return hasAnswer;
     });
 
     // mismatch가 있는지 확인
     const hasMismatch = allQuestionTitles.some(
-      (title) => title && stepData.jsonDetails[title] === 'mismatch'
+      (title) => title && jsonDetails[title] === 'mismatch'
     );
 
     console.log('🔍 최종 결과:', {
       totalQuestions,
       allAnswered,
       hasMismatch,
-      jsonDetails: stepData.jsonDetails,
+      jsonDetails: jsonDetails,
     });
 
     return { allAnswered, hasMismatch };

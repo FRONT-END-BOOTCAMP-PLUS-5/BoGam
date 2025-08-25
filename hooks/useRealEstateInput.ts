@@ -16,6 +16,7 @@ export const useRealEstateInput = ({ formData }: UseRealEstateInputProps) => {
     formState: { errors },
     setValue,
     reset,
+    watch,
   } = useForm<RealEstateFormData>({
     defaultValues: formData,
   });
@@ -40,5 +41,6 @@ export const useRealEstateInput = ({ formData }: UseRealEstateInputProps) => {
     errors,
     setValue,
     reset,
+    watch,
   };
 };
