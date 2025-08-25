@@ -14,13 +14,17 @@ interface BeforeInstallPromptEvent extends Event {
 
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
+    // PWA가 이미 설치되어 있는지 확인
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
-      setShowInstallPrompt(true);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -31,24 +35,27 @@ export default function PWAInstallPrompt() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      // beforeinstallprompt 이벤트가 없는 경우 수동 설치 안내
+      alert('브라우저 주소창 옆의 설치 아이콘을 클릭하여 앱을 설치하세요.');
+      return;
+    }
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
       console.log('PWA 설치됨');
+      setIsInstalled(true);
     }
-    
-    setDeferredPrompt(null);
-    setShowInstallPrompt(false);
   };
 
   const handleDismiss = () => {
-    setShowInstallPrompt(false);
+    // 닫기 버튼 클릭 시 아무것도 하지 않음 (항상 표시)
   };
 
-  if (!showInstallPrompt) return null;
+  // 이미 설치된 경우 표시하지 않음
+  if (isInstalled) return null;
 
   return (
     <div className={styles.container}>

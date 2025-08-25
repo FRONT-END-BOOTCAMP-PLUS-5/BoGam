@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { styles } from './Onboarding.styles';
+import PWAInstallPrompt from '@/(anon)/_components/common/PWAInstallPrompt';
 
 type Props = {
   onSkipToAuth: () => void;
@@ -103,6 +104,10 @@ export default function Onboarding({ onSkipToAuth, onDoneToAuth }: Props) {
             Skip
           </button>
         )}
+        {/* PWA 설치 프롬프트를 헤더에 항상 표시 */}
+        <div className={styles.pwaHeaderContainer}>
+          <PWAInstallPrompt />
+        </div>
       </header>
 
       <section
