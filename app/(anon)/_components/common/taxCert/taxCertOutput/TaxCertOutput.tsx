@@ -23,14 +23,7 @@ export const TaxCertOutput = ({
   response,
   loading,
   existsData,
-  jsonData,
-  onJsonDataChange,
-}: TaxCertOutputProps & {
-  jsonData?: Record<string, 'match' | 'mismatch' | 'unchecked'>;
-  onJsonDataChange?: (
-    newData: Record<string, 'match' | 'mismatch' | 'unchecked'>
-  ) => Promise<void>;
-}) => {
+}: TaxCertOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
   const {
     displayResponse,
@@ -276,9 +269,8 @@ export const TaxCertOutput = ({
         detail={detail}
         userAddressNickname={selectedAddress?.nickname}
         domain='taxCert'
-        initialJsonData={jsonData || getInitialJsonData()}
+        initialJsonData={getInitialJsonData()}
         showSaveButton={true} // 결과 탭에서도 저장 버튼 활성화
-        onJsonDataChange={onJsonDataChange}
       />
     </div>
   );

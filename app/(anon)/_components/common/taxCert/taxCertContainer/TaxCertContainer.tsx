@@ -8,16 +8,10 @@ import { DataContainer } from '@/(anon)/_components/common/container/DataContain
 import { useTaxCertContainer } from '@/hooks/useTaxCertContainer';
 
 interface TaxCertContainerProps {
-  jsonData?: Record<string, 'match' | 'mismatch' | 'unchecked'>;
-  onJsonDataChange?: (
-    newData: Record<string, 'match' | 'mismatch' | 'unchecked'>
-  ) => Promise<void>;
+  // onJsonDataChange 제거
 }
 
-export const TaxCertContainer = ({
-  jsonData,
-  onJsonDataChange,
-}: TaxCertContainerProps) => {
+export const TaxCertContainer = ({}: TaxCertContainerProps) => {
   const {
     formData,
     response,
@@ -53,8 +47,6 @@ export const TaxCertContainer = ({
         submitTwoWayAuthMutation.isPending
       }
       existsData={existsData}
-      jsonData={jsonData}
-      onJsonDataChange={onJsonDataChange}
     />
   );
 

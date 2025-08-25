@@ -11,6 +11,7 @@ import {
   isRiskAssessmentModified,
 } from '@utils/riskAssessmentUtils';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { useRiskAssessmentStore } from '@libs/stores/riskAssessmentStore';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
@@ -28,7 +29,7 @@ interface RiskAssessmentDisplayProps {
   domain?: 'realEstate' | 'broker' | 'taxCert';
   initialJsonData?: RiskAssessmentJsonData;
   showSaveButton?: boolean;
-  onJsonDataChange?: (newData: RiskAssessmentJsonData) => Promise<void>;
+  // onJsonDataChange 제거
 }
 
 export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
@@ -42,7 +43,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   domain = 'realEstate',
   initialJsonData,
   showSaveButton = true,
-  onJsonDataChange,
+  // onJsonDataChange, // 제거
 }) => {
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
     // 저장 성공 시 원본 데이터 업데이트
@@ -51,6 +52,9 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       setIsModified(false);
     }
   });
+  
+  const { addJsonData, getJsonData } = useRiskAssessmentStore();
+  
   const [currentJsonData, setCurrentJsonData] =
     useState<RiskAssessmentJsonData | null>(null);
   const [originalJsonData, setOriginalJsonData] =
@@ -260,18 +264,25 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       latestJsonData[item.label] = item.checked ? 'match' : 'mismatch';
     });
 
-    // 상위 컴포넌트의 저장 함수 사용
-    if (onJsonDataChange) {
-      await onJsonDataChange(latestJsonData);
-    } else {
-      // 기존 방식 (fallback)
-      saveRiskAssessmentMutation.mutate({
+    // 1. store에 데이터 추가
+    addJsonData(latestJsonData);
+    console.log('🔍 2번째 페이지에서 store에 데이터 추가:', latestJsonData);
+
+    // 2. store의 전체 데이터를 가져와서 DB에 저장
+    try {
+      const currentStoreData = getJsonData();
+      console.log('🔍 RiskAssessmentDisplay: store의 전체 데이터를 DB에 저장:', currentStoreData);
+      
+      await saveRiskAssessmentMutation.mutateAsync({
         stepNumber,
         detail,
-        jsonData: latestJsonData,
+        jsonData: currentStoreData,
         domain,
         userAddressNickname,
       });
+      console.log('✅ RiskAssessmentDisplay: store의 전체 데이터 DB 저장 완료');
+    } catch (error) {
+      console.error('❌ RiskAssessmentDisplay: DB 저장 실패:', error);
     }
   };
 

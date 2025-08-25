@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { RiskAssessmentJsonData } from '@utils/riskAssessmentUtils';
+import { useRiskAssessmentStore } from '@libs/stores/riskAssessmentStore';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
 
 interface ChecklistItem {
   id: string;
@@ -31,32 +32,81 @@ interface TaxCertIntroData {
 
 interface TaxCertIntroProps {
   data: TaxCertIntroData;
-  jsonData: RiskAssessmentJsonData;
-  onJsonDataChange: (newData: RiskAssessmentJsonData) => Promise<void>;
 }
 
 export default function TaxCertIntro({
   data,
-  jsonData,
-  onJsonDataChange,
 }: TaxCertIntroProps) {
   const [checklistState, setChecklistState] = useState<
     Record<string, 'match' | 'mismatch'>
   >({});
+  
+  const { selectedAddress } = useUserAddressStore();
+  const { addJsonData, getJsonData } = useRiskAssessmentStore();
+  
+  // URL에서 stepNumber와 detail 가져오기
+  const pathname = window.location.pathname;
+  const stepUrlData = parseStepUrl(pathname);
+  const stepNumber = stepUrlData?.stepNumber || 1;
+  const detail = stepUrlData?.detail || 5;
 
-  // 초기 체크리스트 상태 설정
-  useEffect(() => {
-    if (data.checklistItems && Object.keys(checklistState).length === 0) {
-      const initialState: Record<string, 'match' | 'mismatch'> = {};
-      data.checklistItems.forEach((item) => {
-        // 상위 컴포넌트에서 전달받은 jsonData에서 데이터 찾기
-        const savedValue = jsonData[item.label];
-        initialState[item.id] =
-          (savedValue as 'match' | 'mismatch') || item.defaultValue;
-      });
-      setChecklistState(initialState);
+  // DB에서 저장된 데이터 가져오기
+  const { data: stepResultData } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepNumber.toString(),
+    detail: detail.toString(),
+  });
+
+  const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
+    if (data.success) {
+      console.log('✅ TaxCertIntro 체크리스트 데이터 저장 완료');
     }
-  }, [data.checklistItems, jsonData, checklistState]);
+  });
+
+  // 초기 체크리스트 상태 설정 (DB 데이터와 매핑)
+  useEffect(() => {
+    if (data.checklistItems && stepResultData) {
+      const initialState: Record<string, 'match' | 'mismatch'> = {};
+      
+      // DB에서 가져온 데이터가 있으면 사용, 없으면 기본값 사용
+      const savedData = Array.isArray(stepResultData) 
+        ? stepResultData[0]?.jsonDetails || {}
+        : stepResultData?.jsonDetails || {};
+      
+      console.log('🔍 TaxCertIntro: DB에서 가져온 데이터:', savedData);
+      
+      data.checklistItems.forEach((item) => {
+        // JSON 파일의 한글 키를 item.id의 영어 키로 매핑
+        let jsonKey: string;
+        switch (item.id) {
+          case 'nameMatch':
+            jsonKey = '서류와 임대인의 이름 일치 여부';
+            break;
+          case 'noUnpaid':
+            jsonKey = '미납 내역 없음';
+            break;
+          default:
+            jsonKey = item.id; // 기본값은 원래 id 사용
+        }
+        
+        console.log(`🔍 TaxCertIntro: ${item.id} -> JSON 키: ${jsonKey}`);
+        
+        // DB에 저장된 값이 있으면 사용, 없으면 기본값 사용
+        if (savedData[jsonKey] !== undefined) {
+          const savedValue = savedData[jsonKey];
+          initialState[item.id] = savedValue === 'unchecked' ? 'mismatch' : savedValue;
+          console.log(`✅ ${item.id}: DB 값 "${savedValue}" 적용 (${jsonKey}에서 가져옴)`);
+        } else {
+          // 없으면 기본값 사용
+          initialState[item.id] = item.defaultValue;
+          console.log(`⚠️ ${item.id}: 기본값 "${item.defaultValue}" 사용 (${jsonKey}에 데이터 없음)`);
+        }
+      });
+      
+      setChecklistState(initialState);
+      console.log('🔍 TaxCertIntro: DB 데이터와 매핑된 최종 초기 상태:', initialState);
+    }
+  }, [data.checklistItems, stepResultData]);
 
   // 체크리스트 상태 변경 핸들러
   const handleChecklistChange = async (
@@ -68,27 +118,53 @@ export default function TaxCertIntro({
       [itemId]: newValue,
     };
     setChecklistState(newState);
-
-    // 상위 컴포넌트에 체크리스트 데이터 전달 (기존 데이터 유지)
-    try {
-      const checklistData: RiskAssessmentJsonData = {};
-      Object.keys(newState).forEach((itemId) => {
-        const item = data.checklistItems.find((item) => item.id === itemId);
-        if (item) {
-          checklistData[item.label] = newState[itemId];
+    console.log('✅ 1번째 페이지 체크리스트 상태:', checklistState);
+    console.log('✅ 1번째 페이지 체크리스트 상태 변경:', newState);
+    
+    // store에 체크리스트 데이터 추가 (영어 id를 한글 키로 변환)
+    const checklistData: RiskAssessmentJsonData = {};
+    Object.keys(newState).forEach((itemId) => {
+      const item = data.checklistItems.find((item) => item.id === itemId);
+      if (item) {
+        // 영어 item.id를 한글 JSON 키로 변환
+        let jsonKey: string;
+        switch (itemId) {
+          case 'nameMatch':
+            jsonKey = '서류와 임대인의 이름 일치 여부';
+            break;
+          case 'noUnpaid':
+            jsonKey = '미납 내역 없음';
+            break;
+          default:
+            jsonKey = itemId; // 기본값은 원래 id 사용
         }
-      });
+        
+        checklistData[jsonKey] = newState[itemId];
+        console.log(`🔍 TaxCertIntro: ${itemId} -> ${jsonKey}: ${newState[itemId]}`);
+      }
+    });
 
-      // 기존 jsonData와 새로운 체크리스트 데이터를 병합
-      const updatedData = {
-        ...jsonData, // 기존 데이터 유지
-        ...checklistData, // 새로운 체크리스트 데이터 추가/업데이트
-      };
+    // 1. store에 데이터 추가
+    addJsonData(checklistData);
+    console.log('✅ 1번째 페이지 체크리스트 상태를 store에 추가:', checklistData);
 
-      await onJsonDataChange(updatedData);
-      console.log('✅ 체크리스트 상태 저장 완료:', newState);
+    // 2. store의 전체 데이터를 가져와서 DB에 저장
+    try {
+      const currentStoreData = getJsonData();
+      console.log('🔍 TaxCertIntro: store의 전체 데이터를 DB에 저장:', currentStoreData);
+      
+      if (selectedAddress?.nickname) {
+        await saveRiskAssessmentMutation.mutateAsync({
+          stepNumber,
+          detail,
+          jsonData: currentStoreData,
+          domain: 'taxCert',
+          userAddressNickname: selectedAddress.nickname,
+        });
+        console.log('✅ TaxCertIntro: store의 전체 데이터 DB 저장 완료');
+      }
     } catch (error) {
-      console.error('❌ 체크리스트 상태 저장 실패:', error);
+      console.error('❌ TaxCertIntro: DB 저장 실패:', error);
     }
   };
 
