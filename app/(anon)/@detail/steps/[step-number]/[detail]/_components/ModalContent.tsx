@@ -15,6 +15,7 @@ import { LegacyContentSection, StepContentData, ContentSection } from './content
 import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
+import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
 // DateData 타입 정의 (기존 호환성을 위해 유지)
 interface RegionData {
@@ -55,18 +56,19 @@ export default function ModalContent() {
       (stepNumber === '5' && detail === '1'),
     broker: stepNumber === '3' && detail === '1',
     realEstate: [
-      { step: '1', detail: '3' },
+      { step: '1', detail: '4' },
       { step: '2', detail: '3' },
       { step: '6', detail: '3' },
       { step: '5', detail: '2' },
       { step: '4', detail: '1' },
     ].some((route) => route.step === stepNumber && route.detail === detail),
+    transactionSearch: stepNumber === '1' && detail === '2',
   };
 
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
     const shouldLoadJsonData =
-      !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate;
+      !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate && !specialSteps.transactionSearch;
     if (shouldLoadJsonData) {
       const loadContentData = async () => {
         try {
@@ -99,6 +101,10 @@ export default function ModalContent() {
 
     if (specialSteps.realEstate) {
       return <RealEstateContainer />;
+    }
+
+    if (specialSteps.transactionSearch) {
+      return <TransactionSearchComponent />;
     }
 
     return null;
