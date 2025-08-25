@@ -87,37 +87,13 @@ export const useTaxCertContainer = () => {
       responseData as unknown as CodefResponse
     );
 
-    console.log('🔍 1차 API 응답 데이터 확인:', {
-      continue2Way: actualData?.continue2Way,
-      method: actualData?.method,
-      hasData: !!responseData.data,
-      fullData: responseData.data,
-      extractedData: actualData,
-    });
-
     const actualContinue2Way = actualData?.continue2Way;
     const actualMethod = actualData?.method;
 
-    console.log('🔍 실제 값:', {
-      actualContinue2Way,
-      actualMethod,
-      actualData,
-    });
-
     if (actualContinue2Way && actualMethod === 'simpleAuth') {
-      console.log('🔐 간편인증 추가인증 필요');
       setShowSimpleAuthModal(true);
       return true;
     } else {
-      console.log('❌ 추가인증 조건 불만족:', {
-        continue2Way: actualContinue2Way,
-        method: actualMethod,
-        reason: !actualContinue2Way
-          ? 'continue2Way가 false 또는 undefined'
-          : actualMethod !== 'simpleAuth'
-          ? `method가 '${actualMethod}' (simpleAuth가 아님)`
-          : '기타',
-      });
       return false;
     }
   };

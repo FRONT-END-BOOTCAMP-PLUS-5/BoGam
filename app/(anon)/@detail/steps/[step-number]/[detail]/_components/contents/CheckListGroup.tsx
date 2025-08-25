@@ -103,7 +103,6 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
         const logMessage = isError
           ? '400 에러 시 초기화 진행'
           : '빈 jsonDetails 시 초기화 진행';
-        console.log(`🔍 CheckListGroup: ${logMessage}`, uncheckedDetails);
 
         // 로컬 상태도 즉시 업데이트
         setLocalStepDetails(uncheckedDetails);
@@ -120,11 +119,6 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
         removeQueries(selectedAddress.nickname, stepNumber, detail);
 
         hasInitialized.current = true;
-      } else {
-        console.log('🔍 CheckListGroup: 체크리스트 항목이 없어 초기화 건너뜀', {
-          data,
-          uncheckedDetails,
-        });
       }
     }
   }, [

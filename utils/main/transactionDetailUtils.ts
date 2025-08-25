@@ -1,6 +1,7 @@
 import {
   TransactionDetailApartSaleItem,
   TransactionDetailApartRentItem,
+  TransactionDetailApiResponse,
 } from '@libs/api_front/transactionDetail.api';
 import {
   formatTransactionAmount,
@@ -59,28 +60,6 @@ export const parseTransactionDetailApart = (
   const saleData = data.data.data?.resSaleList || data.data.resSaleList || [];
   const rentData = data.data.data?.resRentList || data.data.resRentList || [];
 
-  console.log('🔍 파싱된 데이터:', { saleData, rentData });
-
-  // 각 아이템의 resTranAmount 값 확인
-  console.log(
-    '🔍 매매 데이터 resTranAmount 값들:',
-    saleData.map((item: TransactionDetailApartSaleItem) => ({
-      resTranAmount: item.resTranAmount,
-      type: typeof item.resTranAmount,
-      year: item.resYear,
-      month: item.resMonth,
-    }))
-  );
-  console.log(
-    '🔍 전월세 데이터 resTranAmount 값들:',
-    rentData.map((item: TransactionDetailApartRentItem) => ({
-      resTranAmount: item.resTranAmount,
-      type: typeof item.resTranAmount,
-      year: item.resYear,
-      month: item.resMonth,
-    }))
-  );
-
   // Rent 데이터를 우선으로 정렬
   const sortedData = sortTransactionDataByRent([...saleData, ...rentData]) as (
     | TransactionDetailApartSaleItem
@@ -112,19 +91,7 @@ export const parseTransactionDetailApart = (
         formattedAmount = formatTransactionAmount(item.resTranAmount || '0');
       }
 
-      console.log(`🔍 아이템 ${index} 포맷팅:`, {
-        original: item.resTranAmount,
-        formatted: formattedAmount,
-        year: item.resYear,
-        month: item.resMonth,
-        isRentData,
-        deposit: isRentData
-          ? (item as TransactionDetailApartRentItem).resDeposit
-          : 'N/A',
-        monthlyRent: isRentData
-          ? (item as TransactionDetailApartRentItem).resMonthlyRent
-          : 'N/A',
-      });
+
 
       return {
         id: `transaction-${index}`,
@@ -174,7 +141,7 @@ interface SingleTransactionApiResponse {
  * 단독/다가구 실거래가 데이터 파싱
  */
 export const parseTransactionDetailSingle = (
-  data: SingleTransactionApiResponse
+  data: TransactionDetailApiResponse
 ): ParsedTransactionDetail[] => {
   if (!data.success || !data.data) {
     throw new Error('실거래가 데이터를 가져올 수 없습니다.');
