@@ -103,6 +103,7 @@ export default function Onboarding({ onSkipToAuth, onDoneToAuth }: Props) {
             Skip
           </button>
         )}
+
       </header>
 
       <section

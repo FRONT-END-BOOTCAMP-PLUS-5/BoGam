@@ -6,12 +6,51 @@ import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/Add
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
 import { styles } from './page.styles';
-import { mockData } from './_data/mockData';
+import { useStepResults } from '@/hooks/useStepResults';
 import Profile from '@/(anon)/_components/common/profile/Profile';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
   const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
+  const { guideSummary, guideSteps, isLoading, error } = useStepResults(selectedAddress?.nickname);
+
+  // 로딩 상태 처리
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.gradientBackground}></div>
+        <LoadingOverlay 
+          isVisible={true}
+          title="데이터를 불러오는 중..."
+          currentStep={1}
+          totalSteps={1}
+        />
+      </div>
+    );
+  }
+
+  // 에러 상태 처리
+  if (error) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.gradientBackground}></div>
+        <div className={styles.errorContainer}>
+          <div className={styles.errorContent}>
+            <div className={styles.errorIcon}>⚠️</div>
+            <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
+            <p className={styles.errorMessage}>{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className={styles.errorButton}
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -52,14 +91,14 @@ export default function MyPage() {
 
         {/* 가이드 결과 요약 */}
         <GuideResultSummary
-          match={mockData.guideSummary.match}
-          mismatch={mockData.guideSummary.mismatch}
-          unchecked={mockData.guideSummary.unchecked}
+          match={guideSummary.match}
+          mismatch={guideSummary.mismatch}
+          unchecked={guideSummary.unchecked}
         />
 
         {/* 가이드 결과 보기 */}
         <GuideResultView
-          guideSteps={mockData.guideSteps}
+          guideSteps={guideSteps}
         />
 
         {/* 회원탈퇴 버튼 */}

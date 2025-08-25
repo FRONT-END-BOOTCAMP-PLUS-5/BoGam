@@ -25,7 +25,11 @@ export class GetTaxCertUsecase {
     console.log(`📝 [${requestId}] 요청 데이터 분석:`, request);
 
     try {
-      let response: any;
+      let response: {
+        success: boolean;
+        message: string;
+        data: any; // 기존 타입과의 호환성을 위해 any 유지
+      };
 
       // 2-way 인증 요청인지 확인
       const isTwoWay = this.isTwoWayRequest(request);
@@ -77,8 +81,8 @@ export class GetTaxCertUsecase {
           hasResult: !!response?.data?.result,
           hasDataData: !!response?.data?.data,
           resultCode: response?.data?.result?.code,
-          continue2Way: (response?.data?.data as any)?.continue2Way,
-          method: (response?.data?.data as any)?.method
+          continue2Way: (response?.data?.data as Record<string, unknown>)?.continue2Way,
+          method: (response?.data?.data as Record<string, unknown>)?.method
         });
       }
 
@@ -134,7 +138,7 @@ export class GetTaxCertUsecase {
   /**
    * 2-way 인증 필요 여부 확인
    */
-  requiresTwoWayAuth(response: any): boolean {
+  requiresTwoWayAuth(response: { data?: { result?: { code?: string }; data?: Record<string, unknown> } }): boolean {
     const hasErrorCode = response.data?.result?.code === 'CF-03002';
     const hasContinue2Way =
       response.data?.data &&
@@ -147,7 +151,7 @@ export class GetTaxCertUsecase {
   /**
    * 2-way 인증 정보 추출
    */
-  extractTwoWayInfo(response: any): {
+  extractTwoWayInfo(response: { data?: { data?: Record<string, unknown> } }): {
     jobIndex: number;
     threadIndex: number;
     jti: string;
@@ -191,7 +195,7 @@ export class GetTaxCertUsecase {
   /**
    * API 성공 여부 확인 (CODEF 기준)
    */
-  isSuccess(response: any): boolean {
+  isSuccess(response: { data?: { result?: { code?: string } } }): boolean {
     return response.data?.result?.code === 'CF-00000';
   }
 

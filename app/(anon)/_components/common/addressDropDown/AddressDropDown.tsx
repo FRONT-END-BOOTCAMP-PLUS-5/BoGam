@@ -11,9 +11,10 @@ import { AddressDropDownProps } from './types';
 import { AddressDropDownList } from './AddressDropDownList';
 import { formatAddress } from '@utils/addressUtils';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useUserStore } from '@libs/stores/userStore';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { useModalStore } from '@libs/stores/modalStore';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
-import { LoadingState } from './_components/LoadingState';
 import { AuthRequiredState } from './_components/AuthRequiredState';
 
 const DEFAULT_PROPS = {
@@ -166,7 +167,14 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   // 로딩 상태 표시
   if (isLoading) {
-    return <LoadingState title={title} className={className} />;
+    return (
+      <LoadingOverlay 
+        isVisible={true}
+        title={title || "주소를 불러오는 중입니다..."}
+        currentStep={1}
+        totalSteps={1}
+      />
+    );
   }
 
   // 인증되지 않은 상태 표시
@@ -232,7 +240,17 @@ export function AddressDropDown(props: AddressDropDownProps) {
         selectedAddress={selectedAddress}
         onDelete={handleDeleteWithConfirmation}
         onToggleFavorite={onToggleFavorite || toggleFavorite}
-        onSelect={onSelect || handleSelect}
+        onSelect={(id) => {
+          // 상위 컴포넌트의 onSelect가 있으면 호출
+          if (onSelect) {
+            onSelect(id);
+          } else {
+            // 없으면 기본 handleSelect 호출
+            handleSelect(id);
+          }
+          // 항상 드롭다운 닫기
+          setIsExpanded(false);
+        }}
         showFavoriteToggle={showFavoriteToggle}
         showDeleteButton={showDeleteButton}
         isExpanded={isExpanded}

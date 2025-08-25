@@ -6,6 +6,7 @@ import { styles } from './JeonseGuarantee.styles';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import Field from '@/(anon)/_components/common/forms/Field';
 import Button from '@/(anon)/_components/common/button/Button';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
 interface JeonseGuaranteeFormProps {
@@ -52,6 +53,14 @@ export default function JeonseGuaranteeForm({ onSubmit }: JeonseGuaranteeFormPro
   ];
 
   const [selectedGrntPrmeActn, setSelectedGrntPrmeActn] = useState<string[]>(['01']);
+
+  // 결혼구분 옵션
+  const weddStcdOptions = [
+    { value: '1', label: '미혼' },
+    { value: '2', label: '기혼' },
+    { value: '3', label: '신혼' },
+    { value: '4', label: '결혼예정' }
+  ];
 
   // 선택된 주소가 변경될 때마다 법정동코드 업데이트
   useEffect(() => {
@@ -134,22 +143,14 @@ export default function JeonseGuaranteeForm({ onSubmit }: JeonseGuaranteeFormPro
           />
         </Field>
         
-        <Field
+        <DropDown
           id="weddStcd"
           label="결혼구분"
           required
-        >
-          <select
-            value={formData.weddStcd}
-            onChange={(e) => handleInputChange('weddStcd', parseInt(e.target.value))}
-            className={styles.select}
-          >
-            <option value={1}>1: 미혼</option>
-            <option value={2}>2: 기혼</option>
-            <option value={3}>3: 신혼</option>
-            <option value={4}>4: 결혼예정</option>
-          </select>
-        </Field>
+          options={weddStcdOptions}
+          value={formData.weddStcd.toString()}
+          onChange={(value) => handleInputChange('weddStcd', parseInt(value))}
+        />
         
         <Field
           id="myIncmAmt"
