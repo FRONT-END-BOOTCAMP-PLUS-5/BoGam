@@ -16,6 +16,10 @@ export const RealEstateContainer = () => {
     showTwoWayModal,
     existsData,
     createRealEstateMutation,
+    twoWayAuthMutation,
+    isDataLoading,
+    activeTab,
+    setActiveTab,
     handleAddressSelect,
     handleCloseTwoWayModal,
     handleSubmit,
@@ -34,7 +38,11 @@ export const RealEstateContainer = () => {
   const outputComponent = (
     <RealEstateOutput
       response={response}
-      loading={createRealEstateMutation.isPending}
+      loading={
+        isDataLoading ||
+        createRealEstateMutation.isPending ||
+        twoWayAuthMutation.isPending
+      }
       existsData={existsData}
     />
   );
@@ -57,6 +65,8 @@ export const RealEstateContainer = () => {
         inputComponent={inputComponent}
         outputComponent={outputComponent}
         checkExistsQuery={checkExistsQuery}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
       {/* 2-way 인증 모달 */}

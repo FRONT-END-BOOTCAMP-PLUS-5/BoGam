@@ -1,4 +1,4 @@
-import { TaxCertJson } from '@be/domain/entities/TaxCert';
+import { TaxCertEntity } from '@be/domain/entities/TaxCert';
 
 /**
  * 납세확인서 복사본 조회 응답 DTO
@@ -9,7 +9,7 @@ export interface GetTaxCertCopyResponseDto {
   data?: {
     id: number;
     userAddressId: number;
-    taxCertJson: TaxCertJson;
+    taxCertJson: TaxCertEntity;
     updatedAt: Date;
   };
   error?: string;

@@ -3,15 +3,13 @@
 import { useState } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
-import { FormField } from '@/(anon)/_components/common/forms/FormField';
-import { FormInput } from '@/(anon)/_components/common/forms/FormInput';
-import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
-import { useIssueTaxCert } from '@/hooks/useTaxCert';
+import Field from '@/(anon)/_components/common/forms/Field';
+import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import { TaxCertInputProps } from './types';
 import { styles } from './TaxCertInput.styles';
+import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import Image from 'next/image';
 
-// 간편인증 방법 데이터
 const authMethods = [
   {
     id: '1',
@@ -63,497 +61,230 @@ const authMethods = [
   },
 ];
 
-interface TaxCertInputProps {
-  userAddressNickname: string;
-  onSuccess?: () => void;
-}
-
 export const TaxCertInput = ({
-  userAddressNickname,
+  formData,
+  onSubmit,
   onSuccess,
 }: TaxCertInputProps) => {
   const { selectedAddress } = useUserAddressStore();
   const [error, setError] = useState<string | null>(null);
   const [isAuthMethodModalOpen, setIsAuthMethodModalOpen] = useState(false);
-  const [isTwoWayModalOpen, setIsTwoWayModalOpen] = useState(false);
-  const [twoWayData, setTwoWayData] = useState<{
-    method?: string;
-    jobIndex?: number;
-    threadIndex?: number;
-    jti?: string;
-    twoWayTimestamp?: number;
-    result?: { code?: string };
-  } | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // 폼 데이터 상태
-  const [formData, setFormData] = useState({
-    userName: '',
-    loginIdentity: '',
+  const [localFormData, setLocalFormData] = useState({
+    userName: formData.userName || '',
+    loginIdentity: formData.loginIdentity || '',
     identityEncYn: 'N',
-    loginBirthDate: '',
-    loginTypeLevel: '',
+    loginBirthDate: formData.loginBirthDate || '',
+    loginTypeLevel: formData.loginTypeLevel || '',
     telecom: '',
-    phoneNo: '',
-    loginType: '6', // 비회원 간편인증 기본값
-    proofType: 'B0006', // 대금수령 기본값
-    submitTargets: '01', // 금융기관 기본값
-    // CommonFields에서 추가된 필드들
-    applicationType: '01', // 본인 기본값
-    clientTypeLevel: '1', // 개인 기본값
-    identity: '', // 사업자번호/주민등록번호
-    birthDate: '', // 생년월일
+    phoneNo: formData.phoneNo || '',
+    loginType: formData.loginType || '6', // 비회원 간편인증 기본값
+    proofType: formData.proofType || 'B0006', // 대금수령 기본값
+    submitTargets: formData.submitTargets || '01', // 금융기관 기본값
+    applicationType: formData.applicationType || '01', // 신청구분 기본값
+    clientTypeLevel: formData.clientTypeLevel || '1', // 고객구분 기본값
+    identity: formData.identity || '',
+    birthDate: formData.birthDate || '',
+    originDataYN: formData.originDataYN || '0',
+    originDataYN1: formData.originDataYN1 || '1',
+    isIdentityViewYN: formData.isIdentityViewYN || '1',
+    isAddrViewYn: formData.isAddrViewYn || '0',
+    organization: formData.organization || '0001',
+    id:
+      formData.id ||
+      `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   });
 
-  const issueTaxCertMutation = useIssueTaxCert();
+  // 선택된 주소가 변경되면 주소 정보 업데이트
+  const handleAddressChange = () => {
+    if (selectedAddress) {
+    }
+  };
 
-  // 입력 변경 핸들러
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+  // 입력 필드 변경 핸들러
+  const handleInputChange = (field: string, value: string) => {
+    setLocalFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
   // 간편인증 방법 선택 핸들러
-  const handleLoginTypeLevelChange = (level: string) => {
-    setFormData((prev) => ({
+  const handleAuthMethodSelect = (methodId: string) => {
+    setLocalFormData((prev) => ({
       ...prev,
-      loginTypeLevel: level,
+      loginTypeLevel: methodId,
     }));
-  };
-
-  // 모달 핸들러
-  const handleOpenAuthMethodModal = () => {
-    setIsAuthMethodModalOpen(true);
-  };
-
-  const handleCloseAuthMethodModal = () => {
     setIsAuthMethodModalOpen(false);
   };
 
   const handleSelectAuthMethod = (methodId: string) => {
-    handleLoginTypeLevelChange(methodId);
-    setIsAuthMethodModalOpen(false);
+    setLocalFormData((prev) => ({
+      ...prev,
+      loginTypeLevel: methodId,
+    }));
   };
 
-  // 선택된 인증 방법 정보 가져오기
-  const selectedMethod = authMethods.find(
-    (method) => method.id === formData.loginTypeLevel
-  );
-
-  // 아코디언 토글
-  const toggleExpanded = () => {
-    setIsExpanded(!isExpanded);
+  // 모달 닫기 핸들러
+  const handleCloseAuthMethodModal = () => {
+    setIsAuthMethodModalOpen(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    try {
-      const requestData = {
-        organization: '0001', // 기본 기관코드
-        loginType: '6',
-        isIdentityViewYN: 'Y', // 주민등록번호 공개
-        proofType: formData.proofType,
-        submitTargets: formData.submitTargets,
-        userAddressNickname: userAddressNickname,
-        is2Way: false,
-        // 간편인증 로그인 타입별 필수 필드
-        userName: formData.userName,
-        loginIdentity: formData.loginIdentity,
-        loginTypeLevel: formData.loginTypeLevel,
-        phoneNo: formData.phoneNo,
-        // 통신사인증서(loginTypeLevel="5")인 경우에만 telecom 필수
-        ...(formData.loginTypeLevel === '5' && { telecom: formData.telecom }),
-        identityEncYn: formData.identityEncYn,
-        loginBirthDate: formData.loginBirthDate,
-        // CommonFields에서 추가된 필드들
-        applicationType: formData.applicationType,
-        clientTypeLevel: formData.clientTypeLevel,
-        identity: formData.identity,
-        birthDate: formData.birthDate,
-        // API 공식문서 필수 필드들
-        isAddrViewYn: '0', // 주소 공개여부 (0: 비공개)
-        originDataYN: '0', // 원문 DATA 포함 여부 (0: 미포함)
-        originDataYN1: '0', // PDF 원문 DATA 포함 여부 (0: 미포함)
-        // 간편인증 선택 필드
-        id: `${formData.userName}_${Date.now()}`, // 요청 식별 아이디
-      };
-
-      console.log('requestData', requestData);
-
-      const result = await issueTaxCertMutation.mutateAsync(requestData);
-
-      if (result && typeof result === 'object' && 'success' in result) {
-        if (result.success) {
-          // 성공 시 바로 결과 탭으로 이동
-          if (onSuccess) {
-            onSuccess();
-          }
-        } else {
-          // 추가인증이 필요한 경우 (CF-03002)
-          const responseData = result as {
-            data?: {
-              result?: { code?: string };
-              data?: {
-                method?: string;
-                jobIndex?: number;
-                threadIndex?: number;
-                jti?: string;
-                twoWayTimestamp?: number;
-              };
-            };
-          };
-          if (responseData.data?.result?.code === 'CF-03002') {
-            // 2-way 인증 모달 표시
-            console.log('2-way 인증 데이터:', responseData.data);
-            console.log('2-way 인증 상세 데이터:', responseData.data.data);
-
-            // 실제 2-way 인증 데이터는 data.data에 있음
-            const twoWayInfo = responseData.data.data;
-            setTwoWayData({
-              method: twoWayInfo?.method,
-              jobIndex: twoWayInfo?.jobIndex,
-              threadIndex: twoWayInfo?.threadIndex,
-              jti: twoWayInfo?.jti,
-              twoWayTimestamp: twoWayInfo?.twoWayTimestamp,
-              result: responseData.data.result,
-            });
-            setIsTwoWayModalOpen(true);
-          } else {
-            const message = (result as { message?: string }).message;
-            setError(message || '납세증명서 발급에 실패했습니다.');
-          }
-        }
-      }
-    } catch (err: unknown) {
-      console.error('납세증명서 발급 오류:', err);
-      const errorMessage =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string } } }).response
-              ?.data?.message
-          : err instanceof Error
-          ? err.message
-          : '납세증명서 발급 중 오류가 발생했습니다.';
-      setError(errorMessage || '납세증명서 발급 중 오류가 발생했습니다.');
+    if (!localFormData.userName.trim()) {
+      setError('이름을 입력해주세요.');
+      return;
     }
-  };
 
-  // 2-way 인증 승인 처리
-  const handleTwoWayConfirm = async () => {
-    if (!twoWayData) return;
+    if (!localFormData.loginIdentity.trim()) {
+      setError('주민등록번호를 입력해주세요.');
+      return;
+    }
+
+    if (!localFormData.loginBirthDate.trim()) {
+      setError('생년월일을 입력해주세요.');
+      return;
+    }
+
+    if (!localFormData.phoneNo.trim()) {
+      setError('휴대폰번호를 입력해주세요.');
+      return;
+    }
+
+    if (!localFormData.loginTypeLevel) {
+      setError('간편인증 방법을 선택해주세요.');
+      return;
+    }
+
+    if (!selectedAddress) {
+      setError('주소를 선택해주세요.');
+      return;
+    }
 
     try {
-      const twoWayRequestData = {
-        organization: '0001',
-        loginType: '6',
-        isIdentityViewYN: 'Y',
-        proofType: formData.proofType,
-        submitTargets: formData.submitTargets,
-        userAddressNickname: userAddressNickname,
-        is2Way: true,
-        // 간편인증 로그인 타입별 필수 필드
-        userName: formData.userName,
-        loginIdentity: formData.loginIdentity,
-        loginTypeLevel: formData.loginTypeLevel,
-        phoneNo: formData.phoneNo,
-        // 통신사인증서(loginTypeLevel="5")인 경우에만 telecom 필수
-        ...(formData.loginTypeLevel === '5' && { telecom: formData.telecom }),
-        identityEncYn: formData.identityEncYn,
-        loginBirthDate: formData.loginBirthDate,
-        // CommonFields에서 추가된 필드들
-        applicationType: formData.applicationType,
-        clientTypeLevel: formData.clientTypeLevel,
-        identity: formData.identity,
-        birthDate: formData.birthDate,
-        // API 공식문서 필수 필드들
-        isAddrViewYn: '0', // 주소 공개여부 (0: 비공개)
-        originDataYN: '0', // 원문 DATA 포함 여부 (0: 미포함)
-        originDataYN1: '0', // PDF 원문 DATA 포함 여부 (0: 미포함)
-        // 간편인증 선택 필드
-        id: `${formData.userName}_${Date.now()}`, // 요청 식별 아이디
-        // 2-way 인증 정보
-        twoWayInfo: {
-          jobIndex: twoWayData.jobIndex,
-          threadIndex: twoWayData.threadIndex,
-          jti: twoWayData.jti,
-          twoWayTimestamp: twoWayData.twoWayTimestamp,
-        },
-        // 간편인증 승인
-        simpleAuth: '1',
-      };
-
-      console.log('2-way 인증 요청 데이터:', twoWayRequestData);
-      console.log('2-way 인증 정보:', twoWayRequestData.twoWayInfo);
-
-      const result = await issueTaxCertMutation.mutateAsync(twoWayRequestData);
-
-      if (result && typeof result === 'object' && 'success' in result) {
-        if (result.success) {
-          setIsTwoWayModalOpen(false);
-          if (onSuccess) {
-            onSuccess();
-          }
-        } else {
-          const message = (result as { message?: string }).message;
-          setError(message || '2-way 인증 처리에 실패했습니다.');
-        }
-      }
-    } catch (err: unknown) {
-      console.error('2-way 인증 처리 오류:', err);
-      const errorMessage =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { message?: string } } }).response
-              ?.data?.message
-          : err instanceof Error
-          ? err.message
-          : '2-way 인증 처리 중 오류가 발생했습니다.';
-      setError(errorMessage || '2-way 인증 처리 중 오류가 발생했습니다.');
+      await onSubmit({
+        ...localFormData,
+        phoneNo: localFormData.phoneNo.replace(/-/g, ''), // 전화번호에서 '-' 제거
+        userAddressNickname: selectedAddress.nickname,
+      });
+      onSuccess?.();
+    } catch (error) {
+      setError('제출 중 오류가 발생했습니다.');
     }
   };
 
   return (
     <>
-      <FormContainer
-        onSubmit={handleSubmit}
-        isLoading={issueTaxCertMutation.isPending}
-        submitText='납세증명서 발급'
-        disabled={
-          !userAddressNickname ||
-          !formData.userName ||
-          !formData.loginIdentity ||
-          !formData.loginTypeLevel ||
-          !formData.phoneNo ||
-          (formData.loginTypeLevel === '5' && !formData.telecom)
-        }
-      >
-        <FormField label='사용자 이름' required>
-          <FormInput
-            type='text'
-            name='userName'
-            value={formData.userName}
-            onChange={handleInputChange}
-            placeholder='필수: 사용자 이름'
-            required
-          />
-        </FormField>
-
-        <FormField label='사용자 주민번호' required>
-          <FormInput
-            type='text'
-            name='loginIdentity'
-            value={formData.loginIdentity}
-            onChange={handleInputChange}
-            placeholder='필수: 사용자 주민번호'
-            maxLength={13}
-            required
-          />
-        </FormField>
-
-        <FormField label='주민등록번호 뒷자리 암호화 여부'>
-          <FormSelect
-            name='identityEncYn'
-            value={formData.identityEncYn}
-            onChange={handleInputChange}
-          >
-            <option value='N'>비암호화</option>
-            <option value='Y'>암호화</option>
-          </FormSelect>
-        </FormField>
-
-        {formData.identityEncYn === 'Y' && (
-          <FormField label='생년월일' required>
-            <FormInput
-              type='text'
-              name='loginBirthDate'
-              value={formData.loginBirthDate}
-              onChange={handleInputChange}
-              placeholder='960413'
-              maxLength={6}
-              required
+      <FormContainer onSubmit={handleSubmit}>
+        <div className={styles.container}>
+          <Field id='userName' label='이름' required>
+            <TextInput
+              value={localFormData.userName}
+              onChange={(e) => handleInputChange('userName', e.target.value)}
+              placeholder='이름을 입력하세요'
+              maxLength={50}
             />
-          </FormField>
-        )}
+          </Field>
 
-        <FormField label='간편인증 로그인 구분' required>
-          <button
-            type='button'
-            onClick={handleOpenAuthMethodModal}
-            className={styles.authMethodButton}
-          >
-            {selectedMethod ? (
-              <div className={styles.selectedAuthMethod}>
-                <Image
-                  src={selectedMethod.image}
-                  alt={selectedMethod.alt}
-                  width={24}
-                  height={24}
-                  className={styles.authIconSmall}
-                />
-                <span className={styles.selectedAuthText}>
-                  {selectedMethod.name}
-                </span>
-              </div>
-            ) : (
-              <span className={styles.placeholderText}>
-                간편인증 방법을 선택해주세요
-              </span>
-            )}
-            <span className={styles.dropdownArrow}>▼</span>
-          </button>
-        </FormField>
+          <Field id='loginIdentity' label='주민등록번호' required>
+            <TextInput
+              value={localFormData.loginIdentity}
+              onChange={(e) =>
+                handleInputChange('loginIdentity', e.target.value)
+              }
+              placeholder='주민등록번호 13자리'
+              maxLength={13}
+              type='password'
+            />
+          </Field>
 
-        {formData.loginTypeLevel === '5' && (
-          <FormField label='통신사' required>
-            <FormSelect
-              name='telecom'
-              value={formData.telecom}
-              onChange={handleInputChange}
-              required
+          <Field id='loginBirthDate' label='생년월일' required>
+            <TextInput
+              value={localFormData.loginBirthDate}
+              onChange={(e) =>
+                handleInputChange('loginBirthDate', e.target.value)
+              }
+              placeholder='생년월일 6자리 (YYMMDD)'
+              maxLength={6}
+            />
+          </Field>
+
+          <Field id='phoneNo' label='휴대폰번호' required>
+            <TextInput
+              value={localFormData.phoneNo}
+              onChange={(e) => handleInputChange('phoneNo', e.target.value)}
+              placeholder='01012345678'
+              mask='phone'
+              inputMode='numeric'
+              maxLength={11}
+            />
+          </Field>
+        </div>
+
+        <div>
+          <Field id='loginTypeLevel' label='인증 방법' required>
+            <button
+              type='button'
+              className={styles.authMethodButton}
+              onClick={() => setIsAuthMethodModalOpen(true)}
             >
-              <option value=''>통신사 선택</option>
-              <option value='0'>SKT</option>
-              <option value='1'>KT</option>
-              <option value='2'>LG U+</option>
-            </FormSelect>
-          </FormField>
-        )}
-
-        <FormField label='전화번호' required>
-          <FormInput
-            type='tel'
-            name='phoneNo'
-            value={formData.phoneNo}
-            onChange={handleInputChange}
-            placeholder='필수: 전화번호'
-            required
-          />
-        </FormField>
-
-        <FormField label='증명구분'>
-          <FormSelect
-            name='proofType'
-            value={formData.proofType}
-            onChange={handleInputChange}
-          >
-            <option value='B0006'>대금수령</option>
-            <option value='B0007'>기타</option>
-          </FormSelect>
-        </FormField>
-
-        <FormField label='제출처'>
-          <FormSelect
-            name='submitTargets'
-            value={formData.submitTargets}
-            onChange={handleInputChange}
-          >
-            <option value='01'>금융기관</option>
-            <option value='02'>관공서</option>
-            <option value='03'>조합/협회</option>
-            <option value='04'>거래처</option>
-            <option value='05'>학교</option>
-            <option value='99'>기타</option>
-          </FormSelect>
-        </FormField>
-
-        {/* 추가 설정 아코디언 */}
-        <div className={styles.accordionContainer}>
-          <button
-            type='button'
-            onClick={toggleExpanded}
-            className={styles.accordionHeader}
-            aria-expanded={isExpanded}
-          >
-            <span className={styles.accordionTitle}>📋 추가 설정</span>
-            <span className={styles.accordionIcon}>
-              {isExpanded ? '▼' : '▶'}
-            </span>
-          </button>
-
-          {isExpanded && (
-            <div className={styles.accordionContent}>
-              {/* 신청구분 및 의뢰인구분 */}
-              <div className={styles.gridTwo}>
-                <FormField label='신청 구분'>
-                  <FormSelect
-                    name='applicationType'
-                    value={formData.applicationType}
-                    onChange={handleInputChange}
-                  >
-                    <option value='01'>본인</option>
-                    <option value='02'>세무대리인</option>
-                  </FormSelect>
-                </FormField>
-
-                <FormField label='의뢰인 구분'>
-                  <FormSelect
-                    name='clientTypeLevel'
-                    value={formData.clientTypeLevel}
-                    onChange={handleInputChange}
-                  >
-                    <option value='1'>개인</option>
-                    <option value='2'>개인 단체</option>
-                    <option value='3'>사업자</option>
-                  </FormSelect>
-                </FormField>
-              </div>
-
-              {/* 사업자번호/주민등록번호 및 생년월일 */}
-              <div className={styles.gridTwo}>
-                <FormField label='사업자번호/주민등록번호'>
-                  <FormInput
-                    type='text'
-                    name='identity'
-                    value={formData.identity}
-                    onChange={handleInputChange}
-                    placeholder='사업자번호 또는 주민등록번호'
-                    maxLength={13}
+              {localFormData.loginTypeLevel ? (
+                <div className={styles.selectedMethod}>
+                  <Image
+                    src={
+                      authMethods.find(
+                        (m) => m.id === localFormData.loginTypeLevel
+                      )?.image || ''
+                    }
+                    alt={
+                      authMethods.find(
+                        (m) => m.id === localFormData.loginTypeLevel
+                      )?.name || ''
+                    }
+                    width={24}
+                    height={24}
                   />
-                </FormField>
-
-                <FormField label='생년월일'>
-                  <FormInput
-                    type='text'
-                    name='birthDate'
-                    value={formData.birthDate}
-                    onChange={handleInputChange}
-                    placeholder='960413'
-                    maxLength={6}
-                  />
-                </FormField>
-              </div>
-            </div>
-          )}
+                  <span>
+                    {
+                      authMethods.find(
+                        (m) => m.id === localFormData.loginTypeLevel
+                      )?.name
+                    }
+                  </span>
+                </div>
+              ) : (
+                <span>간편인증 방법을 선택하세요</span>
+              )}
+            </button>
+          </Field>
         </div>
 
         {error && (
-          <div className={styles.error}>
-            <p>{error}</p>
+          <div className={styles.errorContainer}>
+            <p className={styles.errorText}>{error}</p>
           </div>
         )}
       </FormContainer>
 
-      {/* 간편인증 방법 선택 모달 */}
       <ConfirmModal
         isOpen={isAuthMethodModalOpen}
         title='간편인증 로그인 구분 선택'
         onCancel={handleCloseAuthMethodModal}
-        confirmText='닫기'
+        onConfirm={handleCloseAuthMethodModal}
+        confirmText='결정'
         cancelText='취소'
         icon='info'
-        onConfirm={handleCloseAuthMethodModal}
       >
         <div className={styles.authGrid}>
           {authMethods.map((method) => (
             <div
               key={method.id}
               className={`${styles.authItem} ${
-                formData.loginTypeLevel === method.id
+                localFormData.loginTypeLevel === method.id
                   ? styles.authItemSelected
                   : styles.authItemDefault
               }`}
@@ -571,36 +302,6 @@ export const TaxCertInput = ({
               </div>
             </div>
           ))}
-        </div>
-      </ConfirmModal>
-
-      {/* 2-way 인증 모달 */}
-      <ConfirmModal
-        isOpen={isTwoWayModalOpen}
-        title='추가 인증 필요'
-        onCancel={() => setIsTwoWayModalOpen(false)}
-        confirmText='승인 완료'
-        cancelText='취소'
-        icon='warning'
-        onConfirm={handleTwoWayConfirm}
-        isLoading={issueTaxCertMutation.isPending}
-      >
-        <div className={styles.twoWayContent}>
-          <p className={styles.twoWayMessage}>
-            선택하신 간편인증 방법으로 추가 인증이 필요합니다.
-          </p>
-          <div className={styles.twoWayInfo}>
-            <p>
-              <strong>인증 방법:</strong> {twoWayData?.method || '간편인증'}
-            </p>
-            <p>
-              <strong>타임아웃:</strong> 4분 30초
-            </p>
-            <p className={styles.twoWayWarning}>
-              ⚠️ 인증을 완료하지 않고 승인 버튼을 누르면 2번까지 재시도
-              가능하며, 3번 시도 시 오류가 발생합니다.
-            </p>
-          </div>
         </div>
       </ConfirmModal>
     </>

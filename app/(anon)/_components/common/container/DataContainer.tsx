@@ -15,6 +15,8 @@ interface DataContainerProps {
     refetch: () => void;
   };
   onSuccess?: () => void;
+  activeTab?: 'input' | 'output';
+  onTabChange?: (tab: 'input' | 'output') => void;
 }
 
 export const DataContainer = ({
@@ -23,13 +25,21 @@ export const DataContainer = ({
   outputComponent,
   checkExistsQuery,
   onSuccess,
+  activeTab: externalActiveTab,
+  onTabChange: externalOnTabChange,
 }: DataContainerProps) => {
   const { selectedAddress } = useUserAddressStore();
-  const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
+  const [internalActiveTab, setInternalActiveTab] = useState<
+    'input' | 'output'
+  >('input');
 
-  // 존재 여부 쿼리 결과에 따른 탭 전환
+  // 외부에서 제어하는 경우 외부 상태 사용, 그렇지 않으면 내부 상태 사용
+  const activeTab = externalActiveTab ?? internalActiveTab;
+  const setActiveTab = externalOnTabChange ?? setInternalActiveTab;
+
+  // 존재 여부 쿼리 결과에 따른 탭 전환 (초기 로드 시에만)
   useEffect(() => {
-    if (checkExistsQuery?.data?.success) {
+    if (checkExistsQuery?.data?.success && !checkExistsQuery?.isLoading) {
       const existsData = checkExistsQuery.data.data as { exists: boolean };
       if (existsData?.exists) {
         setActiveTab('output');
@@ -37,7 +47,7 @@ export const DataContainer = ({
         setActiveTab('input');
       }
     }
-  }, [checkExistsQuery?.data]);
+  }, [checkExistsQuery?.data?.success, checkExistsQuery?.isLoading]); // success가 변경되고 로딩이 아닐 때만 실행
 
   // 성공 시 콜백
   const handleSuccess = () => {

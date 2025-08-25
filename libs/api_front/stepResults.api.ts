@@ -3,7 +3,7 @@ import { StepResultData } from './stepResultQueries.api';
 
 // step-results 요청 타입 정의
 export interface StepResultRequest {
-  userAddressId: number;
+  userAddressNickname: string;
   stepNumber: number;
   detail: number;
   jsonDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>;
@@ -37,6 +37,7 @@ class StepResultsApi {
   public async upsertStepResult(
     stepResultData: StepResultRequest
   ): Promise<StepResultResponse> {
+    console.log('stepResultData', stepResultData);
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
     const response = await axiosInstance.post<StepResultResponse>(

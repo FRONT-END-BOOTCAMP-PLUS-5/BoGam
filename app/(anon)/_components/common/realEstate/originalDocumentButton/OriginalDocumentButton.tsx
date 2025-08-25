@@ -15,7 +15,11 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenOriginal = async () => {
-    const data = displayResponse?.data?.realEstateJson?.data;
+    // 기존 데이터 구조 (realEstateJson.data) 또는 새로운 데이터 구조 (data.data)에서 PDF 데이터 찾기
+    const oldData = displayResponse?.data?.realEstateJson?.data;
+    const newData = displayResponse?.data?.data;
+    const data = oldData || newData;
+
     if (
       data &&
       typeof data === 'object' &&
@@ -40,7 +44,10 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
     }
   };
 
-  const data = displayResponse?.data?.realEstateJson?.data;
+  // 기존 데이터 구조 또는 새로운 데이터 구조에서 PDF 데이터 존재 여부 확인
+  const oldData = displayResponse?.data?.realEstateJson?.data;
+  const newData = displayResponse?.data?.data;
+  const data = oldData || newData;
   const hasOriginalData =
     data &&
     typeof data === 'object' &&
