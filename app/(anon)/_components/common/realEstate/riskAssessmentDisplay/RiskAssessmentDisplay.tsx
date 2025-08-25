@@ -73,8 +73,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   useEffect(() => {
     if (isInitialized.current) return;
 
-    console.log('🔍 키워드 상태 초기화 useEffect 실행');
-
     if (initialJsonData) {
       // 저장된 데이터에서 키워드 상태 복원
       const savedKeywordStates: Record<
@@ -114,12 +112,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
   // JSON 데이터 초기화 (checklistItems와 독립적으로 실행)
   useEffect(() => {
-    console.log(
-      '🔍 JSON 데이터 초기화 useEffect 실행 - initialJsonData:',
-      !!initialJsonData,
-      'checklistItems:',
-      checklistItems?.length
-    );
 
     if (initialJsonData) {
       // 기존 currentJsonData가 있으면 유지, 없으면 initialJsonData로 시작
@@ -150,10 +142,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         }
       });
 
-      console.log(
-        '🔍 초기 JSON 데이터 설정 (기존 데이터 유지 + 누락된 항목들 추가):',
-        processedJsonData
-      );
       setCurrentJsonData(processedJsonData);
       setOriginalJsonData(processedJsonData);
     } else {
@@ -176,10 +164,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         }
       });
 
-      console.log(
-        '🔍 초기 JSON 데이터 설정 (새로 생성 - 모든 항목 포함):',
-        newJsonData
-      );
+
       setCurrentJsonData(newJsonData);
       setOriginalJsonData(newJsonData);
     }
@@ -309,15 +294,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           ...currentJsonData,
           [checklistItem.label]: newStatus,
         };
-        console.log(
-          '🔍 체크리스트 변경:',
-          itemId,
-          checked,
-          '→',
-          checklistItem.label,
-          newStatus
-        );
-        console.log('🔍 업데이트된 JSON 데이터:', updatedJsonData);
+
         setCurrentJsonData(updatedJsonData);
       } else {
         const newStatus = checked ? 'match' : 'mismatch';
@@ -326,15 +303,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           ...currentJsonData,
           [itemId]: newStatus,
         };
-        console.log(
-          '🔍 체크리스트 변경 (fallback):',
-          itemId,
-          checked,
-          '→',
-          itemId,
-          newStatus
-        );
-        console.log('🔍 업데이트된 JSON 데이터 (fallback):', updatedJsonData);
+
         setCurrentJsonData(updatedJsonData);
       }
     }
@@ -506,14 +475,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
                             return;
                           }
 
-                          console.log(
-                            '체크박스 클릭:',
-                            item.id,
-                            '현재 상태:',
-                            item.checked,
-                            '새로운 상태:',
-                            e.target.checked
-                          );
+
                           if (onChecklistItemChange) {
                             onChecklistItemChange(item.id, e.target.checked);
                           }

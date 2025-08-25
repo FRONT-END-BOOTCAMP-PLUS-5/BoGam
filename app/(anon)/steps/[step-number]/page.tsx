@@ -95,10 +95,7 @@ export default function MiddleStepPage() {
   if (!hasInitialized.current && typeof window !== 'undefined') {
     hasInitialized.current = true;
     
-    console.log('=== 세션스토리지 값 확인 ===');
     const savedPage = sessionStorage.getItem('saved-page');
-    
-    console.log('saved-page:', savedPage);
     
     // saved-page가 있으면 페이지 복원
     if (savedPage !== null) {

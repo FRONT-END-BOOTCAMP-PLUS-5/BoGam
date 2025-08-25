@@ -81,11 +81,7 @@ export default function ModalContent() {
           );
           setStepContentData(contentModule.default);
           setDataType(contentModule.default.dataType || 'default');
-        } catch (error) {
-          console.log(
-            `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`,
-            error
-          );
+        } catch {
           setDataType('default');
         }
       };
@@ -136,7 +132,6 @@ export default function ModalContent() {
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
       default:
-        console.log('renderSwiperContent - default case, dataType:', dataType);
         return null;
     }
   };
@@ -195,12 +190,6 @@ export default function ModalContent() {
     stepContentData.dataType === 'CombinedContent' &&
     stepContentData.sections
   ) {
-    const handlePageChange = (page: number) => {
-      setCurrentPage(page);
-      if (swiperRef.current) {
-        swiperRef.current.slideTo(page);
-      }
-    };
 
     return (
       <>

@@ -48,8 +48,6 @@ export const BrokerOutput = ({
     userAddressNickname: selectedAddress?.nickname || '',
   });
 
-  console.log('🔍 savedRiskData', savedRiskData);
-
   // 위험도 검사 저장 훅
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
     if (data.success) {
@@ -239,16 +237,6 @@ export const BrokerOutput = ({
       </div>
     );
   }
-
-  console.log('🔍 calculatedRiskAssessment', calculatedRiskAssessment);
-  console.log('🔍 riskAssessment', riskAssessment);
-  console.log('🔍 brokerRiskAssessment', brokerRiskAssessment);
-  console.log('🔍 savedRiskData', savedRiskData);
-  console.log(
-    '🔍 brokerRiskAssessment.checklistItems',
-    brokerRiskAssessment.checklistItems
-  );
-  console.log('🔍 checklistItems (updated)', checklistItems);
 
   return (
     <div>
