@@ -41,7 +41,7 @@ class FrontendAxiosInstance {
     // 환경에 따른 baseURL 설정
     this.baseURL =
       process.env.NODE_ENV === 'production'
-        ? process.env.NEXT_PUBLIC_API_BASE_URL || 'https://www.lion5-bogam.site'
+        ? process.env.NEXT_PUBLIC_API_BASE_URL || 'https://lion5-bogam.site'
         : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
 
     this.axiosInstance = axios.create({
@@ -97,11 +97,6 @@ class FrontendAxiosInstance {
     // 응답 인터셉터
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        console.log(
-          `[Frontend API Response] ${(response as { status: number }).status} ${
-            (response as { config?: { url?: string } }).config?.url
-          }`
-        );
         return response;
       },
       (error: unknown) => {

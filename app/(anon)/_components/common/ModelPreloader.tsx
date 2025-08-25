@@ -13,8 +13,6 @@ export default function ModelPreloader({ onComplete }: ModelPreloaderProps) {
 
     const preloadModels = async () => {
       try {
-        console.log('🚀 3D 모델 파일 백그라운드 다운로드 시작...');
-        
         // 이미 다운로드된 파일이 있는지 확인
         if ('caches' in window) {
           const cache = await caches.open('3d-models');
@@ -30,7 +28,6 @@ export default function ModelPreloader({ onComplete }: ModelPreloaderProps) {
           );
           
           if (allCached) {
-            console.log('🎉 모든 3D 모델이 이미 캐시되어 있습니다!');
             if (isMounted) {
               onComplete?.();
             }
@@ -49,8 +46,6 @@ export default function ModelPreloader({ onComplete }: ModelPreloaderProps) {
           if (!isMounted) return null;
           
           try {
-            console.log(`📦 ${modelUrl} 백그라운드 다운로드 중...`);
-            
             // axios로 파일을 받아서 브라우저 캐시에 저장
             const response = await axios.get(modelUrl, { 
               responseType: 'arraybuffer'
@@ -65,7 +60,6 @@ export default function ModelPreloader({ onComplete }: ModelPreloaderProps) {
               await cache.put(modelUrl, new Response(arrayBuffer));
             }
             
-            console.log(`✅ ${modelUrl} 다운로드 완료 (${(arrayBuffer.byteLength / 1024 / 1024).toFixed(2)}MB)`);
             return { url: modelUrl, data: arrayBuffer };
           } catch (error: unknown) {
             console.error(`❌ ${modelUrl} 다운로드 실패:`, error);
@@ -76,13 +70,11 @@ export default function ModelPreloader({ onComplete }: ModelPreloaderProps) {
         await Promise.all(fetchPromises);
         
         if (isMounted) {
-          console.log('🎉 모든 3D 모델 파일 백그라운드 다운로드 완료!');
           onComplete?.();
         }
         
       } catch (error: unknown) {
         if (error instanceof Error && error.name === 'AbortError') {
-          console.log('⏹️ 3D 모델 다운로드 취소됨');
           return;
         }
         

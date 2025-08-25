@@ -54,37 +54,20 @@ export default function InfoToolTip({
     const gap = 3; // 글씨와 툴팁 사이 간격
     const textHeight = 16; // 글씨 높이 (16px)
     
-    // 디버깅 정보 출력
-    console.log('Tooltip positioning debug:', {
-      containerRect: {
-        top: containerRect.top,
-        bottom: containerRect.bottom,
-        left: containerRect.left,
-        width: containerRect.width
-      },
-      viewport: { height: viewportHeight, width: viewportWidth },
-      tooltip: { height: tooltipHeightPx, width: estimatedTooltipWidth * 16 },
-      spaces: { below: spaceBelow, above: spaceAbove },
-      gap,
-      textHeight
-    });
-    
+
     // 기본적으로 아래쪽에 배치 시도
     if (spaceBelow >= tooltipHeightPx + gap) {
       // 아래쪽에 충분한 공간이 있으면 아래에 배치
       top = containerRect.bottom + gap;
       arrowDirection = 'bottom';
-      console.log('Placing tooltip below text');
     } else if (spaceAbove >= tooltipHeightPx + gap + textHeight) {
       // 위쪽에 충분한 공간이 있으면 위에 배치 (글씨 높이만큼 추가 간격)
       top = containerRect.top - tooltipHeightPx - gap - textHeight*4.5;
       arrowDirection = 'top';
-      console.log('Placing tooltip above text');
     } else {
       // 위아래 모두 공간이 부족하면 아래에 배치 (스크롤 가능)
       top = containerRect.bottom + gap;
       arrowDirection = 'bottom';
-      console.log('Placing tooltip below text (forced)');
     }
 
     // 가로 위치 계산 (중앙 정렬)
@@ -99,7 +82,6 @@ export default function InfoToolTip({
       )
     );
 
-    console.log('Final tooltip position:', { top, left, arrowDirection });
     setTooltipPosition({ top, left, arrowDirection });
   }, [definition]);
 

@@ -44,11 +44,8 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
   // JSON 파일에서 메시지와 링크 데이터 로드
   useEffect(() => {
-    console.log('🔍 JSON 파일 로드 useEffect 실행:', { stepNumber, detail });
-
     const loadContentData = async () => {
       if (!stepNumber || !detail) {
-        console.log('❌ stepNumber 또는 detail 없음');
         return;
       }
 
@@ -56,7 +53,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
         const contentModule = await import(
           `./data/step-${stepNumber}-${detail}-contents.json`
         );
-        console.log('✅ JSON 파일 로드 성공:', contentModule.default);
 
         // CombinedContent 타입인 경우 RadioGroup 섹션을 찾아서 처리
         if (contentModule.default.dataType === 'CombinedContent') {
@@ -71,13 +67,8 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
               data: [radioGroupSection.data], // 2차원 배열로 변환
               sections: contentModule.default.sections, // sections 정보도 저장
             };
-            console.log(
-              '✅ CombinedContent에서 RadioGroup 데이터 추출:',
-              transformedData
-            );
             setContentData(transformedData);
           } else {
-            console.log('❌ RadioGroup 섹션을 찾을 수 없음');
             setContentData(contentModule.default);
           }
         } else {
@@ -85,7 +76,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           setContentData(contentModule.default);
         }
       } catch (error) {
-        console.log('❌ Content data not found:', error);
+        // Content data not found
       }
     };
 
@@ -166,7 +157,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
         // 동적으로 전체 질문 수 계산하여 로그 출력
         const totalQuestions = Object.keys(jsonDetails).length;
-        console.log(`✅ 저장 시작 (전체 ${totalQuestions}문항):`, jsonDetails);
+
       } catch (error) {
         console.error('❌ 저장 실패:', error);
       }
@@ -246,7 +237,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       const logMessage = isError
         ? '400 에러 시 초기화 진행'
         : '빈 jsonDetails 시 초기화 진행';
-      console.log(`🔍 RadioGroup: ${logMessage}`, uncheckedAnswers);
 
       // POST 요청
       saveToDatabase(uncheckedAnswers);
@@ -269,28 +259,17 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
   // 전체 결과 상태 계산 (모든 페이지 데이터 종합)
   const calculateOverallResult = useCallback(() => {
-    console.log('🔍 calculateOverallResult 호출됨');
-    console.log('🔍 contentData:', contentData);
-    console.log('🔍 stepData:', stepData);
-
     // CombinedContent 타입인 경우 sections 사용, 아니면 data 사용
     const dataSource =
       contentData?.dataType === 'CombinedContent'
         ? contentData.sections
         : contentData?.data;
 
-    console.log('🔍 dataType:', contentData?.dataType);
-    console.log('🔍 dataSource:', dataSource);
-    console.log('🔍 contentData.sections:', contentData?.sections);
-    console.log('🔍 contentData.data:', contentData?.data);
-
     if (!dataSource) {
-      console.log('❌ dataSource 없음 (data 또는 sections)');
       return { allAnswered: false, hasMismatch: false };
     }
 
     if (!jsonDetails) {
-      console.log('❌ jsonDetails 없음');
       return { allAnswered: false, hasMismatch: false };
     }
 
@@ -322,18 +301,12 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
         .map((section) => section.title as string);
     }
 
-    console.log('🔍 전체 질문 수:', totalQuestions);
-    console.log('🔍 모든 질문 제목:', allQuestionTitles);
-
     // 각 질문의 답변 상태 상세 확인
-    console.log('🔍 jsonDetails 상세:', jsonDetails);
 
     const questionStatuses = allQuestionTitles.map((title) => {
       const status = title ? jsonDetails[title] : null;
-      console.log(`🔍 질문 "${title}" 상태:`, status);
       return { title, status };
     });
-    console.log('🔍 모든 질문 상태:', questionStatuses);
 
     // 모든 질문이 답변되었는지 확인 (unchecked가 아닌지)
     const allAnswered = allQuestionTitles.every((title) => {
@@ -341,7 +314,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
         title &&
         jsonDetails[title] &&
         jsonDetails[title] !== 'unchecked';
-      console.log(`🔍 질문 "${title}" 답변 여부:`, hasAnswer);
       return hasAnswer;
     });
 
@@ -350,12 +322,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
       (title) => title && jsonDetails[title] === 'mismatch'
     );
 
-    console.log('🔍 최종 결과:', {
-      totalQuestions,
-      allAnswered,
-      hasMismatch,
-      jsonDetails: jsonDetails,
-    });
+
 
     return { allAnswered, hasMismatch };
   }, [contentData, stepData]);
@@ -476,15 +443,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
             (section) => section.title === data[0]?.title
           );
 
-        console.log('🔍 결과 표시 조건 체크:', {
-          allAnswered,
-          contentData: !!contentData,
-          isLastPage,
-          currentPageTitle: data[0]?.title,
-          lastPageTitles: contentData?.data?.[contentData.data.length - 1]?.map(
-            (s) => s.title
-          ),
-        });
+
 
         // 마지막 페이지이고 모든 질문이 답변되었을 때만 결과 표시
         if (allAnswered && contentData && isLastPage) {

@@ -13,8 +13,6 @@ export const useStepResultMutations = () => {
       queryClient.invalidateQueries({ queryKey: ['stepResults'] });
       queryClient.invalidateQueries({ queryKey: ['userAddresses'] });
       
-      // 콘솔에 성공 메시지 출력 (개발용)
-      console.log('Step result saved successfully:', data.message);
     },
     onError: (error) => {
       console.error('Failed to save step result:', error);
