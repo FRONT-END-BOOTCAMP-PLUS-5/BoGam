@@ -335,20 +335,22 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           
           {/* 선택에 따른 메시지 표시 */}
           {selectedAnswers[sectionIndex] && selectedAnswers[sectionIndex] !== 'unchecked' && selectedAnswers[sectionIndex] !== '' && (
-            (selectedAnswers[sectionIndex] === 'yes' && section.messages) || 
-            (selectedAnswers[sectionIndex] === 'no') ? (
+            (selectedAnswers[sectionIndex] === 'yes' && section.yesMessages) || 
+            (selectedAnswers[sectionIndex] === 'no' && section.noMessages) ? (
               <div className={styles.messagesContainer}>
-                {selectedAnswers[sectionIndex] === 'yes' && section.messages && (
-                  // '예' 선택 시 경고 메시지
-                  section.messages.map((message: string, messageIndex: number) => (
+                {selectedAnswers[sectionIndex] === 'yes' && section.yesMessages && (
+                  // '예' 선택 시 yesMessages 표시
+                  section.yesMessages.map((message: string, messageIndex: number) => (
                     <div key={messageIndex} className={styles.messageItem}>{message}</div>
                   ))
                 )}
-                {selectedAnswers[sectionIndex] === 'no' && (
-                  // '아니오' 선택 시 기본 메시지
-                  <div className={styles.messageItem}>안전합니다.</div>
+                {selectedAnswers[sectionIndex] === 'no' && section.noMessages && (
+                  // '아니오' 선택 시 noMessages 표시
+                  section.noMessages.map((message: string, messageIndex: number) => (
+                    <div key={messageIndex} className={styles.messageItem}>{message}</div>
+                  ))
                 )}
-                {section.link && (
+                {section.link && selectedAnswers[sectionIndex] === 'no' && (
                   <div className={styles.linkContainer}>
                     <Link 
                       href={section.link} 
