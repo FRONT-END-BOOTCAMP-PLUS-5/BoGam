@@ -39,8 +39,6 @@ export const styles = {
   statCount: "text-lg font-semibold text-brand-black",
   
   stepContent: "p-4",
-  withdrawButton: "flex justify-center pt-6",
-  withdrawBtn: "px-6 py-2 text-sm text-brand-dark-gray hover:text-brand-black transition-colors underline",
 
   // 에러 상태 스타일
   errorContainer: "flex items-center justify-center min-h-screen",
@@ -48,5 +46,5 @@ export const styles = {
   errorIcon: "text-red-500 text-6xl mb-4",
   errorTitle: "text-xl font-bold text-brand-black mb-2",
   errorMessage: "text-brand-dark-gray mb-4",
-  errorButton: "px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-90 transition-colors"
+  errorButton: "px-4 py-2 bg-brand text-brand-white rounded-lg hover:bg-brand-90 transition-colors"
 };
