@@ -125,7 +125,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
 
     // API 응답 데이터 구조 확인 (첫 번째 데이터만)
     if (transactionData.length > 0) {
-      console.log('🔍 API 응답 데이터 구조:', transactionData[0]);
+      // API 응답 데이터 구조 확인
     }
 
     const areaGroups: { [key: string]: TransactionData[] } = {};

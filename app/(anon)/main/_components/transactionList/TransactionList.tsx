@@ -152,8 +152,6 @@ export const TransactionList: React.FC = () => {
               onClick={() => {
                 if (item.location) {
                   handleTransactionClick(item.location);
-                } else {
-                  console.log('실거래가 클릭 - 좌표 정보 없음');
                 }
               }}
               style={{ cursor: item.location ? 'pointer' : 'default' }}
