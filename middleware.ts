@@ -7,39 +7,30 @@ export async function middleware(req: NextRequest) {
 
   // 1. API 경로 처리 - CORS
   if (pathname.startsWith('/api/')) {
-    const response = NextResponse.next();
-    
-    // CORS 헤더 설정
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set(
-      'Access-Control-Allow-Methods',
-      'GET, POST, PUT, DELETE, OPTIONS, PATCH'
-    );
-    response.headers.set(
-      'Access-Control-Allow-Headers',
-      'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name'
-    );
-    response.headers.set('Access-Control-Allow-Credentials', 'true');
-    response.headers.set('Access-Control-Max-Age', '86400');
-
-    // Preflight 요청 처리
+    // Preflight 요청 처리 (OPTIONS 메서드)
     if (req.method === 'OPTIONS') {
       const preflightResponse = new NextResponse(null, { status: 200 });
+      
+      // 모든 도메인 허용
       preflightResponse.headers.set('Access-Control-Allow-Origin', '*');
-      preflightResponse.headers.set(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, OPTIONS, PATCH'
-      );
-      preflightResponse.headers.set(
-        'Access-Control-Allow-Headers',
-        'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name'
-      );
-      preflightResponse.headers.set('Access-Control-Allow-Credentials', 'true');
+      preflightResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD');
+      preflightResponse.headers.set('Access-Control-Allow-Headers', '*');
       preflightResponse.headers.set('Access-Control-Max-Age', '86400');
+      preflightResponse.headers.set('Access-Control-Allow-Credentials', 'false');
       
       return preflightResponse;
     }
 
+    // 일반 API 요청 처리
+    const response = NextResponse.next();
+    
+    // CORS 헤더 설정
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD');
+    response.headers.set('Access-Control-Allow-Headers', '*');
+    response.headers.set('Access-Control-Max-Age', '86400');
+    response.headers.set('Access-Control-Allow-Credentials', 'false');
+    
     return response;
   }
 

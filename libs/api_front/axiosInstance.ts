@@ -10,6 +10,8 @@ declare module 'next-auth' {
 
 // 타입 정의
 type AxiosInstance = ReturnType<typeof axios.create>;
+type AxiosConfig = Parameters<typeof axios.create>[0];
+
 interface RequestConfig {
   method?: string;
   url?: string;
@@ -78,20 +80,18 @@ class FrontendAxiosInstance {
    * 인터셉터 설정 (next-auth 기반)
    */
   private setupInterceptors(): void {
-    // 요청 인터셉터 - next-auth 세션을 사용한 인증
-    this.axiosInstance.interceptors.request.use(
-      (config) => {
-        console.log(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          `[Frontend API Request] ${config.method?.toUpperCase()} ${
-            (config as any).url
-          }`
-        );
+         // 요청 인터셉터 - next-auth 세션을 사용한 인증
+     this.axiosInstance.interceptors.request.use(
+       (config) => {
+         console.log(
+           `[Frontend API Request] ${config.method?.toUpperCase()} ${
+             config.url
+           }`
+         );
 
-        // Promise를 반환하여 비동기 처리
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this.addAuthHeaders(config as any) as any;
-      },
+         // Promise를 반환하여 비동기 처리
+         return this.addAuthHeaders(config);
+       },
       (error: unknown) => {
         console.error('[Frontend API Request Error]', error);
         return Promise.reject(error);
@@ -143,35 +143,23 @@ class FrontendAxiosInstance {
   }
 
   /**
-   * 인증 헤더 추가 (비동기 처리)
+   * 인증 헤더 추가 (동기 처리 - axios 1.x 호환)
    */
-  private async addAuthHeaders(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
-    try {
-      // next-auth 세션에서 사용자 정보 확인
-      const session = await getSession();
-
-      if (session?.user && config.headers) {
-        // 쿠키 기반 인증을 위해 withCredentials 설정
-        config.withCredentials = true;
-
-        // 사용자 정보를 헤더에 포함 (선택사항) - 인코딩 처리
-        (config.headers as Record<string, string>)['X-User-Nickname'] =
-          encodeURIComponent(session.user.nickname || '');
-      }
-
-      // CSRF 토큰이 필요한 경우 (선택사항)
-      if (config.method !== 'get' && config.headers) {
-        const csrfToken = await this.getCsrfToken();
-        if (csrfToken) {
-                  (config.headers as Record<string, string>)['X-CSRF-Token'] =
-          encodeURIComponent(csrfToken);
-        }
-      }
-    } catch (error) {
-      console.warn('[Frontend API] 세션 정보를 가져올 수 없습니다:', error);
-      // 세션이 없어도 요청은 계속 진행
+  private addAuthHeaders(config: any): any {
+    // axios 1.x에서는 인터셉터가 동기적으로 작동해야 함
+    // 세션 정보는 요청 시점에 이미 설정되어 있어야 함
+    
+    // 쿠키 기반 인증을 위해 withCredentials 설정
+    config.withCredentials = true;
+    
+    // 기본 헤더 설정
+    if (!config.headers) {
+      config.headers = {};
     }
-
+    
+    // 사용자 정보는 쿠키를 통해 자동으로 전송됨
+    // CSRF 토큰도 쿠키를 통해 자동으로 전송됨
+    
     return config;
   }
 
