@@ -57,9 +57,12 @@ export interface RadioGroupSection extends BaseContentSection {
 // Table 전용 인터페이스
 export interface TableSection extends BaseContentSection {
   type: 'Table';
+  columnTitles: string[];
   data: Array<{
-    left: string;
-    right?: string;
+    region: string;
+    depositRange: string;
+    priorityAmount: string;
+    option: string;
   }>;
 }
 
@@ -109,11 +112,14 @@ export interface CombinedContentProps {
   showDividers?: boolean;
 }
 
-// ModalContent용 인터페이스
+// StepContentData는 다양한 콘텐츠 타입을 지원
 export interface StepContentData {
-  dataType: string;
-  data: ContentSection[][];
-  sections?: ContentSection[]; // CombinedContent용
+  dataType: 'TextOnly' | 'RadioGroup' | 'Table' | 'List' | 'DataGrid' | 'CheckListGroup' | 'CombinedContent';
+  title?: string;
+  columnTitles?: string[];
+  description?: string[];
+  data?: ContentSection[][];
+  sections?: ContentSection[];
 }
 
 // 기존 ContentSection과의 호환성을 위한 타입
