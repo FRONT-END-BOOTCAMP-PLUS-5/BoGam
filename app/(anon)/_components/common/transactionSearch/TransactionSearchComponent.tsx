@@ -13,6 +13,7 @@ import Button from '@/(anon)/_components/common/button/Button';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/TabNavigation';
 import { styles } from './TransactionSearchComponent.styles';
 
 // 실제 API 응답 구조에 맞춘 타입
@@ -47,7 +48,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
   const [danjiName, setDanjiName] = useState('');
   const [selectedType, setSelectedType] = useState('0'); // 0: 아파트, 1: 연립/다세대, 2: 오피스텔
   const [showDanjiModal, setShowDanjiModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'search' | 'results'>('search');
+  const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
   const [targetArea, setTargetArea] = useState(''); // 거래하려는 집 전용면적
   const [targetPrice, setTargetPrice] = useState(''); // 전세 거래금액
 
@@ -112,7 +113,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
   // 트랜잭션 데이터가 완료되면 결과 탭으로 이동하고 분석 결과 저장
   useEffect(() => {
     if (transactionData.length > 0) {
-      setActiveTab('results');
+      setActiveTab('output');
       // 검색 완료 후 한 번만 분석 결과 저장
       saveAnalysisResult();
     }
@@ -323,31 +324,14 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
   return (
     <div className={`transaction-search-component ${className}`}>
       {/* 탭 네비게이션 */}
-      <div className={styles.tabNavigation}>
-        <div className={styles.tabContainer}>
-          <button
-            onClick={() => setActiveTab('search')}
-            className={`${styles.tab} ${
-              activeTab === 'search' ? styles.activeTab : styles.inactiveTab
-            }`}
-          >
-            조회
-          </button>
-          <button
-            onClick={() => setActiveTab('results')}
-            className={`${styles.tab} ${
-              activeTab === 'results' ? styles.activeTab : styles.inactiveTab
-            }`}
-            disabled={transactionData.length === 0}
-          >
-            결과 ({transactionData.length})
-          </button>
-        </div>
-      </div>
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
               {/* 탭 컨텐츠 */}
         <div className={styles.tabContent}>
-          {activeTab === 'search' ? (
+          {activeTab === 'input' ? (
             /* 검색 폼 */
             <div className={styles.searchForm}>
               <h3 className={styles.formTitle}>실거래가 조회</h3>
@@ -460,7 +444,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
               <div className="flex justify-between items-center mb-6">
                 <h3 className={styles.resultsTitle}>검색 결과 ({transactionData.length}건)</h3>
                 <Button
-                  onClick={() => setActiveTab('search')}
+                  onClick={() => setActiveTab('input')}
                   variant='secondary'
                   className={styles.newSearchButton}
                 >
