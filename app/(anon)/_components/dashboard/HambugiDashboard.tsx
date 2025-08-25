@@ -6,7 +6,7 @@ import { signOut } from 'next-auth/react';
 import { useUserStore } from '@libs/stores/userStore';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRootStep } from '@libs/stores/rootStepStore';
-import { useStepResults } from '@/hooks/useStepResults';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import DashboardHeader from './DashboardHeader';
 import UserInfo from './UserInfo';
 import StepNavigation from './StepNavigation';
@@ -21,6 +21,17 @@ interface StepDetail {
   status: 'match' | 'mismatch' | 'unchecked';
   actionLink?: string;
   actionText?: string;
+}
+
+interface StepResultItem {
+  id: number;
+  userAddressId: number;
+  stepId: number;
+  stepNumber: number;
+  mismatch: number;
+  match: number;
+  unchecked: number;
+  detail: number;
 }
 
 interface HambugiDashboardProps {
@@ -40,8 +51,16 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   const { selectedAddress } = useUserAddressStore();
   
   // Step Results 데이터 가져오기
-  const { guideSteps, isLoading, error } = useStepResults(selectedAddress?.nickname);
-
+  const { data: stepResultsData, isLoading, isError } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: '',
+    detail: ''
+  });
+  
+  // guideSteps 데이터 처리 - data가 배열인 경우 그대로 사용, 객체인 경우 results 배열 추출
+  const guideSteps = Array.isArray(stepResultsData) ? stepResultsData : 
+    (stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : []);
+  console.log('guideSteps', guideSteps);
   // currentStep에 따라 isActive 동적 설정
   const steps = useMemo(
     () => [
@@ -100,7 +119,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     const details: Record<number, { title: string; details: StepDetail[] }> = {};
 
     // 각 스텝별로 데이터 그룹화
-    guideSteps.forEach((step) => {
+    guideSteps.forEach((step: StepResultItem) => {
       const stepNumber = step.stepNumber;
       if (!details[stepNumber]) {
         details[stepNumber] = {
@@ -136,14 +155,14 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   }
 
   // 에러 상태 처리
-  if (error) {
+  if (isError) {
     return (
       <div className={styles.container}>
         <div className={styles.errorContainer}>
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>{error}</p>
+            <p className={styles.errorMessage}>데이터를 불러오는데 실패했습니다.</p>
             <button 
               onClick={() => window.location.reload()} 
               className={styles.errorButton}

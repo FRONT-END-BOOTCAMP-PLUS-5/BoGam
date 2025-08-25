@@ -6,15 +6,24 @@ import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/Add
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
 import { styles } from './page.styles';
-import { useStepResults } from '@/hooks/useStepResults';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import Profile from '@/(anon)/_components/common/profile/Profile';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
   const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
-  const { guideSummary, guideSteps, isLoading, error } = useStepResults(selectedAddress?.nickname);
+  const { data: stepResultsData, isLoading, isError } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: '',
+    detail: ''
+  });
 
+  // guideSteps와 guideSummary 데이터 처리
+  const guideSteps = Array.isArray(stepResultsData) ? stepResultsData : 
+    (stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : []);
+  const guideSummary = stepResultsData && typeof stepResultsData === 'object' && 'summary' in stepResultsData ? (stepResultsData as any).summary : { match: 0, mismatch: 0, unchecked: 0 };
+  console.log('guideSummary', guideSummary);
   // 로딩 상태 처리
   if (isLoading) {
     return (
@@ -31,7 +40,7 @@ export default function MyPage() {
   }
 
   // 에러 상태 처리
-  if (error) {
+  if (isError) {
     return (
       <div className={styles.container}>
         <div className={styles.gradientBackground}></div>
@@ -39,7 +48,7 @@ export default function MyPage() {
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>{error}</p>
+            <p className={styles.errorMessage}>데이터를 불러오는데 실패했습니다.</p>
             <button 
               onClick={() => window.location.reload()} 
               className={styles.errorButton}
@@ -91,9 +100,9 @@ export default function MyPage() {
 
         {/* 가이드 결과 요약 */}
         <GuideResultSummary
-          match={guideSummary.match}
-          mismatch={guideSummary.mismatch}
-          unchecked={guideSummary.unchecked}
+          match={guideSummary.totalMatch}
+          mismatch={guideSummary.totalMismatch}
+          unchecked={guideSummary.totalUnchecked}
         />
 
         {/* 가이드 결과 보기 */}
