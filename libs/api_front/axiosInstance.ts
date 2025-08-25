@@ -41,7 +41,7 @@ class FrontendAxiosInstance {
     // 환경에 따른 baseURL 설정
     this.baseURL =
       process.env.NODE_ENV === 'production'
-        ? process.env.NEXT_PUBLIC_API_BASE_URL || 'https://www.lion5-bogam.site'
+        ? process.env.NEXT_PUBLIC_API_BASE_URL || 'https://lion5-bogam.site'
         : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
 
     this.axiosInstance = axios.create({
