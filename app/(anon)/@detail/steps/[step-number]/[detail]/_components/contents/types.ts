@@ -147,5 +147,7 @@ export interface LegacyContentSection {
     fullWidth?: boolean;
   }>;
   messages?: string[];
+  yesMessages?: string[];
+  noMessages?: string[];
   link?: string;
 }
