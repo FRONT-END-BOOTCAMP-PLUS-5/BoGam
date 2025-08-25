@@ -5,6 +5,7 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
+import WithdrawButton from './_components/WithdrawButton';
 import { styles } from './page.styles';
 import { useStepResults } from '@/hooks/useStepResults';
 import Profile from '@/(anon)/_components/common/profile/Profile';
@@ -57,7 +58,7 @@ export default function MyPage() {
       {/* 그라데이션 배경 */}
       <div className={styles.gradientBackground}></div>
       
-      {/* 프로필 헤더 (임시) */}
+      {/* 프로필 헤더 */}
       <div className={styles.profileHeader}>
         <div className={styles.profileContent}>
           <Profile size="md" />
@@ -102,11 +103,7 @@ export default function MyPage() {
         />
 
         {/* 회원탈퇴 버튼 */}
-        <div className={styles.withdrawButton}>
-          <button className={styles.withdrawBtn}>
-            회원탈퇴
-          </button>
-        </div>
+        <WithdrawButton />
       </div>
     </div>
   );
