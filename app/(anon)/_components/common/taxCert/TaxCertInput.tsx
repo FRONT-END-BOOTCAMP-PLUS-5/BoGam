@@ -220,7 +220,6 @@ export const TaxCertInput = ({
               placeholder='01012345678'
               mask='phone'
               inputMode='numeric'
-              maxLength={11}
             />
           </Field>
         </div>
