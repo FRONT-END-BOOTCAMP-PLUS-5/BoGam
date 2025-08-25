@@ -441,7 +441,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
         ) : (
                      /* 검색 결과 */
                        <div className={styles.searchResults}>
-              <div className="flex justify-between items-center mb-6">
+              <div className={styles.resultsHeader}>
                 <h3 className={styles.resultsTitle}>검색 결과 ({transactionData.length}건)</h3>
                 <Button
                   onClick={() => setActiveTab('input')}
@@ -455,39 +455,39 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
               {/* 분석 카드 */}
               {renderAnalysisCard()}
 
-             {/* 데이터가 없을 때 */}
-             {transactionData.length === 0 && (
-               <div className="text-center py-12">
-                 <div className="text-gray-500 text-lg mb-4">
-                   아직 검색 결과가 없습니다.
-                 </div>
-                 <div className="text-gray-400 text-sm">
-                   조회 탭에서 실거래가를 검색해보세요.
-                 </div>
-               </div>
-             )}
+              {/* 데이터가 없을 때 */}
+              {transactionData.length === 0 && (
+                <div className={styles.emptyState}>
+                  <div className={styles.emptyStateTitle}>
+                    아직 검색 결과가 없습니다.
+                  </div>
+                  <div className={styles.emptyStateSubtitle}>
+                    조회 탭에서 실거래가를 검색해보세요.
+                  </div>
+                </div>
+              )}
 
-                                       {/* 전용면적별 평균가 */}
-               {averagePricesByArea.length > 0 && (
-                 <div className={styles.averagePrices}>
-                   <h4 className="text-lg font-semibold text-gray-800 mb-3">전용면적별 평균가</h4>
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                     {averagePricesByArea.map((item) => (
-                       <div key={item.area} className={styles.averagePriceCard}>
-                         <div className="text-center">
-                           <div className={styles.averagePriceArea}>{item.area}㎡</div>
-                           <div className={styles.averagePriceValue}>
-                             {formatPrice(item.averagePrice)}
-                           </div>
-                           <div className={styles.averagePriceCount}>
-                             {item.count}건 거래
-                           </div>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-               )}
+                {/* 전용면적별 평균가 */}
+                {averagePricesByArea.length > 0 && (
+                  <div className={styles.averagePrices}>
+                    <h4 className={styles.averagePricesTitle}>전용면적별 평균가</h4>
+                    <div className={styles.averagePricesGrid}>
+                      {averagePricesByArea.map((item) => (
+                        <div key={item.area} className={styles.averagePriceCard}>
+                          <div className={styles.averagePriceContent}>
+                            <div className={styles.averagePriceArea}>{item.area}㎡</div>
+                            <div className={styles.averagePriceValue}>
+                              {formatPrice(item.averagePrice)}
+                            </div>
+                            <div className={styles.averagePriceCount}>
+                              {item.count}건 거래
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
            </div>
         )}
       </div>

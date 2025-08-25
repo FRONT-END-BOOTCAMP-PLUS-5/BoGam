@@ -22,7 +22,13 @@ export const styles = {
   
   // Search results
   searchResults: 'search-results space-y-6',
-  resultsTitle: 'results-title text-2xl font-bold text-brand-black mb-6',
+  resultsHeader: 'results-header flex justify-between items-center mb-6',
+  resultsTitle: 'results-title text-2xl font-bold text-brand-black',
+  
+  // Empty state
+  emptyState: 'empty-state text-center py-12',
+  emptyStateTitle: 'empty-state-title text-brand-dark-gray text-lg mb-4',
+  emptyStateSubtitle: 'empty-state-subtitle text-brand-light-gray text-sm',
   
   // Tab navigation
   tabNavigation: 'tab-navigation mb-6',
@@ -44,7 +50,10 @@ export const styles = {
   
   // Average prices
   averagePrices: 'average-prices mb-6',
+  averagePricesTitle: 'average-prices-title text-lg font-semibold text-brand-black mb-3',
+  averagePricesGrid: 'average-prices-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',
   averagePriceCard: 'average-price-card bg-white p-4 rounded-lg border border-brand-light-gray shadow-sm',
+  averagePriceContent: 'average-price-content text-center',
   averagePriceArea: 'text-2xl font-bold text-brand',
   averagePriceValue: 'text-lg font-semibold text-brand-black',
   averagePriceCount: 'text-sm text-brand-dark-gray',
