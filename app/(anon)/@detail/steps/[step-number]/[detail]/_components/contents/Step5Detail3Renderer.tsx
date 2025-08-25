@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ContentSection, LegacyContentSection } from './types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
-import { stepResultsApi } from '@libs/api_front/stepResults.api';
+import { stepResultQueryApi } from '@libs/api_front/stepResultQueries.api';
 import CombinedContent from './CombinedContent';
 import TextOnly from './TextOnly';
 import RadioGroup from './RadioGroup';
@@ -78,7 +78,7 @@ export default function Step5Detail3Renderer({
           hasSavedStepResult.current = true;
 
           // step-result 저장 - RadioGroup 데이터만 저장
-          await stepResultsApi.upsertStepResult({
+          await stepResultQueryApi.upsertStepResult({
             userAddressNickname: selectedAddress.nickname,
             stepNumber: stepNumber,
             detail: detail,

@@ -1,21 +1,26 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { GetJeonseGuaranteeRequestDto } from '@libs/api_front/jeonseGuarantee.api';
 import {
-  REGION_OPTIONS,
   MARRIAGE_OPTIONS,
   HOUSE_COUNT_OPTIONS,
-  FIELD_ERROR_MESSAGES,
   FIELD_PLACEHOLDERS,
   FIELD_LABELS,
 } from '@utils/constants/jeonseGuarantee';
+
+// 월세 옵션 정의
+const MONTHLY_RENT_OPTIONS = [
+  { value: 'none', label: '없음' },
+  { value: 'direct', label: '직접 입력' },
+];
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
-import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
 import Field from '@/(anon)/_components/common/forms/Field';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { formatToKoreanUnit } from '@utils/formatUtils';
+import { jeonseGuaranteeInputStyles } from './JeonseGuaranteeInput.styles';
 
 interface JeonseGuaranteeInputProps {
   formData: GetJeonseGuaranteeRequestDto;
@@ -64,13 +69,13 @@ export default function JeonseGuaranteeInput({
   return (
     <div>
       <FormContainer onSubmit={onSubmit}>
-        <div className='mb-6'>
-          <h3 className='text-xl font-bold text-gray-800 mb-2'>
+        <div className={jeonseGuaranteeInputStyles.header}>
+          <h3 className={jeonseGuaranteeInputStyles.title}>
             전세자금보증 금액 조회
           </h3>
         </div>
 
-        <div className='space-y-4'>
+        <div className={jeonseGuaranteeInputStyles.formContainer}>
           {/* 전세보증금 */}
           <Field
             id='rentGrntAmt'
@@ -78,7 +83,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.rentGrntAmt}
           >
-            <div className='relative'>
+            <div className={jeonseGuaranteeInputStyles.inputWrapper}>
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.rentGrntAmt}
@@ -87,10 +92,10 @@ export default function JeonseGuaranteeInput({
                   onInputChange('rentGrntAmt', formatNumber(e.target.value))
                 }
                 error={!!errors.rentGrntAmt}
-                className='pr-20'
+                className={jeonseGuaranteeInputStyles.inputWithUnit}
               />
               {formData.rentGrntAmt > 0 && (
-                <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 font-medium'>
+                <div className={jeonseGuaranteeInputStyles.unitDisplay}>
                   {formatToKoreanUnit(formData.rentGrntAmt)}
                 </div>
               )}
@@ -111,25 +116,16 @@ export default function JeonseGuaranteeInput({
           </Field>
 
           {/* 결혼상태 */}
-          <Field
+          <DropDown
             id='weddStcd'
             label={FIELD_LABELS.weddStcd}
             required
             error={errors.weddStcd}
-          >
-            <FormSelect
-              value={formData.weddStcd}
-              onChange={(e) => onInputChange('weddStcd', e.target.value)}
-              hasError={!!errors.weddStcd}
-            >
-              <option value=''>{FIELD_PLACEHOLDERS.weddStcd}</option>
-              {MARRIAGE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </FormSelect>
-          </Field>
+            options={[...MARRIAGE_OPTIONS]}
+            value={formData.weddStcd}
+            onChange={(value) => onInputChange('weddStcd', value)}
+            placeholder={FIELD_PLACEHOLDERS.weddStcd}
+          />
 
           {/* 소득금액 */}
           <Field
@@ -138,7 +134,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.myIncmAmt}
           >
-            <div className='relative'>
+            <div className={jeonseGuaranteeInputStyles.inputWrapper}>
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.myIncmAmt}
@@ -151,10 +147,10 @@ export default function JeonseGuaranteeInput({
                   onInputChange('myIncmAmt', formatNumber(e.target.value))
                 }
                 error={!!errors.myIncmAmt}
-                className='pr-20'
+                className={jeonseGuaranteeInputStyles.inputWithUnit}
               />
               {formData.myIncmAmt > 0 && (
-                <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 font-medium'>
+                <div className={jeonseGuaranteeInputStyles.unitDisplay}>
                   {formatToKoreanUnit(formData.myIncmAmt)}
                 </div>
               )}
@@ -168,7 +164,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.myTotDebtAmt}
           >
-            <div className='relative'>
+            <div className={jeonseGuaranteeInputStyles.inputWrapper}>
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.myTotDebtAmt}
@@ -181,10 +177,10 @@ export default function JeonseGuaranteeInput({
                   onInputChange('myTotDebtAmt', formatNumber(e.target.value))
                 }
                 error={!!errors.myTotDebtAmt}
-                className='pr-20'
+                className={jeonseGuaranteeInputStyles.inputWithUnit}
               />
               {formData.myTotDebtAmt > 0 && (
-                <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 font-medium'>
+                <div className={jeonseGuaranteeInputStyles.unitDisplay}>
                   {formatToKoreanUnit(formData.myTotDebtAmt)}
                 </div>
               )}
@@ -192,27 +188,16 @@ export default function JeonseGuaranteeInput({
           </Field>
 
           {/* 보유주택수 */}
-          <Field
+          <DropDown
             id='ownHsCnt'
             label={FIELD_LABELS.ownHsCnt}
             required
             error={errors.ownHsCnt}
-          >
-            <FormSelect
-              value={formData.ownHsCnt.toString()}
-              onChange={(e) =>
-                onInputChange('ownHsCnt', parseInt(e.target.value))
-              }
-              hasError={!!errors.ownHsCnt}
-            >
-              <option value=''>{FIELD_PLACEHOLDERS.ownHsCnt}</option>
-              {HOUSE_COUNT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </FormSelect>
-          </Field>
+            options={[...HOUSE_COUNT_OPTIONS]}
+            value={formData.ownHsCnt.toString()}
+            onChange={(value) => onInputChange('ownHsCnt', parseInt(value))}
+            placeholder={FIELD_PLACEHOLDERS.ownHsCnt}
+          />
 
           {/* 월세금액 */}
           <Field
@@ -221,23 +206,20 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.mmrtAmt}
           >
-            <div className='flex gap-2'>
-              <FormSelect
+            <div className={jeonseGuaranteeInputStyles.monthlyRentContainer}>
+              <DropDown
+                options={MONTHLY_RENT_OPTIONS}
                 value={inputModes.mmrtAmt}
-                onChange={(e) =>
-                  onInputModeChange(
-                    'mmrtAmt',
-                    e.target.value as 'none' | 'direct'
-                  )
+                onChange={(value) =>
+                  onInputModeChange('mmrtAmt', value as 'none' | 'direct')
                 }
-                hasError={!!errors.mmrtAmt}
-                className='w-1/3'
-              >
-                <option value='none'>없음</option>
-                <option value='direct'>직접 입력</option>
-              </FormSelect>
+                placeholder='월세 선택'
+                className={jeonseGuaranteeInputStyles.monthlyRentSelect}
+              />
               {inputModes.mmrtAmt === 'direct' && (
-                <div className='relative flex-1'>
+                <div
+                  className={jeonseGuaranteeInputStyles.monthlyRentInputWrapper}
+                >
                   <TextInput
                     type='text'
                     placeholder={FIELD_PLACEHOLDERS.mmrtAmt}
@@ -246,10 +228,10 @@ export default function JeonseGuaranteeInput({
                       onInputChange('mmrtAmt', formatNumber(e.target.value))
                     }
                     error={!!errors.mmrtAmt}
-                    className='pr-20'
+                    className={jeonseGuaranteeInputStyles.inputWithUnit}
                   />
                   {formData.mmrtAmt > 0 && (
-                    <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-500 font-medium'>
+                    <div className={jeonseGuaranteeInputStyles.unitDisplay}>
                       {formatToKoreanUnit(formData.mmrtAmt)}
                     </div>
                   )}
@@ -262,8 +244,8 @@ export default function JeonseGuaranteeInput({
 
       {/* 에러 메시지 */}
       {error && (
-        <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
-          <p className='text-red-600 text-sm'>
+        <div className={jeonseGuaranteeInputStyles.errorContainer}>
+          <p className={jeonseGuaranteeInputStyles.errorText}>
             조회 중 오류가 발생했습니다. 다시 시도해주세요.
           </p>
         </div>

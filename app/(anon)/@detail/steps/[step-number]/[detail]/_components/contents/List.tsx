@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import styles from './List.styles';
 
 interface AccordionItem {
@@ -65,13 +66,12 @@ const List = ({ data }: ListProps) => {
                       className={styles.accordionButton}
                     >
                       <span className={styles.accordionText}>{item.title}</span>
-                      <span
+                      <ChevronDown
+                        size={16}
                         className={`${styles.accordionArrow} ${
                           openItems.includes(index) ? 'rotate-180' : ''
                         }`}
-                      >
-                        ▼
-                      </span>
+                      />
                     </button>
 
                     {/* 아코디언 콘텐츠 */}
