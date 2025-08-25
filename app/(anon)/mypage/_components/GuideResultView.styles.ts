@@ -1,12 +1,12 @@
 export const styles = {
-  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto",
+  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto w-full",
   cardTitle: "text-base font-semibold text-brand-black mb-2",
   lastModified: "text-xs text-brand-dark-gray text-right",
   
   guideResultHeader: "flex justify-between items-center mb-4",
   
-  // CircularIconBadge 컨테이너
-  iconBadgeContainer: "flex justify-end space-x-2 mb-4 mr-14",
+  // CircularIconBadge 컨테이너 - 모바일 반응형으로 수정
+  iconBadgeContainer: "flex justify-end space-x-2 mb-4 mr-0 sm:mr-14",
   
   guideSteps: "space-y-0",
   stepContent: "p-4",
