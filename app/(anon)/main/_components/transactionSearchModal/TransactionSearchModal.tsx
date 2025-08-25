@@ -8,6 +8,7 @@ import {
   DanjiInfo,
 } from '@libs/api_front/danjiSerialNumber.api';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 
 interface TransactionSearchModalProps {
   isOpen: boolean;
@@ -194,27 +195,29 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
 
             <div className={styles.inputGroup}>
               <label className={styles.label}>건물 유형</label>
-              <select
+              <DropDown
+                options={[
+                  { value: '0', label: '아파트' },
+                  { value: '1', label: '연립/다세대' },
+                  { value: '2', label: '오피스텔' }
+                ]}
                 value={buildingType}
-                onChange={(e) => setBuildingType(e.target.value)}
-                className={styles.select}
-              >
-                <option value='0'>아파트</option>
-                <option value='1'>연립/다세대</option>
-                <option value='2'>오피스텔</option>
-              </select>
+                onChange={setBuildingType}
+                placeholder="건물 유형을 선택하세요"
+              />
             </div>
 
             <div className={styles.inputGroup}>
               <label className={styles.label}>조회 구분</label>
-              <select
+              <DropDown
+                options={[
+                  { value: '0', label: '지번주소' },
+                  { value: '1', label: '도로명주소' }
+                ]}
                 value={searchGbn}
-                onChange={(e) => setSearchGbn(e.target.value)}
-                className={styles.select}
-              >
-                <option value='0'>지번주소</option>
-                <option value='1'>도로명주소</option>
-              </select>
+                onChange={setSearchGbn}
+                placeholder="조회 구분을 선택하세요"
+              />
               {selectedAddress && (
                 <div className={styles.autoSettingNote}>
                   💡 선택된 주소 타입에 따라 조회 구분이 자동 설정되었습니다.
@@ -225,20 +228,18 @@ export const TransactionSearchModal: React.FC<TransactionSearchModalProps> = ({
 
             <div className={styles.inputGroup}>
               <label className={styles.label}>기준년도</label>
-              <select
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className={styles.select}
-              >
-                {Array.from({ length: 10 }, (_, i) => {
+              <DropDown
+                options={Array.from({ length: 10 }, (_, i) => {
                   const yearValue = new Date().getFullYear() - i;
-                  return (
-                    <option key={yearValue} value={yearValue.toString()}>
-                      {yearValue}년
-                    </option>
-                  );
+                  return {
+                    value: yearValue.toString(),
+                    label: `${yearValue}년`
+                  };
                 })}
-              </select>
+                value={year}
+                onChange={setYear}
+                placeholder="기준년도를 선택하세요"
+              />
             </div>
 
             <div className={styles.inputGroup}>

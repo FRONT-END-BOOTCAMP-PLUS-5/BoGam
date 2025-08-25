@@ -56,10 +56,10 @@ export default function JeonseGuaranteeForm({ onSubmit }: JeonseGuaranteeFormPro
 
   // 결혼구분 옵션
   const weddStcdOptions = [
-    { value: '1', label: '1: 미혼' },
-    { value: '2', label: '2: 기혼' },
-    { value: '3', label: '3: 신혼' },
-    { value: '4', label: '4: 결혼예정' }
+    { value: '1', label: '미혼' },
+    { value: '2', label: '기혼' },
+    { value: '3', label: '신혼' },
+    { value: '4', label: '결혼예정' }
   ];
 
   // 선택된 주소가 변경될 때마다 법정동코드 업데이트
