@@ -1,0 +1,228 @@
+{
+  "dataType": "Table",
+  "title": "소액보증금 최우선변제 기준 변천사",
+  "columnTitles": ["지역", "소액보증금의 범위", "최우선변제금액"],
+  "description": [
+    "소액보증금의 범위는 담보물건 설정일을 기준으로 적용됩니다.",
+    "최우선변제금액은 해당 범위 내에서 우선적으로 변제받을 수 있는 금액입니다.",
+    "날짜를 선택하면 해당 시점의 기준이 테이블에 표시됩니다."
+  ],
+  "data": [
+    {
+      "region": "서울특별시",
+      "depositRange": "300만원 이하",
+      "priorityAmount": "300만원",
+      "option": "1984.01.01"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "200만원 이하",
+      "priorityAmount": "200만원",
+      "option": "1984.01.01"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "500만원 이하",
+      "priorityAmount": "500만원",
+      "option": "1987.12.01"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "400만원 이하",
+      "priorityAmount": "400만원",
+      "option": "1987.12.01"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "2000만원 이하",
+      "priorityAmount": "700만원",
+      "option": "1990.02.19"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "1500만원 이하",
+      "priorityAmount": "500만원",
+      "option": "1990.02.19"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "3000만원 이하",
+      "priorityAmount": "1200만원",
+      "option": "1995.10.19"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "2000만원 이하",
+      "priorityAmount": "800만원",
+      "option": "1995.10.19"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "4000만원 이하",
+      "priorityAmount": "1600만원",
+      "option": "2001.09.15"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "4000만원 이하",
+      "priorityAmount": "1600만원",
+      "option": "2001.09.15"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "3500만원 이하",
+      "priorityAmount": "1400만원",
+      "option": "2001.09.15"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "3000만원 이하",
+      "priorityAmount": "1200만원",
+      "option": "2001.09.15"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "6000만원 이하",
+      "priorityAmount": "2000만원",
+      "option": "2008.08.21"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "6000만원 이하",
+      "priorityAmount": "2600만원",
+      "option": "2008.08.21"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "5000만원 이하",
+      "priorityAmount": "1700만원",
+      "option": "2008.08.21"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "4000만원 이하",
+      "priorityAmount": "1400만원",
+      "option": "2008.08.21"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "7500만원 이하",
+      "priorityAmount": "2500만원",
+      "option": "2010.07.26"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "6500만원 이하",
+      "priorityAmount": "2200만원",
+      "option": "2010.07.26"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "5500만원 이하",
+      "priorityAmount": "1900만원",
+      "option": "2010.07.26"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "4000만원 이하",
+      "priorityAmount": "1400만원",
+      "option": "2010.07.26"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "9500만원 이하",
+      "priorityAmount": "3200만원",
+      "option": "2014.01.01"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "8000만원 이하",
+      "priorityAmount": "2700만원",
+      "option": "2014.01.01"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "6000만원 이하",
+      "priorityAmount": "2000만원",
+      "option": "2014.01.01"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "4500만원 이하",
+      "priorityAmount": "1500만원",
+      "option": "2014.01.01"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "1억원 이하",
+      "priorityAmount": "3400만원",
+      "option": "2018.03.31"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "8000만원 이하",
+      "priorityAmount": "2700만원",
+      "option": "2018.03.31"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "6000만원 이하",
+      "priorityAmount": "2000만원",
+      "option": "2018.03.31"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "5000만원 이하",
+      "priorityAmount": "1700만원",
+      "option": "2018.03.31"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "1억1000만원 이하",
+      "priorityAmount": "3700만원",
+      "option": "2018.09.18"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "1억원 이하",
+      "priorityAmount": "3400만원",
+      "option": "2018.09.18"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "6000만원 이하",
+      "priorityAmount": "2000만원",
+      "option": "2018.09.18"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "5000만원 이하",
+      "priorityAmount": "1700만원",
+      "option": "2018.09.18"
+    },
+    {
+      "region": "서울특별시",
+      "depositRange": "1억5000만원 이하",
+      "priorityAmount": "5000만원",
+      "option": "2021.05.11"
+    },
+    {
+      "region": "수도권(과밀억제권역)",
+      "depositRange": "1억3000만원 이하",
+      "priorityAmount": "4300만원",
+      "option": "2021.05.11"
+    },
+    {
+      "region": "광역시",
+      "depositRange": "7000만원 이하",
+      "priorityAmount": "2300만원",
+      "option": "2021.05.11"
+    },
+    {
+      "region": "기타지역",
+      "depositRange": "6000만원 이하",
+      "priorityAmount": "2000만원",
+      "option": "2021.05.11"
+    }
+  ]
+}
