@@ -5,8 +5,8 @@ import { useSearchBrokers, useCreateBrokerCopy } from '@/hooks/useBroker';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { BrokerListContent } from '@/(anon)/_components/common/broker/brokerListContent/BrokerListContent';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
-import { FormField } from '@/(anon)/_components/common/forms/FormField';
-import { FormInput } from '@/(anon)/_components/common/forms/FormInput';
+import Field from '@/(anon)/_components/common/forms/Field';
+import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/_components/common/broker/brokerInput/BrokerInput.styles';
 
 interface BrokerData {
@@ -128,27 +128,27 @@ export const BrokerInput = ({
         disabled={!brkrNm.trim()}
       >
         {/* 선택된 주소 정보 표시 */}
-        <FormField label='선택된 주소'>
+        <Field id='selected-address' label='선택된 주소'>
           <p className={styles.addressText}>{selectedAddress.roadAddress}</p>
-        </FormField>
+        </Field>
 
-        <FormField label='중개업자명' required>
-          <FormInput
+        <Field id='broker-name' label='중개업자명' required>
+          <TextInput
             type='text'
             value={brkrNm}
             onChange={(e) => setBrkrNm(e.target.value)}
             placeholder='중개업자명을 입력하세요'
           />
-        </FormField>
+        </Field>
 
-        <FormField label='사업자상호'>
-          <FormInput
+        <Field id='business-name' label='사업자상호'>
+          <TextInput
             type='text'
             value={bsnmCmpnm}
             onChange={(e) => setBsnmCmpnm(e.target.value)}
             placeholder='사업자상호를 입력하세요 (선택사항)'
           />
-        </FormField>
+        </Field>
 
         {/* 에러 메시지 표시 */}
         {(searchBrokersMutation.error || createBrokerCopyMutation.error) && (

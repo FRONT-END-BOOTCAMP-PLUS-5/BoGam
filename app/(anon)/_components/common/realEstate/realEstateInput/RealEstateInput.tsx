@@ -5,10 +5,12 @@ import {
   RealEstateInputProps,
 } from '@/(anon)/_components/common/realEstate/types';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
-import { FormField } from '@/(anon)/_components/common/forms/FormField';
-import { FormInput } from '@/(anon)/_components/common/forms/FormInput';
+import Field from '@/(anon)/_components/common/forms/Field';
+import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
+import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import { useRealEstateInput } from '@/hooks/useRealEstateInput';
+import { useState } from 'react';
 
 export const RealEstateInput = ({
   formData,
@@ -18,8 +20,21 @@ export const RealEstateInput = ({
   const { selectedAddress, register, handleSubmit, errors } =
     useRealEstateInput({ formData });
 
+  const [password, setPassword] = useState('');
+
   const handleFormSubmit = (data: RealEstateFormData) => {
-    onSubmit(data);
+    // 비밀번호 검증
+    if (password.length !== 4) {
+      return;
+    }
+
+    // 전화번호에서 '-' 제거
+    const cleanedData = {
+      ...data,
+      phoneNo: data.phoneNo.replace(/-/g, ''),
+      password: password, // OTP 입력값 사용
+    };
+    onSubmit(cleanedData);
   };
 
   return (
@@ -29,66 +44,56 @@ export const RealEstateInput = ({
       isLoading={loading}
       submitText='등본 가져오기'
     >
-      <FormField label='전화번호' required error={errors.phoneNo?.message}>
-        <FormInput
-          {...register('phoneNo', {
-            required: '전화번호는 필수입니다.',
-            pattern: {
-              value:
-                /^(010|011|016|017|018|019|070|02|031|032|033|041|042|043|0502|0505|051|052|053|054|055|061|062|063|064)\d{7,8}$/,
-              message: '유효한 전화번호를 입력해주세요.',
-            },
-          })}
-          placeholder='010-1234-5678'
-          hasError={!!errors.phoneNo}
+      <Field
+        id='phone-no'
+        label='전화번호'
+        required
+        error={errors.phoneNo?.message}
+      >
+        <TextInput
+          {...register('phoneNo')}
+          mask='phone'
+          inputMode='numeric'
+          placeholder='01012345678'
+          error={!!errors.phoneNo}
         />
-      </FormField>
+      </Field>
 
-      <FormField
+      <Field
+        id='password'
         label='비밀번호 (4자리 숫자)'
         required
-        error={errors.password?.message}
+        error={password.length < 4 ? '4자리 숫자를 입력해주세요.' : undefined}
       >
-        <FormInput
-          {...register('password', {
-            required: '비밀번호는 필수입니다.',
-            pattern: {
-              value: /^[0-9]{4}$/,
-              message: '4자리 숫자를 입력해주세요.',
-            },
-          })}
-          type='password'
-          maxLength={4}
-          placeholder='0000'
-          hasError={!!errors.password}
-        />
-      </FormField>
+        <OtpInput length={4} onChange={(value) => setPassword(value)} />
+      </Field>
 
-      <FormField label='부동산 구분'>
+      <Field id='realty-type' label='부동산 구분'>
         <FormSelect {...register('realtyType')}>
           <option value='0'>토지+건물</option>
           <option value='1'>집합건물</option>
           <option value='2'>토지</option>
           <option value='3'>건물</option>
         </FormSelect>
-      </FormField>
+      </Field>
 
-      <FormField label='발행구분' required>
+      <Field id='issue-type' label='발행구분' required>
         <FormSelect {...register('issueType')}>
           <option value='0'>발급</option>
           <option value='1'>열람</option>
           <option value='2'>고유번호조회</option>
           <option value='3'>원문데이터로 결과처리</option>
         </FormSelect>
-      </FormField>
+      </Field>
 
-      <FormField
+      <Field
+        id='address'
         label='주소'
         required
         error={errors.address?.message}
-        helpText={!selectedAddress ? '주소를 선택해주세요' : undefined}
+        hint={!selectedAddress ? '주소를 선택해주세요' : undefined}
       >
-        <FormInput
+        <TextInput
           {...register('address', {
             required: '주소는 필수입니다.',
           })}
@@ -96,9 +101,9 @@ export const RealEstateInput = ({
             selectedAddress ? selectedAddress.nickname : '주소를 선택하세요'
           }
           readOnly
-          hasError={!!errors.address}
+          error={!!errors.address}
         />
-      </FormField>
+      </Field>
 
       {/* 숨겨진 userAddressNickname 필드 */}
       <input

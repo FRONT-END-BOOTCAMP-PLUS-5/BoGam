@@ -46,25 +46,28 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
-
   // 전역 store에서 선택된 주소 가져오기
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
-  
+
   // URL에서 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
   const stepInfo = parseStepUrl(pathname);
-  
+
   // 초기화 여부를 추적하는 ref
   const hasInitialized = useRef(false);
-  
+
   // useStepResultMutations 훅 사용
   const { upsertStepResult, removeQueries } = useStepResultMutations();
-  
+
   // useGetStepResult 훅 사용
-  const { data: stepData, isLoading, isError } = useGetStepResult({
+  const {
+    data: stepData,
+    isLoading,
+    isError,
+  } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
     stepNumber: stepInfo?.stepNumber?.toString() || '',
-    detail: stepInfo?.detail?.toString() || ''
+    detail: stepInfo?.detail?.toString() || '',
   });
 
   // json이 {}이거나 에러 시 기본값으로 초기화
@@ -72,33 +75,55 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     if (data.length === 0 || hasInitialized.current) {
       return;
     }
-    
+
     // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
-    const shouldInitialize = (isError && !hasInitialized.current) || 
-                           (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
-    
-    if (shouldInitialize && selectedAddress?.id && stepInfo?.stepNumber && stepInfo?.detail) {
+    const shouldInitialize =
+      (isError && !hasInitialized.current) ||
+      (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+
+    if (
+      shouldInitialize &&
+      selectedAddress?.id &&
+      stepInfo?.stepNumber &&
+      stepInfo?.detail
+    ) {
       const defaultDetails: Record<string, 'match'> = {
-        '열람': 'match' // TextOnly는 기본적으로 열람 완료 상태
+        열람: 'match', // TextOnly는 기본적으로 열람 완료 상태
       };
-      
-      const logMessage = isError ? '400 에러 시 기본값 초기화 진행' : '빈 jsonDetails 시 기본값 초기화 진행';
+
+      const logMessage = isError
+        ? '400 에러 시 기본값 초기화 진행'
+        : '빈 jsonDetails 시 기본값 초기화 진행';
       console.log(`🔍 TextOnly: ${logMessage}`, defaultDetails);
-      
+
       // DB 저장
       upsertStepResult.mutate({
-        userAddressId: selectedAddress.id,
+        userAddressNickname: selectedAddress.nickname,
         stepNumber: stepInfo.stepNumber,
         detail: stepInfo.detail,
-        jsonDetails: defaultDetails
+        jsonDetails: defaultDetails,
       });
-      
+
       // 쿼리 완전 중단
-      removeQueries(selectedAddress.nickname, stepInfo.stepNumber, stepInfo.detail);
-      
+      removeQueries(
+        selectedAddress.nickname,
+        stepInfo.stepNumber,
+        stepInfo.detail
+      );
+
       hasInitialized.current = true;
     }
-  }, [stepData, isError, data, selectedAddress?.id, selectedAddress?.nickname, stepInfo?.stepNumber, stepInfo?.detail, upsertStepResult, removeQueries]);
+  }, [
+    stepData,
+    isError,
+    data,
+    selectedAddress?.id,
+    selectedAddress?.nickname,
+    stepInfo?.stepNumber,
+    stepInfo?.detail,
+    upsertStepResult,
+    removeQueries,
+  ]);
 
   // 로딩 상태
   if (isLoading) {
@@ -108,16 +133,14 @@ const TextOnly = ({ data }: TextOnlyProps) => {
           <div>로딩 중...</div>
         </div>
       </div>
-      );
+    );
   }
 
   // 에러 상태 (400 에러 시 데이터를 찾을 수 없다고 표시)
   if (isError && !hasInitialized.current) {
     return (
       <div className={styles.container}>
-        <div className={styles.errorContainer}>
-          데이터를 찾을 수 없습니다.
-        </div>
+        <div className={styles.errorContainer}>데이터를 찾을 수 없습니다.</div>
       </div>
     );
   }
@@ -129,10 +152,10 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       <div>
         <div className={styles.badgeContainer}>
           {Object.entries(stepData?.jsonDetails || {}).map(([key, value]) => (
-            <CircularIconBadge 
-              key={key} 
-              type={value as 'match' | 'mismatch' | 'unchecked'} 
-              size="xsm" 
+            <CircularIconBadge
+              key={key}
+              type={value as 'match' | 'mismatch' | 'unchecked'}
+              size='xsm'
             />
           ))}
         </div>
@@ -173,11 +196,13 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             )}
             {section.contents && (
               <div className={styles.contents}>
-                {section.contents.map((content: string, contentIndex: number) => (
-                  <p key={contentIndex} className={styles.contentItem}>
-                    {content}
-                  </p>
-                ))}
+                {section.contents.map(
+                  (content: string, contentIndex: number) => (
+                    <p key={contentIndex} className={styles.contentItem}>
+                      {content}
+                    </p>
+                  )
+                )}
               </div>
             )}
             {section.contentSections && section.contentSections.length > 0 && (
@@ -188,11 +213,13 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                       {contentSection.subtitle}
                     </div>
                     <div className={styles.contents}>
-                      {contentSection.contents.map((content: string, contentIndex: number) => (
-                        <p key={contentIndex} className={styles.contentItem}>
-                          {content}
-                        </p>
-                      ))}
+                      {contentSection.contents.map(
+                        (content: string, contentIndex: number) => (
+                          <p key={contentIndex} className={styles.contentItem}>
+                            {content}
+                          </p>
+                        )
+                      )}
                     </div>
                   </div>
                 ))}
@@ -227,7 +254,11 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                     href={button.href}
                     onClick={() => {
                       if (button.href) {
-                        window.open(button.href, '_blank', 'noopener,noreferrer');
+                        window.open(
+                          button.href,
+                          '_blank',
+                          'noopener,noreferrer'
+                        );
                       }
                     }}
                     fullWidth={button.fullWidth}
@@ -239,7 +270,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
             )}
           </div>
         ))}
-        
+
         {renderStepData()}
       </div>
     );
@@ -248,10 +279,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   // data가 없는 경우
   return (
     <div className={styles.container}>
-      <div className={styles.noDataContainer}>
-        데이터가 없습니다.
-      </div>
-      
+      <div className={styles.noDataContainer}>데이터가 없습니다.</div>
+
       {renderStepData()}
     </div>
   );

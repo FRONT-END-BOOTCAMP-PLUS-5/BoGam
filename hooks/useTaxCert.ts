@@ -39,8 +39,11 @@ export const useGetTaxCertCopy = (nickname: string | null) => {
   });
 };
 
-// 납세증명서 발급
-export const useIssueTaxCert = () => {
+// 납세증명서 제출
+export const useSubmitTaxCert = (
+  onSuccess?: (data: unknown) => void,
+  onError?: (error: unknown) => void
+) => {
   return useMutation({
     mutationFn: async (data: {
       organization: string;
@@ -87,5 +90,59 @@ export const useIssueTaxCert = () => {
         .post('/api/tax-cert', data);
       return response.data;
     },
+    onSuccess,
+    onError,
+  });
+};
+
+// 간편인증 2-way 인증
+export const useSubmitTwoWayAuth = (
+  onSuccess?: (data: unknown) => void,
+  onError?: (error: unknown) => void
+) => {
+  return useMutation({
+    mutationFn: async (data: {
+      organization: string;
+      loginType: string;
+      isIdentityViewYN: string;
+      proofType: string;
+      submitTargets: string;
+      userAddressNickname: string;
+      is2Way: boolean;
+      userName?: string;
+      loginIdentity?: string;
+      loginTypeLevel?: string;
+      phoneNo?: string;
+      telecom?: string;
+      identityEncYn?: string;
+      loginBirthDate?: string;
+      applicationType?: string;
+      clientTypeLevel?: string;
+      identity?: string;
+      birthDate?: string;
+      isAddrViewYn?: string;
+      originDataYN?: string;
+      originDataYN1?: string;
+      id?: string;
+      // 2-way 인증 관련 필드
+      twoWayInfo?: {
+        jobIndex?: number;
+        threadIndex?: number;
+        jti?: string;
+        twoWayTimestamp?: number;
+      };
+      simpleAuth?: string;
+      simpleKeyToken?: string;
+      rValue?: string;
+      certificate?: string;
+      extraInfo?: Record<string, unknown>;
+    }) => {
+      const response = await frontendAxiosInstance
+        .getAxiosInstance()
+        .post('/api/tax-cert', data);
+      return response.data;
+    },
+    onSuccess,
+    onError,
   });
 };

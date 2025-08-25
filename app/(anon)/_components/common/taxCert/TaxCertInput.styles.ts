@@ -1,8 +1,18 @@
 export const styles = {
-  value: 'text-sm text-brand-black bg-brand-light-gray p-2 rounded border',
-  error: 'p-3 bg-red-50 border border-brand-error rounded-md',
-
-  // 간편인증 그리드 컨테이너
+  container: 'space-y-6',
+  formSection:
+    'mb-8 p-5 border border-brand-light-gray rounded-lg bg-brand-light-gray',
+  sectionTitle: 'text-lg font-bold mb-5 text-brand-black',
+  authMethodButton:
+    'w-full px-4 py-3 border border-brand-light-gray rounded-md bg-brand-white cursor-pointer flex items-center justify-between transition-colors hover:border-brand',
+  selectedMethod: 'flex items-center gap-2',
+  errorContainer:
+    'my-5 p-3 bg-brand-error-light border border-brand-error rounded-md',
+  errorText: 'text-brand-error m-0 text-sm',
+  submitSection: 'mt-8 text-center',
+  submitButton:
+    'px-6 py-3 bg-brand text-brand-white border-none rounded-md text-base font-bold cursor-pointer transition-colors hover:bg-brand-dark disabled:bg-brand-light-gray disabled:cursor-not-allowed',
+  // 간편인증 그리드 컨테이너 (SimpleAuthForm 스타일 적용)
   authGrid: 'grid grid-cols-3 gap-4',
 
   // 간편인증 아이템 기본 스타일
@@ -24,29 +34,4 @@ export const styles = {
 
   // 간편인증 텍스트
   authText: 'text-xs font-medium text-brand-dark-gray',
-
-  // 간편인증 방법 선택 버튼
-  authMethodButton:
-    '!mt-0 !h-auto !px-4 !py-3 border-2 border-brand-light-gray rounded-lg bg-brand-white hover:border-brand focus:border-brand focus:outline-none transition-colors duration-200 flex items-center justify-between',
-  selectedAuthMethod: 'flex items-center space-x-3',
-  authIconSmall: 'w-6 h-6 object-contain',
-  selectedAuthText: 'text-sm font-medium text-brand-black',
-  placeholderText: 'text-brand-dark-gray',
-  dropdownArrow: 'text-brand-dark-gray text-sm',
-
-  // 2-way 인증 모달 스타일
-  twoWayContent: 'space-y-4',
-  twoWayMessage: 'text-sm text-brand-dark-gray leading-relaxed',
-  twoWayInfo: 'bg-brand-light-gray p-3 rounded-lg space-y-2',
-  twoWayWarning: 'text-brand-error text-sm font-medium',
-  twoWayInstructions: 'space-y-2',
-
-  // 아코디언 스타일
-  accordionContainer: 'w-full',
-  accordionHeader:
-    'w-full flex items-center justify-between p-3 bg-brand-light-gray rounded-lg hover:bg-brand-light-blue transition-colors duration-200',
-  accordionTitle: 'text-sm font-medium text-brand-dark-gray',
-  accordionIcon: 'text-brand-dark-gray text-sm',
-  accordionContent: 'mt-3 space-y-4',
-  gridTwo: 'grid grid-cols-2 gap-4',
 };

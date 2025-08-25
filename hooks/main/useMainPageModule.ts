@@ -10,6 +10,7 @@ import { useUserAddresses } from '../useUserAddresses';
 import { placesApi } from '@libs/api_front/places.api';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
+import { useModalStore } from '@libs/stores/modalStore';
 import { DaumPostcodeData } from '@/(anon)/main/_components/types/mainPage.types';
 
 export const useMainPageModule = () => {
@@ -26,6 +27,9 @@ export const useMainPageModule = () => {
   const locationManager = useLocationManager();
   const { isLoading: userAddressesLoading, isAuthenticated } =
     useUserAddresses();
+
+  // 모달 스토어
+  const { openModal } = useModalStore();
 
   // Store에서 데이터 가져오기
   const {
@@ -94,17 +98,32 @@ export const useMainPageModule = () => {
         mainPageState.setSavedLawdCode(data.bcode.substring(0, 5) || '');
         mainPageState.setShowPostcode(false);
       } else {
-        alert('주소를 찾을 수 없습니다.');
+        openModal({
+          title: '알림',
+          content: '주소를 찾을 수 없습니다.',
+          icon: 'warning',
+        });
       }
     } catch (error) {
       console.error('주소 검색 실패:', error);
-      alert('주소 검색 중 오류가 발생했습니다.');
+      openModal({
+        title: '오류',
+        content: '주소 검색 중 오류가 발생했습니다.',
+        icon: 'error',
+      });
     }
   };
 
-  const { execDaumPostcode, postcodeRef } = useDaumPostcode(
+  const { execDaumPostcode, executePostcode, postcodeRef } = useDaumPostcode(
     handleDaumPostcodeComplete,
-    mainPageState.setShowPostcode
+    mainPageState.setShowPostcode,
+    (errorMessage: string) => {
+      openModal({
+        title: '오류',
+        content: errorMessage,
+        icon: 'error',
+      });
+    }
   );
 
   return {
@@ -113,8 +132,6 @@ export const useMainPageModule = () => {
     selectedAddress: addressManagement.selectedAddress,
     searchQuery: addressManagement.searchQuery,
     roadAddress: addressManagement.roadAddress,
-    dong: addressManagement.dong,
-    ho: addressManagement.ho,
     savedLawdCode: addressManagement.savedLawdCode,
     buildingType: mainPageState.buildingType,
     selectedYear: mainPageState.selectedYear,
@@ -130,10 +147,8 @@ export const useMainPageModule = () => {
 
     // 상태 설정 함수
     setSearchQuery: mainPageState.setSearchQuery,
-    setDong: mainPageState.setDong,
-    setHo: mainPageState.setHo,
     setBuildingType: mainPageState.setBuildingType,
-    setSelectedYear: mainPageState.setSelectedYear,
+    setSelectedYear: mainPageState.selectedYear,
     setSelectedMonth: mainPageState.setSelectedMonth,
     setShowPostcode: mainPageState.setShowPostcode,
 
@@ -143,6 +158,7 @@ export const useMainPageModule = () => {
     handleMoveToAddress: transactionManagement.handleMoveToAddress,
     handleMoveToAddressOnly: addressManagement.handleMoveToAddressOnly,
     onSearch: execDaumPostcode,
+    executePostcode,
     postcodeRef,
 
     // 위치 관리 액션 함수

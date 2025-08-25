@@ -49,3 +49,27 @@ export class TaxCertArrearsItem {
     public readonly resAdditionalCharges: string
   ) {}
 }
+
+export type TaxCertJson = {
+  resIssueNo: string;
+  resUserNm: string;
+  resUserAddr: string;
+  resUserIdentiyNo: string;
+  resCompanyNm: string;
+  resCompanyIdentityNo: string;
+  resPaymentTaxStatusCd: string;
+  resPaymentTaxStatus: string;
+  resUsePurpose: string;
+  resOriGinalData: string;
+  resOriGinalData1: string;
+  resValidPeriod: string;
+  resReason: string;
+  resReceiptNo: string;
+  resDepartmentName: string;
+  resUserNm1: string;
+  resPhoneNo: string;
+  resIssueOgzNm: string;
+  resIssueDate: string;
+  resRespiteList: TaxCertRespiteItem[];
+  resArrearsList: TaxCertArrearsItem[];
+};

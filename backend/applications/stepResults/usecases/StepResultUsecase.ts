@@ -31,12 +31,28 @@ export class StepResultUsecase {
 
       const params: Record<string, unknown> = { userAddressId };
 
-      if (stepNumber) {
-        params.stepNumber = stepNumber;
-      }
-
-      if (detail) {
-        params.detail = detail;
+      // stepNumber와 detail이 모두 있는 경우 stepId로 변환
+      if (stepNumber && detail) {
+        const stepId = await this.stepResultRepository.findStepIdByMainSub(
+          stepNumber,
+          detail
+        );
+        if (stepId) {
+          params.stepId = stepId;
+        } else {
+          return {
+            success: false,
+            error: '해당 stepNumber와 detail에 맞는 스탭을 찾을 수 없습니다.',
+          };
+        }
+      } else {
+        // stepNumber나 detail 중 하나만 있는 경우 기존 방식 사용
+        if (stepNumber) {
+          params.stepNumber = stepNumber;
+        }
+        if (detail) {
+          params.detail = detail;
+        }
       }
 
       console.log('params', params);
@@ -149,7 +165,7 @@ export class StepResultUsecase {
         undefined, // mismatch - DB 트리거가 계산
         undefined, // match - DB 트리거가 계산
         undefined, // unchecked - DB 트리거가 계산
-        dto.jsonDetails,
+        dto.jsonDetails, // jsonDetails를 details 컬럼에 저장
         new Date()
       );
 

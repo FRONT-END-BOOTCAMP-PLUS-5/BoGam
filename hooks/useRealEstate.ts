@@ -15,15 +15,23 @@ export const useCheckRealEstateExists = (nickname?: string) => {
     } | null> => {
       if (!nickname) return null;
 
-      const response = await frontendAxiosInstance
-        .getAxiosInstance()
-        .post(`/api/real-estate/exists`, {
-          nickname,
-        });
+      try {
+        const response = await frontendAxiosInstance
+          .getAxiosInstance()
+          .post(`/api/real-estate/exists`, {
+            userAddressNickname: nickname,
+          });
 
-      return response.data as { success: boolean; exists: boolean };
+        return response.data as { success: boolean; exists: boolean };
+      } catch (error) {
+        console.error('등기부등본 존재 여부 확인 실패:', error);
+        throw error;
+      }
     },
     enabled: !!nickname,
+    retry: 2, // 실패 시 2번 재시도
+    retryDelay: 1000, // 1초 후 재시도
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
   });
 };
 
@@ -34,15 +42,23 @@ export const useGetRealEstateFromDB = (userAddressNickname?: string) => {
     queryFn: async (): Promise<ApiResponse | null> => {
       if (!userAddressNickname) return null;
 
-      const response = await frontendAxiosInstance
-        .getAxiosInstance()
-        .post(`/api/copies/real-estate`, {
-          userAddressNickname,
-        });
+      try {
+        const response = await frontendAxiosInstance
+          .getAxiosInstance()
+          .post(`/api/copies/real-estate`, {
+            userAddressNickname,
+          });
 
-      return response.data as ApiResponse;
+        return response.data as ApiResponse;
+      } catch (error) {
+        console.error('등기부등본 DB 조회 실패:', error);
+        throw error;
+      }
     },
     enabled: !!userAddressNickname,
+    retry: 2, // 실패 시 2번 재시도
+    retryDelay: 1000, // 1초 후 재시도
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
   });
 };
 
@@ -60,11 +76,16 @@ export const useCreateRealEstate = (
     mutationFn: async (
       data: RealEstateFormData & { userAddressNickname: string }
     ): Promise<ApiResponse> => {
-      const response = await frontendAxiosInstance
-        .getAxiosInstance()
-        .post('/api/real-estate/search/address', data);
+      try {
+        const response = await frontendAxiosInstance
+          .getAxiosInstance()
+          .post('/api/real-estate/search/address', data);
 
-      return response.data as ApiResponse;
+        return response.data as ApiResponse;
+      } catch (error) {
+        console.error('등기부등본 생성 실패:', error);
+        throw error;
+      }
     },
     onSuccess: (data, variables) => {
       // 성공 시 관련 쿼리 무효화
@@ -84,16 +105,24 @@ export const useCreateRealEstate = (
 };
 
 // 2-way 인증 요청
-export const useTwoWayAuth = (onSuccess?: (data: ApiResponse) => void) => {
+export const useTwoWayAuth = (
+  onSuccess?: (data: ApiResponse) => void,
+  onError?: (error: Error) => void
+) => {
   const queryClient = useQueryClient();
 
   return useMutation<ApiResponse, Error, Record<string, unknown>>({
     mutationFn: async (data: Record<string, unknown>): Promise<ApiResponse> => {
-      const response = await frontendAxiosInstance
-        .getAxiosInstance()
-        .post('/api/real-estate/search/address', data);
+      try {
+        const response = await frontendAxiosInstance
+          .getAxiosInstance()
+          .post('/api/real-estate/search/address', data);
 
-      return response.data as ApiResponse;
+        return response.data as ApiResponse;
+      } catch (error) {
+        console.error('2-way 인증 실패:', error);
+        throw error;
+      }
     },
     onSuccess: (data, variables) => {
       // 성공 시 관련 쿼리 무효화
@@ -109,6 +138,12 @@ export const useTwoWayAuth = (onSuccess?: (data: ApiResponse) => void) => {
       // 콜백 실행
       if (onSuccess) {
         onSuccess(data);
+      }
+    },
+    onError: (error) => {
+      // 에러 콜백 실행
+      if (onError) {
+        onError(error);
       }
     },
   });
