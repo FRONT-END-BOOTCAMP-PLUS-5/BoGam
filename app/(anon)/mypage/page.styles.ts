@@ -19,7 +19,7 @@ export const styles = {
   
   content: "px-6 py-6 space-y-6 w-full",
   
-  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto w-full",
+  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full",
   cardHeader: "flex items-center space-x-2 px-6 py-4",
   starIcon: "text-brand-gold",
   cardTitle: "text-base font-semibold text-brand-black mb-2",

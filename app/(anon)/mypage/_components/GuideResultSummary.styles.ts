@@ -1,6 +1,6 @@
 export const styles = {
   // 컨테이너
-  container: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto w-full",
+  container: "bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full",
   
   // 제목
   title: "text-base font-semibold text-brand-black mb-4",

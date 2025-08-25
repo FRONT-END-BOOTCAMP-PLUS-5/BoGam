@@ -1,5 +1,5 @@
 export const styles = {
-  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto w-full",
+  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full",
   cardTitle: "text-base font-semibold text-brand-black mb-2",
   lastModified: "text-xs text-brand-dark-gray text-right",
   
