@@ -16,6 +16,25 @@ import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertCon
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 
+// DateData 타입 정의 (기존 호환성을 위해 유지)
+interface RegionData {
+  region: string;
+  depositRange: string;
+  priorityAmount: string;
+  option: string;
+}
+
+interface DateData {
+  date: string;
+  regions: RegionData[];
+}
+
+// 새로운 Table 데이터 타입 정의
+interface TableData {
+  depositRange: string[];
+  priorityAmount: string[];
+}
+
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
@@ -90,12 +109,6 @@ export default function ModalContent() {
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
-      case 'Table':
-        return (
-          <Table
-            data={pageData as unknown as { left: string; right?: string }[]}
-          />
-        );
       case 'List':
         return (
           <List
@@ -196,12 +209,9 @@ export default function ModalContent() {
                   )}
                   {section.type === 'Table' && (
                     <Table
-                      data={
-                        section.data as unknown as {
-                          left: string;
-                          right?: string;
-                        }[]
-                      }
+                      title={section.title || "소액보증금 최우선변제 기준 변천사"}
+                      columnTitles={section.columnTitles || ["지역", "소액보증금의 범위", "최우선변제금액"]}
+                      data={section.data || []}
                     />
                   )}
                   {section.type === 'List' && (
@@ -258,6 +268,25 @@ export default function ModalContent() {
 
   // JSON 데이터가 있는 경우 Swiper로 렌더링
   if (stepContentData && stepContentData.dataType && stepContentData.data) {
+    // Table 타입인 경우 Swiper 없이 직접 렌더링
+    if (stepContentData.dataType === 'Table') {
+      return (
+        <>
+          <StepHeader />
+          <div className={styles.scrollableContent}>
+            <div className={styles.mainContent}>
+              <Table
+                title={stepContentData.title || "테이블 제목"}
+                columnTitles={stepContentData.columnTitles || ["1", "2", "3"]}
+                description={stepContentData.description}
+                data={stepContentData.data as unknown as RegionData[]}
+              />
+            </div>
+          </div>
+        </>
+      );
+    }
+
     return (
       <>
         <StepHeader />
