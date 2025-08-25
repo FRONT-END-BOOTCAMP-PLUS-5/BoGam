@@ -33,17 +33,5 @@ export const styles = {
   
   fixedStartBtn: "absolute bottom-72",
   
-  startBtn: "text-base text-center text-brand",
-  
-  pwaContainer: "mt-6 w-full max-w-sm mx-auto",
-  
-  pwaContent: "flex flex-col items-center space-y-4",
-  pwaIcon: "text-4xl mb-2",
-  pwaTitle: "text-lg font-semibold text-brand",
-  pwaDesc: "text-sm text-muted text-center leading-relaxed",
-  pwaInstructions: "w-full space-y-3 mt-4",
-  instruction: "flex items-center space-x-3 text-sm text-muted",
-  step: "flex items-center justify-center w-6 h-6 rounded-full bg-brand text-white text-xs font-semibold",
-  
-  pwaHeaderContainer: "ml-auto"
+  startBtn: "text-base text-center text-brand"
 };

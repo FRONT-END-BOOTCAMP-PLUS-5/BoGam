@@ -18,9 +18,28 @@ export default function PWAInstallPrompt() {
 
   useEffect(() => {
     // PWA가 이미 설치되어 있는지 확인
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
-    }
+    const checkIfInstalled = () => {
+      // display-mode: standalone은 PWA가 독립 앱으로 실행될 때
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        setIsInstalled(true);
+        return;
+      }
+      
+      // navigator.standalone은 iOS Safari에서 PWA 설치 여부 확인
+      if ('standalone' in navigator && (navigator as any).standalone) {
+        setIsInstalled(true);
+        return;
+      }
+      
+      // localStorage에 설치 상태 저장/확인
+      const installStatus = localStorage.getItem('pwa-installed');
+      if (installStatus === 'true') {
+        setIsInstalled(true);
+        return;
+      }
+    };
+
+    checkIfInstalled();
 
     const handler = (e: Event) => {
       e.preventDefault();
@@ -46,6 +65,8 @@ export default function PWAInstallPrompt() {
     
     if (outcome === 'accepted') {
       console.log('PWA 설치됨');
+      // 설치 성공 시 localStorage에 상태 저장하고 프롬프트 숨김
+      localStorage.setItem('pwa-installed', 'true');
       setIsInstalled(true);
     }
   };
@@ -54,7 +75,7 @@ export default function PWAInstallPrompt() {
     // 닫기 버튼 클릭 시 아무것도 하지 않음 (항상 표시)
   };
 
-  // 이미 설치된 경우 표시하지 않음
+  // 이미 설치된 경우 프롬프트를 표시하지 않음
   if (isInstalled) return null;
 
   return (
