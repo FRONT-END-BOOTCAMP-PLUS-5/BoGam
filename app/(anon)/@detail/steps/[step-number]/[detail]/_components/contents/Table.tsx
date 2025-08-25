@@ -40,7 +40,7 @@ const Table = ({
       // 날짜를 선택하지 않았을 때는 모든 데이터 표시
       setCurrentData(dataWithOptions);
     }
-  }, [selectedDate, dataWithOptions]);
+  }, [selectedDate]); // dataWithOptions 제거
 
   const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDate(event.target.value);
