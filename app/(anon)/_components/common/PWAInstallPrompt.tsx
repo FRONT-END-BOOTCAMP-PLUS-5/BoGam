@@ -12,6 +12,10 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 
+interface NavigatorWithStandalone extends Navigator {
+  standalone?: boolean;
+}
+
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -26,7 +30,7 @@ export default function PWAInstallPrompt() {
       }
       
       // navigator.standalone은 iOS Safari에서 PWA 설치 여부 확인
-      if ('standalone' in navigator && (navigator as any).standalone) {
+      if ('standalone' in navigator && (navigator as NavigatorWithStandalone).standalone) {
         setIsInstalled(true);
         return;
       }

@@ -49,7 +49,26 @@ export class JeonseGuaranteeRepositoryImpl implements JeonseGuaranteeRepository 
         throw new Error(`API 요청 실패: ${response.status}`);
       }
 
-      const data: any = response.data;
+// API 응답 데이터 타입 정의
+interface JeonseGuaranteeApiResponse {
+  header: {
+    resultCode: string;
+    resultMsg: string;
+  };
+  body: {
+    pageNo: number;
+    totalCount: number;
+    numOfRows: number;
+    items: Array<{
+      rcmdProrRnk: string;
+      grntLmtAmt: string;
+      loanLmtAmt: string;
+      grntDvcd: string;
+    }>;
+  };
+}
+
+      const data = response.data as JeonseGuaranteeApiResponse;
       
       console.log('전세자금보증상품 API 응답 데이터:', JSON.stringify(data, null, 2));
       
@@ -60,7 +79,7 @@ export class JeonseGuaranteeRepositoryImpl implements JeonseGuaranteeRepository 
         data.body?.pageNo || 1,
         data.body?.totalCount || 0,
         data.body?.numOfRows || 0,
-        (data.body?.items || []).map((item: any) => ({
+        (data.body?.items || []).map((item) => ({
           rcmdProrRnk: parseInt(item.rcmdProrRnk) || 0,
           grntLmtAmt: item.grntLmtAmt || '0',
           loanLmtAmt: item.loanLmtAmt || '0',

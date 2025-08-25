@@ -32,11 +32,24 @@ export interface ParsedTransactionDetail {
   종전월세?: string;
 }
 
+// API 응답 데이터 타입 정의
+interface TransactionApiResponse {
+  success: boolean;
+  data: {
+    data?: {
+      resSaleList?: TransactionDetailApartSaleItem[];
+      resRentList?: TransactionDetailApartRentItem[];
+    };
+    resSaleList?: TransactionDetailApartSaleItem[];
+    resRentList?: TransactionDetailApartRentItem[];
+  };
+}
+
 /**
  * 아파트 계열 실거래가 데이터 파싱
  */
 export const parseTransactionDetailApart = (
-  data: any
+  data: TransactionApiResponse
 ): ParsedTransactionDetail[] => {
   if (!data.success || !data.data) {
     throw new Error('실거래가 데이터를 가져올 수 없습니다.');
@@ -51,7 +64,7 @@ export const parseTransactionDetailApart = (
   // 각 아이템의 resTranAmount 값 확인
   console.log(
     '🔍 매매 데이터 resTranAmount 값들:',
-    saleData.map((item: any) => ({
+    saleData.map((item: TransactionDetailApartSaleItem) => ({
       resTranAmount: item.resTranAmount,
       type: typeof item.resTranAmount,
       year: item.resYear,
@@ -60,7 +73,7 @@ export const parseTransactionDetailApart = (
   );
   console.log(
     '🔍 전월세 데이터 resTranAmount 값들:',
-    rentData.map((item: any) => ({
+    rentData.map((item: TransactionDetailApartRentItem) => ({
       resTranAmount: item.resTranAmount,
       type: typeof item.resTranAmount,
       year: item.resYear,
@@ -151,11 +164,17 @@ export const parseTransactionDetailApart = (
   return transformedData;
 };
 
+// 단독/다가구 API 응답 데이터 타입 정의
+interface SingleTransactionApiResponse {
+  success: boolean;
+  data: Array<Record<string, unknown>>;
+}
+
 /**
  * 단독/다가구 실거래가 데이터 파싱
  */
 export const parseTransactionDetailSingle = (
-  data: any
+  data: SingleTransactionApiResponse
 ): ParsedTransactionDetail[] => {
   if (!data.success || !data.data) {
     throw new Error('실거래가 데이터를 가져올 수 없습니다.');

@@ -165,9 +165,9 @@ export class RealEstateTransactionRepository {
   }
   /**
    * 에러 처리
-   * @param error 에러 객체 (axios 에러 타입이 복잡하여 any 사용)
+   * @param error 에러 객체
    */
-  private handleError(error: any): void {
+  private handleError(error: unknown): void {
     if ('response' in error && error.response) {
       console.error('API 응답 에러:', {
         status: error.response.status,
