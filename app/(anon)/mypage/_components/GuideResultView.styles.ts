@@ -10,7 +10,7 @@ export const styles = {
   iconBadgeContainer: "flex justify-end mb-4",
   
   // CircularIconBadge 영역을 위한 새로운 스타일
-  iconBadgeHeader: "w-full px-4 pt-3 flex items-center justify-between bg-white mb-0",
+  iconBadgeHeader: "w-full px-4 pt-0 flex items-center justify-between bg-white mb-0",
   iconBadgeTitle: "text-sm font-medium text-brand-black text-left flex items-center flex-1 min-w-0 opacity-0", // 투명하게 만들어서 안 보이게
   iconBadgeStageNumber: "font-bold text-brand-black flex-shrink-0",
   iconBadgeSubtitle: "font-normal text-brand-black ml-1 truncate",
