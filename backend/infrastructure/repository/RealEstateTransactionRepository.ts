@@ -168,16 +168,26 @@ export class RealEstateTransactionRepository {
    * @param error 에러 객체
    */
   private handleError(error: unknown): void {
-    if ('response' in error && error.response) {
-      console.error('API 응답 에러:', {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
-      });
-    } else if ('request' in error && error.request) {
-      console.error('API 요청 타임아웃 또는 네트워크 에러:', error.message);
+    if (
+      error &&
+      typeof error === 'object' &&
+      'response' in error &&
+      error.response
+    ) {
+      const errorResponse = error.response as unknown;
+      console.error('API 응답 에러:', errorResponse);
+    } else if (
+      error &&
+      typeof error === 'object' &&
+      'request' in error &&
+      error.request
+    ) {
+      const errorRequest = error as unknown;
+      console.error('API 요청 타임아웃 또는 네트워크 에러:', errorRequest);
     } else {
-      console.error('일반 에러:', error.message || error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error('일반 에러:', errorMessage);
     }
   }
 }

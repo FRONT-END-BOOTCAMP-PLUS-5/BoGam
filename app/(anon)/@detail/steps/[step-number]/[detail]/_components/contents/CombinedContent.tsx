@@ -6,7 +6,11 @@ import RadioGroup from './RadioGroup';
 import Table from './Table';
 import List from './List';
 import DataGrid from './DataGrid';
-import { ContentSection, CombinedContentProps, LegacyContentSection } from './types';
+import {
+  ContentSection,
+  CombinedContentProps,
+  LegacyContentSection,
+} from './types';
 import { styles } from './CombinedContent.styles';
 
 const CombinedContent = ({
@@ -32,7 +36,9 @@ const CombinedContent = ({
         content = <RadioGroup data={section.data} />;
         break;
       case 'Table':
-        content = <Table data={section.data} />;
+        content = (
+          <Table data={section.data} columnTitles={section.columnTitles} />
+        );
         break;
       case 'List':
         content = <List data={section.data} />;
@@ -42,7 +48,9 @@ const CombinedContent = ({
         break;
       default:
         console.warn(
-          `Unknown section type: ${(section as unknown as Record<string, unknown>).type}`
+          `Unknown section type: ${
+            (section as unknown as Record<string, unknown>).type
+          }`
         );
         return null;
     }
