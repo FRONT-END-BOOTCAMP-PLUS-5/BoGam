@@ -122,7 +122,7 @@ export default function ModalContent() {
       case 'List':
         return (
           <List
-            data={pageData as unknown as { left: string; right?: string }[]}
+            data={pageData as unknown as string[]}
           />
         );
       case 'DataGrid':
@@ -181,7 +181,9 @@ export default function ModalContent() {
       <>
         <StepHeader />
         <div className={styles.scrollableContent}>
-          <div className={styles.mainContent}>{specialComponent}</div>
+          <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+            {specialComponent}
+          </div>
         </div>
       </>
     );
@@ -219,7 +221,7 @@ export default function ModalContent() {
           >
             {stepContentData.sections.map((section, sectionIndex) => (
               <SwiperSlide key={sectionIndex}>
-                <div className={styles.mainContent}>
+                <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
                   {/* step-5-3 특별 처리 */}
                   {stepNumber === '5' && detail === '3' ? (
                     <Step5Detail3Renderer
@@ -270,10 +272,7 @@ export default function ModalContent() {
                       {section.type === 'List' && (
                         <List
                           data={
-                            section.data as unknown as {
-                              left: string;
-                              right?: string;
-                            }[]
+                            section.data as unknown as string[]
                           }
                         />
                       )}
@@ -371,7 +370,7 @@ export default function ModalContent() {
             {stepContentData.data.map(
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
-                  <div className={styles.mainContent}>
+                  <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
                     {renderSwiperContent(pageData, pageIndex)}
                   </div>
                 </SwiperSlide>
@@ -408,7 +407,7 @@ export default function ModalContent() {
     <>
       <StepHeader />
       <div className={styles.scrollableContent}>
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
           <DataGrid data={[]} />
         </div>
       </div>
