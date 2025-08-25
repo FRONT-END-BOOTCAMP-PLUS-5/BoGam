@@ -81,13 +81,6 @@ class FrontendAxiosInstance {
     // 요청 인터셉터 - next-auth 세션을 사용한 인증
     this.axiosInstance.interceptors.request.use(
       (config) => {
-        console.log(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          `[Frontend API Request] ${config.method?.toUpperCase()} ${
-            (config as any).url
-          }`
-        );
-
         // Promise를 반환하여 비동기 처리
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.addAuthHeaders(config as any) as any;
@@ -101,11 +94,6 @@ class FrontendAxiosInstance {
     // 응답 인터셉터
     this.axiosInstance.interceptors.response.use(
       (response) => {
-        console.log(
-          `[Frontend API Response] ${(response as { status: number }).status} ${
-            (response as { config?: { url?: string } }).config?.url
-          }`
-        );
         return response;
       },
       (error: unknown) => {

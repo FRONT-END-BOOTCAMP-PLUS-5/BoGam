@@ -55,14 +55,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
 
   // 드롭다운 선택 시 ref 업데이트
   useEffect(() => {
-    console.log('🔍 SearchSection useEffect 실행:', {
-      selectedAddress,
-      isNewAddressSearch,
-      roadAddress,
-      dong,
-      ho,
-      searchQuery,
-    });
 
     // 주소 드롭다운에서 선택된 주소가 있고, 새 주소 검색이 아닌 경우
     if (!isNewAddressSearch && selectedAddress) {
@@ -77,7 +69,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
 
   // selectedAddress가 변경될 때마다 ref 업데이트
   useEffect(() => {
-    console.log('🔍 SearchSection selectedAddress 변경 감지:', selectedAddress);
 
     // selectedAddress가 있고, 새 주소 검색이 아닌 경우
     if (selectedAddress && !isNewAddressSearch) {

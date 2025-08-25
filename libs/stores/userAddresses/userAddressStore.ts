@@ -58,34 +58,13 @@ export const useUserAddressStore = create<UserAddressStore>()(
         initializeFromQuery: (data) => {
           const currentState = get();
 
-          // console.log('🔄 initializeFromQuery 호출:', {
-          //   dataLength: data.length,
-          //   currentUserAddressesLength: currentState.userAddresses.length,
-          //   currentSelectedAddress: currentState.selectedAddress?.nickname,
-          //   volatileAddressesCount: currentState.userAddresses.filter(
-          //     (addr) => addr.isVolatile
-          //   ).length,
-          // });
-
           // 기존 휘발성 주소들 보존
           const volatileAddresses = currentState.userAddresses.filter(
             (addr) => addr.isVolatile
           );
 
-          // console.log(
-          //   '💾 휘발성 주소 보존:',
-          //   volatileAddresses.map((addr) => addr.nickname)
-          // );
-
           // DB 데이터와 휘발성 주소를 합침
           const mergedAddresses = [...data, ...volatileAddresses];
-
-          // console.log(
-          //   '🔗 병합된 주소 목록:',
-          //   mergedAddresses.map(
-          //     (addr) => `${addr.nickname}${addr.isVolatile ? ' (휘발성)' : ''}`
-          //   )
-          // );
 
           // selectedAddress를 보존하면서 userAddresses만 업데이트
           set(
@@ -101,7 +80,6 @@ export const useUserAddressStore = create<UserAddressStore>()(
           if (!currentState.selectedAddress) {
             const primaryAddress = data.find((addr) => addr.isPrimary);
             if (primaryAddress) {
-              // console.log('⭐ 대표 주소 선택:', primaryAddress.nickname);
               set(
                 (state) => ({ selectedAddress: primaryAddress }),
                 false,
@@ -109,10 +87,6 @@ export const useUserAddressStore = create<UserAddressStore>()(
               );
             }
           } else {
-            // console.log(
-            //   '✅ 기존 선택된 주소 유지:',
-            //   currentState.selectedAddress.nickname
-            // );
           }
         },
 
