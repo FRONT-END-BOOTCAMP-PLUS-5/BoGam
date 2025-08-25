@@ -2,13 +2,8 @@
 
 import React from 'react';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
-import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 
 export default function TransactionSearchTestPage() {
-  const handleTransactionComplete = (data: TransactionData[]) => {
-    console.log('실거래가 데이터 조회 완료:', data);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto">
@@ -16,11 +11,7 @@ export default function TransactionSearchTestPage() {
           TransactionSearchComponent 테스트
         </h1>
         
-        <TransactionSearchComponent
-          onTransactionComplete={handleTransactionComplete}
-          showResults={true}
-          className="mb-8"
-        />
+        <TransactionSearchComponent className="mb-8" />
         
         <div className="bg-white rounded-lg p-6 shadow-md">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">

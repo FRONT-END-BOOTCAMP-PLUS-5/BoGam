@@ -1,62 +1,57 @@
 export const styles = {
-  // 메인 컨테이너
-  container: 'transaction-search-component w-full max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md',
-  
   // 검색 폼
   searchForm: 'search-form space-y-6 mb-8',
-  formTitle: 'form-title text-2xl font-bold text-gray-800 mb-6 text-center',
+  formTitle: 'form-title text-2xl font-bold text-brand-black mb-6 text-center',
   
-  // 주소 표시
-  addressDisplay: 'address-display bg-gray-50 p-4 rounded-lg',
-  addressValue: 'address-value text-lg font-medium text-gray-900 mt-2',
-  
-  // 폼 그룹
+  // Form elements
   formGroup: 'form-group space-y-2',
-  formLabel: 'form-label block text-sm font-medium text-gray-700',
-  formSelect: 'form-select w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+  formLabel: 'form-label block text-sm font-medium text-brand-dark-gray',
   
-  // 단지명 입력 그룹
+  // Address display
+  addressDisplay: 'address-display p-4 bg-brand-light-gray rounded-lg',
+  addressValue: 'address-value text-lg font-medium text-brand-black',
+  
+  // Complex input
   complexInputGroup: 'complex-input-group flex items-center space-x-3',
-  complexDisplay: 'complex-display flex-1 bg-gray-50 px-3 py-2 rounded-md text-gray-700 min-h-[40px] flex items-center',
-  fetchButton: 'fetch-button px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
+  complexDisplay: 'complex-display flex-1 p-3 bg-brand-light-gray rounded-md text-brand-dark-gray',
+  fetchButton: 'fetch-button px-4 py-2',
   
-  // 검색 버튼
-  searchButtonContainer: 'search-button-container flex justify-center pt-4',
-  searchButton: 'search-button px-8 py-3 bg-green-600 text-white text-lg font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+  // Search button
+  searchButtonContainer: 'search-button-container text-center',
+  searchButton: 'search-button w-full px-6 py-3 text-lg font-medium',
   
-  // 검색 결과
-  searchResults: 'search-results mt-8',
-  resultsTitle: 'results-title text-xl font-semibold text-gray-800 mb-4',
-  resultsGrid: 'results-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',
+  // Search results
+  searchResults: 'search-results space-y-6',
+  resultsTitle: 'results-title text-2xl font-bold text-brand-black mb-6',
   
-  // 결과 카드
-  resultCard: 'result-card bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow',
-  resultHeader: 'result-header flex justify-between items-start mb-3 pb-2 border-b border-gray-100',
-  buildingName: 'building-name text-lg font-semibold text-gray-900 flex-1',
-  transactionDate: 'transaction-date text-sm text-gray-500 ml-2',
+  // Tab navigation
+  tabNavigation: 'tab-navigation mb-6',
+  tabContainer: 'flex border-b border-brand-light-gray',
+  tab: 'px-6 py-3 text-sm font-medium rounded-t-lg transition-colors',
+  activeTab: 'bg-brand text-white border-b-2 border-brand',
+  inactiveTab: 'bg-brand-light-gray text-brand-dark-gray hover:bg-brand-light-gray',
   
-  // 결과 상세
-  resultDetails: 'result-details space-y-2',
-  detailItem: 'detail-item flex justify-between items-center',
-  label: 'label text-sm text-gray-600 font-medium',
-  value: 'value text-sm text-gray-900',
-  price: 'price text-lg font-bold text-green-600',
+  // Analysis card
+  analysisCard: 'analysis-card bg-white p-6 rounded-lg border border-brand-light-gray shadow-sm mb-6',
+  analysisTitle: 'analysis-title text-xl font-bold text-brand-black mb-4',
+  analysisContent: 'analysis-content space-y-4',
+  analysisRow: 'analysis-row flex justify-between items-center',
+  analysisLabel: 'analysis-label text-sm font-medium text-brand-dark-gray',
+  analysisValue: 'analysis-value text-lg font-semibold',
+  analysisHighlight: 'analysis-highlight bg-brand-light-blue p-3 rounded-lg border-l-4 border-brand',
+  analysisWarning: 'analysis-warning bg-red-50 p-3 rounded-lg border-l-4 border-brand-error',
+  analysisSafe: 'analysis-safe bg-green-50 p-3 rounded-lg border-l-4 border-brand-green',
   
-  // 로딩 상태
-  loading: 'loading flex justify-center items-center py-8',
-  loadingSpinner: 'loading-spinner animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600',
+  // Average prices
+  averagePrices: 'average-prices mb-6',
+  averagePriceCard: 'average-price-card bg-white p-4 rounded-lg border border-brand-light-gray shadow-sm',
+  averagePriceArea: 'text-2xl font-bold text-brand',
+  averagePriceValue: 'text-lg font-semibold text-brand-black',
+  averagePriceCount: 'text-sm text-brand-dark-gray',
   
-  // 에러 상태
-  error: 'error bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-center',
+  // Tab content
+  tabContent: 'tab-content',
   
-  // 반응형 디자인
-  responsive: {
-    sm: 'sm:px-4',
-    md: 'md:px-6',
-    lg: 'lg:px-8',
-  },
-  
-  // 애니메이션
-  fadeIn: 'animate-fade-in',
-  slideUp: 'animate-slide-up',
+  // New search button
+  newSearchButton: 'px-4 py-2',
 };

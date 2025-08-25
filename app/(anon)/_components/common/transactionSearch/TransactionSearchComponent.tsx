@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTransactionManagement } from '@/hooks/main/useTransactionManagement';
 import { useMainPageState } from '@/hooks/main/useMainPageState';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
@@ -9,6 +9,8 @@ import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
 import Button from '@/(anon)/_components/common/button/Button';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
+import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
+import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from './TransactionSearchComponent.styles';
 
 // 실제 API 응답 구조에 맞춘 타입
@@ -21,14 +23,17 @@ interface ActualDanjiInfo {
 }
 
 interface TransactionSearchComponentProps {
-  onTransactionComplete?: (data: TransactionData[]) => void;
-  showResults?: boolean;
   className?: string;
 }
 
+  // 평수별 평균가 계산을 위한 타입
+  interface AveragePriceByArea {
+    area: number;
+    averagePrice: number;
+    count: number;
+  }
+
 export const TransactionSearchComponent: React.FC<TransactionSearchComponentProps> = ({
-  onTransactionComplete,
-  showResults = true,
   className = '',
 }) => {
   const [parsedAddress, setParsedAddress] = useState({
@@ -40,14 +45,16 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
   const [danjiName, setDanjiName] = useState('');
   const [selectedType, setSelectedType] = useState('0'); // 0: 아파트, 1: 연립/다세대, 2: 오피스텔
   const [showDanjiModal, setShowDanjiModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'search' | 'results'>('search');
+  const [targetArea, setTargetArea] = useState(''); // 거래하려는 집 전용면적
+  const [targetPrice, setTargetPrice] = useState(''); // 전세 거래금액
 
   // Hook들 사용
   const { selectedAddress } = useUserAddressStore();
   const { 
     transactionData, 
     isLoading, 
-    handleMoveToAddress,
-    handleBuildingSelect 
+    handleMoveToAddress
   } = useTransactionManagement();
   const { selectedYear, setSelectedYear } = useMainPageState();
 
@@ -60,12 +67,92 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
     }
   }, [selectedAddress]);
 
-  // 트랜잭션 데이터가 완료되면 콜백 호출
-  useEffect(() => {
-    if (transactionData.length > 0 && onTransactionComplete) {
-      onTransactionComplete(transactionData);
+  // 매매 거래금액 문자열을 숫자로 변환하는 함수 (보증금 제외)
+  const parsePrice = (price: string): number => {
+    // 보증금이 포함된 데이터는 제외 (전월세 거래)
+    if (price.includes('보증금')) {
+      return 0;
     }
-  }, [transactionData, onTransactionComplete]);
+    
+    // "7억3천만" -> 7.3억
+    const match = price.match(/(\d+)억(\d+)천?만?/);
+    if (match) {
+      const billion = parseInt(match[1]); // 억
+      const thousand = parseInt(match[2]) / 10;  // 천만 → 0.1억
+      return billion + thousand;
+    }
+    
+    // "7억" -> 7억
+    const billionOnly = price.match(/(\d+)억/);
+    if (billionOnly) {
+      return parseInt(billionOnly[1]);
+    }
+    
+    return 0;
+  };
+
+  // 트랜잭션 데이터가 완료되면 결과 탭으로 이동
+  useEffect(() => {
+    if (transactionData.length > 0) {
+      setActiveTab('results');
+    }
+  }, [transactionData]);
+
+  // 전용면적별 평균가 계산 (매매 거래만)
+  const averagePricesByArea: AveragePriceByArea[] = useMemo(() => {
+    if (transactionData.length === 0) return [];
+
+    // API 응답 데이터 구조 확인 (첫 번째 데이터만)
+    if (transactionData.length > 0) {
+      console.log('🔍 API 응답 데이터 구조:', transactionData[0]);
+    }
+
+    const areaGroups: { [key: string]: TransactionData[] } = {};
+    
+    transactionData.forEach((transaction) => {
+      // 보증금이 포함된 거래는 제외 (전월세 거래)
+      if (transaction.거래금액.includes('보증금')) {
+        return;
+      }
+      
+      // 전용면적 처리 (문자열 → 숫자)
+      let area: number | null = null;
+      if (transaction.전용면적) {
+        const parsedArea = parseFloat(transaction.전용면적);
+        if (!isNaN(parsedArea)) {
+          // 전용면적(㎡) 그대로 사용, 소수점 첫째 자리까지 반올림하여 그룹화
+          area = Math.round(parsedArea * 10) / 10;
+        }
+      }
+      
+      if (area !== null) {
+        // areaGroups의 키로 사용할 때는 문자열로 변환 (객체 키는 문자열이어야 함)
+        const areaKey = area.toString();
+        if (!areaGroups[areaKey]) {
+          areaGroups[areaKey] = [];
+        }
+        areaGroups[areaKey].push(transaction);
+      }
+    });
+
+    const result: AveragePriceByArea[] = Object.entries(areaGroups)
+      .map(([areaKey, transactions]) => {
+        const totalPrice = transactions.reduce((sum, t) => {
+          const price = parsePrice(t.거래금액);
+          return sum + price;
+        }, 0);
+        const averagePrice = totalPrice / transactions.length; // 반올림 제거, 소수점 유지
+        
+        return {
+          area: parseFloat(areaKey), // 문자열을 숫자로 변환
+          averagePrice,
+          count: transactions.length
+        };
+      })
+      .sort((a, b) => a.area - b.area);
+    
+    return result;
+  }, [transactionData]);
 
   // 주소 표시 로직
   const displayAddress = selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
@@ -86,147 +173,274 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
     }
   };
 
-  const handleBuildingSelectFromList = (buildingCode: string, buildingName: string) => {
-    setComplexName(buildingCode);
-    setDanjiName(buildingName);
-    handleBuildingSelect(buildingCode, buildingName);
+  const formatPrice = (price: number) => {
+    // price는 이미 억 단위로 변환되어 있음
+    if (price >= 1) {
+      return `${price.toFixed(2)}억`; // 소수점 둘째 자리까지 표시
+    } else if (price >= 0.1) {
+      return `${(price * 10).toFixed(1)}천만원`; // 소수점 첫째 자리까지 표시
+    } else {
+      return `${(price * 10000).toFixed(0)}만원`;
+    }
   };
 
-  const formatTransactionData = (data: TransactionData) => ({
-    ...data,
-    거래금액: data.거래금액 ? `${data.거래금액}만원` : '-',
-    전용면적: data.전용면적 ? `${data.전용면적}㎡` : '-',
-    층: data.층 ? `${data.층}층` : '-',
-    건축년도: data.건축년도 || '-',
-    거래일: `${data.년}-${data.월}-${data.일}`,
-  });
+  // 분석 카드 렌더링 함수
+  const renderAnalysisCard = () => {
+    if (!targetArea || !targetPrice || averagePricesByArea.length === 0) {
+      return null;
+    }
 
-  return (
-    <div className={`transaction-search-component ${className}`}>
-      {/* 검색 폼 */}
-      <div className="search-form">
-        <h3 className="form-title">실거래가 조회</h3>
-        
-        {/* 주소 정보 표시 */}
-        {displayAddress && (
-          <div className="address-display">
-            <label className="form-label">선택된 주소:</label>
-            <div className="address-value">{displayAddress}</div>
+    const targetAreaNum = parseFloat(targetArea);
+    if (isNaN(targetAreaNum)) return null;
+
+    // 입력한 전용면적과 가장 유사한 면적 찾기
+    const mostSimilarArea = averagePricesByArea.reduce((prev, curr) => {
+      return Math.abs(curr.area - targetAreaNum) < Math.abs(prev.area - targetAreaNum) ? curr : prev;
+    });
+
+    // 전세 거래가를 숫자로 변환
+    const targetPriceNum = parsePrice(targetPrice);
+    if (targetPriceNum === 0) return null;
+
+    // 비율 계산
+    const ratio = targetPriceNum / mostSimilarArea.averagePrice;
+    const percentage = (ratio * 100).toFixed(1);
+
+    // 위험도 판단
+    const isDangerous = ratio > 0.9;
+
+    return (
+      <div className={styles.analysisCard}>
+        <h4 className={styles.analysisTitle}>📊 거래 분석 결과</h4>
+        <div className={styles.analysisContent}>
+          <div className={styles.analysisRow}>
+            <span className={styles.analysisLabel}>입력한 전용면적:</span>
+            <span className={styles.analysisValue}>{targetArea}㎡</span>
           </div>
-        )}
-
-        {/* 조회 년도 */}
-        <div className="form-group">
-          <label className="form-label">조회 년도:</label>
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="form-select"
-          >
-            <option value='2025'>2025</option>
-            <option value='2024'>2024</option>
-            <option value='2023'>2023</option>
-            <option value='2022'>2022</option>
-            <option value='2021'>2021</option>
-            <option value='2020'>2020</option>
-          </select>
-        </div>
-
-        {/* 건물 타입 */}
-        <div className="form-group">
-          <label className="form-label">건물 타입:</label>
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="form-select"
-          >
-            <option value='0'>아파트</option>
-            <option value='1'>연립/다세대</option>
-            <option value='2'>오피스텔</option>
-          </select>
-        </div>
-
-        {/* 단지명 */}
-        <div className="form-group">
-          <label className="form-label">단지명:</label>
-          <div className="complex-input-group">
-            <div className="complex-display">
-              {danjiName || '세밀한 검색을 위한 단지명 검색'}
+          <div className={styles.analysisRow}>
+            <span className={styles.analysisLabel}>입력한 전세 거래가:</span>
+            <span className={styles.analysisValue}>{targetPrice}</span>
+          </div>
+          <div className={styles.analysisRow}>
+            <span className={styles.analysisLabel}>유사한 전용면적:</span>
+            <span className={styles.analysisValue}>{mostSimilarArea.area}㎡</span>
+          </div>
+          <div className={styles.analysisRow}>
+            <span className={styles.analysisLabel}>해당 면적 매매 평균가:</span>
+            <span className={styles.analysisValue}>{formatPrice(mostSimilarArea.averagePrice)}</span>
+          </div>
+          
+          {isDangerous ? (
+            <div className={styles.analysisWarning}>
+              <div className="font-semibold text-brand-error mb-1">⚠️ 주의!</div>
+              <div className="text-brand-error">전세 거래가가 매매 평균가에 맞먹습니다!</div>
+              <div className="text-sm text-brand-error mt-1">
+                전세 거래가 / 매매 평균가 = {percentage}%
+              </div>
             </div>
-            <Button 
-              onClick={handleFetchComplex} 
-              variant='primary'
-              className="fetch-button"
-            >
-              가져오기
-            </Button>
-          </div>
-          {!danjiName && (
-            <p className="text-sm text-orange-600 mt-1">
-              * 아파트, 연립/다세대, 오피스텔 검색을 위해서는 단지명이 필요합니다
-            </p>
-          )}
-        </div>
-
-        {/* 실거래가 조회 버튼 */}
-        <div className="search-button-container">
-          <Button
-            onClick={handleTransactionSearch}
-            disabled={!parsedAddress.addrSido || !parsedAddress.addrSigungu || isLoading || !complexName}
-            variant='primary'
-            className="search-button"
-          >
-            {isLoading ? '조회 중...' : '실거래가 조회하기'}
-          </Button>
-          {!complexName && (
-            <p className="text-sm text-red-600 mt-2 text-center">
-              단지명을 먼저 검색해주세요
-            </p>
+          ) : (
+            <div className={styles.analysisSafe}>
+              <div className="font-semibold text-brand-green mb-1">✅ 안전</div>
+              <div className="text-brand-green">
+                전세 거래가가 매매 평균가의 {percentage}%입니다.
+              </div>
+              <div className="text-sm text-brand-green mt-1">
+                크게 위험한 수준이 아닙니다.
+              </div>
+            </div>
           )}
         </div>
       </div>
+    );
+  };
 
-      {/* 검색 결과 */}
-      {showResults && transactionData.length > 0 && (
-        <div className="search-results">
-          <h3 className="results-title">검색 결과 ({transactionData.length}건)</h3>
-          <div className="results-grid">
-            {transactionData.map((item, index) => {
-              const formatted = formatTransactionData(item);
-              return (
-                <div key={index} className="result-card">
-                  <div className="result-header">
-                    <h4 className="building-name">{formatted.아파트}</h4>
-                    <span className="transaction-date">{formatted.거래일}</span>
-                  </div>
-                  <div className="result-details">
-                    <div className="detail-item">
-                      <span className="label">거래금액:</span>
-                      <span className="value price">{formatted.거래금액}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">전용면적:</span>
-                      <span className="value">{formatted.전용면적}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">층:</span>
-                      <span className="value">{formatted.층}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">건축년도:</span>
-                      <span className="value">{formatted.건축년도}</span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="label">주소:</span>
-                      <span className="value">{formatted.법정동} {formatted.지번}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+  return (
+    <div className={`transaction-search-component ${className}`}>
+      {/* 탭 네비게이션 */}
+      <div className={styles.tabNavigation}>
+        <div className={styles.tabContainer}>
+          <button
+            onClick={() => setActiveTab('search')}
+            className={`${styles.tab} ${
+              activeTab === 'search' ? styles.activeTab : styles.inactiveTab
+            }`}
+          >
+            조회
+          </button>
+          <button
+            onClick={() => setActiveTab('results')}
+            className={`${styles.tab} ${
+              activeTab === 'results' ? styles.activeTab : styles.inactiveTab
+            }`}
+            disabled={transactionData.length === 0}
+          >
+            결과 ({transactionData.length})
+          </button>
         </div>
-      )}
+      </div>
+
+              {/* 탭 컨텐츠 */}
+        <div className={styles.tabContent}>
+          {activeTab === 'search' ? (
+            /* 검색 폼 */
+            <div className={styles.searchForm}>
+              <h3 className={styles.formTitle}>실거래가 조회</h3>
+            
+            {/* 주소 정보 표시 */}
+            {displayAddress && (
+              <div className={styles.addressDisplay}>
+                <label className={styles.formLabel}>선택된 주소:</label>
+                <div className={styles.addressValue}>{displayAddress}</div>
+              </div>
+            )}
+
+            {/* 조회 년도 */}
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>조회 년도:</label>
+              <FormSelect
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+              >
+                <option value='2025'>2025</option>
+                <option value='2024'>2024</option>
+                <option value='2023'>2023</option>
+                <option value='2022'>2022</option>
+                <option value='2021'>2021</option>
+                <option value='2020'>2020</option>
+              </FormSelect>
+            </div>
+
+            {/* 건물 타입 */}
+            <div className={styles.formGroup}>
+              <label className={styles.formLabel}>건물 타입:</label>
+              <FormSelect
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+              >
+                <option value='0'>아파트</option>
+                <option value='1'>연립/다세대</option>
+                <option value='2'>오피스텔</option>
+              </FormSelect>
+            </div>
+
+                         {/* 단지명 */}
+             <div className={styles.formGroup}>
+               <label className={styles.formLabel}>단지명:</label>
+               <div className={styles.complexInputGroup}>
+                 <div className={styles.complexDisplay}>
+                   {danjiName || '세밀한 검색을 위한 단지명 검색'}
+                 </div>
+                 <Button 
+                   onClick={handleFetchComplex} 
+                   variant='primary'
+                   className={styles.fetchButton}
+                 >
+                   가져오기
+                 </Button>
+               </div>
+               {!danjiName && (
+                 <p className="text-sm text-orange-600 mt-1">
+                   * 아파트, 연립/다세대, 오피스텔 검색을 위해서는 단지명이 필요합니다
+                 </p>
+               )}
+             </div>
+
+                           {/* 거래하려는 집 정보 */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>거래하려는 집 전용면적 (㎡):</label>
+                <TextInput
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={targetArea}
+                  onChange={(e) => setTargetArea(e.target.value)}
+                  placeholder="예: 84.5"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>전세 거래금액:</label>
+                <TextInput
+                  type="text"
+                  value={targetPrice}
+                  onChange={(e) => setTargetPrice(e.target.value)}
+                  placeholder="예: 5억5천만"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  * &ldquo;억&rdquo;, &ldquo;천만&rdquo; 단위로 입력해주세요 (예: 5억5천만, 3억)
+                </p>
+              </div>
+
+            {/* 실거래가 조회 버튼 */}
+            <div className={styles.searchButtonContainer}>
+              <Button
+                onClick={handleTransactionSearch}
+                disabled={!parsedAddress.addrSido || !parsedAddress.addrSigungu || isLoading || !complexName}
+                variant='primary'
+                className={styles.searchButton}
+              >
+                {isLoading ? '조회 중...' : '실거래가 조회하기'}
+              </Button>
+              {!complexName && (
+                <p className="text-sm text-red-600 mt-2 text-center">
+                  단지명을 먼저 검색해주세요
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+                     /* 검색 결과 */
+                       <div className={styles.searchResults}>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className={styles.resultsTitle}>검색 결과 ({transactionData.length}건)</h3>
+                <Button
+                  onClick={() => setActiveTab('search')}
+                  variant='secondary'
+                  className={styles.newSearchButton}
+                >
+                  새로 검색
+                </Button>
+              </div>
+
+              {/* 분석 카드 */}
+              {renderAnalysisCard()}
+
+             {/* 데이터가 없을 때 */}
+             {transactionData.length === 0 && (
+               <div className="text-center py-12">
+                 <div className="text-gray-500 text-lg mb-4">
+                   아직 검색 결과가 없습니다.
+                 </div>
+                 <div className="text-gray-400 text-sm">
+                   조회 탭에서 실거래가를 검색해보세요.
+                 </div>
+               </div>
+             )}
+
+                                       {/* 전용면적별 평균가 */}
+               {averagePricesByArea.length > 0 && (
+                 <div className={styles.averagePrices}>
+                   <h4 className="text-lg font-semibold text-gray-800 mb-3">전용면적별 평균가</h4>
+                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                     {averagePricesByArea.map((item) => (
+                       <div key={item.area} className={styles.averagePriceCard}>
+                         <div className="text-center">
+                           <div className={styles.averagePriceArea}>{item.area}㎡</div>
+                           <div className={styles.averagePriceValue}>
+                             {formatPrice(item.averagePrice)}
+                           </div>
+                           <div className={styles.averagePriceCount}>
+                             {item.count}건 거래
+                           </div>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               )}
+           </div>
+        )}
+      </div>
 
       {/* 단지 일련번호 조회 모달 */}
       <ConfirmModal

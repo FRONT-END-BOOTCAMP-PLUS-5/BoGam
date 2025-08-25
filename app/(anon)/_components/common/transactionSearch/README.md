@@ -14,8 +14,6 @@
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `onTransactionComplete` | `(data: TransactionData[]) => void` | `undefined` | 트랜잭션 데이터 조회 완료 시 호출되는 콜백 |
-| `showResults` | `boolean` | `true` | 검색 결과 표시 여부 |
 | `className` | `string` | `''` | 추가 CSS 클래스 |
 
 ## 🎯 사용 예시
@@ -25,36 +23,15 @@
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
 function MyPage() {
-  const handleTransactionComplete = (data) => {
-    console.log('실거래가 데이터:', data);
-  };
-
   return (
-    <TransactionSearchComponent
-      onTransactionComplete={handleTransactionComplete}
-      showResults={true}
-    />
+    <TransactionSearchComponent />
   );
 }
 ```
 
-### 결과만 표시하지 않는 경우
-```tsx
-<TransactionSearchComponent
-  showResults={false}
-  onTransactionComplete={(data) => {
-    // 결과를 다른 컴포넌트로 전달
-    setTransactionData(data);
-  }}
-/>
-```
-
 ### 커스텀 스타일 적용
 ```tsx
-<TransactionSearchComponent
-  className="my-custom-class"
-  onTransactionComplete={handleTransactionComplete}
-/>
+<TransactionSearchComponent className="my-custom-class" />
 ```
 
 ## 🔧 의존성
@@ -109,7 +86,7 @@ interface TransactionData {
 3. **검색 조건 설정**: 년도, 건물 타입, 단지명 설정
 4. **API 호출**: `useTransactionManagement`를 통한 실거래가 데이터 조회
 5. **결과 표시**: 조회된 데이터를 카드 형태로 표시
-6. **콜백 실행**: `onTransactionComplete` 콜백으로 결과 전달
+6. **결과 표시**: 조회된 데이터를 전용면적별 평균가로 그룹화하여 표시
 
 ## ⚠️ 주의사항
 
@@ -117,3 +94,4 @@ interface TransactionData {
 - 단지명은 선택사항이지만, 정확한 검색을 위해 권장됩니다
 - API 호출 중에는 로딩 상태가 표시됩니다
 - 검색 결과는 `useTransactionDataStore`에 저장되어 다른 컴포넌트에서도 사용 가능합니다
+- 매매 거래만 처리하며, 전월세 거래는 자동으로 제외됩니다
