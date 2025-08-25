@@ -92,7 +92,6 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
         // 휘발성 주소 추가 (DB 저장 없음)
         addVolatileAddress: (newAddress: UserAddress) => {
-          // console.log('🆕 휘발성 주소 추가 및 자동 선택:', newAddress.nickname);
 
           // 즉시 UI 업데이트 및 자동 선택
           set(

@@ -92,10 +92,6 @@ const CircularIconBadge = ({
   // ===== Step Result 업데이트 핸들러 =====
   const handleStepResultClick = () => {
     if (!stepData?.currentKey) {
-      console.log('❌ Step Result 업데이트 조건 불만족:', {
-        hasStepData: !!stepData,
-        hasCurrentKey: !!stepData?.currentKey,
-      });
       return;
     }
 
@@ -108,7 +104,6 @@ const CircularIconBadge = ({
     } else if (currentValue === 'match') {
       newDetails[stepData.currentKey] = 'unchecked';
     } else {
-      console.log('⚠️ 변경할 수 없는 상태:', currentValue);
       return;
     }
 

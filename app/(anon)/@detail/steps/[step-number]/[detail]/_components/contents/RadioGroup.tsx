@@ -259,10 +259,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
   // 전체 결과 상태 계산 (모든 페이지 데이터 종합)
   const calculateOverallResult = useCallback(() => {
-    console.log('🔍 calculateOverallResult 호출됨');
-    console.log('🔍 contentData:', contentData);
-    console.log('🔍 stepData:', stepData);
-
     // CombinedContent 타입인 경우 sections 사용, 아니면 data 사용
     const dataSource =
       contentData?.dataType === 'CombinedContent'
