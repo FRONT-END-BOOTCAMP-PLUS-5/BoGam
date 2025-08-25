@@ -176,7 +176,6 @@ export default function CircularIconStepTestPage() {
                 stepData={stepInfo ? {
                   stepNumber: stepInfo.stepNumber,
                   detail: stepInfo.detail,
-                  userAddressId: selectedAddress?.id || 1,
                   currentDetails: stepDetails,
                   currentKey: key, // 현재 뱃지의 키 전달
                   onStepResultUpdate: handleStepResultUpdate
