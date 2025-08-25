@@ -148,13 +148,19 @@ export default function ModalContent() {
   }
 
   // CombinedContent 타입인 경우 sections를 사용
-  if (stepContentData && stepContentData.dataType === 'CombinedContent' && stepContentData.sections) {
+  if (
+    stepContentData &&
+    stepContentData.dataType === 'CombinedContent' &&
+    stepContentData.sections
+  ) {
     const handlePageChange = (page: number) => {
       setCurrentPage(page);
       if (swiperRef.current) {
         swiperRef.current.slideTo(page);
       }
     };
+
+    console.log('stepContentData', stepContentData);
 
     return (
       <>
@@ -202,11 +208,13 @@ export default function ModalContent() {
                       <h3 className={styles.sectionTitle}>{section.title}</h3>
                     )}
                     {section.subtitle && (
-                      <p className={styles.sectionSubtitle}>{section.subtitle}</p>
+                      <p className={styles.sectionSubtitle}>
+                        {section.subtitle}
+                      </p>
                     )}
                   </div>
                 )}
-                
+
                 {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
                 {section.type === 'TextOnly' && (
                   <TextOnly data={section.data} />
@@ -216,17 +224,32 @@ export default function ModalContent() {
                 )}
                 {section.type === 'Table' && (
                   <Table
-                    data={section.data as unknown as { left: string; right?: string }[]}
+                    data={
+                      section.data as unknown as {
+                        left: string;
+                        right?: string;
+                      }[]
+                    }
                   />
                 )}
                 {section.type === 'List' && (
                   <List
-                    data={section.data as unknown as { left: string; right?: string }[]}
+                    data={
+                      section.data as unknown as {
+                        left: string;
+                        right?: string;
+                      }[]
+                    }
                   />
                 )}
                 {section.type === 'DataGrid' && (
                   <DataGrid
-                    data={section.data as unknown as { left: string; right?: string }[]}
+                    data={
+                      section.data as unknown as {
+                        left: string;
+                        right?: string;
+                      }[]
+                    }
                   />
                 )}
                 {section.type === 'CheckListGroup' && (
@@ -236,7 +259,7 @@ export default function ModalContent() {
             </SwiperSlide>
           ))}
         </Swiper>
-        
+
         {/* 페이지 인디케이터 */}
         {stepContentData.sections.length > 1 && (
           <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
