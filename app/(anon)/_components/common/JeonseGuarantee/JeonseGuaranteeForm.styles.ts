@@ -1,6 +1,6 @@
 export const styles = {
   // 폼 전체 컨테이너
-  container: "bg-brand-white",
+  container: "bg-brand-white px-8 pt-6 pb-8 mb-4",
   
   // 입력 필드 그리드 레이아웃
   grid: "grid grid-cols-2 gap-6",
