@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { styles } from './PWAInstallPrompt.styles';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -17,8 +18,10 @@ interface NavigatorWithStandalone extends Navigator {
 }
 
 export default function PWAInstallPrompt() {
+  const { data: session, status } = useSession();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     // PWA가 이미 설치되어 있는지 확인
@@ -45,6 +48,11 @@ export default function PWAInstallPrompt() {
 
     checkIfInstalled();
 
+    // 세션이 로그아웃되면 "나중에" 상태를 리셋
+    if (status === 'unauthenticated') {
+      setIsDismissed(false);
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -55,7 +63,7 @@ export default function PWAInstallPrompt() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
     };
-  }, []);
+  }, [status]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
@@ -76,11 +84,15 @@ export default function PWAInstallPrompt() {
   };
 
   const handleDismiss = () => {
-    // 닫기 버튼 클릭 시 아무것도 하지 않음 (항상 표시)
+    // "나중에" 버튼 클릭 시 프롬프트 숨김
+    setIsDismissed(true);
   };
 
   // 이미 설치된 경우 프롬프트를 표시하지 않음
   if (isInstalled) return null;
+
+  // "나중에" 버튼을 클릭했거나 로그인된 상태에서는 프롬프트를 표시하지 않음
+  if (isDismissed || status === 'authenticated') return null;
 
   return (
     <div className={styles.container}>

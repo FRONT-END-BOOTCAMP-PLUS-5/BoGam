@@ -32,7 +32,11 @@ const CombinedContent = ({
         content = <RadioGroup data={section.data} />;
         break;
       case 'Table':
-        content = <Table data={section.data} />;
+        content = <Table 
+          data={section.data} 
+          columnTitles={section.columnTitles}
+          title={section.title}
+        />;
         break;
       case 'List':
         content = <List data={section.data} />;

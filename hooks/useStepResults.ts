@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { stepResultQueryApi, StepResultData } from '@libs/api_front/stepResultQueries.api';
 
@@ -6,12 +8,13 @@ import { stepResultQueryApi, StepResultData } from '@libs/api_front/stepResultQu
  */
 export const useStepResults = (userAddressNickname?: string) => {
   const [stepResults, setStepResults] = useState<StepResultData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchStepResults = async () => {
     if (!userAddressNickname) {
       setStepResults([]);
+      setIsLoading(false); // userAddressNickname이 없을 때도 로딩 상태 해제
       return;
     }
 
