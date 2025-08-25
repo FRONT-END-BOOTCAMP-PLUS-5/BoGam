@@ -4,7 +4,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTransactionManagement } from '@/hooks/main/useTransactionManagement';
 import { useMainPageState } from '@/hooks/main/useMainPageState';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { parseAddressString } from '@utils/main/addressUtils';
+import { parseStepUrl } from '@utils/stepUrlParser';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
 import Button from '@/(anon)/_components/common/button/Button';
@@ -49,6 +51,12 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
   const [targetArea, setTargetArea] = useState(''); // 거래하려는 집 전용면적
   const [targetPrice, setTargetPrice] = useState(''); // 전세 거래금액
 
+  // URL에서 stepNumber와 detail 가져오기 (parseStepUrl 사용)
+  const pathname = window.location.pathname;
+  const stepInfo = parseStepUrl(pathname);
+  const stepNumber = stepInfo?.stepNumber || 1;
+  const detail = stepInfo?.detail || 6;
+
   // Hook들 사용
   const { selectedAddress } = useUserAddressStore();
   const { 
@@ -57,6 +65,9 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
     handleMoveToAddress
   } = useTransactionManagement();
   const { selectedYear, setSelectedYear } = useMainPageState();
+  
+  // 실거래가 결과 저장 훅 (기존 useStepResultMutations 사용)
+  const { upsertStepResult, isLoading: isSaving } = useStepResultMutations();
 
   // 선택된 주소가 변경될 때마다 주소 파싱
   useEffect(() => {
@@ -88,13 +99,22 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
       return parseInt(billionOnly[1]);
     }
     
+    // "5천만" -> 0.5억 (억이 없는 경우)
+    const thousandOnly = price.match(/(\d+)천?만?/);
+    if (thousandOnly) {
+      const thousand = parseInt(thousandOnly[1]) / 10;  // 천만 → 0.1억
+      return thousand;
+    }
+    
     return 0;
   };
 
-  // 트랜잭션 데이터가 완료되면 결과 탭으로 이동
+  // 트랜잭션 데이터가 완료되면 결과 탭으로 이동하고 분석 결과 저장
   useEffect(() => {
     if (transactionData.length > 0) {
       setActiveTab('results');
+      // 검색 완료 후 한 번만 분석 결과 저장
+      saveAnalysisResult();
     }
   }, [transactionData]);
 
@@ -154,6 +174,43 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
     return result;
   }, [transactionData]);
 
+  // 분석 결과 자동 저장 함수
+  const saveAnalysisResult = () => {
+    if (
+      targetArea && 
+      targetPrice && 
+      averagePricesByArea.length > 0 && 
+      selectedAddress?.nickname && 
+      !isSaving
+    ) {
+      const targetAreaNum = parseFloat(targetArea);
+      if (isNaN(targetAreaNum)) return;
+
+      // 입력한 전용면적과 가장 유사한 면적 찾기
+      const mostSimilarArea = averagePricesByArea.reduce((prev, curr) => {
+        return Math.abs(curr.area - targetAreaNum) < Math.abs(prev.area - targetAreaNum) ? curr : prev;
+      });
+
+      // 전세 거래가를 숫자로 변환
+      const targetPriceNum = parsePrice(targetPrice);
+      if (targetPriceNum === 0) return;
+
+      // 비율 계산
+      const ratio = targetPriceNum / mostSimilarArea.averagePrice;
+      
+      // 90% 이상이면 mismatch, 90% 미만이면 match
+      const result: 'match' | 'mismatch' = ratio >= 0.9 ? 'mismatch' : 'match';
+      const jsonDetails = { '깡통주택': result };
+      
+      upsertStepResult.mutate({
+        userAddressNickname: selectedAddress.nickname,
+        stepNumber,
+        detail,
+        jsonDetails,
+      });
+    }
+  };
+
   // 주소 표시 로직
   const displayAddress = selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
 
@@ -206,7 +263,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
     const ratio = targetPriceNum / mostSimilarArea.averagePrice;
     const percentage = (ratio * 100).toFixed(1);
 
-    // 위험도 판단
+    // 위험도 판단 (90% 이상이면 mismatch, 90% 미만이면 match)
     const isDangerous = ratio > 0.9;
 
     return (
@@ -230,25 +287,34 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
             <span className={styles.analysisValue}>{formatPrice(mostSimilarArea.averagePrice)}</span>
           </div>
           
-          {isDangerous ? (
-            <div className={styles.analysisWarning}>
-              <div className="font-semibold text-brand-error mb-1">⚠️ 주의!</div>
-              <div className="text-brand-error">전세 거래가가 매매 평균가에 맞먹습니다!</div>
-              <div className="text-sm text-brand-error mt-1">
-                전세 거래가 / 매매 평균가 = {percentage}%
-              </div>
-            </div>
-          ) : (
-            <div className={styles.analysisSafe}>
-              <div className="font-semibold text-brand-green mb-1">✅ 안전</div>
-              <div className="text-brand-green">
-                전세 거래가가 매매 평균가의 {percentage}%입니다.
-              </div>
-              <div className="text-sm text-brand-green mt-1">
-                크게 위험한 수준이 아닙니다.
-              </div>
-            </div>
-          )}
+                     {isDangerous ? (
+             <div className={styles.analysisWarning}>
+               <div className="font-semibold text-brand-error mb-1">⚠️ 주의!</div>
+               <div className="text-brand-error">전세 거래가가 매매 평균가에 맞먹습니다!</div>
+               <div className="text-sm text-brand-error mt-1">
+                 전세 거래가 / 매매 평균가 = {percentage}%
+               </div>
+             </div>
+           ) : (
+             <div className={styles.analysisSafe}>
+               <div className="font-semibold text-brand-green mb-1">✅ 안전</div>
+               <div className="text-brand-green">
+                 전세 거래가가 매매 평균가의 {percentage}%입니다.
+               </div>
+               <div className="text-sm text-brand-green mt-1">
+                 크게 위험한 수준이 아닙니다.
+               </div>
+             </div>
+           )}
+           
+           {/* 자동 저장 상태 표시 */}
+           {isSaving && (
+             <div className="mt-4 text-center">
+               <div className="text-sm text-brand-dark-gray">
+                 📝 결과를 자동으로 저장하고 있습니다...
+               </div>
+             </div>
+           )}
         </div>
       </div>
     );
