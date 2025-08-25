@@ -45,8 +45,8 @@ export const styles = {
   analysisLabel: 'analysis-label text-sm font-medium text-brand-dark-gray',
   analysisValue: 'analysis-value text-lg font-semibold',
   analysisHighlight: 'analysis-highlight bg-brand-light-blue p-3 rounded-lg border-l-4 border-brand',
-  analysisWarning: 'analysis-warning bg-red-50 p-3 rounded-lg border-l-4 border-brand-error',
-  analysisSafe: 'analysis-safe bg-green-50 p-3 rounded-lg border-l-4 border-brand-green',
+  analysisWarning: 'analysis-warning bg-brand-error/10 p-3 rounded-lg border-l-4 border-brand-error',
+  analysisSafe: 'analysis-safe bg-brand-green/10 p-3 rounded-lg border-l-4 border-brand-green',
   
   // Average prices
   averagePrices: 'average-prices mb-6',
