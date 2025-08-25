@@ -8,19 +8,36 @@ export async function middleware(req: NextRequest) {
   // 1. API 경로 처리 - CORS
   if (pathname.startsWith('/api/')) {
     const response = NextResponse.next();
+    
+    // CORS 헤더 설정
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set(
       'Access-Control-Allow-Methods',
-      'GET, POST, PUT, DELETE, OPTIONS'
+      'GET, POST, PUT, DELETE, OPTIONS, PATCH'
     );
     response.headers.set(
       'Access-Control-Allow-Headers',
-      'Content-Type, Authorization'
+      'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name'
     );
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    response.headers.set('Access-Control-Max-Age', '86400');
 
-    // Preflight
+    // Preflight 요청 처리
     if (req.method === 'OPTIONS') {
-      return new NextResponse(null, { status: 200, headers: response.headers });
+      const preflightResponse = new NextResponse(null, { status: 200 });
+      preflightResponse.headers.set('Access-Control-Allow-Origin', '*');
+      preflightResponse.headers.set(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, OPTIONS, PATCH'
+      );
+      preflightResponse.headers.set(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization, X-Requested-With, Accept, Origin, Cache-Control, X-File-Name'
+      );
+      preflightResponse.headers.set('Access-Control-Allow-Credentials', 'true');
+      preflightResponse.headers.set('Access-Control-Max-Age', '86400');
+      
+      return preflightResponse;
     }
 
     return response;

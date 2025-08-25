@@ -5,11 +5,16 @@ export interface TaxCertCopyRequestParams {
   userAddressNickname: string;
 }
 
+// 납세증명서 JSON 데이터 타입 정의
+export interface TaxCertJsonData {
+  [key: string]: string | number | boolean | null | undefined;
+}
+
 // 납세증명서 복사본 데이터 타입 정의
 export interface TaxCertCopyData {
   id: number;
   userAddressId: number;
-  taxCertJson: any; // 납세증명서 JSON 데이터
+  taxCertJson: TaxCertJsonData; // 납세증명서 JSON 데이터
   createdAt: string;
   updatedAt: string;
 }

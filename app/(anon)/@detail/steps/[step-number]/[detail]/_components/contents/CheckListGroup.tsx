@@ -8,6 +8,7 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { parseStepUrl } from '@utils/stepUrlParser';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 import { CheckListGroupSection } from './types';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface ChecklistItem {
   id: string;
@@ -56,10 +57,14 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
 
   // DB 데이터를 로컬 상태와 동기화
   useEffect(() => {
-    if (stepData?.jsonDetails) {
-      setLocalStepDetails(stepData.jsonDetails);
+    if (stepData) {
+      // stepData가 배열인 경우 첫 번째 항목 사용, 단일 객체인 경우 그대로 사용
+      const stepDataItem = Array.isArray(stepData) ? stepData[0] : stepData;
+      if (stepDataItem?.jsonDetails) {
+        setLocalStepDetails(stepDataItem.jsonDetails);
+      }
     }
-  }, [stepData?.jsonDetails]);
+  }, [stepData]);
 
   // json이 {}이거나 에러 시 unchecked로 초기화
   useEffect(() => {
@@ -67,10 +72,13 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
       return;
     }
 
+    // stepData가 배열인 경우 첫 번째 항목 사용, 단일 객체인 경우 그대로 사용
+    const stepDataItem = Array.isArray(stepData) ? stepData[0] : stepData;
+
     // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
     const shouldInitialize =
       (isError && !hasInitialized.current) ||
-      (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+      (stepDataItem?.jsonDetails && Object.keys(stepDataItem.jsonDetails).length === 0);
 
     if (shouldInitialize && selectedAddress?.id) {
       // 체크리스트 항목이 실제로 존재하는지 확인
@@ -152,20 +160,24 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
   // 로딩 중일 때
   if (isLoading) {
     return (
-      <div className={styles.container}>
-        <div className={styles.loadingContainer}>로딩 중...</div>
-      </div>
+      <LoadingOverlay 
+        isVisible={true}
+        title="데이터를 불러오는 중입니다..."
+        currentStep={1}
+        totalSteps={1}
+      />
     );
   }
 
   // 에러 상태 (400 에러 시 초기화 진행 중)
   if (isError && !hasInitialized.current) {
     return (
-      <div className={styles.container}>
-        <div className={styles.errorContainer}>
-          데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...
-        </div>
-      </div>
+      <LoadingOverlay 
+        isVisible={true}
+        title="데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중..."
+        currentStep={1}
+        totalSteps={1}
+      />
     );
   }
 

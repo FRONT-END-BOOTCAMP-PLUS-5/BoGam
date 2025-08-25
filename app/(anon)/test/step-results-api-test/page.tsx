@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import stepResultsApi, {
+import stepResultQueryApi, {
   StepResultRequest,
-} from '@libs/api_front/stepResults.api';
+} from '@libs/api_front/stepResultQueries.api';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
 const StepResultsApiTest = () => {
@@ -58,7 +58,7 @@ const StepResultsApiTest = () => {
     }
 
     try {
-      const response = await stepResultsApi.upsertStepResult(parsedData);
+      const response = await stepResultQueryApi.upsertStepResult(parsedData);
 
       if (response.success) {
         setResult(JSON.stringify(response.data, null, 2));

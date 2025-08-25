@@ -45,7 +45,7 @@ export const AddressConfirmationTab: React.FC = () => {
 
     // 정규식으로 동/호 패턴 찾기
     // 패턴: "xx동 xx호" 형태
-    const dongHoPattern = /(\d+동)\s*(\d+호)/;
+    const dongHoPattern = /(\d+)동\s*(\d+)호/;
 
     let dong = '';
     let ho = '';
@@ -54,8 +54,8 @@ export const AddressConfirmationTab: React.FC = () => {
     // 패턴 매칭 시도
     const match = address.match(dongHoPattern);
     if (match) {
-      dong = match[1];
-      ho = match[2];
+      dong = match[1]; // "동" 글자 제거하고 숫자만 추출
+      ho = match[2]; // "호" 글자 제거하고 숫자만 추출
       cleanAddress = address.replace(dongHoPattern, '').trim();
     }
 

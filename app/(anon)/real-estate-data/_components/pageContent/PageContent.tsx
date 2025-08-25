@@ -1,18 +1,27 @@
 'use client';
 
+import React from 'react';
 import { useRealEstateDataProcessor } from '@/hooks/useRealEstateDataProcessor';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { useRealEstateDataSearch } from '@/hooks/useRealEstateDataSearch';
 import SearchSection from '@/(anon)/real-estate-data/_components/searchSection/SearchSection';
 import DataList from '@/(anon)/real-estate-data/_components/dataList/DataList';
 import { styles } from './PageContent.styles';
 
-function RealEstateDataPageContent() {
+export default function PageContent() {
   const { jsonData, isLoading } = useRealEstateDataProcessor();
   const { searchTerm, filteredData, scrollRefs, handleSearch, setSearchTerm } =
     useRealEstateDataSearch(jsonData);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <LoadingOverlay 
+        isVisible={true}
+        title="데이터를 불러오는 중입니다..."
+        currentStep={1}
+        totalSteps={1}
+      />
+    );
   }
 
   return (
@@ -35,5 +44,3 @@ function RealEstateDataPageContent() {
     </div>
   );
 }
-
-export default RealEstateDataPageContent;

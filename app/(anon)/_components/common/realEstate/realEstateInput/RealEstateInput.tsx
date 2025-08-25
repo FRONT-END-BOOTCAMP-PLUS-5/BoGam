@@ -7,7 +7,7 @@ import {
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import Field from '@/(anon)/_components/common/forms/Field';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
-import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import { useRealEstateInput } from '@/hooks/useRealEstateInput';
 import { useState } from 'react';
@@ -17,10 +17,26 @@ export const RealEstateInput = ({
   onSubmit,
   loading,
 }: RealEstateInputProps) => {
-  const { selectedAddress, register, handleSubmit, errors } =
+  const { selectedAddress, register, handleSubmit, errors, watch, setValue } =
     useRealEstateInput({ formData });
 
   const [password, setPassword] = useState('');
+
+  // 부동산 구분 옵션
+  const realtyTypeOptions = [
+    { value: '0', label: '토지+건물' },
+    { value: '1', label: '집합건물' },
+    { value: '2', label: '토지' },
+    { value: '3', label: '건물' }
+  ];
+
+  // 발행구분 옵션
+  const issueTypeOptions = [
+    { value: '0', label: '발급' },
+    { value: '1', label: '열람' },
+    { value: '2', label: '고유번호조회' },
+    { value: '3', label: '원문데이터로 결과처리' }
+  ];
 
   const handleFormSubmit = (data: RealEstateFormData) => {
     // 비밀번호 검증
@@ -68,23 +84,22 @@ export const RealEstateInput = ({
         <OtpInput length={4} onChange={(value) => setPassword(value)} />
       </Field>
 
-      <Field id='realty-type' label='부동산 구분'>
-        <FormSelect {...register('realtyType')}>
-          <option value='0'>토지+건물</option>
-          <option value='1'>집합건물</option>
-          <option value='2'>토지</option>
-          <option value='3'>건물</option>
-        </FormSelect>
-      </Field>
+      <DropDown
+        id='realty-type'
+        label='부동산 구분'
+        options={realtyTypeOptions}
+        value={watch('realtyType') || '0'}
+        onChange={(value) => setValue('realtyType', value)}
+      />
 
-      <Field id='issue-type' label='발행구분' required>
-        <FormSelect {...register('issueType')}>
-          <option value='0'>발급</option>
-          <option value='1'>열람</option>
-          <option value='2'>고유번호조회</option>
-          <option value='3'>원문데이터로 결과처리</option>
-        </FormSelect>
-      </Field>
+      <DropDown
+        id='issue-type'
+        label='발행구분'
+        required
+        options={issueTypeOptions}
+        value={watch('issueType') || '0'}
+        onChange={(value) => setValue('issueType', value)}
+      />
 
       <Field
         id='address'

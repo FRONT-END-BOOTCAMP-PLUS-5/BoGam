@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
-import { styles } from './TransactionList.styles';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { useMapStore } from '@libs/stores/map/mapStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { styles } from './TransactionList.styles';
 
 // 전월세 데이터 타입 정의
 interface RentTransactionData {
@@ -108,14 +110,12 @@ export const TransactionList: React.FC = () => {
   // 로딩 중일 때
   if (isLoading) {
     return (
-      <div className={styles.transactionList}>
-        <h3>실거래가 정보</h3>
-        <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner}></div>
-          <p>실거래가 데이터를 불러오는 중...</p>
-          <p className={styles.loadingNote}>약 10-15초 정도 소요됩니다.</p>
-        </div>
-      </div>
+      <LoadingOverlay 
+        isVisible={true}
+        title="실거래가 데이터를 불러오는 중..."
+        currentStep={1}
+        totalSteps={1}
+      />
     );
   }
 
