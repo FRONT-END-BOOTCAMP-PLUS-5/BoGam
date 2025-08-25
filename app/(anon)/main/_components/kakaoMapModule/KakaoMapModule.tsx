@@ -6,6 +6,7 @@ import { KakaoMapOptions } from '@/(anon)/main/_components/types/map.types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMapStore } from '@libs/stores/map/mapStore';
 import { useLocationManager } from '@/hooks/main/useLocationManager';
+import { styles } from './KakaoMapModule.styles';
 
 interface KakaoMapModuleProps {
   showTransactionMarkers?: boolean;
@@ -79,41 +80,16 @@ const KakaoMapModule: React.FC<KakaoMapModuleProps> = (props) => {
   } = useKakaoMap(mapOptions);
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '400px',
-        ...props.style,
-      }}
-    >
+    <div className={styles.mainContainer} style={props.style}>
       <div
         ref={mapRef}
-        className={`kakao-map ${props.className || ''}`}
-        style={{
-          width: '100%',
-          height: '100%',
-          border: '1px solid #ddd',
-        }}
+        className={`kakao-map ${props.className || ''} ${styles.map}`}
       />
 
       {(isLoading || mapGpsLoading || addressLoading) && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(245, 245, 245, 0.9)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10,
-          }}
-        >
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ margin: 0 }}>
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingContent}>
+            <p className={styles.loadingText}>
               {mapGpsLoading
                 ? '위치 정보 가져오는 중...'
                 : addressLoading
@@ -123,50 +99,29 @@ const KakaoMapModule: React.FC<KakaoMapModuleProps> = (props) => {
                 : '지도 초기화 중...'}
             </p>
             {currentLocation && (
-              <p style={{ margin: '5px 0 0 0', fontSize: '12px' }}>
+              <p className={styles.locationText}>
                 현재 위치: {currentLocation.lat.toFixed(6)},{' '}
                 {currentLocation.lng.toFixed(6)}
               </p>
             )}
             {addressInfo && (
-              <p style={{ margin: '5px 0 0 0', fontSize: '12px' }}>
+              <p className={styles.locationText}>
                 주소: {addressInfo.address.address_name}
               </p>
             )}
             {gpsError && (
-              <p
-                style={{
-                  margin: '5px 0 0 0',
-                  fontSize: '12px',
-                  color: '#ff6b6b',
-                }}
-              >
+              <p className={styles.errorText}>
                 GPS 오류: {gpsError}
               </p>
             )}
             {addressError && (
-              <p
-                style={{
-                  margin: '5px 0 0 0',
-                  fontSize: '12px',
-                  color: '#ff6b6b',
-                }}
-              >
+              <p className={styles.errorText}>
                 주소 오류: {addressError}
               </p>
             )}
             <button
               onClick={refreshLocation}
-              style={{
-                marginTop: '10px',
-                padding: '5px 10px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '12px',
-              }}
+              className={styles.refreshButton}
             >
               위치 새로고침
             </button>
@@ -176,40 +131,17 @@ const KakaoMapModule: React.FC<KakaoMapModuleProps> = (props) => {
 
       {/* API 키 오류 메시지 */}
       {!isLoading && !mapGpsLoading && !addressLoading && gpsError && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 5,
-          }}
-        >
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <h3 style={{ margin: '0 0 10px 0', color: '#ff6b6b' }}>
+        <div className={styles.errorOverlay}>
+          <div className={styles.errorContent}>
+            <h3 className={styles.errorTitle}>
               지도를 불러올 수 없습니다
             </h3>
-            <p
-              style={{ margin: '0 0 15px 0', fontSize: '14px', color: '#666' }}
-            >
+            <p className={styles.errorDescription}>
               {gpsError}
             </p>
             <button
               onClick={refreshLocation}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '14px',
-              }}
+              className={styles.retryButton}
             >
               다시 시도
             </button>

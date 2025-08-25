@@ -145,8 +145,7 @@ class FrontendAxiosInstance {
   /**
    * 인증 헤더 추가 (비동기 처리)
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private async addAuthHeaders(config: any): Promise<any> {
+  private async addAuthHeaders(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
     try {
       // next-auth 세션에서 사용자 정보 확인
       const session = await getSession();

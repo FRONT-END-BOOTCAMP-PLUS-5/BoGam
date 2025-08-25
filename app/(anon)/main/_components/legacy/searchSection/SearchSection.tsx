@@ -4,6 +4,7 @@ import {
   UserAddress,
 } from '@/(anon)/main/_components/types/mainPage.types';
 import { styles } from './SearchSection.styles';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 
 interface SearchSectionProps {
   searchQuery: string;
@@ -167,39 +168,42 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             {/* 건물 유형 선택 */}
             <div className={styles.buildingTypeContainer}>
               <label className={styles.buildingTypeLabel}>건물 유형:</label>
-              <select
+              <DropDown
+                options={[
+                  { value: '', label: '선택하세요' },
+                  { value: 'residential', label: '주거용' },
+                  { value: 'commercial', label: '상업용' }
+                ]}
                 value={buildingType.category}
-                onChange={(e) => handleBuildingCategoryChange(e.target.value)}
-                className={styles.buildingTypeSelect}
-              >
-                <option value=''>선택하세요</option>
-                <option value='residential'>주거용</option>
-                <option value='commercial'>상업용</option>
-              </select>
+                onChange={handleBuildingCategoryChange}
+                placeholder="건물 유형을 선택하세요"
+              />
 
               {buildingType.category === 'residential' && (
-                <select
+                <DropDown
+                  options={[
+                    { value: '', label: '주거용 건물 선택' },
+                    { value: 'apartment', label: '아파트' },
+                    { value: 'villa', label: '연립/다세대' },
+                    { value: 'officetel', label: '오피스텔' }
+                  ]}
                   value={buildingType.type}
-                  onChange={(e) => handleBuildingTypeChange(e.target.value)}
-                  className={styles.buildingTypeSelect}
-                >
-                  <option value=''>주거용 건물 선택</option>
-                  <option value='apartment'>아파트</option>
-                  <option value='villa'>연립/다세대</option>
-                  <option value='officetel'>오피스텔</option>
-                </select>
+                  onChange={handleBuildingTypeChange}
+                  placeholder="주거용 건물을 선택하세요"
+                />
               )}
 
               {buildingType.category === 'commercial' && (
-                <select
+                <DropDown
+                  options={[
+                    { value: '', label: '상업용 건물 선택' },
+                    { value: 'detached', label: '단독' },
+                    { value: 'multi', label: '다가구' }
+                  ]}
                   value={buildingType.type}
-                  onChange={(e) => handleBuildingTypeChange(e.target.value)}
-                  className={styles.buildingTypeSelect}
-                >
-                  <option value=''>상업용 건물 선택</option>
-                  <option value='detached'>단독</option>
-                  <option value='multi'>다가구</option>
-                </select>
+                  onChange={handleBuildingTypeChange}
+                  placeholder="상업용 건물을 선택하세요"
+                />
               )}
             </div>
 
@@ -255,38 +259,40 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
         <label htmlFor='yearSelect' className={styles.dateLabel}>
           실거래가 조회 기간:
         </label>
-        <select
+        <DropDown
           id='yearSelect'
+          options={[
+            { value: '2025', label: '2025년' },
+            { value: '2024', label: '2024년' },
+            { value: '2023', label: '2023년' },
+            { value: '2022', label: '2022년' },
+            { value: '2021', label: '2021년' },
+            { value: '2020', label: '2020년' }
+          ]}
           value={selectedYear}
-          onChange={(e) => onSelectedYearChange(e.target.value)}
-          className={styles.dateSelect}
-        >
-          <option value='2025'>2025년</option>
-          <option value='2024'>2024년</option>
-          <option value='2023'>2023년</option>
-          <option value='2022'>2022년</option>
-          <option value='2021'>2021년</option>
-          <option value='2020'>2020년</option>
-        </select>
-        <select
+          onChange={onSelectedYearChange}
+          placeholder="연도를 선택하세요"
+        />
+        <DropDown
           id='monthSelect'
+          options={[
+            { value: '12', label: '12월' },
+            { value: '11', label: '11월' },
+            { value: '10', label: '10월' },
+            { value: '9', label: '9월' },
+            { value: '8', label: '8월' },
+            { value: '7', label: '7월' },
+            { value: '6', label: '6월' },
+            { value: '5', label: '5월' },
+            { value: '4', label: '4월' },
+            { value: '3', label: '3월' },
+            { value: '2', label: '2월' },
+            { value: '1', label: '1월' }
+          ]}
           value={selectedMonth}
-          onChange={(e) => onSelectedMonthChange(e.target.value)}
-          className={styles.dateSelect}
-        >
-          <option value='12'>12월</option>
-          <option value='11'>11월</option>
-          <option value='10'>10월</option>
-          <option value='9'>9월</option>
-          <option value='8'>8월</option>
-          <option value='7'>7월</option>
-          <option value='6'>6월</option>
-          <option value='5'>5월</option>
-          <option value='4'>4월</option>
-          <option value='3'>3월</option>
-          <option value='2'>2월</option>
-          <option value='1'>1월</option>
-        </select>
+          onChange={onSelectedMonthChange}
+          placeholder="월을 선택하세요"
+        />
       </div>
     </div>
   );

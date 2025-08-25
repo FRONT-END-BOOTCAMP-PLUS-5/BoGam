@@ -2,6 +2,7 @@ import './globals.css';
 import { Providers } from './providers';
 import { ConfirmModal } from './(anon)/_components/common/modal/ConfirmModal';
 import Header from '@/(anon)/_components/common/header/Header';
+import PWAInstallPrompt from '@/(anon)/_components/common/PWAInstallPrompt';
 
 export default function RootLayout({
   children,
@@ -26,6 +27,9 @@ export default function RootLayout({
           <div >{children}</div>
 
           <ConfirmModal />
+          
+          {/* 전역 PWA 설치 프롬프트 */}
+          <PWAInstallPrompt />
         </Providers>
       </body>
     </html>

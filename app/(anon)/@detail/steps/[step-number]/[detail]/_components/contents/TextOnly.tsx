@@ -70,6 +70,10 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     detail: stepInfo?.detail?.toString() || '',
   });
 
+  // stepData가 배열인지 단일 객체인지 확인하고 jsonDetails 추출
+  const stepResultData = Array.isArray(stepData) ? stepData[0] : stepData;
+  const jsonDetails = stepResultData?.jsonDetails;
+
   // json이 {}이거나 에러 시 기본값으로 초기화
   useEffect(() => {
     if (data.length === 0 || hasInitialized.current) {
@@ -79,7 +83,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
     const shouldInitialize =
       (isError && !hasInitialized.current) ||
-      (stepData?.jsonDetails && Object.keys(stepData.jsonDetails).length === 0);
+      (jsonDetails && Object.keys(jsonDetails).length === 0);
 
     if (
       shouldInitialize &&
@@ -151,7 +155,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       <div className={styles.stepDataTitle}>스텝 데이터</div>
       <div>
         <div className={styles.badgeContainer}>
-          {Object.entries(stepData?.jsonDetails || {}).map(([key, value]) => (
+          {Object.entries(jsonDetails || {}).map(([key, value]) => (
             <CircularIconBadge
               key={key}
               type={value as 'match' | 'mismatch' | 'unchecked'}

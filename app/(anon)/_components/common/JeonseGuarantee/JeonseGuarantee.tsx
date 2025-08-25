@@ -4,6 +4,7 @@ import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/
 import { useJeonseGuarantee } from '@/hooks/useJeonseGuarantee';
 import JeonseGuaranteeForm from './JeonseGuaranteeForm';
 import JeonseGuaranteeResult from './JeonseGuaranteeResult';
+import Button from '@/(anon)/_components/common/button/Button';
 import { styles } from './JeonseGuarantee.styles';
 
 export default function JeonseGuarantee() {
@@ -24,13 +25,13 @@ export default function JeonseGuarantee() {
         />
         {/* 다시 조회하기 버튼 */}
         <div className="flex justify-center mt-6">
-          <button
+          <Button
             type="button"
+            variant="primary"
             onClick={() => window.location.reload()}
-            className="bg-brand hover:bg-brand-90 text-brand-white font-bold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-colors duration-200"
           >
             다시 조회하기
-          </button>
+          </Button>
         </div>
       </div>
     );
