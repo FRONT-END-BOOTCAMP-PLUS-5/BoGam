@@ -11,7 +11,7 @@ import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
 import Button from '@/(anon)/_components/common/button/Button';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
-import { FormSelect } from '@/(anon)/_components/common/forms/FormSelect';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/TabNavigation';
 import { styles } from './TransactionSearchComponent.styles';
@@ -347,30 +347,32 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
             {/* 조회 년도 */}
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>조회 년도:</label>
-              <FormSelect
+              <DropDown
                 value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
-              >
-                <option value='2025'>2025</option>
-                <option value='2024'>2024</option>
-                <option value='2023'>2023</option>
-                <option value='2022'>2022</option>
-                <option value='2021'>2021</option>
-                <option value='2020'>2020</option>
-              </FormSelect>
+                onChange={(value) => setSelectedYear(value)}
+                options={[
+                  { value: '2025', label: '2025' },
+                  { value: '2024', label: '2024' },
+                  { value: '2023', label: '2023' },
+                  { value: '2022', label: '2022' },
+                  { value: '2021', label: '2021' },
+                  { value: '2020', label: '2020' },
+                ]}
+              />
             </div>
 
             {/* 건물 타입 */}
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>건물 타입:</label>
-              <FormSelect
+              <DropDown
                 value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value)}
-              >
-                <option value='0'>아파트</option>
-                <option value='1'>연립/다세대</option>
-                <option value='2'>오피스텔</option>
-              </FormSelect>
+                onChange={(value) => setSelectedType(value)}
+                options={[
+                  { value: '0', label: '아파트' },
+                  { value: '1', label: '연립/다세대' },
+                  { value: '2', label: '오피스텔' },
+                ]}
+              />
             </div>
 
                          {/* 단지명 */}
