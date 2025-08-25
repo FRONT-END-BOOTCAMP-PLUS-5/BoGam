@@ -14,6 +14,7 @@ import { LegacyContentSection, StepContentData } from './contents/types';
 import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
+import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
 
 export default function ModalContent() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -55,9 +56,10 @@ export default function ModalContent() {
           );
           setStepContentData(contentModule.default);
           setDataType(contentModule.default.dataType || 'default');
-        } catch {
+        } catch (error) {
           console.log(
-            `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`
+            `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`,
+            error
           );
           setDataType('default');
         }
@@ -85,7 +87,10 @@ export default function ModalContent() {
   };
 
   // Swiper 콘텐츠 렌더링 함수
-  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
+  const renderSwiperContent = (
+    pageData: LegacyContentSection[],
+    pageIndex: number
+  ) => {
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
@@ -117,12 +122,28 @@ export default function ModalContent() {
     }
   };
 
+  // 스크롤을 맨 위로 올리는 함수
+  const scrollToTop = () => {
+    // CSS 클래스명에 공백이 있으므로 직접 스타일 속성으로 찾기
+    const scrollableContainer = document.querySelector(
+      '[class*="max-h-[calc(100vh-200px)]"]'
+    ) as HTMLElement;
+    if (scrollableContainer) {
+      scrollableContainer.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     if (swiperRef.current) {
       swiperRef.current.slideTo(page);
     }
+    // 페이지 변경 시 스크롤을 맨 위로 올리기
+    scrollToTop();
   };
 
   // 공통 헤더 컴포넌트
@@ -160,8 +181,6 @@ export default function ModalContent() {
       }
     };
 
-    console.log('stepContentData', stepContentData);
-
     return (
       <>
         <StepHeader />
@@ -171,94 +190,89 @@ export default function ModalContent() {
             spaceBetween={50}
             slidesPerView={1}
             className={styles.swiperContainer}
-            onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+            onSlideChange={(swiper) => {
+              setCurrentPage(swiper.activeIndex);
+              scrollToTop();
+            }}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
           >
-            {stepContentData.data.map(
-              (pageData: LegacyContentSection[], pageIndex: number) => (
-                <SwiperSlide key={pageIndex}>
-                  <div className={styles.mainContent}>
-                    {renderSwiperContent(pageData)}
-                  </div>
-                </SwiperSlide>
-              )
-            )}
+            {stepContentData.sections.map((section, sectionIndex) => (
+              <SwiperSlide key={sectionIndex}>
+                <div className={styles.mainContent}>
+                  {/* step-5-3 특별 처리 */}
+                  {stepNumber === '5' && detail === '3' ? (
+                    <Step5Detail3Renderer
+                      sectionIndex={sectionIndex}
+                      section={section}
+                      allSections={stepContentData.sections}
+                    />
+                  ) : (
+                    <>
+                      {/* 기존 로직 - 다른 단계들 */}
+                      {(section.title || section.subtitle) && (
+                        <div className={styles.sectionHeader}>
+                          {section.title && (
+                            <h3 className={styles.sectionTitle}>
+                              {section.title}
+                            </h3>
+                          )}
+                          {section.subtitle && (
+                            <p className={styles.sectionSubtitle}>
+                              {section.subtitle}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
+                      {section.type === 'TextOnly' && (
+                        <TextOnly data={section.data} />
+                      )}
+                      {section.type === 'RadioGroup' && (
+                        <RadioGroup data={section.data} />
+                      )}
+                      {section.type === 'Table' && (
+                        <Table
+                          data={
+                            section.data as unknown as {
+                              left: string;
+                              right?: string;
+                            }[]
+                          }
+                        />
+                      )}
+                      {section.type === 'List' && (
+                        <List
+                          data={
+                            section.data as unknown as {
+                              left: string;
+                              right?: string;
+                            }[]
+                          }
+                        />
+                      )}
+                      {section.type === 'DataGrid' && (
+                        <DataGrid
+                          data={
+                            section.data as unknown as {
+                              left: string;
+                              right?: string;
+                            }[]
+                          }
+                        />
+                      )}
+                      {section.type === 'CheckListGroup' && (
+                        <CheckListGroup data={section.data} />
+                      )}
+                    </>
+                  )}
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
-
-        {/* Swiper로 각 섹션을 별도 슬라이드로 렌더링 */}
-        <Swiper
-          spaceBetween={50}
-          slidesPerView={1}
-          className={styles.swiperContainer}
-          onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
-          onSwiper={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-        >
-          {stepContentData.sections.map((section, sectionIndex) => (
-            <SwiperSlide key={sectionIndex}>
-              <div className={styles.mainContent}>
-                {/* 각 섹션의 제목과 부제목 표시 */}
-                {(section.title || section.subtitle) && (
-                  <div className={styles.sectionHeader}>
-                    {section.title && (
-                      <h3 className={styles.sectionTitle}>{section.title}</h3>
-                    )}
-                    {section.subtitle && (
-                      <p className={styles.sectionSubtitle}>
-                        {section.subtitle}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
-                {section.type === 'TextOnly' && (
-                  <TextOnly data={section.data} />
-                )}
-                {section.type === 'RadioGroup' && (
-                  <RadioGroup data={section.data} />
-                )}
-                {section.type === 'Table' && (
-                  <Table
-                    data={
-                      section.data as unknown as {
-                        left: string;
-                        right?: string;
-                      }[]
-                    }
-                  />
-                )}
-                {section.type === 'List' && (
-                  <List
-                    data={
-                      section.data as unknown as {
-                        left: string;
-                        right?: string;
-                      }[]
-                    }
-                  />
-                )}
-                {section.type === 'DataGrid' && (
-                  <DataGrid
-                    data={
-                      section.data as unknown as {
-                        left: string;
-                        right?: string;
-                      }[]
-                    }
-                  />
-                )}
-                {section.type === 'CheckListGroup' && (
-                  <CheckListGroup data={section.data} />
-                )}
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
 
         {/* 페이지 인디케이터 */}
         {stepContentData.sections.length > 1 && (
@@ -294,7 +308,10 @@ export default function ModalContent() {
             spaceBetween={50}
             slidesPerView={1}
             className={styles.swiperContainer}
-            onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+            onSlideChange={(swiper) => {
+              setCurrentPage(swiper.activeIndex);
+              scrollToTop();
+            }}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
@@ -303,7 +320,7 @@ export default function ModalContent() {
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
                   <div className={styles.mainContent}>
-                    {renderSwiperContent(pageData)}
+                    {renderSwiperContent(pageData, pageIndex)}
                   </div>
                 </SwiperSlide>
               )
