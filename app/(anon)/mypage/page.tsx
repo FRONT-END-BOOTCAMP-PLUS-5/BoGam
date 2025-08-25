@@ -58,7 +58,7 @@ export default function MyPage() {
       {/* 그라데이션 배경 */}
       <div className={styles.gradientBackground}></div>
       
-      {/* 프로필 헤더 (임시) */}
+      {/* 프로필 헤더 */}
       <div className={styles.profileHeader}>
         <div className={styles.profileContent}>
           <Profile size="md" />
