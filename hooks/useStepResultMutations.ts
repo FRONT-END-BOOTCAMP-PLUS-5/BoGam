@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { stepResultsApi, StepResultRequest, StepResultResponse } from '@libs/api_front/stepResults.api';
+import { stepResultQueryApi, StepResultRequest } from '@libs/api_front/stepResultQueries.api';
 
 export const useStepResultMutations = () => {
   const queryClient = useQueryClient();
@@ -7,8 +7,8 @@ export const useStepResultMutations = () => {
   // Step Result 생성/수정 뮤테이션 (upsert)
   const upsertStepResult = useMutation({
     mutationFn: (data: StepResultRequest) => 
-      stepResultsApi.upsertStepResult(data),
-    onSuccess: (data: StepResultResponse) => {
+      stepResultQueryApi.upsertStepResult(data),
+    onSuccess: (data) => {
       // 성공 시 관련 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: ['stepResults'] });
       queryClient.invalidateQueries({ queryKey: ['userAddresses'] });

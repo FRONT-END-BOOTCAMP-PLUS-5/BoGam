@@ -16,7 +16,7 @@ const STEP_TITLES = [
   '계약한 직후',
   '입주한 이후',
   '계약기간이 끝난 후',
-  '이런 상황에 휘말리지 않도록 유의하세요!'
+  '특수 사기 유형 예방'
 ] as const;
 
 export interface GuideStepData {

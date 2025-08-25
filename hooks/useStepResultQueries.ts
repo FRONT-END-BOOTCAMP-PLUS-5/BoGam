@@ -8,7 +8,7 @@ interface GetStepResultParams {
 }
 
 export const useGetStepResult = (params: GetStepResultParams) => {
-  const { data, isLoading, isError } = useQuery<StepResultData>({
+  const { data, isLoading, isError } = useQuery<StepResultData | StepResultData[]>({
     queryKey: [
       'stepResults',
       params.userAddressNickname,
@@ -16,11 +16,7 @@ export const useGetStepResult = (params: GetStepResultParams) => {
       params.detail,
     ],
     queryFn: () => stepResultQueryApi.getStepResult(params),
-    enabled: !!(
-      params.userAddressNickname &&
-      params.stepNumber &&
-      params.detail
-    ),
+    enabled: !!params.userAddressNickname,
     staleTime: 5 * 60 * 1000, // 5분
     gcTime: 10 * 60 * 1000, // 10분
   });
