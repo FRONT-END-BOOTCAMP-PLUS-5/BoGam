@@ -1,6 +1,7 @@
 import {
   TransactionDetailApartSaleItem,
   TransactionDetailApartRentItem,
+  TransactionDetailApiResponse,
 } from '@libs/api_front/transactionDetail.api';
 import {
   formatTransactionAmount,
@@ -174,7 +175,7 @@ interface SingleTransactionApiResponse {
  * 단독/다가구 실거래가 데이터 파싱
  */
 export const parseTransactionDetailSingle = (
-  data: SingleTransactionApiResponse
+  data: TransactionDetailApiResponse
 ): ParsedTransactionDetail[] => {
   if (!data.success || !data.data) {
     throw new Error('실거래가 데이터를 가져올 수 없습니다.');

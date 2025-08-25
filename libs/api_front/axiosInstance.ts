@@ -80,17 +80,13 @@ class FrontendAxiosInstance {
   private setupInterceptors(): void {
     // 요청 인터셉터 - next-auth 세션을 사용한 인증
     this.axiosInstance.interceptors.request.use(
-      (config) => {
+      (config: any) => {
         console.log(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          `[Frontend API Request] ${config.method?.toUpperCase()} ${
-            (config as any).url
-          }`
+          `[Frontend API Request] ${config.method?.toUpperCase()} ${config.url}`
         );
 
         // Promise를 반환하여 비동기 처리
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this.addAuthHeaders(config as any) as any;
+        return this.addAuthHeaders(config);
       },
       (error: unknown) => {
         console.error('[Frontend API Request Error]', error);
@@ -145,7 +141,7 @@ class FrontendAxiosInstance {
   /**
    * 인증 헤더 추가 (비동기 처리)
    */
-  private async addAuthHeaders(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
+  private async addAuthHeaders(config: any): Promise<any> {
     try {
       // next-auth 세션에서 사용자 정보 확인
       const session = await getSession();
@@ -163,8 +159,8 @@ class FrontendAxiosInstance {
       if (config.method !== 'get' && config.headers) {
         const csrfToken = await this.getCsrfToken();
         if (csrfToken) {
-                  (config.headers as Record<string, string>)['X-CSRF-Token'] =
-          encodeURIComponent(csrfToken);
+          (config.headers as Record<string, string>)['X-CSRF-Token'] =
+            encodeURIComponent(csrfToken);
         }
       }
     } catch (error) {
