@@ -22,23 +22,26 @@ export const BrokerContainer = () => {
   );
 
   // React Query 훅 - 선택된 주소의 닉네임을 자동으로 사용
-  const existsQuery = useCheckBrokerCopyExists(
-    selectedAddress?.nickname || null
-  );
+  const {
+    data: existsQuery,
+    isLoading,
+    refetch,
+  } = useCheckBrokerCopyExists(selectedAddress?.nickname || null);
+
+  console.log('existsQuery', existsQuery);
 
   // 존재 여부 쿼리 객체 생성
   const checkExistsQuery = {
-    data: existsQuery.data?.success
+    data: existsQuery?.success
       ? {
           success: true,
           data: {
-            exists:
-              (existsQuery.data.data as { exists?: boolean })?.exists || false,
+            exists: (existsQuery.data as { exists?: boolean })?.exists || false,
           },
         }
       : undefined,
-    isLoading: existsQuery.isLoading,
-    refetch: existsQuery.refetch,
+    isLoading: isLoading,
+    refetch: refetch,
   };
 
   // 중개업자 선택 처리

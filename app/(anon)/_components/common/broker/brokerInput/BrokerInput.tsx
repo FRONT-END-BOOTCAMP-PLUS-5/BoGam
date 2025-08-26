@@ -32,14 +32,13 @@ export const BrokerInput = ({
 }: BrokerInputProps) => {
   const [brkrNm, setBrkrNm] = useState<string>('');
   const [bsnmCmpnm, setBsnmCmpnm] = useState<string>('');
-  const [brokerData, setBrokerData] = useState<string>('');
   const [showBrokerList, setShowBrokerList] = useState(false);
   const [brokerList, setBrokerList] = useState<BrokerData[]>([]);
 
   const searchBrokersMutation = useSearchBrokers();
   const createBrokerCopyMutation = useCreateBrokerCopy();
 
-  // 중개사 복사본 조회 (API에서)
+  // 중개사 외부 API 데이터 조회 (API에서)
   const handleGetBrokerCopy = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -60,7 +59,6 @@ export const BrokerInput = ({
           try {
             const brokerData =
               typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
-
             const brokers = Array.isArray(brokerData)
               ? brokerData
               : [brokerData];
@@ -74,32 +72,20 @@ export const BrokerInput = ({
     });
   };
 
-  // 중개사 복사본 생성/수정
-  const handleCreateBrokerCopy = async () => {
-    if (!userAddressNickname || !brokerData) {
-      return;
-    }
-
-    try {
-      const params = {
-        userAddressId: selectedAddress?.id || 0,
-        brokerJson: JSON.parse(brokerData),
-      };
-
-      createBrokerCopyMutation.mutate(params, {
-        onSuccess: (data) => {
-          if (data.success) {
-            onSuccess();
-          }
-        },
-      });
-    } catch (error) {
-      console.error('JSON 파싱 오류:', error);
-    }
-  };
-
   // 중개업자 선택 처리
   const handleSelectBroker = (broker: BrokerData) => {
+    const params = {
+      userAddressNickname: userAddressNickname,
+      brokerJson: JSON.stringify(broker),
+    };
+
+    createBrokerCopyMutation.mutate(params, {
+      onSuccess: (data) => {
+        if (data.success) {
+          onSuccess();
+        }
+      },
+    });
     onBrokerSelected(broker);
     setShowBrokerList(false);
     onSuccess(); // 출력 탭으로 이동

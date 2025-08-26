@@ -100,15 +100,15 @@ export const useBrokerRiskAssessment = (
         keyword: '중개업자 등록',
         passed: true,
         foundCount: 1,
-        status: 'unchecked', // 사용자가 확인해야 하므로 초기값은 unchecked
+        status: 'match', // passed가 true이면 match로 설정
       });
     } else {
       riskFactors.push({
         fieldName: '중개업자명',
-        fieldValue: '등록 정보 없음',
+        fieldValue: '정보 없음',
         riskLevel: 'HIGH',
-        description: '중개업자 등록 정보가 확인되지 않습니다.',
-        foundKeywords: ['미등록'],
+        description: '중개업자명 정보가 없습니다.',
+        foundKeywords: ['중개업자명없음'],
       });
       keywordChecks.push({
         keyword: '중개업자 등록',
@@ -116,7 +116,7 @@ export const useBrokerRiskAssessment = (
         foundCount: 0,
         status: 'unchecked', // 사용자가 확인해야 하므로 초기값은 unchecked
       });
-      recommendations.push('중개업자 등록 여부를 반드시 확인하세요.');
+      recommendations.push('중개업자명을 반드시 확인하세요.');
     }
 
     // 2. 사업자 상호 체크리스트 항목
@@ -136,15 +136,15 @@ export const useBrokerRiskAssessment = (
         keyword: '등록번호',
         passed: true,
         foundCount: 1,
-        status: 'unchecked', // 사용자가 확인해야 하므로 초기값은 unchecked
+        status: 'match', // passed가 true이면 match로 설정
       });
     } else {
       riskFactors.push({
         fieldName: '등록번호',
-        fieldValue: '등록번호 없음',
+        fieldValue: '정보 없음',
         riskLevel: 'HIGH',
-        description: '중개업자 등록번호가 확인되지 않습니다.',
-        foundKeywords: ['등록번호미등록'],
+        description: '중개업자 등록번호가 없습니다.',
+        foundKeywords: ['등록번호없음'],
       });
       keywordChecks.push({
         keyword: '등록번호',
@@ -172,7 +172,7 @@ export const useBrokerRiskAssessment = (
         keyword: '공인중개사',
         passed: true,
         foundCount: 1,
-        status: 'unchecked', // 사용자가 확인해야 하므로 초기값은 unchecked
+        status: 'match', // passed가 true이면 match로 설정
       });
     } else {
       const currentType = brokerData.brkrAsortCodeNm || '공인중개사 정보 없음';
@@ -199,7 +199,7 @@ export const useBrokerRiskAssessment = (
         keyword: '대표',
         passed: true,
         foundCount: 1,
-        status: 'unchecked', // 사용자가 확인해야 하므로 초기값은 unchecked
+        status: 'match', // passed가 true이면 match로 설정
       });
     } else {
       const currentPosition = brokerData.ofcpsSeCodeNm || '직위 정보 없음';
