@@ -43,17 +43,20 @@ export default function ModalContent() {
   const detail = stepUrlData?.detail?.toString() || '1';
 
   // 특별한 컴포넌트를 사용할 단계들 정의
-  const specialSteps = useMemo(() => ({
-    broker: stepNumber === '3' && detail === '1',
-    realEstate: [
-      { step: '1', detail: '4' },
-      { step: '2', detail: '3' },
-      { step: '6', detail: '3' },
-      { step: '5', detail: '2' },
-      { step: '4', detail: '1' },
-    ].some((route) => route.step === stepNumber && route.detail === detail),
-    transactionSearch: stepNumber === '1' && detail === '2',
-  }), [stepNumber, detail]);
+  const specialSteps = useMemo(
+    () => ({
+      broker: stepNumber === '3' && detail === '1',
+      realEstate: [
+        { step: '1', detail: '4' },
+        { step: '2', detail: '3' },
+        { step: '6', detail: '3' },
+        { step: '5', detail: '2' },
+        { step: '4', detail: '1' },
+      ].some((route) => route.step === stepNumber && route.detail === detail),
+      transactionSearch: stepNumber === '1' && detail === '2',
+    }),
+    [stepNumber, detail]
+  );
 
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
@@ -104,11 +107,7 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'List':
-        return (
-          <List
-            data={pageData as unknown as string[]}
-          />
-        );
+        return <List data={pageData as unknown as string[]} />;
       case 'DataGrid':
         return (
           <DataGrid
@@ -204,7 +203,10 @@ export default function ModalContent() {
           >
             {stepContentData.sections.map((section, sectionIndex) => (
               <SwiperSlide key={sectionIndex}>
-                <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+                <div
+                  className={styles.mainContent}
+                  style={{ paddingBottom: '80px' }}
+                >
                   {/* step-5-3 특별 처리 */}
                   {stepNumber === '5' && detail === '3' ? (
                     <Step5Detail3Renderer
@@ -274,6 +276,13 @@ export default function ModalContent() {
                       )}
                       {section.type === 'CheckListGroup' && (
                         <CheckListGroup data={section.data} />
+                      )}
+                      {(section.type === 'TaxCertIntro' ||
+                        section.type === 'TaxCertContainer') && (
+                        <TaxCertWrapper
+                          sectionIndex={sectionIndex}
+                          section={section}
+                        />
                       )}
                     </>
                   )}
@@ -349,7 +358,10 @@ export default function ModalContent() {
             {stepContentData.data.map(
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
-                  <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+                  <div
+                    className={styles.mainContent}
+                    style={{ paddingBottom: '80px' }}
+                  >
                     {renderSwiperContent(pageData, pageIndex)}
                   </div>
                 </SwiperSlide>

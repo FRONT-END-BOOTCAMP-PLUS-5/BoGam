@@ -145,11 +145,6 @@ export const TaxCertInput = ({
       return;
     }
 
-    if (!localFormData.loginBirthDate.trim()) {
-      setError('생년월일을 입력해주세요.');
-      return;
-    }
-
     if (!localFormData.phoneNo.trim()) {
       setError('휴대폰번호를 입력해주세요.');
       return;
@@ -202,17 +197,6 @@ export const TaxCertInput = ({
             />
           </Field>
 
-          <Field id='loginBirthDate' label='생년월일' required>
-            <TextInput
-              value={localFormData.loginBirthDate}
-              onChange={(e) =>
-                handleInputChange('loginBirthDate', e.target.value)
-              }
-              placeholder='생년월일 6자리 (YYMMDD)'
-              maxLength={6}
-            />
-          </Field>
-
           <Field id='phoneNo' label='휴대폰번호' required>
             <TextInput
               value={localFormData.phoneNo}
@@ -221,7 +205,6 @@ export const TaxCertInput = ({
               mask='phone'
               inputMode='numeric'
               maxLength={14}
-
             />
           </Field>
         </div>
