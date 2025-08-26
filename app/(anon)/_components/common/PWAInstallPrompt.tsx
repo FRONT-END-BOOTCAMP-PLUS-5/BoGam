@@ -68,7 +68,6 @@ export default function PWAInstallPrompt() {
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('PWA 설치됨');
       // 설치 성공 시 localStorage에 상태 저장하고 프롬프트 숨김
       localStorage.setItem('pwa-installed', 'true');
       setIsInstalled(true);

@@ -1,6 +1,7 @@
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import { BrokerRiskAssessmentResult } from '@/hooks/useBrokerRiskAssessment';
 import { TaxCertRiskAssessmentResult } from '@/hooks/useTaxCertRiskAssessment';
+import { DANGEROUS_KEYWORDS } from '@utils/constants/riskAssessment';
 
 // 위험도 검사 결과를 JSON 형태로 변환하는 타입
 export type RiskAssessmentJsonData = Record<
@@ -14,22 +15,8 @@ export const convertRealEstateRiskAssessmentToJson = (
 ): RiskAssessmentJsonData => {
   const jsonData: RiskAssessmentJsonData = {};
 
-  // 위험 키워드들 (DANGEROUS_KEYWORDS)
-  const dangerousKeywords = [
-    '압류',
-    '가압류',
-    '경매',
-    '강제집행',
-    '체납',
-    '미납',
-    '부도',
-    '파산',
-    '해지',
-    '취소',
-  ];
-
   // 각 키워드별로 상태 설정
-  dangerousKeywords.forEach((keyword) => {
+  DANGEROUS_KEYWORDS.forEach((keyword) => {
     const keywordCheck = riskAssessment.keywordChecks.find(
       (check) => check.keyword === keyword
     );
