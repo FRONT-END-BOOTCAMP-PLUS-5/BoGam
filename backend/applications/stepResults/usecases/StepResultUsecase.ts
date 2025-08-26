@@ -59,9 +59,9 @@ export class StepResultUsecase {
 
       const stepResults = await this.stepResultRepository.findByParams(params);
 
-      // stepNumber만 있는 경우 요약 정보 계산
-      if (stepNumber && !detail) {
-        const summary = this.calculateSummary(stepResults, stepNumber);
+      // stepNumber만 있는 경우 또는 userAddressId만 있는 경우 요약 정보 계산
+      if ((stepNumber && !detail) || (!stepNumber && !detail)) {
+        const summary = this.calculateSummary(stepResults, stepNumber || 0);
         return {
           success: true,
           data: {

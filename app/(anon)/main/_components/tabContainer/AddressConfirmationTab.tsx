@@ -16,7 +16,8 @@ export const AddressConfirmationTab: React.FC = () => {
   const { selectedAddress, dong, ho, setDong, setHo } = useUserAddressStore();
 
   // 모달 스토어
-  const { isOpen, content, closeModal, confirmModal, cancelModal } = useModalStore();
+  const { isOpen, content, closeModal, confirmModal, cancelModal } =
+    useModalStore();
 
   // useMainPageModule에서 필요한 함수들만 가져오기
   const {
@@ -65,7 +66,7 @@ export const AddressConfirmationTab: React.FC = () => {
     return {
       address: cleanAddress,
       dong: dong,
-      ho: ho
+      ho: ho,
     };
   };
 
@@ -87,7 +88,9 @@ export const AddressConfirmationTab: React.FC = () => {
       {/* 첫 번째 줄: 버튼들 */}
       <div className={styles.buttonRow}>
         <Button
-          onClick={() => handleMoveToAddressOnly(dong)}
+          onClick={() => {
+            handleMoveToAddressOnly(dong);
+          }}
           disabled={!dong.trim()}
           variant='primary'
           className={styles.confirmButton}
@@ -106,21 +109,23 @@ export const AddressConfirmationTab: React.FC = () => {
         </Button>
       </div>
 
-             {/* 두 번째 줄: 주소 검색 결과 */}
-       <div className={styles.addressSearchRow}>
-         <div className={styles.addressContainer}>
-           <span className={styles.addressValue}>
-             {parsedAddress.address || displaySearchQuery || '주소 검색으로 주소를 검색 해주세요'}
-           </span>
-         </div>
-         <Button
-           onClick={handleAddressSearch}
-           variant='primary'
-           className={styles.searchButton}
-         >
-           주소 검색
-         </Button>
-       </div>
+      {/* 두 번째 줄: 주소 검색 결과 */}
+      <div className={styles.addressSearchRow}>
+        <div className={styles.addressContainer}>
+          <span className={styles.addressValue}>
+            {parsedAddress.address ||
+              displaySearchQuery ||
+              '주소 검색으로 주소를 검색 해주세요'}
+          </span>
+        </div>
+        <Button
+          onClick={handleAddressSearch}
+          variant='primary'
+          className={styles.searchButton}
+        >
+          주소 검색
+        </Button>
+      </div>
 
       {/* 세 번째 줄: 동/호 입력 필드 */}
       <div className={styles.dongHoInputs}>
@@ -148,7 +153,7 @@ export const AddressConfirmationTab: React.FC = () => {
       <div className={styles.mapContainer}>
         <KakaoMapModule showTransactionMarkers={true} />
       </div>
-      
+
       {/* Daum 우편번호 검색 모달 */}
       <DaumPostcodeModal
         postcodeRef={postcodeRef}

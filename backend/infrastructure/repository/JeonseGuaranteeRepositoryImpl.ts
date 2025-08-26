@@ -1,10 +1,13 @@
 import { JeonseGuaranteeRepository } from '@be/domain/repository/JeonseGuaranteeRepository';
 import { JeonseGuaranteeEntity } from '@be/domain/entities/JeonseGuarantee';
 import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/dtos/GetJeonseGuaranteeRequestDto';
+import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
 
-export class JeonseGuaranteeRepositoryImpl implements JeonseGuaranteeRepository {
-  private readonly baseUrl = 'https://apis.data.go.kr/B551408/jnse-rcmd-info-v2/jnse-rcmd-list-v2';
+export class JeonseGuaranteeRepositoryImpl
+  implements JeonseGuaranteeRepository
+{
+  private readonly baseUrl = API_ENDPOINTS.JEONSE_GUARANTEE;
 
   async getJeonseGuarantee(
     params: GetJeonseGuaranteeRequestDto
@@ -12,7 +15,7 @@ export class JeonseGuaranteeRepositoryImpl implements JeonseGuaranteeRepository 
     try {
       // 서비스키는 환경변수에서 가져옴
       const serviceKey = process.env.RTMSDATA_TRANSACTION_PRICE_KEY_DECODING;
-      
+
       if (!serviceKey) {
         throw new Error('전세자금보증상품 서비스키가 설정되지 않았습니다.');
       }
@@ -39,39 +42,37 @@ export class JeonseGuaranteeRepositoryImpl implements JeonseGuaranteeRepository 
       }
 
       const url = `${this.baseUrl}?${queryParams.toString()}`;
-      
-      console.log('전세자금보증상품 API 요청 URL:', url);
-      console.log('전세자금보증상품 API 요청 파라미터:', Object.fromEntries(queryParams.entries()));
-      
       const response = await axios.get(url);
-      
+
       if (response.status !== 200) {
         throw new Error(`API 요청 실패: ${response.status}`);
       }
-
-// API 응답 데이터 타입 정의
-interface JeonseGuaranteeApiResponse {
-  header: {
-    resultCode: string;
-    resultMsg: string;
-  };
-  body: {
-    pageNo: number;
-    totalCount: number;
-    numOfRows: number;
-    items: Array<{
-      rcmdProrRnk: string;
-      grntLmtAmt: string;
-      loanLmtAmt: string;
-      grntDvcd: string;
-    }>;
-  };
-}
+      // API 응답 데이터 타입 정의
+      interface JeonseGuaranteeApiResponse {
+        header: {
+          resultCode: string;
+          resultMsg: string;
+        };
+        body: {
+          pageNo: number;
+          totalCount: number;
+          numOfRows: number;
+          items: Array<{
+            rcmdProrRnk: string;
+            grntLmtAmt: string;
+            loanLmtAmt: string;
+            grntDvcd: string;
+          }>;
+        };
+      }
 
       const data = response.data as JeonseGuaranteeApiResponse;
-      
-      console.log('전세자금보증상품 API 응답 데이터:', JSON.stringify(data, null, 2));
-      
+
+      console.log(
+        '전세자금보증상품 API 응답 데이터:',
+        JSON.stringify(data, null, 2)
+      );
+
       // 원본 데이터를 직접 Entity로 변환
       return new JeonseGuaranteeEntity(
         data.header?.resultCode || '',
@@ -83,7 +84,7 @@ interface JeonseGuaranteeApiResponse {
           rcmdProrRnk: parseInt(item.rcmdProrRnk) || 0,
           grntLmtAmt: item.grntLmtAmt || '0',
           loanLmtAmt: item.loanLmtAmt || '0',
-          grntDvcd: item.grntDvcd || ''
+          grntDvcd: item.grntDvcd || '',
         }))
       );
     } catch (error) {
