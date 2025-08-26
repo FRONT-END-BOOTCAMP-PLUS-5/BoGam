@@ -21,7 +21,7 @@ export const styles = {
 
   // 주소 텍스트 라인
   addressFirstLine:
-    'text-sm text-brand-black leading-relaxed break-all leading-[1.4]',
+    'text-sm font-semibold text-brand-black leading-relaxed break-all leading-[1.4] py-1',
   addressSecondLine:
     'flex items-center text-xs text-brand-dark-gray leading-relaxed mt-1 break-all leading-[1.3]',
 

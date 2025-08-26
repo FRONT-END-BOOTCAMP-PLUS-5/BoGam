@@ -85,30 +85,6 @@ export const AddressConfirmationTab: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* 첫 번째 줄: 버튼들 */}
-      <div className={styles.buttonRow}>
-        <Button
-          onClick={() => {
-            handleMoveToAddressOnly(dong);
-          }}
-          disabled={!dong.trim()}
-          variant='primary'
-          className={styles.confirmButton}
-        >
-          지도에서 확인하기
-        </Button>
-        <Button
-          onClick={() => {
-            saveAddressToUser(dong, ho);
-          }}
-          disabled={!dong.trim()}
-          variant='secondary'
-          className={styles.saveButton}
-        >
-          저장하기
-        </Button>
-      </div>
-
       {/* 두 번째 줄: 주소 검색 결과 */}
       <div className={styles.addressSearchRow}>
         <div className={styles.addressContainer}>
@@ -149,9 +125,36 @@ export const AddressConfirmationTab: React.FC = () => {
         </div>
       </div>
 
+      <div className={styles.buttonRow}>
+        <Button
+          onClick={() => {
+            saveAddressToUser(dong, ho);
+          }}
+          disabled={!dong.trim()}
+          variant='secondary'
+          className={styles.saveButton}
+        >
+          저장하기
+        </Button>
+      </div>
+
       {/* 네 번째 줄: 카카오맵 */}
       <div className={styles.mapContainer}>
-        <KakaoMapModule showTransactionMarkers={true} />
+        <div className={styles.mapWrapper}>
+          <div className={styles.mapButtonContainer}>
+            <Button
+              onClick={() => {
+                handleMoveToAddressOnly(dong);
+              }}
+              disabled={!dong.trim()}
+              variant='primary'
+              className={styles.confirmButton}
+            >
+              지도 이동
+            </Button>
+          </div>
+          <KakaoMapModule showTransactionMarkers={true} />
+        </div>
       </div>
 
       {/* Daum 우편번호 검색 모달 */}

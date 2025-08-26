@@ -33,7 +33,7 @@ export const RealEstateTwoWayContent: React.FC<
           >
             <div className={styles.addressItemContent}>
               <div className={styles.addressLocation}>
-                📍 {addr.commAddrLotNumber}
+                📍 {addr.commAddrLotNumber?.replace(/\+/g, ' ')}
               </div>
               <div className={styles.addressUniqueNo}>
                 🔑 {addr.commUniqueNo}
