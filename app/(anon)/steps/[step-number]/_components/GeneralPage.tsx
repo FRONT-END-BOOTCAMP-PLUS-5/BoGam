@@ -7,11 +7,19 @@ import { useState } from 'react';
 interface pageType {
   title: string;
   category: string;
-  content: string;
+  content: string | string[];
   pageIdx: number;
   stepNumber: string;
   currentPage: number;
 }
+
+// \n을 <br> 태그로 변환하는 함수
+const formatContent = (content: string | string[]): string => {
+  if (Array.isArray(content)) {
+    return content.join('\n').replace(/\n/g, '<br>');
+  }
+  return content.replace(/\n/g, '<br>');
+};
 
 export default function GeneralPage({
   title,
@@ -48,12 +56,10 @@ export default function GeneralPage({
       {/* 중간 */}
       <div className={styles.middleSection}>
         <h5 className={styles.danger}> {category} </h5>
-        <p
+        <div
           className={styles.content}
-          style={{ whiteSpace: 'pre-line' }}
-        >
-          {content}
-        </p>
+          dangerouslySetInnerHTML={{ __html: formatContent(content) }}
+        />
       </div>
       
       {/* 하단 */}
