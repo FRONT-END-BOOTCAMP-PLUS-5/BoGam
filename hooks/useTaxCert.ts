@@ -146,7 +146,6 @@ export const useSubmitTwoWayAuth = (
     onSuccess: (data: unknown) => {
       if (data.success === true) {
         queryClient.invalidateQueries({ queryKey: ['taxCert', 'exists', (data.data.userAddressNickname).split("+").join(" ")] });
-        queryClient.invalidateQueries({ queryKey: ['taxCertCopy'] });
       }
     },
     onError,
