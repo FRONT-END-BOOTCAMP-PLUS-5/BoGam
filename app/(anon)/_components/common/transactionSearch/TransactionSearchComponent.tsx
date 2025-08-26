@@ -512,6 +512,9 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
           onSelect={handleDanjiSelect}
         />
       </ConfirmModal>
+      
+      {/* 하단 여백 추가 - 밑부분이 잘리지 않도록 */}
+      <div className={styles.bottomSpacer}></div>
     </div>
   );
 };
