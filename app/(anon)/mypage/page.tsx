@@ -28,44 +28,45 @@ export default function MyPage() {
     detail: ''
   });
 
-  // 타입 가드 함수들
-  const isStepResultArray = (data: unknown): data is StepResultData[] => {
-    return Array.isArray(data) && data.every(item => 
-      typeof item === 'object' && 
-      item !== null && 
-      'id' in item && 
-      'match' in item && 
-      'mismatch' in item && 
-      'unchecked' in item
-    );
-  };
-
-  const isStepResultSingle = (data: unknown): data is StepResultData => {
-    return typeof data === 'object' && 
-      data !== null && 
-      'id' in data && 
-      'match' in data && 
-      'mismatch' in data && 
-      'unchecked' in data;
-  };
-
   // guideSteps와 guideSummary 데이터 처리
-  const guideSteps: StepResultData[] = isStepResultArray(stepResultsData) 
-    ? stepResultsData 
-    : isStepResultSingle(stepResultsData) 
-      ? [stepResultsData] 
-      : [];
+  let guideSteps: StepResultData[] = [];
+  let guideSummary: GuideSummaryData = { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 };
 
-  // 요약 데이터 계산
-  const guideSummary: GuideSummaryData = guideSteps.reduce(
-    (summary, step) => ({
-      totalMatch: summary.totalMatch + (step.match || 0),
-      totalMismatch: summary.totalMismatch + (step.mismatch || 0),
-      totalUnchecked: summary.totalUnchecked + (step.unchecked || 0),
-    }),
-    { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 }
-  );
+  if (stepResultsData) {
+    const data = stepResultsData as any;
+    
+    if (data.results && data.summary) {
+      // {results: Array, summary: {...}} 구조
+      guideSteps = data.results;
+      guideSummary = {
+        totalMatch: data.summary.totalMatch || 0,
+        totalMismatch: data.summary.totalMismatch || 0,
+        totalUnchecked: data.summary.totalUnchecked || 0
+      };
+    } else if (Array.isArray(stepResultsData)) {
+      // StepResultData[] 구조
+      guideSteps = stepResultsData;
+      guideSummary = guideSteps.reduce(
+        (summary, step) => ({
+          totalMatch: summary.totalMatch + (step.match || 0),
+          totalMismatch: summary.totalMismatch + (step.mismatch || 0),
+          totalUnchecked: summary.totalUnchecked + (step.unchecked || 0),
+        }),
+        { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 }
+      );
+    } else if (stepResultsData && typeof stepResultsData === 'object') {
+      // 단일 StepResultData 구조
+      guideSteps = [stepResultsData as any];
+      guideSummary = {
+        totalMatch: data.match || 0,
+        totalMismatch: data.mismatch || 0,
+        totalUnchecked: data.unchecked || 0
+      };
+    }
+  }
 
+  console.log('stepResultsData', stepResultsData);
+  console.log('guideSteps', guideSteps);
   console.log('guideSummary', guideSummary);
 
   // 로딩 상태 처리
