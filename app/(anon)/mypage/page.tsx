@@ -5,6 +5,7 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
+import DocumentCard from './_components/DocumentCard';
 import WithdrawButton from './_components/WithdrawButton';
 import { styles } from './page.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
@@ -127,13 +128,7 @@ export default function MyPage() {
         />
 
         {/* 문서 카드 */}
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>문서</div>
-          <div className={styles.documentButtons}>
-            <span className={styles.documentButton}>등기부등본</span>
-            <span className={styles.documentButton}>납세증명서</span>
-          </div>
-        </div>
+        <DocumentCard />
 
         {/* 가이드 결과 요약 */}
         <GuideResultSummary
