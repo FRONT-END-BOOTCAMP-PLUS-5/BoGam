@@ -18,7 +18,7 @@ import {
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
-import TaxCertWrapper from './contents/TaxCertWrapper';
+import TaxCertWrapper, { TaxCertWrapperRef } from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
 // RegionData 타입 정의 (기존 호환성을 위해 유지)
@@ -29,7 +29,19 @@ interface RegionData {
   option: string;
 }
 
-export default function ModalContent() {
+interface ModalContentProps {
+  onShowSimpleAuthModal: () => void;
+  onSimpleAuthApprove: () => void;
+  onSimpleAuthCancel: () => void;
+  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
+}
+
+export default function ModalContent({
+  onShowSimpleAuthModal,
+  onSimpleAuthApprove,
+  onSimpleAuthCancel,
+  taxCertContainerRef,
+}: ModalContentProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
   const [stepContentData, setStepContentData] =
@@ -99,17 +111,14 @@ export default function ModalContent() {
   };
 
   // Swiper 콘텐츠 렌더링 함수
-  const renderSwiperContent = (
-    pageData: LegacyContentSection[],
-    pageIndex: number
-  ) => {
+  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'List':
         return (
           <List
-            title={(pageData[0] as any)?.title}
+            title={(pageData[0] as { title?: string })?.title}
             data={pageData as unknown as string[]}
           />
         );
@@ -263,8 +272,12 @@ export default function ModalContent() {
                       {section.type === 'List' && (
                         <List
                           title={section.title}
-                          data={section.data as Array<{ title: string; content: string }>}
-
+                          data={
+                            section.data as Array<{
+                              title: string;
+                              content: string;
+                            }>
+                          }
                         />
                       )}
                       {section.type === 'DataGrid' && (
@@ -285,6 +298,10 @@ export default function ModalContent() {
                         <TaxCertWrapper
                           sectionIndex={sectionIndex}
                           section={section}
+                          onShowSimpleAuthModal={onShowSimpleAuthModal}
+                          onSimpleAuthApprove={onSimpleAuthApprove}
+                          onSimpleAuthCancel={onSimpleAuthCancel}
+                          ref={taxCertContainerRef}
                         />
                       )}
                     </>
@@ -365,7 +382,7 @@ export default function ModalContent() {
                     className={styles.mainContent}
                     style={{ paddingBottom: '80px' }}
                   >
-                    {renderSwiperContent(pageData, pageIndex)}
+                    {renderSwiperContent(pageData)}
                   </div>
                 </SwiperSlide>
               )

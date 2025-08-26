@@ -8,20 +8,12 @@
           {
             "subtitle": "납세증명서란?",
             "contents": [
-              "납세증명서는 개인이나 법인이 특정 기간 동안의 소득세, 부가가치세 등의 납세 실적을 증명하는 공식 문서입니다.",
-              "임대차 계약 시 임대인이 제출하는 중요한 서류 중 하나로, 소득의 안정성과 신뢰성을 확인할 수 있습니다."
-            ]
-          },
-          {
-            "subtitle": "체크리스트 확인사항",
-            "contents": [
-              "납세증명서를 받았을 때 반드시 확인해야 할 사항들을 체크해보세요.",
-              "각 항목을 확인한 후 체크박스를 클릭하여 상태를 변경할 수 있습니다."
+              "납세증명서는 개인이나 법인이 특정 기간 동안의 소득세, 부가가치세 등의 납세 실적을 증명하는 공식 문서입니다."
             ]
           }
         ],
         "image": {
-          "src": "https://mblogthumb-phinf.pstatic.net/MjAxOTExMDRfMjM5/MDAxNTcyODYzMjU3NDkx.L7u9nUpcPGeCx6DEZDVWxyajHfn7UfK0UWcivySrj-Mg.6_b6q5p8Pq6G0EK9NCeOAgDfPsCjgt5oCeR25lSgPDMg.JPEG.smspkkb/%EC%9D%B4%EB%AF%B8%EC%A7%80_11.jpg?type=w800",
+          "src": "/images/5-1.png",
           "alt": "납세증명서 샘플 이미지",
           "width": 400,
           "height": 300

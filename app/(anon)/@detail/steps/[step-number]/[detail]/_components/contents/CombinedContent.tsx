@@ -6,11 +6,7 @@ import RadioGroup from './RadioGroup';
 import Table from './Table';
 import List from './List';
 import DataGrid from './DataGrid';
-import {
-  ContentSection,
-  CombinedContentProps,
-  LegacyContentSection,
-} from './types';
+import { ContentSection, CombinedContentProps } from './types';
 import { styles } from './CombinedContent.styles';
 
 const CombinedContent = ({
@@ -33,7 +29,13 @@ const CombinedContent = ({
         content = <TextOnly data={section.data} />;
         break;
       case 'RadioGroup':
-        content = <RadioGroup title={section.title} subtitle={section.subtitle} data={section.data} />;
+        content = (
+          <RadioGroup
+            title={section.title}
+            subtitle={section.subtitle}
+            data={section.data}
+          />
+        );
         break;
       case 'Table':
         content = (
@@ -42,32 +44,34 @@ const CombinedContent = ({
         break;
       case 'List':
         // ListSection의 data를 올바르게 처리
-        const listData = section.data as Array<{ title: string; content: string }>;
+        const listData = section.data as Array<{
+          title: string;
+          content: string;
+        }>;
         content = <List title={section.title} data={listData} />;
         break;
       case 'DataGrid':
         content = <DataGrid data={section.data} />;
         break;
       default:
-        console.warn(
-          `Unknown section type: ${section.type}`
-        );
+        console.warn(`Unknown section type: ${section.type}`);
         return null;
     }
 
     return (
       <div key={index} className={styles.sectionContainer}>
         {/* 섹션 제목이 있는 경우 (RadioGroup 제외) */}
-        {(section.title || section.subtitle) && section.type !== 'RadioGroup' && (
-          <div className={styles.sectionHeader}>
-            {section.title && (
-              <h3 className={styles.sectionTitle}>{section.title}</h3>
-            )}
-            {section.subtitle && (
-              <p className={styles.sectionSubtitle}>{section.subtitle}</p>
-            )}
-          </div>
-        )}
+        {(section.title || section.subtitle) &&
+          section.type !== 'RadioGroup' && (
+            <div className={styles.sectionHeader}>
+              {section.title && (
+                <h3 className={styles.sectionTitle}>{section.title}</h3>
+              )}
+              {section.subtitle && (
+                <p className={styles.sectionSubtitle}>{section.subtitle}</p>
+              )}
+            </div>
+          )}
 
         {/* 컴포넌트 렌더링 */}
         {content}

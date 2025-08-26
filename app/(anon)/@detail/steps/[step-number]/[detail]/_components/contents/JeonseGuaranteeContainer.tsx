@@ -71,7 +71,7 @@ export default function JeonseGuaranteeContainer({
   const [inputModes, setInputModes] = useState(INITIAL_INPUT_MODES);
   const [activeTab, setActiveTab] = useState<TabType>('input');
 
-  const { selectedAddress } = useUserAddressStore();
+  // const { selectedAddress } = useUserAddressStore();
 
   // API 훅
   const {
@@ -227,7 +227,7 @@ export default function JeonseGuaranteeContainer({
             formData={formData}
             errors={errors}
             inputModes={inputModes}
-            isPending={isPending}
+            // isPending={isPending}
             error={error?.message || null}
             onInputChange={handleInputChange}
             onInputModeChange={handleInputModeChange}

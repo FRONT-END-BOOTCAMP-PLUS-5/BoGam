@@ -146,10 +146,16 @@ export const useSubmitTwoWayAuth = (
     },
     onSuccess: (data: GetTaxCertResponseDto, variables) => {
       if (data.success === true && variables.userAddressNickname) {
-        const formattedAddress = variables.userAddressNickname.split("+").join(" ");
-        queryClient.invalidateQueries({ 
-          queryKey: ['taxCert', 'exists', formattedAddress] 
+        const formattedAddress = variables.userAddressNickname
+          .split('+')
+          .join(' ');
+        queryClient.invalidateQueries({
+          queryKey: ['taxCert', 'exists', formattedAddress],
         });
+      }
+      // onSuccess 콜백 호출 추가
+      if (onSuccess) {
+        onSuccess(data);
       }
     },
     onError,

@@ -9,66 +9,22 @@ import { TaxCertInputProps } from './types';
 import { styles } from './TaxCertInput.styles';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import Image from 'next/image';
-
-const authMethods = [
-  {
-    id: '1',
-    name: '카카오톡',
-    image: '/images/KakaoTalk.png',
-    alt: '카카오톡',
-  },
-  {
-    id: '3',
-    name: '삼성패스',
-    image: '/images/SamsungPass.png',
-    alt: '삼성패스',
-  },
-  {
-    id: '4',
-    name: '국민민인증서',
-    image: '/images/KBMobileCertificate.png',
-    alt: '국민인증서',
-  },
-  {
-    id: '5',
-    name: '통신사인증서',
-    image: '/images/Pass.png',
-    alt: '통신사PASS',
-  },
-  {
-    id: '6',
-    name: '네이버',
-    image: '/images/Naver.png',
-    alt: '네이버',
-  },
-  {
-    id: '7',
-    name: '신한인증서',
-    image: '/images/ShinhanCertificate.png',
-    alt: '신한인증서',
-  },
-  {
-    id: '8',
-    name: 'toss',
-    image: '/images/Toss.png',
-    alt: '토스',
-  },
-  {
-    id: '9',
-    name: '뱅크샐러드',
-    image: '/images/Banksalad.png',
-    alt: '뱅크샐러드',
-  },
-];
+import { TAX_CERT_AUTH_METHODS } from '@libs/constants/taxCertConstants';
 
 export const TaxCertInput = ({
   formData,
   onSubmit,
   onSuccess,
-}: TaxCertInputProps) => {
+  onAuthMethodSelect,
+  isAuthMethodModalOpen,
+  setIsAuthMethodModalOpen,
+}: TaxCertInputProps & {
+  onAuthMethodSelect: (methodId: string) => void;
+  isAuthMethodModalOpen: boolean;
+  setIsAuthMethodModalOpen: (open: boolean) => void;
+}) => {
   const { selectedAddress } = useUserAddressStore();
   const [error, setError] = useState<string | null>(null);
-  const [isAuthMethodModalOpen, setIsAuthMethodModalOpen] = useState(false);
 
   // 폼 데이터 상태
   const [localFormData, setLocalFormData] = useState({
@@ -96,39 +52,12 @@ export const TaxCertInput = ({
       `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
   });
 
-  // 선택된 주소가 변경되면 주소 정보 업데이트
-  const handleAddressChange = () => {
-    if (selectedAddress) {
-    }
-  };
-
   // 입력 필드 변경 핸들러
   const handleInputChange = (field: string, value: string) => {
     setLocalFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-  };
-
-  // 간편인증 방법 선택 핸들러
-  const handleAuthMethodSelect = (methodId: string) => {
-    setLocalFormData((prev) => ({
-      ...prev,
-      loginTypeLevel: methodId,
-    }));
-    setIsAuthMethodModalOpen(false);
-  };
-
-  const handleSelectAuthMethod = (methodId: string) => {
-    setLocalFormData((prev) => ({
-      ...prev,
-      loginTypeLevel: methodId,
-    }));
-  };
-
-  // 모달 닫기 핸들러
-  const handleCloseAuthMethodModal = () => {
-    setIsAuthMethodModalOpen(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -220,12 +149,12 @@ export const TaxCertInput = ({
                 <div className={styles.selectedMethod}>
                   <Image
                     src={
-                      authMethods.find(
+                      TAX_CERT_AUTH_METHODS.find(
                         (m) => m.id === localFormData.loginTypeLevel
                       )?.image || ''
                     }
                     alt={
-                      authMethods.find(
+                      TAX_CERT_AUTH_METHODS.find(
                         (m) => m.id === localFormData.loginTypeLevel
                       )?.name || ''
                     }
@@ -234,7 +163,7 @@ export const TaxCertInput = ({
                   />
                   <span>
                     {
-                      authMethods.find(
+                      TAX_CERT_AUTH_METHODS.find(
                         (m) => m.id === localFormData.loginTypeLevel
                       )?.name
                     }
@@ -253,41 +182,6 @@ export const TaxCertInput = ({
           </div>
         )}
       </FormContainer>
-
-      <ConfirmModal
-        isOpen={isAuthMethodModalOpen}
-        title='간편인증 로그인 구분 선택'
-        onCancel={handleCloseAuthMethodModal}
-        onConfirm={handleCloseAuthMethodModal}
-        confirmText='결정'
-        cancelText='취소'
-        icon='info'
-      >
-        <div className={styles.authGrid}>
-          {authMethods.map((method) => (
-            <div
-              key={method.id}
-              className={`${styles.authItem} ${
-                localFormData.loginTypeLevel === method.id
-                  ? styles.authItemSelected
-                  : styles.authItemDefault
-              }`}
-              onClick={() => handleSelectAuthMethod(method.id)}
-            >
-              <div className={styles.authIconContainer}>
-                <Image
-                  src={method.image}
-                  alt={method.alt}
-                  width={48}
-                  height={48}
-                  className={styles.authIcon}
-                />
-                <span className={styles.authText}>{method.name}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </ConfirmModal>
     </>
   );
 };

@@ -1,15 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import {
-  ContentSection,
-  LegacyContentSection,
-  RadioGroupSection,
-} from './types';
+import { ContentSection, RadioGroupSection } from './types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { stepResultQueryApi } from '@libs/api_front/stepResultQueries.api';
-import CombinedContent from './CombinedContent';
+// import CombinedContent from './CombinedContent';
 import TextOnly from './TextOnly';
 import RadioGroup from './RadioGroup';
 import Table from './Table';
@@ -58,11 +54,11 @@ export default function Step5Detail3Renderer({
   const detail = stepUrlData ? parseInt(stepUrlData[2]) : 1;
 
   // step-result 데이터 요청
-  const { data: stepResultData } = useGetStepResult({
-    userAddressNickname: selectedAddress?.nickname || '',
-    stepNumber: stepNumber.toString(),
-    detail: detail.toString(),
-  });
+  // const { data: stepResultData } = useGetStepResult({
+  //   userAddressNickname: selectedAddress?.nickname || '',
+  //   stepNumber: stepNumber.toString(),
+  //   detail: detail.toString(),
+  // });
 
   // 5-3 단계 전체 JSON 상태
   const [stepJsonData, setStepJsonData] = useState<Step5Detail3JsonData>({});
@@ -114,7 +110,11 @@ export default function Step5Detail3Renderer({
   // 슬라이드별 렌더링 로직
   switch (sectionIndex) {
     case 0:
-      return section.type === 'TextOnly' ? <TextOnly data={section.data} /> : <div>TextOnly 타입이 아닙니다.</div>;
+      return section.type === 'TextOnly' ? (
+        <TextOnly data={section.data} />
+      ) : (
+        <div>TextOnly 타입이 아닙니다.</div>
+      );
     case 1:
       return (
         <JeonseGuaranteeContainer
@@ -125,16 +125,21 @@ export default function Step5Detail3Renderer({
       );
     case 2:
       return section.type === 'RadioGroup' ? (
-        <RadioGroup 
-          title={section.title} 
-          subtitle={section.subtitle} 
-          data={(section as RadioGroupSection).data} 
+        <RadioGroup
+          title={section.title}
+          subtitle={section.subtitle}
+          data={(section as RadioGroupSection).data}
         />
-      ) : <div>RadioGroup 타입이 아닙니다.</div>;
+      ) : (
+        <div>RadioGroup 타입이 아닙니다.</div>
+      );
     case 3:
       if (section.type === 'List') {
         // ListSection의 data를 올바른 타입으로 변환
-        const listData = section.data as Array<{ title: string; content: string }>;
+        const listData = section.data as Array<{
+          title: string;
+          content: string;
+        }>;
         return <List title={section.title} data={listData} />;
       }
       return <div>List 타입이 아닙니다.</div>;
@@ -166,7 +171,10 @@ export default function Step5Detail3Renderer({
             <Table data={section.data as unknown as RegionData[]} />
           )}
           {section.type === 'List' && (
-            <List title={section.title} data={section.data as unknown as string[]} />
+            <List
+              title={section.title}
+              data={section.data as unknown as string[]}
+            />
           )}
         </>
       );

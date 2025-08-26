@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useModalStore } from '@libs/stores/modalStore';
@@ -14,6 +14,9 @@ import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapMod
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
   const { selectedAddress, dong, ho, setDong, setHo } = useUserAddressStore();
+
+  // 강제 리렌더링을 위한 상태
+  const [, forceUpdate] = useState({});
 
   // 모달 스토어
   const { isOpen, content, closeModal, confirmModal, cancelModal } =
@@ -72,26 +75,42 @@ export const AddressConfirmationTab: React.FC = () => {
 
   // 주소 파싱 결과
   const parsedAddress = parseAddressForDongHo(displaySearchQuery);
-
+  console.log('parsedAddress.dong', parsedAddress.dong);
+  console.log('dong', dong);
+  console.log('parsedAddress.ho', parsedAddress.ho);
+  console.log('ho', ho);
   // 동/호가 파싱되면 자동으로 입력 필드에 설정
   useEffect(() => {
-    if (parsedAddress.dong && !dong) {
+    console.log(
+      'useEffect 실행됨 - parsedAddress.dong:',
+      parsedAddress.dong,
+      'parsedAddress.ho:',
+      parsedAddress.ho
+    );
+
+    if (parsedAddress.dong) {
+      console.log('setDong 실행:', parsedAddress.dong);
       setDong(parsedAddress.dong);
+      // 강제 리렌더링
+      forceUpdate({});
     }
-    if (parsedAddress.ho && !ho) {
+    if (parsedAddress.ho) {
+      console.log('setHo 실행:', parsedAddress.ho);
       setHo(parsedAddress.ho);
+      // 강제 리렌더링
+      forceUpdate({});
     }
-  }, [parsedAddress.dong, parsedAddress.ho, dong, ho]);
+  }, [selectedAddress, parsedAddress.dong, parsedAddress.ho]); // dong, ho 의존성 제거
 
   return (
     <div className={styles.container}>
       {/* 두 번째 줄: 주소 검색 결과 */}
       <div className={styles.addressSearchRow}>
         <div className={styles.addressContainer}>
-          <span 
+          <span
             className={`${
-              parsedAddress.address || displaySearchQuery 
-                ? styles.addressValue 
+              parsedAddress.address || displaySearchQuery
+                ? styles.addressValue
                 : styles.addressPlaceholder
             }`}
           >
@@ -113,18 +132,26 @@ export const AddressConfirmationTab: React.FC = () => {
       <div className={styles.dongHoInputs}>
         <div className={styles.dongHoContainer}>
           <TextInput
-            placeholder='101'
-            value={dong || parsedAddress.dong || ''}
-            onChange={(e) => setDong(e.target.value)}
+            placeholder='동'
+            value={dong || ''}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, '');
+              setDong(value);
+            }}
+            inputMode='numeric'
             className={styles.dongField}
           />
           <span className={styles.dongHoLabel}>동</span>
         </div>
         <div className={styles.dongHoContainer}>
           <TextInput
-            placeholder='201'
-            value={ho || parsedAddress.ho || ''}
-            onChange={(e) => setHo(e.target.value)}
+            placeholder='호'
+            value={ho || ''}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9]/g, '');
+              setHo(value);
+            }}
+            inputMode='numeric'
             className={styles.hoField}
           />
           <span className={styles.dongHoLabel}>호</span>
