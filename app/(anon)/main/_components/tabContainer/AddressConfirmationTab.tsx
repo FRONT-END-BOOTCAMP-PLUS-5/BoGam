@@ -88,10 +88,16 @@ export const AddressConfirmationTab: React.FC = () => {
       {/* 두 번째 줄: 주소 검색 결과 */}
       <div className={styles.addressSearchRow}>
         <div className={styles.addressContainer}>
-          <span className={styles.addressValue}>
+          <span 
+            className={`${
+              parsedAddress.address || displaySearchQuery 
+                ? styles.addressValue 
+                : styles.addressPlaceholder
+            }`}
+          >
             {parsedAddress.address ||
               displaySearchQuery ||
-              '주소 검색으로 주소를 검색 해주세요'}
+              '주소를 검색하여 추가해주세요'}
           </span>
         </div>
         <Button
@@ -99,7 +105,7 @@ export const AddressConfirmationTab: React.FC = () => {
           variant='primary'
           className={styles.searchButton}
         >
-          주소 검색
+          검색
         </Button>
       </div>
 
@@ -107,7 +113,7 @@ export const AddressConfirmationTab: React.FC = () => {
       <div className={styles.dongHoInputs}>
         <div className={styles.dongHoContainer}>
           <TextInput
-            placeholder='동'
+            placeholder='101'
             value={dong || parsedAddress.dong || ''}
             onChange={(e) => setDong(e.target.value)}
             className={styles.dongField}
@@ -116,7 +122,7 @@ export const AddressConfirmationTab: React.FC = () => {
         </div>
         <div className={styles.dongHoContainer}>
           <TextInput
-            placeholder='호'
+            placeholder='201'
             value={ho || parsedAddress.ho || ''}
             onChange={(e) => setHo(e.target.value)}
             className={styles.hoField}
@@ -130,8 +136,8 @@ export const AddressConfirmationTab: React.FC = () => {
           onClick={() => {
             saveAddressToUser(dong, ho);
           }}
-          disabled={!dong.trim()}
-          variant='secondary'
+          disabled={!dong.trim() || !ho.trim()}
+          variant='primary'
           className={styles.saveButton}
         >
           저장하기
