@@ -28,7 +28,7 @@ export const styles = {
   starIcon: 'flex-shrink-0 w-[18px] h-[18px]',
 
   // Placeholder 텍스트
-  placeholderText: 'text-sm text-brand-dark-gray/60 italic leading-[1.4]',
+  placeholderText: 'text-sm text-brand-dark-gray/60 leading-[1.4]',
 
   // 비활성화된 확장 버튼
   expandButtonDisabled: 'opacity-50 cursor-not-allowed',

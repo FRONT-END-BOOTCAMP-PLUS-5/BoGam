@@ -35,7 +35,7 @@ export const styles = {
     'w-full px-4 py-3 bg-brand text-brand-white rounded-lg hover:bg-brand-90 transition-colors duration-200 disabled:bg-brand-light-gray disabled:cursor-not-allowed font-medium',
 
   // 자동 설정 안내
-  autoSettingNote: 'text-xs text-brand-blue mt-1 italic',
+  autoSettingNote: 'text-xs text-brand-blue mt-1',
 
   // 커스텀 드롭다운 화살표
   selectArrow:

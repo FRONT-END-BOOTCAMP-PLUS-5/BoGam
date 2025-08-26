@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import styles from './TextOnly.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import InfoToolTip from '@/(anon)/_components/common/infoToolTip/InfoToolTip';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
+import { loadTooltipWords, applyTooltipsToText } from '@utils/tooltipUtils';
 import Button from '@/(anon)/_components/common/button/Button';
 
 interface ContentSection {
@@ -46,6 +48,8 @@ interface TextOnlyProps {
 }
 
 const TextOnly = ({ data }: TextOnlyProps) => {
+  const [tooltipWords, setTooltipWords] = useState<Record<string, string | string[]>>({});
+
   // 전역 store에서 선택된 주소 가져오기
   const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
 
@@ -55,6 +59,34 @@ const TextOnly = ({ data }: TextOnlyProps) => {
 
   // 초기화 여부를 추적하는 ref
   const hasInitialized = useRef(false);
+
+  // tooltip 단어들을 로드
+  useEffect(() => {
+    const loadTooltips = async () => {
+      const tooltipData = await loadTooltipWords();
+      setTooltipWords(tooltipData.tooltips);
+    };
+    loadTooltips();
+  }, []);
+
+  // tooltip이 적용된 텍스트를 렌더링하는 함수
+  const renderTextWithTooltips = (text: string) => {
+    const parts = applyTooltipsToText(text, tooltipWords);
+    
+    return parts.map((part, index) => {
+      if (typeof part === 'string') {
+        return part;
+      } else {
+        return (
+          <InfoToolTip
+            key={index}
+            term={part.term}
+            definition={part.definition}
+          />
+        );
+      }
+    });
+  };
 
   // useStepResultMutations 훅 사용
   const { upsertStepResult, removeQueries } = useStepResultMutations();
@@ -205,7 +237,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                 {section.contents.map(
                   (content: string, contentIndex: number) => (
                     <p key={contentIndex} className={styles.contentItem}>
-                      {content}
+                      {renderTextWithTooltips(content)}
                     </p>
                   )
                 )}
@@ -222,7 +254,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
                       {contentSection.contents.map(
                         (content: string, contentIndex: number) => (
                           <p key={contentIndex} className={styles.contentItem}>
-                            {content}
+                            {renderTextWithTooltips(content)}
                           </p>
                         )
                       )}
@@ -232,7 +264,9 @@ const TextOnly = ({ data }: TextOnlyProps) => {
               </div>
             )}
             {section.summary && (
-              <div className={styles.summary}>{section.summary}</div>
+              <div className={styles.summary}>
+                {renderTextWithTooltips(section.summary)}
+              </div>
             )}
             {section.button && (
               <div className={styles.buttonContainer}>

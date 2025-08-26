@@ -47,42 +47,41 @@ export default function InfoToolTip({
 
     // 툴팁 높이를 픽셀로 변환
     const tooltipHeightPx = estimatedTooltipHeight * 16;
-    
-    // 단순하게: 위아래 공간 중 더 넓은 쪽에 툴팁 배치
-    const spaceBelow = viewportHeight - containerRect.bottom;
-    const spaceAbove = containerRect.top;
-    const gap = 3; // 글씨와 툴팁 사이 간격
-    const textHeight = 16; // 글씨 높이 (16px)
-    
-
-    // 기본적으로 아래쪽에 배치 시도
-    if (spaceBelow >= tooltipHeightPx + gap) {
-      // 아래쪽에 충분한 공간이 있으면 아래에 배치
-      top = containerRect.bottom + gap;
-      arrowDirection = 'bottom';
-    } else if (spaceAbove >= tooltipHeightPx + gap + textHeight) {
-      // 위쪽에 충분한 공간이 있으면 위에 배치 (글씨 높이만큼 추가 간격)
-      top = containerRect.top - tooltipHeightPx - gap - textHeight*4.5;
-      arrowDirection = 'top';
-    } else {
-      // 위아래 모두 공간이 부족하면 아래에 배치 (스크롤 가능)
-      top = containerRect.bottom + gap;
-      arrowDirection = 'bottom';
-    }
-
-    // 가로 위치 계산 (중앙 정렬)
     const tooltipWidthPx = estimatedTooltipWidth * 16;
-    left = Math.max(
-      15,
-      Math.min(
-        containerRect.left +
-          containerRect.width / 2 -
-          tooltipWidthPx / 2,
-        viewportWidth - tooltipWidthPx - 15
-      )
-    );
+    
+    // 글씨 위치를 기준으로 tooltip 위치 계산
+    const gap = 5; // 글씨와 툴팁 사이 간격
+    
+    // 세로 위치: 글씨 바로 아래 (뷰포트 기준)
+    top = containerRect.bottom + gap;
+    
+    // 가로 위치: 글씨의 중앙에 tooltip 중앙이 오도록 설정
+    const textCenter = containerRect.left + containerRect.width / 2;
+    left = textCenter - tooltipWidthPx / 2;
+    
+    // 화면 경계 체크 및 조정
+    // 좌측 경계 체크
+    if (left < 15) {
+      left = 15;
+    }
+    
+    // 우측 경계 체크
+    if (left + tooltipWidthPx > viewportWidth - 15) {
+      left = viewportWidth - tooltipWidthPx - 15;
+    }
+    
+    // 하단 경계 체크 (스크롤 가능하므로 경고만)
+    if (top + tooltipHeightPx > viewportHeight - 15) {
+      // 하단에 가까우면 간격을 줄임
+      top = containerRect.bottom + 2;
+    }
+    
+    arrowDirection = 'bottom';
 
-    setTooltipPosition({ top, left, arrowDirection });
+    // 위치가 제대로 계산되었는지 확인
+    if (top > 0 && left > 0) {
+      setTooltipPosition({ top, left, arrowDirection });
+    }
   }, [definition]);
 
   useEffect(() => {
@@ -135,9 +134,12 @@ export default function InfoToolTip({
   const handleTermClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!isVisible) {
-      // 먼저 위치를 계산하고 툴팁을 표시
-      calculateTooltipPosition();
+      // 먼저 툴팁을 표시하고 DOM 업데이트 후 위치 계산
       setIsVisible(true);
+      // DOM 업데이트 후 위치 계산
+      setTimeout(() => {
+        calculateTooltipPosition();
+      }, 0);
     } else {
       setIsVisible(false);
     }
