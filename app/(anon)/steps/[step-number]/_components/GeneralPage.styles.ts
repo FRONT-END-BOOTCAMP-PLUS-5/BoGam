@@ -18,10 +18,10 @@ export const styles = {
   borderBottomDiv: 'border-b border-b-brand-light-gray py-[4vh] px-[10%] h-[38vh] max-h-[38vh] overflow-y-auto',
   
   // 위험 표시 스타일
-  danger: 'text-[0.8em] font-bold w-[16%] shadow-[inset_0px_-11px_0_rgba(194,74,74,0.3)]',
+  danger: 'text-base font-bold w-[20%] shadow-[inset_0px_-11px_0_rgba(194,74,74,0.3)]',
   
   // 콘텐츠 텍스트 스타일
-  content: 'text-[0.8em] mt-[4vh] leading-[2.5vh]',
+  content: 'text-sm mt-[4vh] leading-[2.5vh]',
   
   // 이동 버튼 내부 스타일
   goInside: 'flex items-center',
@@ -30,5 +30,5 @@ export const styles = {
   goInsideDiv: 'flex items-center flex-1 w-full h-[13%] absolute bottom-0 left-[75%]',
   
   // 작은 폰트 스타일
-  smallFont: 'font-bold text-[0.8em] flex items-center justify-center pt-[0.3vh]'
+  smallFont: 'font-bold text-sm flex items-center justify-center pt-[0.3vh]'
 } as const;
