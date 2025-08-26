@@ -8,53 +8,76 @@ import GuideStepRow from '@/(anon)/_components/common/guideStepContent/GuideStep
 import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideStepText';
 import { STEP_DETAIL_TITLES } from '@libs/constants/stepDetailTitles';
 
-interface StepDetail {
-  id: string;
-  title: string;
-  content: string;
-  status: 'match' | 'mismatch' | 'unchecked';
-  actionLink?: string;
-  actionText?: string;
-  stepNumber?: number;
-  detail?: number;
+// GuideResultView와 동일한 인터페이스 사용
+export interface GuideStepData {
+  id: number;
+  userAddressId: number;
+  stepId: number;
+  mismatch: number;
+  match: number;
+  unchecked: number;
+  createdAt: string;
+  updatedAt: string;
+  stepNumber: number;
+  detail: number;
+  expanded?: boolean;
+
+  // Fields for GuideStepItem and its content, primarily for stepNumber 1
+  title?: string;
+  content?: string;
+  type?: 'match' | 'mismatch' | 'unchecked' | 'link';
+  multiLine?: boolean;
+  hasLink?: boolean;
+  linkHref?: string;
+  linkText?: string;
+
+  // The 'details' field from API can be either an object or an array of strings
+  details?: {
+    checkItems?: string[];
+    [key: string]: string | string[] | undefined;
+  } | string[];
 }
 
 interface StepDetailContentProps {
   stepTitle: string;
-  details: StepDetail[];
+  guideSteps: GuideStepData[];
   onActionClick: (actionLink: string) => void;
   currentStep?: number;
 }
 
-export default function StepDetailContent({ details, onActionClick, currentStep = 1 }: StepDetailContentProps) {
+export default function StepDetailContent({ guideSteps, onActionClick, currentStep = 1 }: StepDetailContentProps) {
+  // currentStep에 해당하는 스텝들만 필터링
+  const currentStepData = guideSteps.filter(step => step.stepNumber === currentStep);
+  
+  // detail 번호 순으로 정렬
+  const sortedStepData = currentStepData.sort((a, b) => a.detail - b.detail);
+
   return (
     <div className={styles.container}>      
-      {details.map((detail, index) => (
+      {sortedStepData.map((step, index) => (
         <GuideStepItem 
-          key={detail.id}
-          stepNumber={`${currentStep}-${index + 1}`}
-          title={STEP_DETAIL_TITLES[currentStep]?.[index] || detail.title}
-          showDivider={index < details.length - 1}
+          key={step.id}
+          stepNumber={`${step.stepNumber}-${step.detail}`}
+          title={STEP_DETAIL_TITLES[step.stepNumber]?.[step.detail - 1] || `${step.stepNumber}단계 서브 ${step.detail}`}
+          showDivider={index < sortedStepData.length - 1}
         >
           <GuideStepContent>
-
-            
-            {/* 통계 정보 표시 (마이페이지와 동일한 스타일) */}
+            {/* 통계 정보 표시 (GuideResultView와 동일한 스타일) */}
             <GuideStepRow iconType="match">
               <GuideStepText>
-                안전: {detail.status === 'match' ? '1' : '0'}개
+                안전: {step.match}개
               </GuideStepText>
             </GuideStepRow>
             
             <GuideStepRow iconType="mismatch">
               <GuideStepText>
-                경고: {detail.status === 'mismatch' ? '1' : '0'}개
+                경고: {step.mismatch}개
               </GuideStepText>
             </GuideStepRow>
             
             <GuideStepRow iconType="unchecked">
               <GuideStepText>
-                미확인: {detail.status === 'unchecked' ? '1' : '0'}개
+                미확인: {step.unchecked}개
               </GuideStepText>
             </GuideStepRow>
           </GuideStepContent>
