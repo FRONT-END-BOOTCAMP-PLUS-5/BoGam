@@ -22,10 +22,6 @@ export const styles = {
   card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full",
   cardHeader: "flex items-center space-x-2 px-6 py-4",
   starIcon: "text-brand-gold",
-  cardTitle: "text-base font-semibold text-brand-black mb-2",
-  
-  documentButtons: "flex justify-evenly px-6",
-  documentButton: "text-xl font-bold text-brand-black cursor-pointer hover:text-brand-blue transition-colors",
   
   summaryContent: "p-6",
   gaugeContainer: "flex justify-center mb-6",
