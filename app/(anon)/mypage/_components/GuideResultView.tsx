@@ -8,16 +8,7 @@ import GuideStepText from '@/(anon)/_components/common/guideStepContent/GuideSte
 import GuideStepContent from '@/(anon)/_components/common/guideStepContent/GuideStepContent';
 import ResultAccordion from './ResultAccordion';
 import { styles } from './GuideResultView.styles';
-
-const STEP_TITLES = [
-  '집 고를 때',
-  '임대인 확인할 때',
-  '계약서 작성할 때',
-  '계약한 직후',
-  '입주한 이후',
-  '계약기간이 끝난 후',
-  '특수 사기 유형 예방'
-] as const;
+import { STEP_TITLES, STEP_DETAIL_TITLES } from '@libs/constants/stepDetailTitles';
 
 export interface GuideStepData {
   id: number;
@@ -121,73 +112,38 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
               numbers={[totalMatch.toString(), totalMismatch.toString(), totalUnchecked.toString()]}
             >
               <div className={styles.stepContent}>
-                {parseInt(stepNumber) === 1 ? (
-                  // 1단계는 GuideStepItem 컴포넌트들을 사용하여 예쁘게 꾸며주기
-                  <div>
-                    {steps.map((subStep) => (
-                      <GuideStepItem
-                        key={subStep.id}
-                        stepNumber={`${subStep.stepNumber}-${subStep.detail}`} // stepNumber-detail 형식
-                        title={subStep.title || ''} // Ensure title is not undefined
-                        showDivider={false}
-                      >
-                        <GuideStepContent>
-                          {subStep.content && ( // Render content if available
-                            <GuideStepRow iconType={(subStep.type as 'match' | 'mismatch' | 'unchecked' | 'link') || 'unchecked'}> {/* Cast to supported types */}
-                              <GuideStepText>
-                                {subStep.content}
-                              </GuideStepText>
-                            </GuideStepRow>
-                          )}
-                          {subStep.multiLine && Array.isArray(subStep.details) && ( // Check if details is an array
-                            <GuideStepRow iconType={(subStep.type as 'match' | 'mismatch' | 'unchecked' | 'link') || 'unchecked'}>
-                              <GuideStepText multiLine> {/* Add multiLine prop to GuideStepText */}
-                                {subStep.details.map((detail, index) => (
-                                  <p key={index}>{detail}</p>
-                                ))}
-                              </GuideStepText>
-                            </GuideStepRow>
-                          )}
-                          {subStep.hasLink && subStep.linkHref && subStep.linkText && (
-                            <GuideStepRow iconType="link" href={subStep.linkHref}>
-                              {subStep.linkText}
-                            </GuideStepRow>
-                          )}
-                        </GuideStepContent>
-                      </GuideStepItem>
-                    ))}
-                  </div>
-                ) : (
-                  // 나머지 단계는 간단하게
-                  <div className={styles.tempStepsContent}>
-                    <div className={styles.tempStepsHeader}>
-                      <p className={styles.tempStepsDescription}>
-                        {STEP_TITLES[stepIndex]} 관련 상세 정보
-                      </p>
-                    </div>
-                    
-                    <div className={styles.tempStepsItems}>
-                      {steps.map((step) => (
-                        <div key={step.id} className={styles.tempStepItem}>
-                          <div className={styles.tempStepItemHeader}>
-                            <span className={styles.tempStepItemNumber}>
-                              서브 {step.detail}
-                            </span>
-                            <span className={styles.tempStepItemStats}>
-                              ✓{step.match} ✗{step.mismatch} ?{step.unchecked}
-                            </span>
-                          </div>
-                          
-                          <div className={styles.tempStepItemFooter}>
-                            <span className={styles.createdAt}>
-                              {new Date(step.createdAt).toLocaleDateString('ko-KR')}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                {/* 모든 단계를 1단계처럼 통일하여 깔끔하게 표시 */}
+                <div>
+                  {steps.map((subStep) => (
+                                         <GuideStepItem
+                       key={subStep.id}
+                       stepNumber={`${subStep.stepNumber}-${subStep.detail}`}
+                       title={STEP_DETAIL_TITLES[subStep.stepNumber]?.[subStep.detail - 1] || `${STEP_TITLES[stepIndex]} 서브 ${subStep.detail}`}
+                       showDivider={false}
+                     >
+                      <GuideStepContent>
+                        {/* 통계 정보 표시 */}
+                        <GuideStepRow iconType="match">
+                          <GuideStepText>
+                            안전 : {subStep.match}개
+                          </GuideStepText>
+                        </GuideStepRow>
+                        
+                        <GuideStepRow iconType="mismatch">
+                          <GuideStepText>
+                            경고: {subStep.mismatch}개
+                          </GuideStepText>
+                        </GuideStepRow>
+                        
+                        <GuideStepRow iconType="unchecked">
+                          <GuideStepText>
+                            미확인: {subStep.unchecked}개
+                          </GuideStepText>
+                        </GuideStepRow>
+                      </GuideStepContent>
+                    </GuideStepItem>
+                  ))}
+                </div>
               </div>
             </ResultAccordion>
           );
