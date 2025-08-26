@@ -103,6 +103,9 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
           const totalUnchecked = steps.reduce((sum, step) => sum + step.unchecked, 0);
           const isExpanded = steps.some(step => step.expanded);
 
+          // detail 번호 순으로 정렬
+          const sortedSteps = steps.sort((a, b) => a.detail - b.detail);
+
           return (
             <ResultAccordion
               key={stepNumber}
@@ -114,8 +117,8 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
               <div className={styles.stepContent}>
                 {/* 모든 단계를 1단계처럼 통일하여 깔끔하게 표시 */}
                 <div>
-                  {steps.map((subStep) => (
-                                         <GuideStepItem
+                  {sortedSteps.map((subStep) => (
+                      <GuideStepItem
                        key={subStep.id}
                        stepNumber={`${subStep.stepNumber}-${subStep.detail}`}
                        title={STEP_DETAIL_TITLES[subStep.stepNumber]?.[subStep.detail - 1] || `${STEP_TITLES[stepIndex]} 서브 ${subStep.detail}`}

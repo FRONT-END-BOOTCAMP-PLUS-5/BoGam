@@ -154,17 +154,15 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
   const renderStepData = () => (
     <div className={styles.stepDataSection}>
-      <div className={styles.stepDataTitle}>스텝 데이터</div>
-      <div>
-        <div className={styles.badgeContainer}>
-          {Object.entries(jsonDetails || {}).map(([key, value]) => (
-            <CircularIconBadge
-              key={key}
-              type={value as 'match' | 'mismatch' | 'unchecked'}
-              size='xsm'
-            />
-          ))}
-        </div>
+      <div className={styles.badgeContainer}>
+        {Object.entries(jsonDetails || {}).map(([key, value]) => (
+          <CircularIconBadge
+            key={key}
+            type={value as 'match' | 'mismatch' | 'unchecked'}
+            size='sm'
+          />
+        ))}
+        <span className={styles.stepDataTitle}>읽음</span>
       </div>
     </div>
   );

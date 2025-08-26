@@ -14,7 +14,7 @@ import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapMod
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
   const { selectedAddress, dong, ho, setDong, setHo } = useUserAddressStore();
-  
+
   // 강제 리렌더링을 위한 상태
   const [, forceUpdate] = useState({});
 
@@ -75,22 +75,27 @@ export const AddressConfirmationTab: React.FC = () => {
 
   // 주소 파싱 결과
   const parsedAddress = parseAddressForDongHo(displaySearchQuery);
-  console.log("parsedAddress.dong", parsedAddress.dong);
-  console.log("dong", dong);
-  console.log("parsedAddress.ho", parsedAddress.ho);
-  console.log("ho", ho);
+  console.log('parsedAddress.dong', parsedAddress.dong);
+  console.log('dong', dong);
+  console.log('parsedAddress.ho', parsedAddress.ho);
+  console.log('ho', ho);
   // 동/호가 파싱되면 자동으로 입력 필드에 설정
   useEffect(() => {
-    console.log("useEffect 실행됨 - parsedAddress.dong:", parsedAddress.dong, "parsedAddress.ho:", parsedAddress.ho);
-    
+    console.log(
+      'useEffect 실행됨 - parsedAddress.dong:',
+      parsedAddress.dong,
+      'parsedAddress.ho:',
+      parsedAddress.ho
+    );
+
     if (parsedAddress.dong) {
-      console.log("setDong 실행:", parsedAddress.dong);
+      console.log('setDong 실행:', parsedAddress.dong);
       setDong(parsedAddress.dong);
       // 강제 리렌더링
       forceUpdate({});
     }
     if (parsedAddress.ho) {
-      console.log("setHo 실행:", parsedAddress.ho);
+      console.log('setHo 실행:', parsedAddress.ho);
       setHo(parsedAddress.ho);
       // 강제 리렌더링
       forceUpdate({});
@@ -102,10 +107,16 @@ export const AddressConfirmationTab: React.FC = () => {
       {/* 두 번째 줄: 주소 검색 결과 */}
       <div className={styles.addressSearchRow}>
         <div className={styles.addressContainer}>
-          <span className={styles.addressValue}>
+          <span
+            className={`${
+              parsedAddress.address || displaySearchQuery
+                ? styles.addressValue
+                : styles.addressPlaceholder
+            }`}
+          >
             {parsedAddress.address ||
               displaySearchQuery ||
-              '주소 검색으로 주소를 검색 해주세요'}
+              '주소를 검색하여 추가해주세요'}
           </span>
         </div>
         <Button
@@ -113,7 +124,7 @@ export const AddressConfirmationTab: React.FC = () => {
           variant='primary'
           className={styles.searchButton}
         >
-          주소 검색
+          검색
         </Button>
       </div>
 
@@ -127,7 +138,7 @@ export const AddressConfirmationTab: React.FC = () => {
               const value = e.target.value.replace(/[^0-9]/g, '');
               setDong(value);
             }}
-            inputMode="numeric"
+            inputMode='numeric'
             className={styles.dongField}
           />
           <span className={styles.dongHoLabel}>동</span>
@@ -140,7 +151,7 @@ export const AddressConfirmationTab: React.FC = () => {
               const value = e.target.value.replace(/[^0-9]/g, '');
               setHo(value);
             }}
-            inputMode="numeric"
+            inputMode='numeric'
             className={styles.hoField}
           />
           <span className={styles.dongHoLabel}>호</span>
@@ -152,8 +163,8 @@ export const AddressConfirmationTab: React.FC = () => {
           onClick={() => {
             saveAddressToUser(dong, ho);
           }}
-          disabled={!dong.trim()}
-          variant='secondary'
+          disabled={!dong.trim() || !ho.trim()}
+          variant='primary'
           className={styles.saveButton}
         >
           저장하기
