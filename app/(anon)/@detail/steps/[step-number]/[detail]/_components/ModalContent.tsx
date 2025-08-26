@@ -109,7 +109,7 @@ export default function ModalContent() {
       case 'List':
         return (
           <List
-            title={(pageData[0] as any)?.title}
+            title={pageData[0]?.title}
             data={pageData as unknown as string[]}
           />
         );
