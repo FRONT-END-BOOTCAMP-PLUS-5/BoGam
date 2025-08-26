@@ -124,10 +124,10 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
         onConfirm={handleSimpleAuthApprove}
         confirmText='✅ 승인'
       >
-        <div className='space-y-3'>
+        <div className={styles.simpleAuthModalContent}>
           <p>📱 모바일에서 카카오 인증을 완료해주세요.</p>
           <p>✅ 인증 완료 후 아래 버튼을 클릭하여 승인해주세요.</p>
-          <p className='text-sm text-gray-600'>
+          <p className={styles.simpleAuthModalText}>
             * 4분 30초 내에 승인/취소를 완료해주세요.
           </p>
         </div>

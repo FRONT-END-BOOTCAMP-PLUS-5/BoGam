@@ -18,7 +18,7 @@ import {
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
-import TaxCertWrapper from './contents/TaxCertWrapper';
+import TaxCertWrapper, { TaxCertWrapperRef } from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
 // RegionData 타입 정의 (기존 호환성을 위해 유지)
@@ -33,7 +33,7 @@ interface ModalContentProps {
   onShowSimpleAuthModal: () => void;
   onSimpleAuthApprove: () => void;
   onSimpleAuthCancel: () => void;
-  taxCertContainerRef?: React.RefObject<{ handleSimpleAuthApprove: () => void }>;
+  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef>;
 }
 
 export default function ModalContent({
