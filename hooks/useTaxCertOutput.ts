@@ -55,7 +55,7 @@ export const useTaxCertOutput = ({
 
   const totalLoading = loading || dbLoading;
 
-  // 등기부등본과 동일한 hasData 로직
+  // 표준 hasData 로직
   const hasData = useMemo(() => {
     return (
       displayResponse &&

@@ -254,22 +254,22 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
     addJsonData(latestJsonData);
     console.log('🔍 2번째 페이지에서 store에 데이터 추가:', latestJsonData);
 
-    // 2. store의 전체 데이터를 가져와서 DB에 저장
+    // 2. 현재 단계의 데이터만 DB에 저장 (기존 데이터 덮어쓰기)
     try {
-      const currentStoreData = getJsonData();
       console.log(
-        '🔍 RiskAssessmentDisplay: store의 전체 데이터를 DB에 저장:',
-        currentStoreData
+        '🔍 RiskAssessmentDisplay: 현재 단계 데이터만 DB에 저장:',
+        latestJsonData
       );
 
       await saveRiskAssessmentMutation.mutateAsync({
         stepNumber,
         detail,
-        jsonData: currentStoreData,
+        jsonData: latestJsonData, // store의 전체 데이터가 아닌 현재 단계 데이터만
         domain,
         userAddressNickname,
       });
-      console.log('✅ RiskAssessmentDisplay: store의 전체 데이터 DB 저장 완료');
+
+      console.log('✅ RiskAssessmentDisplay: 현재 단계 데이터 DB 저장 완료');
     } catch (error) {
       console.error('❌ RiskAssessmentDisplay: DB 저장 실패:', error);
     }
