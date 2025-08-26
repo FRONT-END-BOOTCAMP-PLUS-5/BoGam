@@ -106,6 +106,7 @@ export default function ModalContent() {
       case 'List':
         return (
           <List
+            title={(pageData[0] as any)?.title}
             data={pageData as unknown as string[]}
           />
         );
@@ -254,12 +255,8 @@ export default function ModalContent() {
                       )}
                       {section.type === 'List' && (
                         <List
-                          data={
-                            section.data as unknown as {
-                              left: string;
-                              right?: string;
-                            }[]
-                          }
+                          title={section.title}
+                          data={section.data as Array<{ title: string; content: string }>}
                         />
                       )}
                       {section.type === 'DataGrid' && (
