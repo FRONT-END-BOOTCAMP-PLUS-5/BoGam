@@ -1,6 +1,6 @@
 export const styles = {
   // 기존 스타일
-  container: "min-h-screen bg-brand-light-gray/30 relative",
+  container: "min-h-screen bg-brand-light-gray/30 relative w-full overflow-x-hidden",
   title: "text-2xl font-bold text-brand-black mb-8 text-center",
   accordionSection: "mt-8",
   accordionTitle: "text-xl font-semibold text-brand-black mb-4",
@@ -11,15 +11,15 @@ export const styles = {
   gradientBackground: "absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-brand via-brand to-brand-light-gray/30",
   
   profileHeader: "relative py-6 px-6",
-  profileContent: "flex flex-col items-center space-y-4 relative z-10 max-w-md mx-auto",
+  profileContent: "flex flex-col items-center space-y-4 relative z-10 max-w-md mx-auto w-full",
   avatar: "w-16 h-16 bg-brand-gold rounded-full flex items-center justify-center text-2xl font-bold text-white",
   profileInfo: "flex flex-col items-center space-y-2",
   profileName: "text-xl text-center text-white",
   questionIcon: "text-white/80",
   
-  content: "px-6 py-6 space-y-6",
+  content: "px-6 py-6 space-y-6 w-full",
   
-  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto",
+  card: "bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full",
   cardHeader: "flex items-center space-x-2 px-6 py-4",
   starIcon: "text-brand-gold",
   cardTitle: "text-base font-semibold text-brand-black mb-2",
@@ -39,8 +39,6 @@ export const styles = {
   statCount: "text-lg font-semibold text-brand-black",
   
   stepContent: "p-4",
-  withdrawButton: "flex justify-center pt-6",
-  withdrawBtn: "px-6 py-2 text-sm text-brand-dark-gray hover:text-brand-black transition-colors underline",
 
   // 에러 상태 스타일
   errorContainer: "flex items-center justify-center min-h-screen",
@@ -48,5 +46,5 @@ export const styles = {
   errorIcon: "text-red-500 text-6xl mb-4",
   errorTitle: "text-xl font-bold text-brand-black mb-2",
   errorMessage: "text-brand-dark-gray mb-4",
-  errorButton: "px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-90 transition-colors"
+  errorButton: "px-4 py-2 bg-brand text-brand-white rounded-lg hover:bg-brand-90 transition-colors"
 };
