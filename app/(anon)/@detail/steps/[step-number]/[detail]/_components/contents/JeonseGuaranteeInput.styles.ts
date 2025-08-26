@@ -1,4 +1,5 @@
-export const styles = {
+const styles = {
+
   container: '',
   header: 'mb-6',
   title: 'text-xl font-bold text-brand-black mb-2',
@@ -21,4 +22,6 @@ export const styles = {
   errorContainer:
     'mt-4 p-3 bg-brand-red-50 border border-brand-red-200 rounded-lg',
   errorText: 'text-brand-red-600 text-sm',
-} as const;
+};
+
+export default styles;

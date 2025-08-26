@@ -69,7 +69,7 @@ export interface TableSection extends BaseContentSection {
 // List 전용 인터페이스
 export interface ListSection extends BaseContentSection {
   type: 'List';
-  data: Array<{ left: string; right?: string }>;
+  data: Array<{ title: string; content: string }>;
 }
 
 // DataGrid 전용 인터페이스

@@ -20,6 +20,7 @@ const MONTHLY_RENT_OPTIONS = [
   { value: 'none', label: '없음' },
   { value: 'direct', label: '직접 입력' },
 ];
+import styles from './JeonseGuaranteeInput.styles';
 
 interface JeonseGuaranteeInputProps {
   formData: GetJeonseGuaranteeRequestDto;
@@ -69,7 +70,10 @@ export default function JeonseGuaranteeInput({
     <div>
       <FormContainer onSubmit={onSubmit}>
         <div className={styles.header}>
-          <h3 className={styles.title}>전세자금보증 금액 조회</h3>
+          <h3 className={styles.title}>
+            전세자금보증 금액 조회
+          </h3>
+
         </div>
         <div className={styles.formContainer}>
           {/* 전세보증금 */}
@@ -213,7 +217,10 @@ export default function JeonseGuaranteeInput({
                 className={styles.monthlyRentSelect}
               />
               {inputModes.mmrtAmt === 'direct' && (
-                <div className={styles.monthlyRentInputWrapper}>
+                <div
+                  className={styles.monthlyRentInputWrapper}
+                >
+
                   <TextInput
                     type='text'
                     placeholder={FIELD_PLACEHOLDERS.mmrtAmt}

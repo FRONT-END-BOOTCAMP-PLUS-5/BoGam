@@ -13,10 +13,12 @@ import Button from '@/(anon)/_components/common/button/Button';
 import { LegacyContentSection } from './types';
 
 interface RadioGroupProps {
+  title?: string;
+  subtitle?: string;
   data: LegacyContentSection[];
 }
 
-const RadioGroup = ({ data }: RadioGroupProps) => {
+const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
   const [selectedAnswers, setSelectedAnswers] = useState<{
     [key: number]: string;
   }>({});
@@ -350,6 +352,14 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
   // 메인 렌더링
   return (
     <div className={styles.container}>
+      {/* 제목과 부제목 표시 */}
+      {(title || subtitle) && (
+        <div className={styles.header}>
+          {title && <h3 className={styles.title}>{title}</h3>}
+          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+        </div>
+      )}
+      
       {data.map((section, sectionIndex) => (
         <div key={sectionIndex} className={styles.section}>
           {section.title && (

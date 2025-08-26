@@ -20,7 +20,7 @@ export const styles = {
   pageDotInactive: 'bg-brand-light-gray',
 
   // 섹션 헤더 (CombinedContent용)
-  sectionHeader: 'mb-6',
+  sectionHeader: 'p-5 mb-6',
   sectionTitle: 'text-lg font-bold mb-2 text-brand-black',
   sectionSubtitle: 'text-base font-medium mb-2 text-brand-dark-gray',
 } as const;
