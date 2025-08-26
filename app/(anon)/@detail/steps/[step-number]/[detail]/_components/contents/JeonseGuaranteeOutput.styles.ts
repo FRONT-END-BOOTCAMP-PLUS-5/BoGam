@@ -1,4 +1,4 @@
-export const jeonseGuaranteeOutputStyles = {
+export const styles = {
   container: 'p-6 bg-brand-white',
   header: 'mb-6',
   title: 'text-xl font-bold text-brand-black mb-2',

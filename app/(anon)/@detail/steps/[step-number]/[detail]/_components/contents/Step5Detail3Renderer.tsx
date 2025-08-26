@@ -110,7 +110,13 @@ export default function Step5Detail3Renderer({
   // 슬라이드별 렌더링 로직
   switch (sectionIndex) {
     case 0:
-      return <RadioGroup data={section.data as LegacyContentSection[]} />;
+      return (
+        <RadioGroup
+          data={
+            'data' in section ? (section.data as LegacyContentSection[]) : []
+          }
+        />
+      );
     case 1:
       return (
         <JeonseGuaranteeContainer
@@ -121,7 +127,9 @@ export default function Step5Detail3Renderer({
       );
 
     case 2:
-      return <List data={section.data as string[]} />;
+      return (
+        <List data={'data' in section ? (section.data as string[]) : []} />
+      );
 
     default:
       // 기본 렌더링 로직

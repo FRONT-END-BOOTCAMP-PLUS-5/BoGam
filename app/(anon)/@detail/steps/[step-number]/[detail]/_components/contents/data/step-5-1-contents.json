@@ -3,8 +3,6 @@
   "sections": [
     {
       "type": "TaxCertIntro",
-      "title": "납세증명서 확인하기",
-      "subtitle": "납세증명서 예시와 체크리스트를 확인해보세요",
       "data": {
         "contentSections": [
           {
@@ -43,9 +41,7 @@
       }
     },
     {
-      "type": "TaxCertContainer",
-      "title": "납세증명서 조회",
-      "subtitle": "실제 납세증명서를 조회하고 안전도를 검사해보세요"
+      "type": "TaxCertContainer"
     }
   ]
 }
