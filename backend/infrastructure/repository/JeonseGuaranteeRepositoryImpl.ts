@@ -1,13 +1,13 @@
 import { JeonseGuaranteeRepository } from '@be/domain/repository/JeonseGuaranteeRepository';
 import { JeonseGuaranteeEntity } from '@be/domain/entities/JeonseGuarantee';
 import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/dtos/GetJeonseGuaranteeRequestDto';
+import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
 
 export class JeonseGuaranteeRepositoryImpl
   implements JeonseGuaranteeRepository
 {
-  private readonly baseUrl =
-    'https://apis.data.go.kr/B551408/jnse-rcmd-info-v2/jnse-rcmd-list-v2';
+  private readonly baseUrl = API_ENDPOINTS.JEONSE_GUARANTEE;
 
   async getJeonseGuarantee(
     params: GetJeonseGuaranteeRequestDto

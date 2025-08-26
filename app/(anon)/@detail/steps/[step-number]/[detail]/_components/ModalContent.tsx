@@ -69,7 +69,7 @@ export default function ModalContent() {
           );
           setStepContentData(contentModule.default);
           setDataType(contentModule.default.dataType || 'default');
-        } catch {
+        } catch (error) {
           setDataType('default');
         }
       };
@@ -97,7 +97,8 @@ export default function ModalContent() {
 
   // Swiper 콘텐츠 렌더링 함수
   const renderSwiperContent = (
-    pageData: LegacyContentSection[]
+    pageData: LegacyContentSection[],
+    pageIndex: number
   ) => {
     switch (dataType) {
       case 'TextOnly':
@@ -177,6 +178,12 @@ export default function ModalContent() {
     stepContentData.dataType === 'CombinedContent' &&
     stepContentData.sections
   ) {
+    const handlePageChange = (page: number) => {
+      setCurrentPage(page);
+      if (swiperRef.current) {
+        swiperRef.current.slideTo(page);
+      }
+    };
 
     return (
       <>
@@ -248,7 +255,10 @@ export default function ModalContent() {
                       {section.type === 'List' && (
                         <List
                           data={
-                            section.data as unknown as string[]
+                            section.data as unknown as {
+                              left: string;
+                              right?: string;
+                            }[]
                           }
                         />
                       )}
@@ -264,13 +274,6 @@ export default function ModalContent() {
                       )}
                       {section.type === 'CheckListGroup' && (
                         <CheckListGroup data={section.data} />
-                      )}
-                      {(section.type === 'TaxCertIntro' ||
-                        section.type === 'TaxCertContainer') && (
-                        <TaxCertWrapper
-                          sectionIndex={sectionIndex}
-                          section={section}
-                        />
                       )}
                     </>
                   )}
@@ -347,7 +350,7 @@ export default function ModalContent() {
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
                   <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
-                                         {renderSwiperContent(pageData)}
+                    {renderSwiperContent(pageData, pageIndex)}
                   </div>
                 </SwiperSlide>
               )

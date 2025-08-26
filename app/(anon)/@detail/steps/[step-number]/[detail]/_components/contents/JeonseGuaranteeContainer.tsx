@@ -92,27 +92,18 @@ export default function JeonseGuaranteeContainer({
   // 데이터 응답 시 자동으로 결과 탭으로 이동 및 로컬 상태 업데이트
   useEffect(() => {
     if (data?.items && data.items.length > 0) {
-      console.log('API response data:', data);
       setActiveTab('output');
 
       const firstItem = data.items[0];
-      console.log('First item:', firstItem);
 
       // 보증 금액 데이터를 로컬 상태에 저장
       if (firstItem) {
-        console.log('Saving guarantee data to local state...');
         setGuaranteeData({
           grntLmtAmt: firstItem.grntLmtAmt,
           loanLmtAmt: firstItem.loanLmtAmt,
           grntDvcd: firstItem.grntDvcd,
           rcmdProrRnk: firstItem.rcmdProrRnk,
         });
-        console.log('Guarantee data saved to local state');
-      }
-
-      // 보증 금액 데이터는 로컬 상태에만 저장 (step-result는 RadioGroup에서만 관리)
-      if (firstItem) {
-        console.log('Guarantee data saved to local state only');
       }
     }
   }, [data]);

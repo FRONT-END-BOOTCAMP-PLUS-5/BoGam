@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import styles from './List.styles';
 
 interface AccordionItem {
@@ -7,7 +8,7 @@ interface AccordionItem {
 }
 
 interface ListProps {
-  data: AccordionItem[] | string[] | Array<{ left: string; right?: string }>;
+  data: AccordionItem[] | string[];
 }
 
 const List = ({ data }: ListProps) => {
@@ -20,12 +21,7 @@ const List = ({ data }: ListProps) => {
           title: item,
           content: `${item}에 대한 상세 설명입니다.`,
         }))
-      : Array.isArray(data) && typeof data[0] === 'object' && 'left' in data[0]
-        ? (data as Array<{ left: string; right?: string }>).map((item) => ({
-            title: item.left,
-            content: item.right || `${item.left}에 대한 상세 설명입니다.`,
-          }))
-        : (data as AccordionItem[]);
+      : (data as AccordionItem[]);
 
   const toggleItem = (index: number) => {
     setOpenItems((prev) =>
@@ -70,13 +66,12 @@ const List = ({ data }: ListProps) => {
                       className={styles.accordionButton}
                     >
                       <span className={styles.accordionText}>{item.title}</span>
-                      <span
+                      <ChevronDown
+                        size={16}
                         className={`${styles.accordionArrow} ${
                           openItems.includes(index) ? 'rotate-180' : ''
                         }`}
-                      >
-                        ▼
-                      </span>
+                      />
                     </button>
 
                     {/* 아코디언 콘텐츠 */}
