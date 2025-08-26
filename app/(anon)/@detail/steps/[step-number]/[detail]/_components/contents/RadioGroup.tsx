@@ -96,7 +96,10 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
   // stepData가 배열인지 단일 객체인지 확인하고 jsonDetails 추출
   const stepResultData = Array.isArray(stepData) ? stepData[0] : stepData;
-  const jsonDetails = stepResultData?.jsonDetails;
+  const jsonDetails =
+    stepResultData && 'jsonDetails' in stepResultData
+      ? stepResultData.jsonDetails
+      : undefined;
 
   // DB 저장 (useCallback으로 메모이제이션) - 전체 질문 저장
   const saveToDatabase = useCallback(
@@ -157,7 +160,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
 
         // 동적으로 전체 질문 수 계산하여 로그 출력
         const totalQuestions = Object.keys(jsonDetails).length;
-
       } catch (error) {
         console.error('❌ 저장 실패:', error);
       }
@@ -311,9 +313,7 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     // 모든 질문이 답변되었는지 확인 (unchecked가 아닌지)
     const allAnswered = allQuestionTitles.every((title) => {
       const hasAnswer =
-        title &&
-        jsonDetails[title] &&
-        jsonDetails[title] !== 'unchecked';
+        title && jsonDetails[title] && jsonDetails[title] !== 'unchecked';
       return hasAnswer;
     });
 
@@ -321,8 +321,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
     const hasMismatch = allQuestionTitles.some(
       (title) => title && jsonDetails[title] === 'mismatch'
     );
-
-
 
     return { allAnswered, hasMismatch };
   }, [contentData, stepData]);
@@ -442,8 +440,6 @@ const RadioGroup = ({ data }: RadioGroupProps) => {
           contentData.data[contentData.data.length - 1].some(
             (section) => section.title === data[0]?.title
           );
-
-
 
         // 마지막 페이지이고 모든 질문이 답변되었을 때만 결과 표시
         if (allAnswered && contentData && isLastPage) {

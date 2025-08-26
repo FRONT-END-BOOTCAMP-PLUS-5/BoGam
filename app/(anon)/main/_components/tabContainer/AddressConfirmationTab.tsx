@@ -140,8 +140,8 @@ export const AddressConfirmationTab: React.FC = () => {
 
       {/* 네 번째 줄: 카카오맵 */}
       <div className={styles.mapContainer}>
-        <div className='relative'>
-          <div className='absolute top-4 left-4 z-10'>
+        <div className={styles.mapWrapper}>
+          <div className={styles.mapButtonContainer}>
             <Button
               onClick={() => {
                 handleMoveToAddressOnly(dong);

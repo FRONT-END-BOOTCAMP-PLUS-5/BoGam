@@ -257,10 +257,9 @@ export default function ModalContent() {
                       {section.type === 'List' && (
                         <List
                           data={
-                            section.data as unknown as {
-                              left: string;
-                              right?: string;
-                            }[]
+                            'data' in section
+                              ? (section.data as unknown as string[])
+                              : []
                           }
                         />
                       )}

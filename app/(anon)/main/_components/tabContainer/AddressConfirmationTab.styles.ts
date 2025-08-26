@@ -31,4 +31,6 @@ export const styles = {
 
   // 지도 컨테이너
   mapContainer: 'w-full',
+  mapWrapper: 'relative',
+  mapButtonContainer: 'absolute top-4 left-4 z-10',
 } as const;
