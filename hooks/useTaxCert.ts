@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { frontendAxiosInstance } from '@libs/api_front/axiosInstance';
 
 // 납세증명서 복사본 존재 여부 확인
@@ -100,6 +100,7 @@ export const useSubmitTwoWayAuth = (
   onSuccess?: (data: unknown) => void,
   onError?: (error: unknown) => void
 ) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: {
       organization: string;
@@ -142,7 +143,15 @@ export const useSubmitTwoWayAuth = (
         .post('/api/tax-cert', data);
       return response.data;
     },
-    onSuccess,
+    onSuccess: (data: unknown) => {
+      if (data.success === true) {
+        console.log("data", data);
+        console.log("data.data.userAddressNickname", (data.data.userAddressNickname).split("+").join(" "));
+        console.log("queryClient data(납세증명서 발급)", queryClient.getQueryData(['taxCert', 'exists', (data.data.userAddressNickname).split("+").join(" ")]));
+        queryClient.invalidateQueries({ queryKey: ['taxCert', 'exists', (data.data.userAddressNickname).split("+").join(" ")] });
+        queryClient.invalidateQueries({ queryKey: ['taxCertCopy'] });
+      }
+    },
     onError,
   });
 };
