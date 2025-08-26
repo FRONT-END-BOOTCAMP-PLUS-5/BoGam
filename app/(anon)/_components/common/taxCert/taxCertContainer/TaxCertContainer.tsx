@@ -16,11 +16,10 @@ export interface TaxCertContainerRef {
   handleSimpleAuthApprove: () => void;
 }
 
-export const TaxCertContainer = forwardRef<TaxCertContainerRef, TaxCertContainerProps>(({
-  onShowSimpleAuthModal,
-  onSimpleAuthApprove,
-  onSimpleAuthCancel,
-}, ref) => {
+export const TaxCertContainer = forwardRef<
+  TaxCertContainerRef,
+  TaxCertContainerProps
+>(({ onShowSimpleAuthModal, onSimpleAuthApprove, onSimpleAuthCancel }, ref) => {
   const {
     formData,
     response,
@@ -50,6 +49,9 @@ export const TaxCertContainer = forwardRef<TaxCertContainerRef, TaxCertContainer
       onSubmit={handleSubmit}
       loading={submitTaxCertMutation.isPending}
       onSuccess={onSuccess}
+      onAuthMethodSelect={() => {}}
+      isAuthMethodModalOpen={false}
+      setIsAuthMethodModalOpen={() => {}}
     />
   );
 
