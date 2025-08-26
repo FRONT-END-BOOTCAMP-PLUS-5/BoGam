@@ -15,6 +15,7 @@ import Field from '@/(anon)/_components/common/forms/Field';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { formatToKoreanUnit } from '@utils/formatUtils';
 import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
+import { styles } from './JeonseGuaranteeInput.styles';
 const MONTHLY_RENT_OPTIONS = [
   { value: 'none', label: '없음' },
   { value: 'direct', label: '직접 입력' },
@@ -67,12 +68,10 @@ export default function JeonseGuaranteeInput({
   return (
     <div>
       <FormContainer onSubmit={onSubmit}>
-        <div className={jeonseGuaranteeInputStyles.header}>
-          <h3 className={jeonseGuaranteeInputStyles.title}>
-            전세자금보증 금액 조회
-          </h3>
+        <div className={styles.header}>
+          <h3 className={styles.title}>전세자금보증 금액 조회</h3>
         </div>
-        <div className={jeonseGuaranteeInputStyles.formContainer}>
+        <div className={styles.formContainer}>
           {/* 전세보증금 */}
           <Field
             id='rentGrntAmt'
@@ -80,7 +79,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.rentGrntAmt}
           >
-            <div className={jeonseGuaranteeInputStyles.inputWrapper}>
+            <div className={styles.inputWrapper}>
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.rentGrntAmt}
@@ -89,10 +88,10 @@ export default function JeonseGuaranteeInput({
                   onInputChange('rentGrntAmt', formatNumber(e.target.value))
                 }
                 error={!!errors.rentGrntAmt}
-                className={jeonseGuaranteeInputStyles.inputWithUnit}
+                className={styles.inputWithUnit}
               />
               {formData.rentGrntAmt > 0 && (
-                <div className={jeonseGuaranteeInputStyles.unitDisplay}>
+                <div className={styles.unitDisplay}>
                   {formatToKoreanUnit(formData.rentGrntAmt)}
                 </div>
               )}
@@ -131,7 +130,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.myIncmAmt}
           >
-            <div className={jeonseGuaranteeInputStyles.inputWrapper}>
+            <div className={styles.inputWrapper}>
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.myIncmAmt}
@@ -144,10 +143,10 @@ export default function JeonseGuaranteeInput({
                   onInputChange('myIncmAmt', formatNumber(e.target.value))
                 }
                 error={!!errors.myIncmAmt}
-                className={jeonseGuaranteeInputStyles.inputWithUnit}
+                className={styles.inputWithUnit}
               />
               {formData.myIncmAmt > 0 && (
-                <div className={jeonseGuaranteeInputStyles.unitDisplay}>
+                <div className={styles.unitDisplay}>
                   {formatToKoreanUnit(formData.myIncmAmt)}
                 </div>
               )}
@@ -161,7 +160,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.myTotDebtAmt}
           >
-            <div className={jeonseGuaranteeInputStyles.inputWrapper}>
+            <div className={styles.inputWrapper}>
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.myTotDebtAmt}
@@ -174,10 +173,10 @@ export default function JeonseGuaranteeInput({
                   onInputChange('myTotDebtAmt', formatNumber(e.target.value))
                 }
                 error={!!errors.myTotDebtAmt}
-                className={jeonseGuaranteeInputStyles.inputWithUnit}
+                className={styles.inputWithUnit}
               />
               {formData.myTotDebtAmt > 0 && (
-                <div className={jeonseGuaranteeInputStyles.unitDisplay}>
+                <div className={styles.unitDisplay}>
                   {formatToKoreanUnit(formData.myTotDebtAmt)}
                 </div>
               )}
@@ -203,7 +202,7 @@ export default function JeonseGuaranteeInput({
             required
             error={errors.mmrtAmt}
           >
-            <div className={jeonseGuaranteeInputStyles.monthlyRentContainer}>
+            <div className={styles.monthlyRentContainer}>
               <DropDown
                 options={MONTHLY_RENT_OPTIONS}
                 value={inputModes.mmrtAmt}
@@ -211,12 +210,10 @@ export default function JeonseGuaranteeInput({
                   onInputModeChange('mmrtAmt', value as 'none' | 'direct')
                 }
                 placeholder='월세 선택'
-                className={jeonseGuaranteeInputStyles.monthlyRentSelect}
+                className={styles.monthlyRentSelect}
               />
               {inputModes.mmrtAmt === 'direct' && (
-                <div
-                  className={jeonseGuaranteeInputStyles.monthlyRentInputWrapper}
-                >
+                <div className={styles.monthlyRentInputWrapper}>
                   <TextInput
                     type='text'
                     placeholder={FIELD_PLACEHOLDERS.mmrtAmt}
@@ -225,10 +222,10 @@ export default function JeonseGuaranteeInput({
                       onInputChange('mmrtAmt', formatNumber(e.target.value))
                     }
                     error={!!errors.mmrtAmt}
-                    className={jeonseGuaranteeInputStyles.inputWithUnit}
+                    className={styles.inputWithUnit}
                   />
                   {formData.mmrtAmt > 0 && (
-                    <div className={jeonseGuaranteeInputStyles.unitDisplay}>
+                    <div className={styles.unitDisplay}>
                       {formatToKoreanUnit(formData.mmrtAmt)}
                     </div>
                   )}
@@ -241,8 +238,8 @@ export default function JeonseGuaranteeInput({
 
       {/* 에러 메시지 */}
       {error && (
-        <div className={jeonseGuaranteeInputStyles.errorContainer}>
-          <p className={jeonseGuaranteeInputStyles.errorText}>
+        <div className={styles.errorContainer}>
+          <p className={styles.errorText}>
             조회 중 오류가 발생했습니다. 다시 시도해주세요.
           </p>
         </div>
