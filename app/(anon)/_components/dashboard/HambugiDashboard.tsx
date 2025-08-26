@@ -13,6 +13,7 @@ import StepNavigation from './StepNavigation';
 import StepDetailContent from './StepDetailContent';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './HambugiDashboard.styles';
+import { STEP_TITLES } from '@libs/constants/stepDetailTitles';
 
 interface StepDetail {
   id: string;
@@ -66,43 +67,43 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     () => [
       {
         id: 1,
-        title: '집 고를 때',
+        title: STEP_TITLES[0],
         isActive: currentStep === 1,
         isCompleted: true,
       },
       {
         id: 2,
-        title: '임대인 확인할 때',
+        title: STEP_TITLES[1],
         isActive: currentStep === 2,
         isCompleted: true,
       },
       {
         id: 3,
-        title: '계약서 작성할 때때',
+        title: STEP_TITLES[2],
         isActive: currentStep === 3,
         isCompleted: false,
       },
       {
         id: 4,
-        title: '계약한 직후후',
+        title: STEP_TITLES[3],
         isActive: currentStep === 4,
         isCompleted: false,
       },
       {
         id: 5,
-        title: '입주한 이유유',
+        title: STEP_TITLES[4],
         isActive: currentStep === 5,
         isCompleted: false,
       },
       {
         id: 6,
-        title: '계약기간이 끝난 후후',
+        title: STEP_TITLES[5],
         isActive: currentStep === 6,
         isCompleted: false,
       },
       { 
         id: 7, 
-        title: '특수 사기 유형 예방', 
+        title: STEP_TITLES[6], 
         isActive: currentStep === 7, 
         isCompleted: false 
       },
@@ -259,6 +260,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
             stepTitle={currentStepData.title}
             details={currentStepData.details}
             onActionClick={handleActionClick}
+            currentStep={currentStep}
           />
         </div>
       </div>

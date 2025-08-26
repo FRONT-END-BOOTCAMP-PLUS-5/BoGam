@@ -72,7 +72,10 @@ const TextOnly = ({ data }: TextOnlyProps) => {
 
   // stepData가 배열인지 단일 객체인지 확인하고 jsonDetails 추출
   const stepResultData = Array.isArray(stepData) ? stepData[0] : stepData;
-  const jsonDetails = stepResultData?.jsonDetails;
+  const jsonDetails =
+    stepResultData && 'jsonDetails' in stepResultData
+      ? stepResultData.jsonDetails
+      : undefined;
 
   // json이 {}이거나 에러 시 기본값으로 초기화
   useEffect(() => {

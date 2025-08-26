@@ -21,7 +21,7 @@ const GuideStepRow = ({ children, iconType, href, className, onClick }: GuideSte
       <Link href={href} className={clsx(styles.linkRow, className)} onClick={onClick}>
         <CircularIconBadge 
           type="link" 
-          size="md" 
+          size="xsm" 
           weight="thick" 
         />
         <span className={styles.linkText}>{children}</span>
@@ -34,8 +34,8 @@ const GuideStepRow = ({ children, iconType, href, className, onClick }: GuideSte
     <div className={clsx(styles.row, className)} onClick={onClick}>
       <div className={styles.iconContainer}>
         <CircularIconBadge 
-          type={iconType === 'match' ? 'match-blue' : iconType} 
-          size="md" 
+          type={iconType} 
+          size="xsm" 
           weight="thick" 
         />
       </div>

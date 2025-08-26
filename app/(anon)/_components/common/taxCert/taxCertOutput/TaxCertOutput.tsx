@@ -242,7 +242,7 @@ export const TaxCertOutput = ({
   const getInitialJsonData = () => {
     if (Array.isArray(stepResultData)) {
       return stepResultData[0]?.jsonDetails || {};
-    } else if (stepResultData?.jsonDetails) {
+    } else if (stepResultData && 'jsonDetails' in stepResultData) {
       return stepResultData.jsonDetails;
     }
     return savedRiskData?.jsonData || {};

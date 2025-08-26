@@ -154,11 +154,10 @@ export default function MiddleStepPage() {
   // stepResults 데이터 처리 - results 배열에서 현재 stepNumber에 해당하는 데이터 찾기
   const stepResults = stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : [];
   
-  // 현재 단계의 stepResult 데이터 계산 (results 배열에서 현재 stepNumber 찾기)
-  const currentStepResult = stepResults.find((result: StepResultItem) => result.stepNumber === parseInt(stepNumber));
-  const completedCount = currentStepResult?.match || 0;
-  const unconfirmedCount = currentStepResult?.unchecked || 0;
-  const warningCount = currentStepResult?.mismatch || 0;
+  // summary에서 전체 total 값들을 가져오기
+  const totalMatch = (stepResultsData as StepResultResponse)?.summary?.totalMatch || 0;
+  const totalUnchecked = (stepResultsData as StepResultResponse)?.summary?.totalUnchecked || 0;
+  const totalMismatch = (stepResultsData as StepResultResponse)?.summary?.totalMismatch || 0;
 
   const flipPages: ReactNode[] = [];
   pages.forEach((page: PageData, idx: number) => {
@@ -212,9 +211,9 @@ export default function MiddleStepPage() {
     <div className={styles.mainContainer}>
       <div className={styles.stateIconArea}>
         <StateIcon 
-          completedCount={completedCount} 
-          unconfirmedCount={unconfirmedCount} 
-          warningCount={warningCount} 
+          completedCount={totalMatch} 
+          unconfirmedCount={totalUnchecked} 
+          warningCount={totalMismatch} 
         />
       </div>
       

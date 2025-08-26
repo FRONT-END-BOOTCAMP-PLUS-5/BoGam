@@ -5,6 +5,8 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
+import DocumentCard from './_components/DocumentCard';
+import WithdrawButton from './_components/WithdrawButton';
 import { styles } from './page.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { StepResultData } from '@libs/api_front/stepResultQueries.api';
@@ -18,6 +20,18 @@ interface GuideSummaryData {
   totalUnchecked: number;
 }
 
+// API 응답 데이터 타입 정의
+interface StepResultResponseData {
+  results: StepResultData[];
+  summary: {
+    totalMismatch: number;
+    totalMatch: number;
+    totalUnchecked: number;
+    stepCount: number;
+    stepNumber: number;
+  };
+}
+
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
   const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
@@ -27,44 +41,25 @@ export default function MyPage() {
     detail: ''
   });
 
-  // 타입 가드 함수들
-  const isStepResultArray = (data: unknown): data is StepResultData[] => {
-    return Array.isArray(data) && data.every(item => 
-      typeof item === 'object' && 
-      item !== null && 
-      'id' in item && 
-      'match' in item && 
-      'mismatch' in item && 
-      'unchecked' in item
-    );
-  };
-
-  const isStepResultSingle = (data: unknown): data is StepResultData => {
-    return typeof data === 'object' && 
-      data !== null && 
-      'id' in data && 
-      'match' in data && 
-      'mismatch' in data && 
-      'unchecked' in data;
-  };
-
   // guideSteps와 guideSummary 데이터 처리
-  const guideSteps: StepResultData[] = isStepResultArray(stepResultsData) 
-    ? stepResultsData 
-    : isStepResultSingle(stepResultsData) 
-      ? [stepResultsData] 
-      : [];
+  let guideSteps: StepResultData[] = [];
+  let guideSummary: GuideSummaryData = { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 };
 
-  // 요약 데이터 계산
-  const guideSummary: GuideSummaryData = guideSteps.reduce(
-    (summary, step) => ({
-      totalMatch: summary.totalMatch + (step.match || 0),
-      totalMismatch: summary.totalMismatch + (step.mismatch || 0),
-      totalUnchecked: summary.totalUnchecked + (step.unchecked || 0),
-    }),
-    { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 }
-  );
+  if (stepResultsData) {
+    if ((stepResultsData as StepResultResponseData).results && (stepResultsData as StepResultResponseData).summary) {
+      // {results: Array, summary: {...}} 구조
+      const responseData = stepResultsData as StepResultResponseData;
+      guideSteps = responseData.results;
+      guideSummary = {
+        totalMatch: responseData.summary.totalMatch || 0,
+        totalMismatch: responseData.summary.totalMismatch || 0,
+        totalUnchecked: responseData.summary.totalUnchecked || 0
+      };
+    }
+  }
 
+  console.log('stepResultsData', stepResultsData);
+  console.log('guideSteps', guideSteps);
   console.log('guideSummary', guideSummary);
 
   // 로딩 상태 처리
@@ -109,7 +104,7 @@ export default function MyPage() {
       {/* 그라데이션 배경 */}
       <div className={styles.gradientBackground}></div>
       
-      {/* 프로필 헤더 (임시) */}
+      {/* 프로필 헤더 */}
       <div className={styles.profileHeader}>
         <div className={styles.profileContent}>
           <Profile size="md" />
@@ -133,13 +128,7 @@ export default function MyPage() {
         />
 
         {/* 문서 카드 */}
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>문서</div>
-          <div className={styles.documentButtons}>
-            <span className={styles.documentButton}>등기부등본</span>
-            <span className={styles.documentButton}>납세증명서</span>
-          </div>
-        </div>
+        <DocumentCard />
 
         {/* 가이드 결과 요약 */}
         <GuideResultSummary
@@ -154,11 +143,7 @@ export default function MyPage() {
         />
 
         {/* 회원탈퇴 버튼 */}
-        <div className={styles.withdrawButton}>
-          <button className={styles.withdrawBtn}>
-            회원탈퇴
-          </button>
-        </div>
+        <WithdrawButton />
       </div>
     </div>
   );

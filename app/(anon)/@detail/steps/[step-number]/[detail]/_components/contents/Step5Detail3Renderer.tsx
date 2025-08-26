@@ -124,9 +124,6 @@ export default function Step5Detail3Renderer({
         />
       );
     case 2:
-      console.log('Case 2 - section:', section);
-      console.log('Case 2 - section.type:', section.type);
-      console.log('Case 2 - section.data:', (section as RadioGroupSection).data);
       return section.type === 'RadioGroup' ? (
         <RadioGroup 
           title={section.title} 
@@ -141,6 +138,7 @@ export default function Step5Detail3Renderer({
         return <List title={section.title} data={listData} />;
       }
       return <div>List 타입이 아닙니다.</div>;
+
     default:
       // 기본 렌더링 로직
       return (
