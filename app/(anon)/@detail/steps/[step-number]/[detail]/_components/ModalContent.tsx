@@ -1,7 +1,7 @@
 import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
@@ -9,36 +9,24 @@ import Table from './contents/Table';
 import List from './contents/List';
 import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
-import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import {
   LegacyContentSection,
   StepContentData,
   ContentSection,
 } from './contents/types';
-import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
+import TaxCertWrapper from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
-// DateData 타입 정의 (기존 호환성을 위해 유지)
+// RegionData 타입 정의 (기존 호환성을 위해 유지)
 interface RegionData {
   region: string;
   depositRange: string;
   priorityAmount: string;
   option: string;
-}
-
-interface DateData {
-  date: string;
-  regions: RegionData[];
-}
-
-// 새로운 Table 데이터 타입 정의
-interface TableData {
-  depositRange: string[];
-  priorityAmount: string[];
 }
 
 export default function ModalContent() {
@@ -55,10 +43,7 @@ export default function ModalContent() {
   const detail = stepUrlData?.detail?.toString() || '1';
 
   // 특별한 컴포넌트를 사용할 단계들 정의
-  const specialSteps = {
-    taxCert:
-      (stepNumber === '1' && detail === '5') ||
-      (stepNumber === '5' && detail === '1'),
+  const specialSteps = useMemo(() => ({
     broker: stepNumber === '3' && detail === '1',
     realEstate: [
       { step: '1', detail: '4' },
@@ -68,12 +53,11 @@ export default function ModalContent() {
       { step: '4', detail: '1' },
     ].some((route) => route.step === stepNumber && route.detail === detail),
     transactionSearch: stepNumber === '1' && detail === '2',
-  };
+  }), [stepNumber, detail]);
 
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
     const shouldLoadJsonData =
-      !specialSteps.taxCert &&
       !specialSteps.broker &&
       !specialSteps.realEstate &&
       !specialSteps.transactionSearch;
@@ -96,10 +80,6 @@ export default function ModalContent() {
 
   // 특별한 컴포넌트 렌더링 함수
   const renderSpecialComponent = () => {
-    if (specialSteps.taxCert) {
-      return <TaxCertContainer />;
-    }
-
     if (specialSteps.broker) {
       return <BrokerContainer />;
     }
@@ -126,7 +106,7 @@ export default function ModalContent() {
       case 'List':
         return (
           <List
-            data={pageData as unknown as { left: string; right?: string }[]}
+            data={pageData as unknown as string[]}
           />
         );
       case 'DataGrid':
@@ -184,7 +164,9 @@ export default function ModalContent() {
       <>
         <StepHeader />
         <div className={styles.scrollableContent}>
-          <div className={styles.mainContent}>{specialComponent}</div>
+          <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+            {specialComponent}
+          </div>
         </div>
       </>
     );
@@ -222,7 +204,7 @@ export default function ModalContent() {
           >
             {stepContentData.sections.map((section, sectionIndex) => (
               <SwiperSlide key={sectionIndex}>
-                <div className={styles.mainContent}>
+                <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
                   {/* step-5-3 특별 처리 */}
                   {stepNumber === '5' && detail === '3' ? (
                     <Step5Detail3Renderer
@@ -367,7 +349,7 @@ export default function ModalContent() {
             {stepContentData.data.map(
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
-                  <div className={styles.mainContent}>
+                  <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
                     {renderSwiperContent(pageData, pageIndex)}
                   </div>
                 </SwiperSlide>
@@ -404,7 +386,7 @@ export default function ModalContent() {
     <>
       <StepHeader />
       <div className={styles.scrollableContent}>
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
           <DataGrid data={[]} />
         </div>
       </div>

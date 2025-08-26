@@ -96,6 +96,33 @@ export interface CheckListGroupSection extends BaseContentSection {
   }>;
 }
 
+// TaxCertIntro 전용 인터페이스
+export interface TaxCertIntroSection extends BaseContentSection {
+  type: 'TaxCertIntro';
+  data: {
+    contentSections: Array<{
+      subtitle: string;
+      contents: string[];
+    }>;
+    image: {
+      src: string;
+      alt: string;
+      width: number;
+      height: number;
+    };
+    checklistItems: Array<{
+      id: string;
+      label: string;
+      defaultValue: 'match' | 'mismatch';
+    }>;
+  };
+}
+
+// TaxCertContainer 전용 인터페이스
+export interface TaxCertContainerSection extends BaseContentSection {
+  type: 'TaxCertContainer';
+}
+
 // 모든 섹션 타입을 유니온으로 정의
 export type ContentSection =
   | TextOnlySection
@@ -103,7 +130,9 @@ export type ContentSection =
   | TableSection
   | ListSection
   | DataGridSection
-  | CheckListGroupSection;
+  | CheckListGroupSection
+  | TaxCertIntroSection
+  | TaxCertContainerSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {
@@ -114,7 +143,14 @@ export interface CombinedContentProps {
 
 // StepContentData는 다양한 콘텐츠 타입을 지원
 export interface StepContentData {
-  dataType: 'TextOnly' | 'RadioGroup' | 'Table' | 'List' | 'DataGrid' | 'CheckListGroup' | 'CombinedContent';
+  dataType:
+    | 'TextOnly'
+    | 'RadioGroup'
+    | 'Table'
+    | 'List'
+    | 'DataGrid'
+    | 'CheckListGroup'
+    | 'CombinedContent';
   title?: string;
   columnTitles?: string[];
   description?: string[];

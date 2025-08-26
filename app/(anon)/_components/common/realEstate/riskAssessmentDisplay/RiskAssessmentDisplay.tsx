@@ -11,6 +11,7 @@ import {
   isRiskAssessmentModified,
 } from '@utils/riskAssessmentUtils';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { useRiskAssessmentStore } from '@libs/stores/riskAssessmentStore';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
@@ -28,6 +29,7 @@ interface RiskAssessmentDisplayProps {
   domain?: 'realEstate' | 'broker' | 'taxCert';
   initialJsonData?: RiskAssessmentJsonData;
   showSaveButton?: boolean;
+  // onJsonDataChange 제거
 }
 
 export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
@@ -41,6 +43,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   domain = 'realEstate',
   initialJsonData,
   showSaveButton = true,
+  // onJsonDataChange, // 제거
 }) => {
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
     // 저장 성공 시 원본 데이터 업데이트
@@ -49,6 +52,9 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       setIsModified(false);
     }
   });
+  
+  const { addJsonData, getJsonData } = useRiskAssessmentStore();
+  
   const [currentJsonData, setCurrentJsonData] =
     useState<RiskAssessmentJsonData | null>(null);
   const [originalJsonData, setOriginalJsonData] =
@@ -108,8 +114,11 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   useEffect(() => {
 
     if (initialJsonData) {
+      // 기존 currentJsonData가 있으면 유지, 없으면 initialJsonData로 시작
+      const baseData = currentJsonData || initialJsonData;
+
       // 저장된 데이터에서 체크리스트 항목의 'unchecked'를 'mismatch'로 변환
-      const processedJsonData = { ...initialJsonData };
+      const processedJsonData = { ...baseData };
 
       if (checklistItems) {
         checklistItems.forEach((item) => {
@@ -119,30 +128,19 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         });
       }
 
-      // 기존 currentJsonData가 있으면 사용자 변경사항 보존
-      if (currentJsonData) {
-        Object.keys(currentJsonData).forEach((key) => {
-          if (processedJsonData[key] !== undefined) {
-            // 사용자가 변경한 데이터는 보존
-            processedJsonData[key] = currentJsonData[key];
-          }
-        });
-      }
-
-      // 누락된 키워드 항목들 추가
+      // 누락된 키워드 항목들 추가 (기존 데이터 덮어쓰지 않음)
       riskAssessment.keywordChecks.forEach((check) => {
         if (processedJsonData[check.keyword] === undefined) {
           processedJsonData[check.keyword] = check.status;
         }
       });
 
-      // 누락된 체크리스트 항목들 추가
+      // 누락된 체크리스트 항목들 추가 (기존 데이터 덮어쓰지 않음)
       checklistItems?.forEach((item) => {
         if (processedJsonData[item.label] === undefined) {
           processedJsonData[item.label] = item.checked ? 'match' : 'mismatch';
         }
       });
-
 
       setCurrentJsonData(processedJsonData);
       setOriginalJsonData(processedJsonData);
@@ -235,27 +233,42 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       throw new Error('저장에 필요한 데이터가 누락되었습니다.');
     }
 
-    // 현재 상태를 기반으로 최신 JSON 데이터 생성
-    const latestJsonData: RiskAssessmentJsonData = {};
+    // 기존 데이터를 기반으로 최신 JSON 데이터 생성
+    const latestJsonData: RiskAssessmentJsonData = {
+      ...(currentJsonData || {}), // 기존 데이터 유지
+    };
 
-    // 키워드 상태 추가
+    // 키워드 상태 추가/업데이트
     riskAssessment.keywordChecks.forEach((check) => {
       const userStatus = keywordStates[check.keyword];
       latestJsonData[check.keyword] = userStatus || check.status;
     });
 
-    // 체크리스트 상태 추가
+    // 체크리스트 상태 추가/업데이트
     checklistItems?.forEach((item) => {
       latestJsonData[item.label] = item.checked ? 'match' : 'mismatch';
     });
 
-    saveRiskAssessmentMutation.mutate({
-      stepNumber,
-      detail,
-      jsonData: latestJsonData,
-      domain,
-      userAddressNickname,
-    });
+    // 1. store에 데이터 추가
+    addJsonData(latestJsonData);
+    console.log('🔍 2번째 페이지에서 store에 데이터 추가:', latestJsonData);
+
+    // 2. store의 전체 데이터를 가져와서 DB에 저장
+    try {
+      const currentStoreData = getJsonData();
+      console.log('🔍 RiskAssessmentDisplay: store의 전체 데이터를 DB에 저장:', currentStoreData);
+      
+      await saveRiskAssessmentMutation.mutateAsync({
+        stepNumber,
+        detail,
+        jsonData: currentStoreData,
+        domain,
+        userAddressNickname,
+      });
+      console.log('✅ RiskAssessmentDisplay: store의 전체 데이터 DB 저장 완료');
+    } catch (error) {
+      console.error('❌ RiskAssessmentDisplay: DB 저장 실패:', error);
+    }
   };
 
   // 체크리스트 항목 변경 핸들러 (납세증명서용)

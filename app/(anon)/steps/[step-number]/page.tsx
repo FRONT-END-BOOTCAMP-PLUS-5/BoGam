@@ -10,6 +10,9 @@ import StateIcon from '@/(anon)/_components/common/stateIcon/StateIcon';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ReactNode } from 'react';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 // HTMLFlipBook 인스턴스 타입 정의
 interface FlipBookInstance {
@@ -26,6 +29,34 @@ type BookRefType = {
     turnToPage: (pageIndex: number) => void;
   };
 } | null;
+
+// API 응답 타입 정의
+interface StepResultSummary {
+  stepCount: number;
+  stepNumber: number;
+  totalMatch: number;
+  totalMismatch: number;
+  totalUnchecked: number;
+}
+
+interface StepResultItem {
+  id: number;
+  userAddressId: number;
+  stepId: number;
+  stepNumber: number;
+  mismatch: number;
+  match: number;
+  unchecked: number;
+  jsonDetails: Record<string, 'match' | 'mismatch' | 'unchecked'>;
+  createdAt: string;
+  updatedAt: string;
+  detail: number;
+}
+
+interface StepResultResponse {
+  results: StepResultItem[];
+  summary: StepResultSummary;
+}
 
 interface PageContent {
   subtitle: string;
@@ -98,18 +129,36 @@ export default function MiddleStepPage() {
         }
         setLoading(false);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('JSON 파일 로드 실패:', error);
         setPages([]);
         setLoading(false);
       });
   }, []);
 
-  const totalPages = pages.length;
   const match =
     typeof window !== 'undefined'
       ? window.location.pathname.match(/\/steps\/(\d+)/)
       : null;
   const stepNumber = match ? match[1] : '1';
+
+  // 사용자 주소 정보와 stepResults 가져오기 (특정 단계)
+  const { selectedAddress } = useUserAddressStore();
+  const { data: stepResultsData, isLoading: stepResultsLoading } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepNumber,
+    detail: '' // detail은 빈 문자열로 전달
+  });
+  console.log('stepResultsData', stepResultsData);
+
+  // stepResults 데이터 처리 - results 배열에서 현재 stepNumber에 해당하는 데이터 찾기
+  const stepResults = stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : [];
+  
+  // 현재 단계의 stepResult 데이터 계산 (results 배열에서 현재 stepNumber 찾기)
+  const currentStepResult = stepResults.find((result: StepResultItem) => result.stepNumber === parseInt(stepNumber));
+  const completedCount = currentStepResult?.match || 0;
+  const unconfirmedCount = currentStepResult?.unchecked || 0;
+  const warningCount = currentStepResult?.mismatch || 0;
 
   const flipPages: ReactNode[] = [];
   pages.forEach((page: PageData, idx: number) => {
@@ -157,12 +206,16 @@ export default function MiddleStepPage() {
     }
   }, []);
 
-  if (loading) return <div>데이터를 불러오는 중...</div>;
+  if (loading || stepResultsLoading || !stepResults || stepResults.length === 0) return <LoadingOverlay isVisible={true} title="데이터를 불러오는 중..." currentStep={1} totalSteps={3} />;
   
   return (
     <div className={styles.mainContainer}>
       <div className={styles.stateIconArea}>
-        <StateIcon completedCount={2} unconfirmedCount={1} warningCount={0} />
+        <StateIcon 
+          completedCount={completedCount} 
+          unconfirmedCount={unconfirmedCount} 
+          warningCount={warningCount} 
+        />
       </div>
       
       <div className={styles.flipBookArea}>
@@ -207,7 +260,7 @@ export default function MiddleStepPage() {
               // 실제 콘텐츠 페이지는 0, 2, 4... 위치에 있으므로 2로 나눔
               const calculatedPage = Math.floor((e.data + 1) / 2);
               // 계산된 페이지가 유효한 범위 내에 있는지 확인
-              if (calculatedPage >= 0 && calculatedPage < totalPages) {
+              if (calculatedPage >= 0 && calculatedPage < pages.length) {
                 setCurrentPage(calculatedPage);
               }
             }
@@ -234,7 +287,7 @@ export default function MiddleStepPage() {
             </button>
           </div>
           <div className={styles.indicatorDots}>
-            {Array.from({ length: totalPages }).map((_, j) => (
+            {Array.from({ length: pages.length }).map((_, j) => (
               <button
                 key={j}
                 className={
@@ -267,21 +320,21 @@ export default function MiddleStepPage() {
                      }, 100);
                    }
                  }}
-              />
-            ))}
-          </div>
-          <div className={styles.indicatorRight}>
-            <button
-              className={`${styles.indicatorArrowBtn} ${Number(stepNumber) >= 7 ? styles.disabled : ''}`}
-              aria-label='다음 단계로 이동'
-              onClick={() => Number(stepNumber) < 7 && router.push(`/steps/${Number(stepNumber) + 1}`)}
-              disabled={Number(stepNumber) >= 7}
-            >
-              <ChevronRight size={22} color={Number(stepNumber) >= 7 ? '#ccc' : '#222'} />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+               />
+             ))}
+           </div>
+           <div className={styles.indicatorRight}>
+             <button
+               className={`${styles.indicatorArrowBtn} ${Number(stepNumber) >= 7 ? styles.disabled : ''}`}
+               aria-label='다음 단계로 이동'
+               onClick={() => Number(stepNumber) < 7 && router.push(`/steps/${Number(stepNumber) + 1}`)}
+               disabled={Number(stepNumber) >= 7}
+             >
+               <ChevronRight size={22} color={Number(stepNumber) >= 7 ? '#ccc' : '#222'} />
+             </button>
+           </div>
+         </div>
+       </div>
+     </div>
+   );
+ }

@@ -47,7 +47,6 @@ export class JeonseGuaranteeRepositoryImpl
       if (response.status !== 200) {
         throw new Error(`API 요청 실패: ${response.status}`);
       }
-
       // API 응답 데이터 타입 정의
       interface JeonseGuaranteeApiResponse {
         header: {

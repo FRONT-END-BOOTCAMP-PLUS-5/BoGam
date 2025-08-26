@@ -111,7 +111,6 @@ export default function Step5Detail3Renderer({
   switch (sectionIndex) {
     case 0:
       return <RadioGroup data={section.data as LegacyContentSection[]} />;
-
     case 1:
       return (
         <JeonseGuaranteeContainer

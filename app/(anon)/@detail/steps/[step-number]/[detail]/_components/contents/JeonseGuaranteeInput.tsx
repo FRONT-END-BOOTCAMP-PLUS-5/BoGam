@@ -1,26 +1,24 @@
 'use client';
-
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GetJeonseGuaranteeRequestDto } from '@libs/api_front/jeonseGuarantee.api';
 import {
+  REGION_OPTIONS,
   MARRIAGE_OPTIONS,
   HOUSE_COUNT_OPTIONS,
+  FIELD_ERROR_MESSAGES,
   FIELD_PLACEHOLDERS,
   FIELD_LABELS,
 } from '@utils/constants/jeonseGuarantee';
-
-// 월세 옵션 정의
+import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
+import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import Field from '@/(anon)/_components/common/forms/Field';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { formatToKoreanUnit } from '@utils/formatUtils';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 const MONTHLY_RENT_OPTIONS = [
   { value: 'none', label: '없음' },
   { value: 'direct', label: '직접 입력' },
 ];
-import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
-import TextInput from '@/(anon)/_components/common/forms/TextInput';
-import Field from '@/(anon)/_components/common/forms/Field';
-import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
-import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { formatToKoreanUnit } from '@utils/formatUtils';
-import { jeonseGuaranteeInputStyles } from './JeonseGuaranteeInput.styles';
 
 interface JeonseGuaranteeInputProps {
   formData: GetJeonseGuaranteeRequestDto;
@@ -74,7 +72,6 @@ export default function JeonseGuaranteeInput({
             전세자금보증 금액 조회
           </h3>
         </div>
-
         <div className={jeonseGuaranteeInputStyles.formContainer}>
           {/* 전세보증금 */}
           <Field
