@@ -11,6 +11,8 @@ import { useTaxCertOutput } from '@/hooks/useTaxCertOutput';
 import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { parseStepUrl } from '@utils/stepUrlParser';
 import {
   useTaxCertRiskAssessment,
   TaxCertRiskAssessmentResult,
@@ -31,9 +33,16 @@ export const TaxCertOutput = ({
   } = useTaxCertOutput({ response, loading, existsData });
 
   const pathname = window.location.pathname;
-  const stepUrlData = pathname.match(/\/steps\/(\d+)\/(\d+)/);
-  const stepNumber = stepUrlData ? parseInt(stepUrlData[1]) : 1;
-  const detail = stepUrlData ? parseInt(stepUrlData[2]) : 5;
+  const stepUrlData = parseStepUrl(pathname);
+  const stepNumber = stepUrlData?.stepNumber || 1;
+  const detail = stepUrlData?.detail || 5;
+
+  // 전체 step-result 데이터 요청 (TaxCertIntro 데이터 포함)
+  const { data: stepResultData } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepNumber.toString(),
+    detail: detail.toString(),
+  });
 
   const {
     data: savedRiskData,
@@ -229,6 +238,16 @@ export const TaxCertOutput = ({
     };
   };
 
+  // 전체 step-result 데이터에서 jsonDetails 추출 (TaxCertIntro 데이터 포함)
+  const getInitialJsonData = () => {
+    if (Array.isArray(stepResultData)) {
+      return stepResultData[0]?.jsonDetails || {};
+    } else if (stepResultData?.jsonDetails) {
+      return stepResultData.jsonDetails;
+    }
+    return savedRiskData?.jsonData || {};
+  };
+
   // 변환된 위험도 검사 결과
   const convertedRiskAssessment = hookRiskAssessment
     ? convertToRiskAssessmentResult(hookRiskAssessment)
@@ -250,7 +269,7 @@ export const TaxCertOutput = ({
         detail={detail}
         userAddressNickname={selectedAddress?.nickname}
         domain='taxCert'
-        initialJsonData={savedRiskData?.jsonData}
+        initialJsonData={getInitialJsonData()}
         showSaveButton={true} // 결과 탭에서도 저장 버튼 활성화
       />
     </div>

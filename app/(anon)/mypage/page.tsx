@@ -7,14 +7,66 @@ import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
 import WithdrawButton from './_components/WithdrawButton';
 import { styles } from './page.styles';
-import { useStepResults } from '@/hooks/useStepResults';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { StepResultData } from '@libs/api_front/stepResultQueries.api';
 import Profile from '@/(anon)/_components/common/profile/Profile';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
+
+// 가이드 요약 데이터 타입 정의
+interface GuideSummaryData {
+  totalMatch: number;
+  totalMismatch: number;
+  totalUnchecked: number;
+}
 
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
   const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
-  const { guideSummary, guideSteps, isLoading, error } = useStepResults(selectedAddress?.nickname);
+  const { data: stepResultsData, isLoading, isError } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: '',
+    detail: ''
+  });
+
+  // 타입 가드 함수들
+  const isStepResultArray = (data: unknown): data is StepResultData[] => {
+    return Array.isArray(data) && data.every(item => 
+      typeof item === 'object' && 
+      item !== null && 
+      'id' in item && 
+      'match' in item && 
+      'mismatch' in item && 
+      'unchecked' in item
+    );
+  };
+
+  const isStepResultSingle = (data: unknown): data is StepResultData => {
+    return typeof data === 'object' && 
+      data !== null && 
+      'id' in data && 
+      'match' in data && 
+      'mismatch' in data && 
+      'unchecked' in data;
+  };
+
+  // guideSteps와 guideSummary 데이터 처리
+  const guideSteps: StepResultData[] = isStepResultArray(stepResultsData) 
+    ? stepResultsData 
+    : isStepResultSingle(stepResultsData) 
+      ? [stepResultsData] 
+      : [];
+
+  // 요약 데이터 계산
+  const guideSummary: GuideSummaryData = guideSteps.reduce(
+    (summary, step) => ({
+      totalMatch: summary.totalMatch + (step.match || 0),
+      totalMismatch: summary.totalMismatch + (step.mismatch || 0),
+      totalUnchecked: summary.totalUnchecked + (step.unchecked || 0),
+    }),
+    { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 }
+  );
+
+  console.log('guideSummary', guideSummary);
 
   // 로딩 상태 처리
   if (isLoading) {
@@ -32,7 +84,7 @@ export default function MyPage() {
   }
 
   // 에러 상태 처리
-  if (error) {
+  if (isError) {
     return (
       <div className={styles.container}>
         <div className={styles.gradientBackground}></div>
@@ -40,7 +92,7 @@ export default function MyPage() {
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>{error}</p>
+            <p className={styles.errorMessage}>데이터를 불러오는데 실패했습니다.</p>
             <button 
               onClick={() => window.location.reload()} 
               className={styles.errorButton}
@@ -92,9 +144,9 @@ export default function MyPage() {
 
         {/* 가이드 결과 요약 */}
         <GuideResultSummary
-          match={guideSummary.match}
-          mismatch={guideSummary.mismatch}
-          unchecked={guideSummary.unchecked}
+          match={guideSummary.totalMatch}
+          mismatch={guideSummary.totalMismatch}
+          unchecked={guideSummary.totalUnchecked}
         />
 
         {/* 가이드 결과 보기 */}

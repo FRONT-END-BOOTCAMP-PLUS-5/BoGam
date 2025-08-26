@@ -1,14 +1,14 @@
 'use client';
 
-import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/dtos/GetJeonseGuaranteeRequestDto';
-import { useJeonseGuarantee } from '@/hooks/useJeonseGuarantee';
+import { GetJeonseGuaranteeRequestDto } from '@libs/api_front/jeonseGuarantee.api';
+import { useGetJeonseGuarantee } from '@/hooks/useJeonseGuarantee';
 import JeonseGuaranteeForm from './JeonseGuaranteeForm';
 import JeonseGuaranteeResult from './JeonseGuaranteeResult';
 import Button from '@/(anon)/_components/common/button/Button';
 import { styles } from './JeonseGuarantee.styles';
 
 export default function JeonseGuarantee() {
-  const { mutate: submitJeonseGuarantee, data: result, isPending, error } = useJeonseGuarantee();
+  const { mutate: submitJeonseGuarantee, data: result, isPending, error } = useGetJeonseGuarantee();
 
   const handleSubmit = (data: GetJeonseGuaranteeRequestDto) => {
     submitJeonseGuarantee(data);
