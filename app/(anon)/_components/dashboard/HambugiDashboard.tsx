@@ -43,7 +43,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   // guideSteps 데이터 처리 - data가 배열인 경우 그대로 사용, 객체인 경우 results 배열 추출
   const guideSteps: GuideStepData[] = Array.isArray(stepResultsData) ? stepResultsData : 
     (stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : []);
-  console.log('guideSteps', guideSteps);
   // currentStep에 따라 isActive 동적 설정
   const steps = useMemo(
     () => [
