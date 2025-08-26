@@ -18,6 +18,7 @@ export const jeonseGuaranteeInputStyles = {
   monthlyRentInputWrapper: 'relative flex-1',
 
   // 에러 메시지
-  errorContainer: 'mt-4 p-3 bg-red-50 border border-red-200 rounded-lg',
-  errorText: 'text-red-600 text-sm',
+  errorContainer:
+    'mt-4 p-3 bg-brand-red-50 border border-brand-red-200 rounded-lg',
+  errorText: 'text-brand-red-600 text-sm',
 } as const;
