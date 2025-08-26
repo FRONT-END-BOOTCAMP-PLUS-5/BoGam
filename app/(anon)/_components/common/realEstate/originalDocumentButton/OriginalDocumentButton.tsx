@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { RealEstateData } from '@/(anon)/_components/common/realEstate/types';
 import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
 import { styles } from './OriginalDocumentButton.styles';
+import { TaxCertApiResponse } from '@libs/api_front/taxCert.api';
+import { BrokerApiResponse } from '@be/domain/entities/Broker';
 
 interface OriginalDocumentButtonProps {
-  displayResponse: ApiResponse | null;
+  displayResponse: ApiResponse | TaxCertApiResponse | null;
 }
 
 export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
@@ -16,7 +18,11 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
 
   const handleOpenOriginal = async () => {
     // 기존 데이터 구조 (realEstateJson.data) 또는 새로운 데이터 구조 (data.data)에서 PDF 데이터 찾기
-    const oldData = displayResponse?.data?.realEstateJson?.data;
+    const oldData =
+      'realEstateJson' in (displayResponse?.data || {})
+        ? (displayResponse?.data as { realEstateJson?: { data?: unknown } })
+            ?.realEstateJson?.data
+        : undefined;
     const newData = displayResponse?.data?.data;
     const data = oldData || newData;
 
@@ -45,7 +51,11 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
   };
 
   // 기존 데이터 구조 또는 새로운 데이터 구조에서 PDF 데이터 존재 여부 확인
-  const oldData = displayResponse?.data?.realEstateJson?.data;
+  const oldData =
+    'realEstateJson' in (displayResponse?.data || {})
+      ? (displayResponse?.data as { realEstateJson?: { data?: unknown } })
+          ?.realEstateJson?.data
+      : undefined;
   const newData = displayResponse?.data?.data;
   const data = oldData || newData;
   const hasOriginalData =

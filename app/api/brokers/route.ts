@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetBrokerUsecase } from '@be/applications/brokers/usecases/GetBrokerUsecase';
-import { CreateBrokerCopyUsecase } from '@be/applications/brokerCopies/usecases/CreateBrokerCopyUsecase';
 import { ApiBrokerRepository } from '@be/infrastructure/repository/ApiBrokerRepository';
-import { BrokerCopyRepositoryImpl } from '@be/infrastructure/repository/BrokerCopyRepositoryImpl';
 import { getUserAddressId } from '@utils/userAddress';
 
 /**
  * 중개사 정보 조회 API
  *
  * @description
- * VWorld API를 통해 중개사 정보를 조회하고, 조회된 정보를 자동으로 BrokerCopy 테이블에 저장/수정합니다.
+ * VWorld API를 통해 중개사 정보를 조회합니다.
  *
  * @param req - NextRequest 객체
  * @returns 중개사 정보 또는 에러 응답
@@ -31,7 +29,7 @@ import { getUserAddressId } from '@utils/userAddress';
  * @param {string} [bsnmCmpnm] - 사업자상호 (선택)
  * @param {number} [numOfRows] - 검색건수, 기본값: 10, 최대: 1000
  * @param {number} [pageNo] - 페이지번호, 기본값: 1, 최소: 1
- * @param {string} userAddressNickname - 사용자 주소 닉네임 (필수, BrokerCopy 저장용)
+ * @param {string} userAddressNickname - 사용자 주소 닉네임 (필수, 검증용)
  */
 export async function GET(req: NextRequest) {
   try {
@@ -58,13 +56,13 @@ export async function GET(req: NextRequest) {
         {
           success: false,
           error:
-            '사용자 주소 닉네임(userAddressNickname) 파라미터는 BrokerCopy 저장을 위해 필수입니다.',
+            '사용자 주소 닉네임(userAddressNickname) 파라미터는 필수입니다.',
         },
         { status: 400 }
       );
     }
 
-    // userAddressNickname을 userAddressId로 변환
+    // userAddressNickname을 userAddressId로 변환 (검증용)
     const userAddressId = await getUserAddressId(userAddressNickname);
     if (!userAddressId) {
       return NextResponse.json(
@@ -91,38 +89,12 @@ export async function GET(req: NextRequest) {
       pageNo: validatedPageNo,
     });
 
-    // 중개사 정보를 BrokerCopy에 저장/수정
-    try {
-      const createBrokerCopyUsecase = new CreateBrokerCopyUsecase(
-        new BrokerCopyRepositoryImpl()
-      );
-      const brokerCopyResult = await createBrokerCopyUsecase.execute({
-        userAddressId: userAddressId,
-        brokerJson: JSON.stringify(
-          Array.isArray(result)
-            ? result.map((broker) => Object.assign({}, broker))
-            : [Object.assign({}, result)]
-        ),
-      });
-
-      if (!brokerCopyResult.success) {
-        console.warn('⚠️ 중개업자 복사본 저장 실패:', brokerCopyResult.error);
-      }
-    } catch (error) {
-      console.warn('⚠️ 중개업자 복사본 저장 중 오류:', error);
-      // BrokerCopy 저장 실패는 전체 API 응답에 영향을 주지 않음
-    }
-
     return NextResponse.json({
       success: true,
       data: result,
       pagination: {
         numOfRows: validatedNumOfRows,
         pageNo: validatedPageNo,
-      },
-      brokerCopy: {
-        saved: true,
-        userAddressId: userAddressId,
       },
       message: '중개업자 정보 조회가 완료되었습니다.',
     });

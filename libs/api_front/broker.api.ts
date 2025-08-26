@@ -28,7 +28,7 @@ export interface BrokerSearchParams {
 }
 
 export interface CreateBrokerCopyParams {
-  userAddressId: number;
+  userAddressNickname: string;
   brokerJson: string;
 }
 
