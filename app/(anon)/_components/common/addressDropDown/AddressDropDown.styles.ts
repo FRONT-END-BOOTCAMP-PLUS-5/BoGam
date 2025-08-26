@@ -6,14 +6,15 @@ export const styles = {
   // 헤더 영역
   header: 'flex items-start justify-between px-4 py-3 cursor-pointer',
   headerContent: 'flex-1 min-w-0',
-  headerTitle: 'text-base font-medium text-brand-dark-gray block mb-2',
+  headerTitle:
+    'text-base font-medium text-brand-dark-gray block mb-2 opacity-70',
   selectedAddress: 'flex items-start',
   selectedAddressText:
     'text-sm text-brand-black break-words ml-1 leading-[1.4]',
 
   // 헤더 영역의 주소 텍스트 스타일
   addressFirstLine:
-    'text-sm text-brand-black leading-relaxed break-all leading-[1.4]',
+    'text-sm font-semibold text-brand-black leading-relaxed break-all leading-[1.4]',
   addressSecondLine:
     'text-xs text-brand-dark-gray leading-relaxed mt-1 break-all leading-[1.3]',
 
