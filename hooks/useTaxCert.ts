@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { frontendAxiosInstance } from '@libs/api_front/axiosInstance';
+import { GetTaxCertResponseDto } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 // 납세증명서 복사본 존재 여부 확인
 export const useCheckTaxCertCopyExists = (nickname: string | null) => {
@@ -137,15 +138,18 @@ export const useSubmitTwoWayAuth = (
       rValue?: string;
       certificate?: string;
       extraInfo?: Record<string, unknown>;
-    }) => {
+    }): Promise<GetTaxCertResponseDto> => {
       const response = await frontendAxiosInstance
         .getAxiosInstance()
         .post('/api/tax-cert', data);
-      return response.data;
+      return response.data as GetTaxCertResponseDto;
     },
-    onSuccess: (data: unknown) => {
-      if (data.success === true) {
-        queryClient.invalidateQueries({ queryKey: ['taxCert', 'exists', (data.data.userAddressNickname).split("+").join(" ")] });
+    onSuccess: (data: GetTaxCertResponseDto, variables) => {
+      if (data.success === true && variables.userAddressNickname) {
+        const formattedAddress = variables.userAddressNickname.split("+").join(" ");
+        queryClient.invalidateQueries({ 
+          queryKey: ['taxCert', 'exists', formattedAddress] 
+        });
       }
     },
     onError,

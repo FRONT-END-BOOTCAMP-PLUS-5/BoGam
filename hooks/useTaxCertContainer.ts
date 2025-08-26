@@ -39,7 +39,7 @@ export const useTaxCertContainer = () => {
   const { data: existsData } = useCheckTaxCertExists(
     selectedAddress?.nickname || ''
   );
-  console.log('existsData :', existsData);
+
   const submitTaxCertMutation = useSubmitTaxCert();
 
   const submitTwoWayAuthMutation = useSubmitTwoWayAuth(
