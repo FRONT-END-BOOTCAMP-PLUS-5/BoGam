@@ -11,6 +11,7 @@ import RadioGroup from './RadioGroup';
 import Table from './Table';
 import List from './List';
 import JeonseGuaranteeContainer from './JeonseGuaranteeContainer';
+import { step5Detail3RendererStyles } from './Step5Detail3Renderer.styles';
 
 // RegionData 타입 정의
 interface RegionData {
@@ -131,14 +132,16 @@ export default function Step5Detail3Renderer({
         <>
           {/* 각 섹션의 제목과 부제목 표시 */}
           {(section.title || section.subtitle) && (
-            <div className='mb-4'>
+            <div className={step5Detail3RendererStyles.sectionHeader}>
               {section.title && (
-                <h3 className='text-lg font-semibold text-gray-800 mb-2'>
+                <h3 className={step5Detail3RendererStyles.sectionTitle}>
                   {section.title}
                 </h3>
               )}
               {section.subtitle && (
-                <p className='text-sm text-gray-600'>{section.subtitle}</p>
+                <p className={step5Detail3RendererStyles.sectionSubtitle}>
+                  {section.subtitle}
+                </p>
               )}
             </div>
           )}
