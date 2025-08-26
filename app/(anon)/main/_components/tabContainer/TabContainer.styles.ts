@@ -10,7 +10,7 @@ export const styles = {
 
   // 활성 탭
   activeTab:
-    'bg-brand-90 text-brand-white border-b-2 border-brand-white relative z-10 shadow-sm',
+    'bg-brand text-brand-white border-b-2 border-brand-white relative z-10 shadow-sm',
 
   // 비활성 탭
   inactiveTab:
