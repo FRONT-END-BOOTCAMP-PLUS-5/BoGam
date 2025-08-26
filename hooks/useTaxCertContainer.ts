@@ -8,7 +8,6 @@ import {
 } from '@/(anon)/_components/common/taxCert/types';
 import { extractActualData } from '@libs/responseUtils';
 import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
-import { QueryClient } from '@tanstack/react-query';
 
 export const useTaxCertContainer = () => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
@@ -84,7 +83,6 @@ export const useTaxCertContainer = () => {
   }, [activeTab, existsData]);
 
   const handleFirstRequestComplete = (responseData: TaxCertApiResponse) => {
-    const queryClient = new QueryClient();
     const actualData = extractActualData(
       responseData as unknown as CodefResponse
     );
@@ -140,11 +138,8 @@ export const useTaxCertContainer = () => {
       certificate,
     };
 
-    const data = await submitTwoWayAuthMutation.mutateAsync(twoWayRequest);
-    console.log('data :', data);
-    if (data.success === true) {
-      setShowSimpleAuthModal(false);
-    }
+    submitTwoWayAuthMutation.mutate(twoWayRequest);
+    setShowSimpleAuthModal(false);
   };
 
   const handleSimpleAuthCancel = () => {

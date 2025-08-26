@@ -145,9 +145,6 @@ export const useSubmitTwoWayAuth = (
     },
     onSuccess: (data: unknown) => {
       if (data.success === true) {
-        console.log("data", data);
-        console.log("data.data.userAddressNickname", (data.data.userAddressNickname).split("+").join(" "));
-        console.log("queryClient data(납세증명서 발급)", queryClient.getQueryData(['taxCert', 'exists', (data.data.userAddressNickname).split("+").join(" ")]));
         queryClient.invalidateQueries({ queryKey: ['taxCert', 'exists', (data.data.userAddressNickname).split("+").join(" ")] });
         queryClient.invalidateQueries({ queryKey: ['taxCertCopy'] });
       }

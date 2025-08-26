@@ -1,16 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { taxCertApi, TaxCertIssueRequest } from '@libs/api_front/taxCert.api';
 import { frontendAxiosInstance } from '@libs/api_front/axiosInstance';
 
 export const useCheckTaxCertExists = (nickname: string) => {
-  const queryClient = useQueryClient();
-  console.log("queryCLient data(존재 확인)", queryClient.getQueryData(['taxCert', 'exists', nickname]));
-  console.log("nickname", nickname);
   return useQuery({
     queryKey: ['taxCert', 'exists', nickname],
     queryFn: () => taxCertApi.checkTaxCertExists(nickname),
     enabled: !!nickname,
-    staleTime: 0,
   });
 };
 
