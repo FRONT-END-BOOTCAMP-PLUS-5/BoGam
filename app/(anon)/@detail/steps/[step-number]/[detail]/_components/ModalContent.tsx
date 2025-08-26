@@ -1,7 +1,7 @@
 import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
@@ -9,31 +9,24 @@ import Table from './contents/Table';
 import List from './contents/List';
 import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
-import CombinedContent from './contents/CombinedContent';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import { LegacyContentSection, StepContentData, ContentSection } from './contents/types';
-import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
+import {
+  LegacyContentSection,
+  StepContentData,
+  ContentSection,
+} from './contents/types';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
+import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
+import TaxCertWrapper from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 
-// DateData 타입 정의 (기존 호환성을 위해 유지)
+// RegionData 타입 정의 (기존 호환성을 위해 유지)
 interface RegionData {
   region: string;
   depositRange: string;
   priorityAmount: string;
   option: string;
-}
-
-interface DateData {
-  date: string;
-  regions: RegionData[];
-}
-
-// 새로운 Table 데이터 타입 정의
-interface TableData {
-  depositRange: string[];
-  priorityAmount: string[];
 }
 
 export default function ModalContent() {
@@ -50,10 +43,7 @@ export default function ModalContent() {
   const detail = stepUrlData?.detail?.toString() || '1';
 
   // 특별한 컴포넌트를 사용할 단계들 정의
-  const specialSteps = {
-    taxCert:
-      (stepNumber === '1' && detail === '5') ||
-      (stepNumber === '5' && detail === '1'),
+  const specialSteps = useMemo(() => ({
     broker: stepNumber === '3' && detail === '1',
     realEstate: [
       { step: '1', detail: '4' },
@@ -63,12 +53,14 @@ export default function ModalContent() {
       { step: '4', detail: '1' },
     ].some((route) => route.step === stepNumber && route.detail === detail),
     transactionSearch: stepNumber === '1' && detail === '2',
-  };
+  }), [stepNumber, detail]);
 
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
     const shouldLoadJsonData =
-      !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate && !specialSteps.transactionSearch;
+      !specialSteps.broker &&
+      !specialSteps.realEstate &&
+      !specialSteps.transactionSearch;
     if (shouldLoadJsonData) {
       const loadContentData = async () => {
         try {
@@ -88,10 +80,6 @@ export default function ModalContent() {
 
   // 특별한 컴포넌트 렌더링 함수
   const renderSpecialComponent = () => {
-    if (specialSteps.taxCert) {
-      return <TaxCertContainer />;
-    }
-
     if (specialSteps.broker) {
       return <BrokerContainer />;
     }
@@ -108,14 +96,16 @@ export default function ModalContent() {
   };
 
   // Swiper 콘텐츠 렌더링 함수
-  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
+  const renderSwiperContent = (
+    pageData: LegacyContentSection[]
+  ) => {
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'List':
         return (
           <List
-            data={pageData as unknown as { left: string; right?: string }[]}
+            data={pageData as unknown as string[]}
           />
         );
       case 'DataGrid':
@@ -133,12 +123,28 @@ export default function ModalContent() {
     }
   };
 
+  // 스크롤을 맨 위로 올리는 함수
+  const scrollToTop = () => {
+    // CSS 클래스명에 공백이 있으므로 직접 스타일 속성으로 찾기
+    const scrollableContainer = document.querySelector(
+      '[class*="max-h-[calc(100vh-200px)]"]'
+    ) as HTMLElement;
+    if (scrollableContainer) {
+      scrollableContainer.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   // 페이지 변경 핸들러
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     if (swiperRef.current) {
       swiperRef.current.slideTo(page);
     }
+    // 페이지 변경 시 스크롤을 맨 위로 올리기
+    scrollToTop();
   };
 
   // 공통 헤더 컴포넌트
@@ -157,7 +163,9 @@ export default function ModalContent() {
       <>
         <StepHeader />
         <div className={styles.scrollableContent}>
-          <div className={styles.mainContent}>{specialComponent}</div>
+          <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+            {specialComponent}
+          </div>
         </div>
       </>
     );
@@ -179,64 +187,92 @@ export default function ModalContent() {
             spaceBetween={50}
             slidesPerView={1}
             className={styles.swiperContainer}
-            onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+            onSlideChange={(swiper) => {
+              setCurrentPage(swiper.activeIndex);
+              scrollToTop();
+            }}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
           >
             {stepContentData.sections.map((section, sectionIndex) => (
               <SwiperSlide key={sectionIndex}>
-                <div className={styles.mainContent}>
-                  {/* 각 섹션의 제목과 부제목 표시 */}
-                  {(section.title || section.subtitle) && (
-                    <div className={styles.sectionHeader}>
-                      {section.title && (
-                        <h3 className={styles.sectionTitle}>{section.title}</h3>
+                <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+                  {/* step-5-3 특별 처리 */}
+                  {stepNumber === '5' && detail === '3' ? (
+                    <Step5Detail3Renderer
+                      sectionIndex={sectionIndex}
+                      section={section}
+                      allSections={stepContentData.sections}
+                    />
+                  ) : (
+                    <>
+                      {/* 기존 로직 - 다른 단계들 */}
+                      {(section.title || section.subtitle) && (
+                        <div className={styles.sectionHeader}>
+                          {section.title && (
+                            <h3 className={styles.sectionTitle}>
+                              {section.title}
+                            </h3>
+                          )}
+                          {section.subtitle && (
+                            <p className={styles.sectionSubtitle}>
+                              {section.subtitle}
+                            </p>
+                          )}
+                        </div>
                       )}
-                      {section.subtitle && (
-                        <p className={styles.sectionSubtitle}>
-                          {section.subtitle}
-                        </p>
-                      )}
-                    </div>
-                  )}
 
-                  {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
-                  {section.type === 'TextOnly' && (
-                    <TextOnly data={section.data} />
-                  )}
-                  {section.type === 'RadioGroup' && (
-                    <RadioGroup data={section.data} />
-                  )}
-                  {section.type === 'Table' && (
-                    <Table
-                      title={section.title || "소액보증금 최우선변제 기준 변천사"}
-                      columnTitles={section.columnTitles || ["지역", "소액보증금의 범위", "최우선변제금액"]}
-                      data={section.data || []}
-                    />
-                  )}
-                  {section.type === 'List' && (
-                    <List
-                      data={
-                        section.data as unknown as {
-                          left: string;
-                          right?: string;
-                        }[]
-                      }
-                    />
-                  )}
-                  {section.type === 'DataGrid' && (
-                    <DataGrid
-                      data={
-                        section.data as unknown as {
-                          left: string;
-                          right?: string;
-                        }[]
-                      }
-                    />
-                  )}
-                  {section.type === 'CheckListGroup' && (
-                    <CheckListGroup data={section.data} />
+                      {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
+                      {section.type === 'TextOnly' && (
+                        <TextOnly data={section.data} />
+                      )}
+                      {section.type === 'RadioGroup' && (
+                        <RadioGroup data={section.data} />
+                      )}
+                      {section.type === 'Table' && (
+                        <Table
+                          title={
+                            section.title || '소액보증금 최우선변제 기준 변천사'
+                          }
+                          columnTitles={
+                            section.columnTitles || [
+                              '지역',
+                              '소액보증금의 범위',
+                              '최우선변제금액',
+                            ]
+                          }
+                          data={section.data || []}
+                        />
+                      )}
+                      {section.type === 'List' && (
+                        <List
+                          data={
+                            section.data as unknown as string[]
+                          }
+                        />
+                      )}
+                      {section.type === 'DataGrid' && (
+                        <DataGrid
+                          data={
+                            section.data as unknown as {
+                              left: string;
+                              right?: string;
+                            }[]
+                          }
+                        />
+                      )}
+                      {section.type === 'CheckListGroup' && (
+                        <CheckListGroup data={section.data} />
+                      )}
+                      {(section.type === 'TaxCertIntro' ||
+                        section.type === 'TaxCertContainer') && (
+                        <TaxCertWrapper
+                          sectionIndex={sectionIndex}
+                          section={section}
+                        />
+                      )}
+                    </>
                   )}
                 </div>
               </SwiperSlide>
@@ -247,20 +283,22 @@ export default function ModalContent() {
         {/* 페이지 인디케이터 */}
         {stepContentData.sections.length > 1 && (
           <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.sections.map((section: ContentSection, index: number) => (
-              <button
-                key={index}
-                className={`${styles.pageDot} ${
-                  index === currentPage
-                    ? styles.pageDotActive
-                    : styles.pageDotInactive
-                }`}
-                aria-label={`페이지 ${index + 1}${
-                  index === currentPage ? ' (현재)' : ''
-                }`}
-                onClick={() => handlePageChange(index)}
-              />
-            ))}
+            {stepContentData.sections.map(
+              (section: ContentSection, index: number) => (
+                <button
+                  key={index}
+                  className={`${styles.pageDot} ${
+                    index === currentPage
+                      ? styles.pageDotActive
+                      : styles.pageDotInactive
+                  }`}
+                  aria-label={`페이지 ${index + 1}${
+                    index === currentPage ? ' (현재)' : ''
+                  }`}
+                  onClick={() => handlePageChange(index)}
+                />
+              )
+            )}
           </div>
         )}
       </>
@@ -277,8 +315,8 @@ export default function ModalContent() {
           <div className={styles.scrollableContent}>
             <div className={styles.mainContent}>
               <Table
-                title={stepContentData.title || "테이블 제목"}
-                columnTitles={stepContentData.columnTitles || ["1", "2", "3"]}
+                title={stepContentData.title || '테이블 제목'}
+                columnTitles={stepContentData.columnTitles || ['1', '2', '3']}
                 description={stepContentData.description}
                 data={stepContentData.data as unknown as RegionData[]}
               />
@@ -297,7 +335,10 @@ export default function ModalContent() {
             spaceBetween={50}
             slidesPerView={1}
             className={styles.swiperContainer}
-            onSlideChange={(swiper) => setCurrentPage(swiper.activeIndex)}
+            onSlideChange={(swiper) => {
+              setCurrentPage(swiper.activeIndex);
+              scrollToTop();
+            }}
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
@@ -305,8 +346,8 @@ export default function ModalContent() {
             {stepContentData.data.map(
               (pageData: LegacyContentSection[], pageIndex: number) => (
                 <SwiperSlide key={pageIndex}>
-                  <div className={styles.mainContent}>
-                    {renderSwiperContent(pageData)}
+                  <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
+                                         {renderSwiperContent(pageData)}
                   </div>
                 </SwiperSlide>
               )
@@ -342,7 +383,7 @@ export default function ModalContent() {
     <>
       <StepHeader />
       <div className={styles.scrollableContent}>
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
           <DataGrid data={[]} />
         </div>
       </div>

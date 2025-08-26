@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/dtos/GetJeonseGuaranteeRequestDto';
+import { GetJeonseGuaranteeRequestDto } from '@libs/api_front/jeonseGuarantee.api';
 import { styles } from './JeonseGuarantee.styles';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import Field from '@/(anon)/_components/common/forms/Field';
@@ -23,11 +23,10 @@ export default function JeonseGuaranteeForm({ onSubmit }: JeonseGuaranteeFormPro
     mmrtAmt: 1000000,
     trgtLwdgCd: selectedAddress?.legalDistrictCode || '2629000000',
     age: 22,
-    weddStcd: 1,
+    weddStcd: '1',
     myIncmAmt: 40000000,
     myTotDebtAmt: 10000000,
-    ownHsCnt: 1,
-    grntPrmeActnDvcdCont: '01'
+    ownHsCnt: 1
   });
 
   // 보증우대조치구분 옵션
@@ -75,13 +74,8 @@ export default function JeonseGuaranteeForm({ onSubmit }: JeonseGuaranteeFormPro
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 보증우대조치구분 처리
-    const updatedFormData = {
-      ...formData,
-      grntPrmeActnDvcdCont: selectedGrntPrmeActn.join(',')
-    };
-
-    onSubmit(updatedFormData);
+    // 보증우대조치구분은 현재 API에서 지원하지 않으므로 제거
+    onSubmit(formData);
   };
 
   const handleInputChange = (field: keyof GetJeonseGuaranteeRequestDto, value: string | number) => {
@@ -148,8 +142,8 @@ export default function JeonseGuaranteeForm({ onSubmit }: JeonseGuaranteeFormPro
           label="결혼구분"
           required
           options={weddStcdOptions}
-          value={formData.weddStcd.toString()}
-          onChange={(value) => handleInputChange('weddStcd', parseInt(value))}
+          value={formData.weddStcd}
+          onChange={(value) => handleInputChange('weddStcd', value)}
         />
         
         <Field

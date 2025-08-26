@@ -139,12 +139,12 @@ export const useTaxCertRiskAssessment = (
       userInputName.trim() === taxCertData.resUserNm.trim();
 
     const nameMatchChecked =
-      checklistState?.['name-match'] !== undefined
-        ? checklistState['name-match']
+      checklistState?.['서류와 임대인의 이름 일치 여부'] !== undefined
+        ? checklistState['서류와 임대인의 이름 일치 여부']
         : nameMatch || false;
 
     checklistItems.push({
-      id: 'name-match',
+      id: '서류와 임대인의 이름 일치 여부',
       label: '납세자명과 임대인 명 일치 여부',
       checked: nameMatchChecked,
       description: '납세증명서의 납세자명과 실제 임대인 명이 일치하는지 확인',
@@ -155,12 +155,12 @@ export const useTaxCertRiskAssessment = (
     const hasArrearsList =
       taxCertData.resArrearsList && taxCertData.resArrearsList.length > 0;
     const arrearsChecked =
-      checklistState?.['arrears-check'] !== undefined
-        ? checklistState['arrears-check']
+      checklistState?.['미납 내역 없음'] !== undefined
+        ? checklistState['미납 내역 없음']
         : !hasArrearsList || false;
 
     checklistItems.push({
-      id: 'arrears-check',
+      id: '미납 내역 없음',
       label: '체납 내역 확인',
       checked: arrearsChecked,
       description: '체납 내역이 없는지 확인 (체납 내역이 있으면 위험)',
@@ -183,12 +183,12 @@ export const useTaxCertRiskAssessment = (
     }
 
     const expiryChecked =
-      checklistState?.['expiry-check'] !== undefined
-        ? checklistState['expiry-check']
+      checklistState?.['유효기간 만료일 확인'] !== undefined
+        ? checklistState['유효기간 만료일 확인']
         : isNotExpired || false;
 
     checklistItems.push({
-      id: 'expiry-check',
+      id: '유효기간 만료일 확인',
       label: '유효기간 만료일 확인',
       checked: expiryChecked,
       description: '납세증명서 유효기간이 만료되지 않았는지 확인',
@@ -213,12 +213,12 @@ export const useTaxCertRiskAssessment = (
     }
 
     const recentIssueChecked =
-      checklistState?.['recent-issue-check'] !== undefined
-        ? checklistState['recent-issue-check']
+      checklistState?.['발급일자 최신성 확인'] !== undefined
+        ? checklistState['발급일자 최신성 확인']
         : isRecentIssue || false;
 
     checklistItems.push({
-      id: 'recent-issue-check',
+      id: '발급일자 최신성 확인',
       label: '발급일자 최신성 확인',
       checked: recentIssueChecked,
       description: '납세증명서가 최근 30일 이내에 발급되었는지 확인',
@@ -235,12 +235,12 @@ export const useTaxCertRiskAssessment = (
         (item) => item.resRespiteType
       );
       const respiteTypeChecked =
-        checklistState?.['respite-type'] !== undefined
-          ? checklistState['respite-type']
+        checklistState?.['유예 종류 확인'] !== undefined
+          ? checklistState['유예 종류 확인']
           : hasRespiteType || false;
 
       checklistItems.push({
-        id: 'respite-type',
+        id: '유예 종류 확인',
         label: '유예 종류 확인',
         checked: respiteTypeChecked,
         description:
@@ -253,12 +253,12 @@ export const useTaxCertRiskAssessment = (
         (item) => item.resRespitePeriod
       );
       const respitePeriodChecked =
-        checklistState?.['respite-period'] !== undefined
-          ? checklistState['respite-period']
+        checklistState?.['유예 기간 확인'] !== undefined
+          ? checklistState['유예 기간 확인']
           : hasRespitePeriod || false;
 
       checklistItems.push({
-        id: 'respite-period',
+        id: '유예 기간 확인',
         label: '유예 기간 확인',
         checked: respitePeriodChecked,
         description:
@@ -271,12 +271,12 @@ export const useTaxCertRiskAssessment = (
         (item) => item.resPaymentDeadline
       );
       const paymentDeadlineChecked =
-        checklistState?.['payment-deadline'] !== undefined
-          ? checklistState['payment-deadline']
+        checklistState?.['납부기한 확인'] !== undefined
+          ? checklistState['납부기한 확인']
           : hasPaymentDeadline || false;
 
       checklistItems.push({
-        id: 'payment-deadline',
+        id: '납부기한 확인',
         label: '체납 리스트에서 납부기한 확인',
         checked: paymentDeadlineChecked,
         description: '체납 리스트에서 납부기한이 명시되어 있는지 확인',
@@ -289,12 +289,12 @@ export const useTaxCertRiskAssessment = (
         return taxAmount <= 10000000; // 천만원
       });
       const taxAmountChecked =
-        checklistState?.['tax-amount-under-10m'] !== undefined
-          ? checklistState['tax-amount-under-10m']
+        checklistState?.['지방세액 천만원 이하 확인'] !== undefined
+          ? checklistState['지방세액 천만원 이하 확인']
           : isTaxAmountUnder10M || false;
 
       checklistItems.push({
-        id: 'tax-amount-under-10m',
+        id: '지방세액 천만원 이하 확인',
         label: '지방세액이 천만원 이하인 지 확인',
         checked: taxAmountChecked,
         description: '모든 체납 항목의 지방세액이 천만원 이하인지 확인',

@@ -5,6 +5,8 @@ import { useDragToClose } from './_components/useDragToClose';
 import { styles } from './StepDetail.styles';
 import ModalDragHandle from './_components/ModalDragHandle';
 import ModalContent from './_components/ModalContent';
+import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
+import { useModalStore } from '@libs/stores/modalStore';
 
 interface StepDetailProps {
   isOpen: boolean;
@@ -20,6 +22,8 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     handleTouchEnd,
     handleMouseDown,
   } = useDragToClose(isOpen, onClose);
+
+  const { isOpen: isModalOpen, content, closeModal, confirmModal, cancelModal } = useModalStore();
 
   // 모달이 열릴 때 배경 스크롤 차단
   useEffect(() => {
@@ -67,6 +71,21 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
 
         <ModalContent />
       </div>
+
+      {/* modalStore의 모달 */}
+      {isModalOpen && content && (
+        <ConfirmModal
+          isOpen={isModalOpen}
+          title={content.title}
+          icon={content.icon}
+          onConfirm={confirmModal}
+          onCancel={cancelModal}
+          confirmText={content.confirmText}
+          cancelText={content.cancelText}
+        >
+          {content.content}
+        </ConfirmModal>
+      )}
     </div>
   );
 }
