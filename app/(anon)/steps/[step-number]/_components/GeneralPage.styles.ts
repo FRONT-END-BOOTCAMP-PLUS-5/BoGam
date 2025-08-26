@@ -21,7 +21,7 @@ export const styles = {
   danger: 'text-base font-bold w-[20%] shadow-[inset_0px_-11px_0_rgba(194,74,74,0.3)]',
   
   // 콘텐츠 텍스트 스타일
-  content: 'text-sm mt-[4vh] leading-[2.5vh]',
+  content: 'text-sm mt-[4vh] leading-[3.0vh]',
   
   // 이동 버튼 내부 스타일
   goInside: 'flex items-center',
