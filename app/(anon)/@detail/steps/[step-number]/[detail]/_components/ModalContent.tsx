@@ -107,7 +107,13 @@ export default function ModalContent() {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'List':
-        return <List data={pageData as unknown as string[]} />;
+        return (
+          <List
+            title={(pageData[0] as any)?.title}
+            data={pageData as unknown as string[]}
+          />
+        );
+
       case 'DataGrid':
         return (
           <DataGrid
@@ -256,11 +262,9 @@ export default function ModalContent() {
                       )}
                       {section.type === 'List' && (
                         <List
-                          data={
-                            'data' in section
-                              ? (section.data as unknown as string[])
-                              : []
-                          }
+                          title={section.title}
+                          data={section.data as Array<{ title: string; content: string }>}
+
                         />
                       )}
                       {section.type === 'DataGrid' && (

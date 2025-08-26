@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import styles from './List.styles';
 
@@ -8,20 +8,50 @@ interface AccordionItem {
 }
 
 interface ListProps {
-  data: AccordionItem[] | string[];
+  title?: string;
+  data: AccordionItem[] | string[] | Record<string, AccordionItem[]>;
 }
 
-const List = ({ data }: ListProps) => {
+const List = ({ title, data }: ListProps) => {
   const [openItems, setOpenItems] = useState<number[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string>('전체');
+  const [currentData, setCurrentData] = useState<AccordionItem[]>([]);
 
-  // 문자열 배열인 경우 기본 아코디언 형태로 변환
-  const accordionData: AccordionItem[] =
-    Array.isArray(data) && typeof data[0] === 'string'
-      ? (data as string[]).map((item) => ({
-          title: item,
-          content: `${item}에 대한 상세 설명입니다.`,
-        }))
-      : (data as AccordionItem[]);
+  // 데이터 타입에 따른 처리
+  useEffect(() => {
+    if (typeof data === 'object' && !Array.isArray(data)) {
+      // Record<string, AccordionItem[]> 타입인 경우
+      const optionData = data as Record<string, AccordionItem[]>;
+      const options = Object.keys(optionData);
+      
+      if (selectedOption === '전체') {
+        // 전체 데이터를 하나의 배열로 합치기 (그룹 헤더 포함)
+        const allData: AccordionItem[] = [];
+        Object.entries(optionData).forEach(([option, items]) => {
+          // 그룹 헤더 추가
+          allData.push({
+            title: `📋 ${option}`,
+            content: ''
+          });
+          // 해당 그룹의 아이템들 추가
+          allData.push(...items);
+        });
+        setCurrentData(allData);
+      } else if (options.includes(selectedOption)) {
+        setCurrentData(optionData[selectedOption]);
+      }
+    } else {
+      // 기존 배열 타입인 경우
+      const accordionData: AccordionItem[] =
+        Array.isArray(data) && typeof data[0] === 'string'
+          ? (data as string[]).map((item) => ({
+              title: item,
+              content: `${item}에 대한 상세 설명입니다.`,
+            }))
+          : (data as AccordionItem[]);
+      setCurrentData(accordionData);
+    }
+  }, [data, selectedOption]);
 
   const toggleItem = (index: number) => {
     setOpenItems((prev) =>
@@ -31,27 +61,51 @@ const List = ({ data }: ListProps) => {
     );
   };
 
+  // 옵션 데이터가 있는지 확인
+  const hasOptions = typeof data === 'object' && !Array.isArray(data) && Object.keys(data as Record<string, AccordionItem[]>).length > 0;
+
   return (
     <div className={styles.container}>
-      <div>
-        <h3 className={styles.title}>필요한 서류 보기</h3>
-      </div>
+      {title && (
+        <div>
+          <h3 className={styles.title}>{title}</h3>
+        </div>
+      )}
+      
+      {/* 옵션 선택 드롭다운 */}
+      {hasOptions && (
+        <div className={styles.optionSelector}>
+          <label className={styles.optionLabel}>서류 종류 선택:</label>
+          <select
+            value={selectedOption}
+            onChange={(e) => setSelectedOption(e.target.value)}
+            className={styles.optionSelect}
+          >
+            <option value="전체">전체</option>
+            {Object.keys(data as Record<string, AccordionItem[]>).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className='max-w-2xl mx-auto'>
         <div className={styles.content}>
-          {accordionData.map((item, index) => {
+          {currentData.map((item, index) => {
             // 구분 영역인지 확인 (content가 비어있는 경우)
             const isSectionHeader = !item.content || item.content.trim() === '';
 
             if (isSectionHeader) {
-              // 구분 영역 렌더링
+              // 구분 영역 렌더링 (구분선 형태)
               return (
-                <div key={index} className='mb-2'>
-                  <div className={styles.sectionHeader}>
-                    <div className={styles.sectionHeaderButton}>
-                      <span className={styles.sectionHeaderText}>
-                        {item.title}
-                      </span>
-                    </div>
+                <div key={index} className='mb-4 mt-6'>
+                  <div className={styles.sectionDivider}>
+                    <span className={styles.sectionDividerText}>
+                      {item.title}
+                    </span>
+                    <div className='flex-1 border-t border-brand-light-gray'></div>
                   </div>
                 </div>
               );
@@ -63,7 +117,9 @@ const List = ({ data }: ListProps) => {
                     {/* 아코디언 헤더 */}
                     <button
                       onClick={() => toggleItem(index)}
-                      className={styles.accordionButton}
+                      className={`${styles.accordionButton} ${
+                        openItems.includes(index) ? 'bg-brand-light-gray' : ''
+                      }`}
                     >
                       <span className={styles.accordionText}>{item.title}</span>
                       <ChevronDown

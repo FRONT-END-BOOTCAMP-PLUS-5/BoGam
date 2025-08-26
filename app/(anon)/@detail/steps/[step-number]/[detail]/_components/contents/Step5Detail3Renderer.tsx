@@ -1,7 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ContentSection, LegacyContentSection } from './types';
+import {
+  ContentSection,
+  LegacyContentSection,
+  RadioGroupSection,
+} from './types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { stepResultQueryApi } from '@libs/api_front/stepResultQueries.api';
@@ -110,13 +114,7 @@ export default function Step5Detail3Renderer({
   // 슬라이드별 렌더링 로직
   switch (sectionIndex) {
     case 0:
-      return (
-        <RadioGroup
-          data={
-            'data' in section ? (section.data as LegacyContentSection[]) : []
-          }
-        />
-      );
+      return section.type === 'TextOnly' ? <TextOnly data={section.data} /> : <div>TextOnly 타입이 아닙니다.</div>;
     case 1:
       return (
         <JeonseGuaranteeContainer
@@ -125,11 +123,21 @@ export default function Step5Detail3Renderer({
           isSavingStepResult={isSavingStepResult}
         />
       );
-
     case 2:
-      return (
-        <List data={'data' in section ? (section.data as string[]) : []} />
-      );
+      return section.type === 'RadioGroup' ? (
+        <RadioGroup 
+          title={section.title} 
+          subtitle={section.subtitle} 
+          data={(section as RadioGroupSection).data} 
+        />
+      ) : <div>RadioGroup 타입이 아닙니다.</div>;
+    case 3:
+      if (section.type === 'List') {
+        // ListSection의 data를 올바른 타입으로 변환
+        const listData = section.data as Array<{ title: string; content: string }>;
+        return <List title={section.title} data={listData} />;
+      }
+      return <div>List 타입이 아닙니다.</div>;
 
     default:
       // 기본 렌더링 로직
@@ -158,7 +166,7 @@ export default function Step5Detail3Renderer({
             <Table data={section.data as unknown as RegionData[]} />
           )}
           {section.type === 'List' && (
-            <List data={section.data as unknown as string[]} />
+            <List title={section.title} data={section.data as unknown as string[]} />
           )}
         </>
       );

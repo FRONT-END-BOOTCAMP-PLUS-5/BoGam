@@ -33,7 +33,7 @@ const CombinedContent = ({
         content = <TextOnly data={section.data} />;
         break;
       case 'RadioGroup':
-        content = <RadioGroup data={section.data} />;
+        content = <RadioGroup title={section.title} subtitle={section.subtitle} data={section.data} />;
         break;
       case 'Table':
         content = (
@@ -41,9 +41,9 @@ const CombinedContent = ({
         );
         break;
       case 'List':
-        // ListSection의 data를 string[]로 변환
-        const listData = (section.data as Array<{ left: string; right?: string }>).map(item => item.left);
-        content = <List data={listData} />;
+        // ListSection의 data를 올바르게 처리
+        const listData = section.data as Array<{ title: string; content: string }>;
+        content = <List title={section.title} data={listData} />;
         break;
       case 'DataGrid':
         content = <DataGrid data={section.data} />;
@@ -57,8 +57,8 @@ const CombinedContent = ({
 
     return (
       <div key={index} className={styles.sectionContainer}>
-        {/* 섹션 제목이 있는 경우 */}
-        {(section.title || section.subtitle) && (
+        {/* 섹션 제목이 있는 경우 (RadioGroup 제외) */}
+        {(section.title || section.subtitle) && section.type !== 'RadioGroup' && (
           <div className={styles.sectionHeader}>
             {section.title && (
               <h3 className={styles.sectionTitle}>{section.title}</h3>

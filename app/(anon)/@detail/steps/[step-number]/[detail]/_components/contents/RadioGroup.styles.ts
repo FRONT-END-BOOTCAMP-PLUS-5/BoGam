@@ -1,6 +1,9 @@
 const styles = {
   // JSON 데이터 표시를 위한 스타일
   container: 'p-5 max-w-4xl mx-auto',
+  header: 'mb-6',
+  title: 'text-xl font-bold mb-2 text-brand-black',
+  subtitle: 'text-base text-brand-dark-gray mb-4',
   section: 'mb-6',
   sectionTitle: 'text-lg font-medium mb-2 text-black',
   sectionSubtitle: 'text-base font-medium mb-2 text-black',
