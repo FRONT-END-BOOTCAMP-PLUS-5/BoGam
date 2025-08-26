@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDragToClose } from './_components/useDragToClose';
 import { styles } from './StepDetail.styles';
 import ModalDragHandle from './_components/ModalDragHandle';
 import ModalContent from './_components/ModalContent';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { useModalStore } from '@libs/stores/modalStore';
+import { TaxCertWrapperRef } from './_components/contents/TaxCertWrapper';
 
 interface StepDetailProps {
   isOpen: boolean;
@@ -14,6 +15,9 @@ interface StepDetailProps {
 }
 
 export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
+  const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
+  const taxCertWrapperRef = useRef<TaxCertWrapperRef | null>(null);
+  
   const {
     dragState,
     modalRef,
@@ -24,6 +28,23 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
   } = useDragToClose(isOpen, onClose);
 
   const { isOpen: isModalOpen, content, closeModal, confirmModal, cancelModal } = useModalStore();
+
+  // 간편인증 모달 관련 핸들러들
+  const handleShowSimpleAuthModal = () => {
+    setShowSimpleAuthModal(true);
+  };
+
+  const handleSimpleAuthApprove = () => {
+    // TaxCertWrapper의 ref를 통해 TaxCertContainer의 승인 로직 실행
+    if (taxCertWrapperRef.current) {
+      taxCertWrapperRef.current.handleSimpleAuthApprove();
+    }
+    setShowSimpleAuthModal(false);
+  };
+
+  const handleSimpleAuthCancel = () => {
+    setShowSimpleAuthModal(false);
+  };
 
   // 모달이 열릴 때 배경 스크롤 차단
   useEffect(() => {
@@ -69,7 +90,12 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
           onClose={onClose}
         />
 
-        <ModalContent />
+        <ModalContent
+          onShowSimpleAuthModal={handleShowSimpleAuthModal}
+          onSimpleAuthApprove={handleSimpleAuthApprove}
+          onSimpleAuthCancel={handleSimpleAuthCancel}
+          taxCertContainerRef={taxCertWrapperRef}
+        />
       </div>
 
       {/* modalStore의 모달 */}
@@ -86,6 +112,26 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
           {content.content}
         </ConfirmModal>
       )}
+
+      {/* 간편인증 추가인증 모달 */}
+      <ConfirmModal
+        isOpen={showSimpleAuthModal}
+        title='🔐 간편인증 추가인증'
+        onCancel={handleSimpleAuthCancel}
+        cancelText='❌ 취소'
+        icon='info'
+        isLoading={false}
+        onConfirm={handleSimpleAuthApprove}
+        confirmText='✅ 승인'
+      >
+        <div className='space-y-3'>
+          <p>📱 모바일에서 카카오 인증을 완료해주세요.</p>
+          <p>✅ 인증 완료 후 아래 버튼을 클릭하여 승인해주세요.</p>
+          <p className='text-sm text-gray-600'>
+            * 4분 30초 내에 승인/취소를 완료해주세요.
+          </p>
+        </div>
+      </ConfirmModal>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 'use client';
 
+import React, { forwardRef, useImperativeHandle } from 'react';
 import TaxCertIntro from './TaxCertIntro';
-import { TaxCertContainer } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
+import { TaxCertContainer, TaxCertContainerRef } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
 
 interface ChecklistItem {
   id: string;
@@ -31,12 +32,33 @@ interface TaxCertWrapperProps {
     type: string;
     data?: TaxCertIntroData;
   };
+  onShowSimpleAuthModal: () => void;
+  onSimpleAuthApprove: () => void;
+  onSimpleAuthCancel: () => void;
 }
 
-export default function TaxCertWrapper({
+export interface TaxCertWrapperRef {
+  handleSimpleAuthApprove: () => void;
+}
+
+const TaxCertWrapper = forwardRef<TaxCertWrapperRef, TaxCertWrapperProps>(({
   sectionIndex,
   section,
-}: TaxCertWrapperProps) {
+  onShowSimpleAuthModal,
+  onSimpleAuthApprove,
+  onSimpleAuthCancel,
+}, ref) => {
+  const taxCertContainerRef = React.useRef<TaxCertContainerRef | null>(null);
+
+  // ref를 통해 외부에서 접근할 수 있는 메서드 노출
+  useImperativeHandle(ref, () => ({
+    handleSimpleAuthApprove: () => {
+      if (taxCertContainerRef.current) {
+        taxCertContainerRef.current.handleSimpleAuthApprove();
+      }
+    },
+  }));
+
   // 슬라이드별 렌더링
   switch (sectionIndex) {
     case 0:
@@ -48,10 +70,19 @@ export default function TaxCertWrapper({
 
     case 1:
       return (
-        <TaxCertContainer />
+        <TaxCertContainer
+          ref={taxCertContainerRef}
+          onShowSimpleAuthModal={onShowSimpleAuthModal}
+          onSimpleAuthApprove={onSimpleAuthApprove}
+          onSimpleAuthCancel={onSimpleAuthCancel}
+        />
       );
 
     default:
       return null;
   }
-}
+});
+
+TaxCertWrapper.displayName = 'TaxCertWrapper';
+
+export default TaxCertWrapper;

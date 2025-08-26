@@ -29,7 +29,19 @@ interface RegionData {
   option: string;
 }
 
-export default function ModalContent() {
+interface ModalContentProps {
+  onShowSimpleAuthModal: () => void;
+  onSimpleAuthApprove: () => void;
+  onSimpleAuthCancel: () => void;
+  taxCertContainerRef?: React.RefObject<{ handleSimpleAuthApprove: () => void }>;
+}
+
+export default function ModalContent({
+  onShowSimpleAuthModal,
+  onSimpleAuthApprove,
+  onSimpleAuthCancel,
+  taxCertContainerRef,
+}: ModalContentProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
   const [stepContentData, setStepContentData] =
@@ -285,6 +297,10 @@ export default function ModalContent() {
                         <TaxCertWrapper
                           sectionIndex={sectionIndex}
                           section={section}
+                          onShowSimpleAuthModal={onShowSimpleAuthModal}
+                          onSimpleAuthApprove={onSimpleAuthApprove}
+                          onSimpleAuthCancel={onSimpleAuthCancel}
+                          ref={taxCertContainerRef}
                         />
                       )}
                     </>

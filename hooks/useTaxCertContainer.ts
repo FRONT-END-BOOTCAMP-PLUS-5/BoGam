@@ -9,7 +9,17 @@ import {
 import { extractActualData } from '@libs/responseUtils';
 import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
-export const useTaxCertContainer = () => {
+interface UseTaxCertContainerProps {
+  onShowSimpleAuthModal: () => void;
+  onSimpleAuthApprove: () => void;
+  onSimpleAuthCancel: () => void;
+}
+
+export const useTaxCertContainer = ({
+  onShowSimpleAuthModal,
+  onSimpleAuthApprove,
+  onSimpleAuthCancel,
+}: UseTaxCertContainerProps) => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
   const [formData] = useState<TaxCertFormData>({
     organization: '0001',
@@ -32,7 +42,6 @@ export const useTaxCertContainer = () => {
     originDataYN1: '1',
   });
   const [response, setResponse] = useState<TaxCertApiResponse | null>(null);
-  const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   const { selectedAddress } = useUserAddressStore();
@@ -47,6 +56,7 @@ export const useTaxCertContainer = () => {
       setResponse(data as TaxCertApiResponse);
       setIsDataLoading(false);
       setActiveTab('output');
+      onSimpleAuthCancel(); // 성공 시 모달 닫기
     },
     (error) => {
       setResponse({
@@ -56,6 +66,7 @@ export const useTaxCertContainer = () => {
         userAddressNickname: selectedAddress?.nickname || '',
       });
       setIsDataLoading(false);
+      onSimpleAuthCancel(); // 실패 시에도 모달 닫기
     }
   );
 
@@ -91,7 +102,7 @@ export const useTaxCertContainer = () => {
     const actualMethod = actualData?.method;
 
     if (actualContinue2Way && actualMethod === 'simpleAuth') {
-      setShowSimpleAuthModal(true);
+      onShowSimpleAuthModal();
       return true;
     } else {
       return false;
@@ -139,11 +150,7 @@ export const useTaxCertContainer = () => {
     };
 
     submitTwoWayAuthMutation.mutate(twoWayRequest);
-    setShowSimpleAuthModal(false);
-  };
-
-  const handleSimpleAuthCancel = () => {
-    setShowSimpleAuthModal(false);
+    // onSimpleAuthApprove() 호출 제거 - 무한 루프 방지
   };
 
   const handleSubmit = async (data: TaxCertFormData) => {
@@ -184,15 +191,13 @@ export const useTaxCertContainer = () => {
   return {
     formData,
     response,
-    showSimpleAuthModal,
     existsData,
     submitTaxCertMutation,
     submitTwoWayAuthMutation,
     isDataLoading,
     activeTab,
     setActiveTab,
-    handleSimpleAuthApprove,
-    handleSimpleAuthCancel,
     handleSubmit,
+    handleSimpleAuthApprove,
   };
 };
