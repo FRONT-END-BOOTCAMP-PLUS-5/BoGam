@@ -71,6 +71,9 @@ const ResultAccordion = ({
           styles.content,
           isOpen ? styles.contentOpen : styles.contentClosed
         )}
+        style={{
+          maxHeight: isOpen ? 'none' : '0px'
+        }}
       >
         {children}
       </div>
