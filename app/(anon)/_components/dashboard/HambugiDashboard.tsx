@@ -10,30 +10,12 @@ import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import DashboardHeader from './DashboardHeader';
 import UserInfo from './UserInfo';
 import StepNavigation from './StepNavigation';
-import StepDetailContent from './StepDetailContent';
+import StepDetailContent, { GuideStepData } from './StepDetailContent';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './HambugiDashboard.styles';
 import { STEP_TITLES } from '@libs/constants/stepDetailTitles';
 
-interface StepDetail {
-  id: string;
-  title: string;
-  content: string;
-  status: 'match' | 'mismatch' | 'unchecked';
-  actionLink?: string;
-  actionText?: string;
-}
 
-interface StepResultItem {
-  id: number;
-  userAddressId: number;
-  stepId: number;
-  stepNumber: number;
-  mismatch: number;
-  match: number;
-  unchecked: number;
-  detail: number;
-}
 
 interface HambugiDashboardProps {
   onClose: () => void;
@@ -59,7 +41,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   });
   
   // guideSteps 데이터 처리 - data가 배열인 경우 그대로 사용, 객체인 경우 results 배열 추출
-  const guideSteps = Array.isArray(stepResultsData) ? stepResultsData : 
+  const guideSteps: GuideStepData[] = Array.isArray(stepResultsData) ? stepResultsData : 
     (stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : []);
   // currentStep에 따라 isActive 동적 설정
   const steps = useMemo(
@@ -110,37 +92,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     [currentStep]
   );
 
-  // 실제 데이터를 기반으로 stepDetails 동적 생성
-  const stepDetails = useMemo(() => {
-    if (!guideSteps || guideSteps.length === 0) {
-      return {};
-    }
 
-    const details: Record<number, { title: string; details: StepDetail[] }> = {};
-
-    // 각 스텝별로 데이터 그룹화
-    guideSteps.forEach((step: StepResultItem) => {
-      const stepNumber = step.stepNumber;
-      if (!details[stepNumber]) {
-        details[stepNumber] = {
-          title: `${stepNumber}단계`,
-          details: []
-        };
-      }
-
-      // 각 detail에 대한 정보 생성
-      const detail: StepDetail = {
-        id: `${stepNumber}-${step.detail}`,
-        title: `Detail ${step.detail}`,
-        content: `Match: ${step.match}, Mismatch: ${step.mismatch}, Unchecked: ${step.unchecked}`,
-        status: step.match > 0 ? 'match' : step.mismatch > 0 ? 'mismatch' : 'unchecked'
-      };
-
-      details[stepNumber].details.push(detail);
-    });
-
-    return details;
-  }, [guideSteps]);
 
   // 로딩 상태 처리
   if (isLoading) {
@@ -223,11 +175,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     // 액션 링크 처리
   };
 
-  const currentStepData = stepDetails[currentStep] || {
-    title: '단계 정보 없음',
-    details: [],
-  };
-
   return (
     <div className={styles.container}>
       {/* 헤더 */}
@@ -256,8 +203,8 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
         {/* 오른쪽: 단계 상세 내용 */}
         <div className={styles.rightPanel}>
           <StepDetailContent
-            stepTitle={currentStepData.title}
-            details={currentStepData.details}
+            stepTitle={STEP_TITLES[currentStep - 1] || '단계 정보'}
+            guideSteps={guideSteps}
             onActionClick={handleActionClick}
             currentStep={currentStep}
           />

@@ -26,6 +26,6 @@ export const styles = {
   // 아코디언 내용 영역
   content: "bg-brand-light-gray/20 border-t border-brand-light-gray/20 overflow-hidden transition-all duration-300 ease-in-out",
   contentClosed: "max-h-0 py-0 px-0 opacity-0 border-t-0",
-  contentOpen: "max-h-[1000px] py-4 px-4 opacity-100",
+  contentOpen: "py-4 px-4 opacity-100",
   bottomBorder: "border-b border-brand-light-gray"
 } as const;
