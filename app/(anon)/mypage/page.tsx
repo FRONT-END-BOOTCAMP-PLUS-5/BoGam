@@ -19,6 +19,18 @@ interface GuideSummaryData {
   totalUnchecked: number;
 }
 
+// API 응답 데이터 타입 정의
+interface StepResultResponseData {
+  results: StepResultData[];
+  summary: {
+    totalMismatch: number;
+    totalMatch: number;
+    totalUnchecked: number;
+    stepCount: number;
+    stepNumber: number;
+  };
+}
+
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
   const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
@@ -33,34 +45,14 @@ export default function MyPage() {
   let guideSummary: GuideSummaryData = { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 };
 
   if (stepResultsData) {
-    const data = stepResultsData as any;
-    
-    if (data.results && data.summary) {
+    if ((stepResultsData as StepResultResponseData).results && (stepResultsData as StepResultResponseData).summary) {
       // {results: Array, summary: {...}} 구조
-      guideSteps = data.results;
+      const responseData = stepResultsData as StepResultResponseData;
+      guideSteps = responseData.results;
       guideSummary = {
-        totalMatch: data.summary.totalMatch || 0,
-        totalMismatch: data.summary.totalMismatch || 0,
-        totalUnchecked: data.summary.totalUnchecked || 0
-      };
-    } else if (Array.isArray(stepResultsData)) {
-      // StepResultData[] 구조
-      guideSteps = stepResultsData;
-      guideSummary = guideSteps.reduce(
-        (summary, step) => ({
-          totalMatch: summary.totalMatch + (step.match || 0),
-          totalMismatch: summary.totalMismatch + (step.mismatch || 0),
-          totalUnchecked: summary.totalUnchecked + (step.unchecked || 0),
-        }),
-        { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 }
-      );
-    } else if (stepResultsData && typeof stepResultsData === 'object') {
-      // 단일 StepResultData 구조
-      guideSteps = [stepResultsData as any];
-      guideSummary = {
-        totalMatch: data.match || 0,
-        totalMismatch: data.mismatch || 0,
-        totalUnchecked: data.unchecked || 0
+        totalMatch: responseData.summary.totalMatch || 0,
+        totalMismatch: responseData.summary.totalMismatch || 0,
+        totalUnchecked: responseData.summary.totalUnchecked || 0
       };
     }
   }
