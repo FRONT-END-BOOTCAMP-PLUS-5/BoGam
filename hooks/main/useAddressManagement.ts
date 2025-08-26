@@ -280,6 +280,7 @@ export const useAddressManagement = () => {
       try {
         // API 호출로 좌표 가져오기 (호는 사용하지 않음)
         const completeAddress = `${roadAddress} ${dongValue}동`;
+        console.log('completeAddress', completeAddress);
         const searchData = await placesApi.searchByKeyword(completeAddress);
 
         if (searchData && searchData.length > 0) {

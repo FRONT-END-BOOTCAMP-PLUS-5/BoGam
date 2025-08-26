@@ -12,12 +12,6 @@ export default function JeonseGuaranteeOutput({
   data,
   isPending,
 }: JeonseGuaranteeOutputProps) {
-  console.log('JeonseGuaranteeOutput 렌더링:', {
-    isPending,
-    hasData: !!data,
-    data,
-  });
-
   return (
     <div className={jeonseGuaranteeOutputStyles.container}>
       <div className={jeonseGuaranteeOutputStyles.header}>

@@ -87,8 +87,6 @@ export default function Step5Detail3Renderer({
               step5Detail3: 'match',
             },
           });
-
-          console.log('✅ Step 5-3 전체 JSON 저장 완료:', stepJsonData);
         } catch (error) {
           console.error('❌ Step 5-3 전체 JSON 저장 실패:', error);
           hasSavedStepResult.current = false;

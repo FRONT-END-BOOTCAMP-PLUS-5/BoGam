@@ -73,7 +73,10 @@ export default function ModalContent() {
   // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
   useEffect(() => {
     const shouldLoadJsonData =
-      !specialSteps.taxCert && !specialSteps.broker && !specialSteps.realEstate && !specialSteps.transactionSearch;
+      !specialSteps.taxCert &&
+      !specialSteps.broker &&
+      !specialSteps.realEstate &&
+      !specialSteps.transactionSearch;
     if (shouldLoadJsonData) {
       const loadContentData = async () => {
         try {
@@ -83,10 +86,6 @@ export default function ModalContent() {
           setStepContentData(contentModule.default);
           setDataType(contentModule.default.dataType || 'default');
         } catch (error) {
-          console.log(
-            `Step content data not found for step-${stepNumber}-${detail}, using default DataGrid`,
-            error
-          );
           setDataType('default');
         }
       };
@@ -197,7 +196,6 @@ export default function ModalContent() {
     stepContentData.dataType === 'CombinedContent' &&
     stepContentData.sections
   ) {
-
     const handlePageChange = (page: number) => {
       setCurrentPage(page);
       if (swiperRef.current) {
