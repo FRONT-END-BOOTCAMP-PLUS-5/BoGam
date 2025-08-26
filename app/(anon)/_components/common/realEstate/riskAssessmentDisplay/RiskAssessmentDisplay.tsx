@@ -6,6 +6,7 @@ import { styles } from './RiskAssessmentDisplay.styles';
 import { OriginalDocumentButton } from '@/(anon)/_components/common/realEstate/originalDocumentButton/OriginalDocumentButton';
 import { RiskAssessmentSaveButton } from './RiskAssessmentSaveButton';
 import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
+import { TaxCertApiResponse } from '@/(anon)/_components/common/taxCert/types';
 import {
   RiskAssessmentJsonData,
   isRiskAssessmentModified,
@@ -15,7 +16,7 @@ import { useRiskAssessmentStore } from '@libs/stores/riskAssessmentStore';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
-  displayResponse: ApiResponse | null;
+  displayResponse: ApiResponse | TaxCertApiResponse | null;
   checklistItems?: Array<{
     id: string;
     label: string;
@@ -52,9 +53,11 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       setIsModified(false);
     }
   });
-  
+
+  console.log('displayResponse', displayResponse);
+
   const { addJsonData, getJsonData } = useRiskAssessmentStore();
-  
+
   const [currentJsonData, setCurrentJsonData] =
     useState<RiskAssessmentJsonData | null>(null);
   const [originalJsonData, setOriginalJsonData] =
@@ -112,7 +115,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
   // JSON 데이터 초기화 (checklistItems와 독립적으로 실행)
   useEffect(() => {
-
     if (initialJsonData) {
       // 기존 currentJsonData가 있으면 유지, 없으면 initialJsonData로 시작
       const baseData = currentJsonData || initialJsonData;
@@ -163,7 +165,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           newJsonData[item.label] = item.checked ? 'match' : 'mismatch';
         }
       });
-
 
       setCurrentJsonData(newJsonData);
       setOriginalJsonData(newJsonData);
@@ -256,8 +257,11 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
     // 2. store의 전체 데이터를 가져와서 DB에 저장
     try {
       const currentStoreData = getJsonData();
-      console.log('🔍 RiskAssessmentDisplay: store의 전체 데이터를 DB에 저장:', currentStoreData);
-      
+      console.log(
+        '🔍 RiskAssessmentDisplay: store의 전체 데이터를 DB에 저장:',
+        currentStoreData
+      );
+
       await saveRiskAssessmentMutation.mutateAsync({
         stepNumber,
         detail,
@@ -474,7 +478,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
                           if (item.checked) {
                             return;
                           }
-
 
                           if (onChecklistItemChange) {
                             onChecklistItemChange(item.id, e.target.checked);

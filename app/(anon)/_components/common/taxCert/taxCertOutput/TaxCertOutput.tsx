@@ -32,6 +32,8 @@ export const TaxCertOutput = ({
     hasData,
   } = useTaxCertOutput({ response, loading, existsData });
 
+  console.log('displayResponse', displayResponse);
+
   const pathname = window.location.pathname;
   const stepUrlData = parseStepUrl(pathname);
   const stepNumber = stepUrlData?.stepNumber || 1;
@@ -56,9 +58,12 @@ export const TaxCertOutput = ({
 
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
     if (data.success) {
+      console.log('saveRiskAssessmentMutation', data);
       invalidateRiskDataCache();
     }
   });
+
+  console.log('savedRiskData', savedRiskData);
 
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
     useState(false);
@@ -76,11 +81,14 @@ export const TaxCertOutput = ({
 
   // 위험도 검사 hook 사용
   const taxCertData = displayResponse?.data?.taxCertJson;
+  console.log('taxCertData', taxCertData);
   const hookRiskAssessment = useTaxCertRiskAssessment(
     taxCertData || null,
     selectedAddress?.nickname,
     checklistState
   );
+
+  console.log('hookRiskAssessment', hookRiskAssessment);
 
   const handleChecklistItemChange = (itemId: string, checked: boolean) => {
     // 체크리스트 상태 업데이트
