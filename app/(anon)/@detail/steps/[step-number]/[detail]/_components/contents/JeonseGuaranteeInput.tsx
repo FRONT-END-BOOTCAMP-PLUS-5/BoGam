@@ -1,8 +1,8 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { GetJeonseGuaranteeRequestDto } from '@libs/api_front/jeonseGuarantee.api';
 import {
-  REGION_OPTIONS,
+  // REGION_OPTIONS,
   MARRIAGE_OPTIONS,
   HOUSE_COUNT_OPTIONS,
   FIELD_ERROR_MESSAGES,
@@ -29,7 +29,7 @@ interface JeonseGuaranteeInputProps {
     myTotDebtAmt: 'none' | 'direct';
     mmrtAmt: 'none' | 'direct';
   };
-  isPending: boolean;
+  // isPending: boolean;
   error: string | null;
   onInputChange: (
     field: keyof GetJeonseGuaranteeRequestDto,
@@ -46,7 +46,6 @@ export default function JeonseGuaranteeInput({
   formData,
   errors,
   inputModes,
-  isPending,
   error,
   onInputChange,
   onInputModeChange,
@@ -69,10 +68,7 @@ export default function JeonseGuaranteeInput({
     <div>
       <FormContainer onSubmit={onSubmit}>
         <div className={styles.header}>
-          <h3 className={styles.title}>
-            전세자금보증 금액 조회
-          </h3>
-
+          <h3 className={styles.title}>전세자금보증 금액 조회</h3>
         </div>
         <div className={styles.formContainer}>
           {/* 전세보증금 */}
@@ -216,10 +212,7 @@ export default function JeonseGuaranteeInput({
                 className={styles.monthlyRentSelect}
               />
               {inputModes.mmrtAmt === 'direct' && (
-                <div
-                  className={styles.monthlyRentInputWrapper}
-                >
-
+                <div className={styles.monthlyRentInputWrapper}>
                   <TextInput
                     type='text'
                     placeholder={FIELD_PLACEHOLDERS.mmrtAmt}

@@ -33,7 +33,7 @@ interface ModalContentProps {
   onShowSimpleAuthModal: () => void;
   onSimpleAuthApprove: () => void;
   onSimpleAuthCancel: () => void;
-  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef>;
+  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
 }
 
 export default function ModalContent({
@@ -111,17 +111,14 @@ export default function ModalContent({
   };
 
   // Swiper 콘텐츠 렌더링 함수
-  const renderSwiperContent = (
-    pageData: LegacyContentSection[],
-    pageIndex: number
-  ) => {
+  const renderSwiperContent = (pageData: LegacyContentSection[]) => {
     switch (dataType) {
       case 'TextOnly':
         return <TextOnly data={pageData} />;
       case 'List':
         return (
           <List
-            title={(pageData[0] as any)?.title}
+            title={(pageData[0] as { title?: string })?.title}
             data={pageData as unknown as string[]}
           />
         );
@@ -275,8 +272,12 @@ export default function ModalContent({
                       {section.type === 'List' && (
                         <List
                           title={section.title}
-                          data={section.data as Array<{ title: string; content: string }>}
-
+                          data={
+                            section.data as Array<{
+                              title: string;
+                              content: string;
+                            }>
+                          }
                         />
                       )}
                       {section.type === 'DataGrid' && (
@@ -381,7 +382,7 @@ export default function ModalContent({
                     className={styles.mainContent}
                     style={{ paddingBottom: '80px' }}
                   >
-                    {renderSwiperContent(pageData, pageIndex)}
+                    {renderSwiperContent(pageData)}
                   </div>
                 </SwiperSlide>
               )

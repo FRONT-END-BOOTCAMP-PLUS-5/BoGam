@@ -10,16 +10,6 @@ import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/Ci
 import { CheckListGroupSection } from './types';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
-interface ChecklistItem {
-  id: string;
-  text: string;
-}
-
-interface ChecklistGroup {
-  title: string;
-  items: ChecklistItem[];
-}
-
 type ContentSection = CheckListGroupSection['data'][0];
 
 interface CheckListGroupProps {
@@ -107,9 +97,9 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
 
       // 체크리스트 항목이 실제로 존재할 때만 초기화 진행
       if (hasChecklistItems && Object.keys(uncheckedDetails).length > 0) {
-        const logMessage = isError
-          ? '400 에러 시 초기화 진행'
-          : '빈 jsonDetails 시 초기화 진행';
+        // const logMessage = isError
+        //   ? '400 에러 시 초기화 진행'
+        //   : '빈 jsonDetails 시 초기화 진행';
 
         // 로컬 상태도 즉시 업데이트
         setLocalStepDetails(uncheckedDetails);

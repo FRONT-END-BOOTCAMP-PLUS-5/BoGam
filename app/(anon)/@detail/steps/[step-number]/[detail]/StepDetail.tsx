@@ -17,7 +17,7 @@ interface StepDetailProps {
 export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
   const taxCertWrapperRef = useRef<TaxCertWrapperRef | null>(null);
-  
+
   const {
     dragState,
     modalRef,
@@ -27,7 +27,12 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     handleMouseDown,
   } = useDragToClose(isOpen, onClose);
 
-  const { isOpen: isModalOpen, content, closeModal, confirmModal, cancelModal } = useModalStore();
+  const {
+    isOpen: isModalOpen,
+    content,
+    confirmModal,
+    cancelModal,
+  } = useModalStore();
 
   // 간편인증 모달 관련 핸들러들
   const handleShowSimpleAuthModal = () => {
