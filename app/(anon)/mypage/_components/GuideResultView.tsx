@@ -77,11 +77,31 @@ export default function GuideResultView({ guideSteps }: GuideResultViewProps) {
         <div className={styles.lastModified}>최종 수정 일자: {new Date(latestUpdatedAt).toLocaleDateString('ko-KR')}</div>
       </div>
       
-      {/* 첫 번째 아코디언 위에 CircularIconBadge 3개 */}
-      <div className={styles.iconBadgeContainer}>
-        <CircularIconBadge type="match" size="sm" weight="thick" />
-        <CircularIconBadge type="mismatch" size="sm" weight="thick" />
-        <CircularIconBadge type="unchecked" size="sm" weight="thick" />
+      {/* 첫 번째 아코디언 위에 CircularIconBadge 3개 - ResultAccordion의 numbers와 정확히 정렬 */}
+      <div className={styles.iconBadgeHeader}>
+        {/* ResultAccordion의 title 영역과 동일한 구조 - 투명하게 만들어서 안 보이게 */}
+        <div className={styles.iconBadgeTitle}>
+          <span className={styles.iconBadgeStageNumber}>1단계</span>
+          <span className={styles.iconBadgeSubtitle}>집 고를 때</span>
+        </div>
+        
+        {/* numbers 영역에 정확히 정렬 - ResultAccordion과 동일한 구조 */}
+        <div className={styles.iconBadgeNumbersContainer}>
+          <div className={styles.iconBadgeNumbers}>
+            <div className="pointer-events-none">
+              <CircularIconBadge type="match" size="xsm" weight="thick" />
+            </div>
+            <div className="pointer-events-none">
+              <CircularIconBadge type="mismatch" size="xsm" weight="thick" />
+            </div>
+            <div className="pointer-events-none">
+              <CircularIconBadge type="unchecked" size="xsm" weight="thick" />
+            </div>
+          </div>
+          
+          {/* ResultAccordion의 icon 영역과 동일한 크기로 공간 확보 */}
+          <div className={styles.iconBadgeIcon}></div>
+        </div>
       </div>
       
       <div className={styles.guideSteps}>

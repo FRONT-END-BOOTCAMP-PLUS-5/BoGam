@@ -1,6 +1,6 @@
 export const styles = {
   // 컨테이너
-  container: "bg-brand-white rounded-lg border border-brand-light-gray shadow-sm p-6 max-w-md mx-auto",
+  container: "bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full",
   
   // 제목
   title: "text-base font-semibold text-brand-black mb-4",
@@ -8,11 +8,11 @@ export const styles = {
   // 게이지 컨테이너
   gaugeContainer: "flex flex-col items-center mb-6 relative",
   
-  // 구분선
-  divider: "border-t border-brand-light-gray my-4 mx-auto w-96",
+  // 구분선 - 모바일 반응형으로 수정
+  divider: "border-t border-brand-light-gray my-4 mx-auto w-full max-w-96",
   
-  // 차트 래퍼
-  chartWrapper: "relative w-64 h-32",
+  // 차트 래퍼 - 모바일 반응형으로 수정
+  chartWrapper: "relative w-full max-w-64 h-32",
   
   // 중앙 텍스트
   centerText: "absolute inset-0 flex flex-col items-center justify-end items-end",
@@ -41,8 +41,8 @@ export const styles = {
   // 안전도 단계 아래쪽
   safetyLevelBottom: "absolute bottom-0 left-0 right-0 h-1/2 opacity-30",
   
-  // 통계 컨테이너
-  statsContainer: "grid grid-cols-5 gap-0 items-center [grid-template-columns:1fr_16px_1fr_16px_1fr]",
+  // 통계 컨테이너 - 모바일 반응형으로 수정
+  statsContainer: "grid grid-cols-5 gap-0 items-center [grid-template-columns:1fr_16px_1fr_16px_1fr] w-full",
   
   // 통계 카드
   statCard: "flex flex-col items-center text-center py-2",
