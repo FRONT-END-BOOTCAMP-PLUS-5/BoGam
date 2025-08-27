@@ -92,11 +92,15 @@ export const useMainPageModule = () => {
         // 새로 저장된 주소를 자동으로 선택
         selectAddress(newAddressWithId);
 
-        // 메인 상태 업데이트 (호는 초기화하지 않음)
+        // 메인 상태 업데이트 (호는 초기화)
         mainPageState.setRoadAddress(data.roadAddress || '');
         mainPageState.setSearchQuery(data.address || '');
         mainPageState.setSavedLawdCode(data.bcode.substring(0, 5) || '');
         mainPageState.setShowPostcode(false);
+
+        // 새 주소 추가 시 호 초기화
+        const { setHo } = useUserAddressStore.getState();
+        setHo('');
       } else {
         openModal({
           title: '알림',

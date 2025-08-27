@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useModalStore } from '@libs/stores/modalStore';
@@ -46,6 +46,7 @@ export const AddressConfirmationTab: React.FC = () => {
   // 주소에서 동/호 파싱하는 함수
   const parseAddressForDongHo = (address: string) => {
     if (!address) return { address: '', dong: '', ho: '' };
+    console.log('parseAddressForDongHo address', address);
 
     // 정규식으로 동/호 패턴 찾기
     // 패턴: "xx동 xx호" 형태
@@ -73,8 +74,11 @@ export const AddressConfirmationTab: React.FC = () => {
     };
   };
 
-  // 주소 파싱 결과
-  const parsedAddress = parseAddressForDongHo(displaySearchQuery);
+  // 주소 파싱 결과를 useMemo로 메모이제이션
+  const parsedAddress = useMemo(() => {
+    return parseAddressForDongHo(displaySearchQuery);
+  }, [displaySearchQuery]);
+
   console.log('parsedAddress.dong', parsedAddress.dong);
   console.log('dong', dong);
   console.log('parsedAddress.ho', parsedAddress.ho);
@@ -91,16 +95,18 @@ export const AddressConfirmationTab: React.FC = () => {
     if (parsedAddress.dong) {
       console.log('setDong 실행:', parsedAddress.dong);
       setDong(parsedAddress.dong);
-      // 강제 리렌더링
-      forceUpdate({});
     }
     if (parsedAddress.ho) {
       console.log('setHo 실행:', parsedAddress.ho);
       setHo(parsedAddress.ho);
-      // 강제 리렌더링
-      forceUpdate({});
     }
-  }, [selectedAddress, parsedAddress.dong, parsedAddress.ho]); // dong, ho 의존성 제거
+  }, [
+    displaySearchQuery,
+    parsedAddress.dong,
+    parsedAddress.ho,
+    setDong,
+    setHo,
+  ]);
 
   return (
     <div className={styles.container}>

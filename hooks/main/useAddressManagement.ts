@@ -84,9 +84,9 @@ export const useAddressManagement = () => {
 
       // 드롭다운 주소로 메인 상태 업데이트
       setRoadAddress(baseAddress);
-      // 동만 업데이트 (호는 기존 값 유지)
+      // 동만 업데이트 (호는 AddressConfirmationTab에서 관리)
       setDong(extractedDong || '');
-      setHo('');
+      // setHo('') 제거 - AddressConfirmationTab에서 호를 관리하도록 함
       setSearchQuery(storeSelectedAddress.completeAddress);
       setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
 
