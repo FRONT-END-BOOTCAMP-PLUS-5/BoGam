@@ -61,9 +61,15 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
     }
   });
 
-  // 초기 체크리스트 상태 설정 (DB 데이터와 매핑)
+  // 초기 체크리스트 상태 설정 (DB 데이터와 매핑) - 한 번만 실행
   useEffect(() => {
-    if (data.checklistItems && stepResultData) {
+    console.log('checklistState', checklistState);
+    console.log('stepResultData', stepResultData);
+    if (
+      data.checklistItems &&
+      stepResultData &&
+      Object.keys(checklistState).length === 0
+    ) {
       const initialState: Record<string, 'match' | 'mismatch'> = {};
 
       // DB에서 가져온 데이터가 있으면 사용, 없으면 기본값 사용
@@ -75,7 +81,9 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
         ? stepResultData.jsonDetails
         : {};
 
+      console.log('🔍 TaxCertIntro: stepResultData 원본:', stepResultData);
       console.log('🔍 TaxCertIntro: DB에서 가져온 데이터:', savedData);
+      console.log('🔍 TaxCertIntro: savedData 키들:', Object.keys(savedData));
 
       data.checklistItems.forEach((item) => {
         // JSON 파일의 한글 키를 item.id의 영어 키로 매핑
@@ -116,7 +124,7 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
         initialState
       );
     }
-  }, [data.checklistItems, stepResultData]);
+  }, [data.checklistItems, stepResultData]); // checklistState 의존성 제거
 
   // 체크리스트 상태 변경 핸들러
   const handleChecklistChange = async (
@@ -244,14 +252,17 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
                     <input
                       type='checkbox'
                       checked={checklistState[item.id] === 'match'}
-                      onChange={(e) => {
-                        const newValue = e.target.checked
-                          ? 'match'
-                          : 'mismatch';
+                      onChange={() => {
+                        const newValue =
+                          checklistState[item.id] === 'match'
+                            ? 'mismatch'
+                            : 'match';
                         handleChecklistChange(item.id, newValue);
                       }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
                       className='w-4 h-4 text-brand-blue border-brand-black focus:ring-brand-blue appearance-none rounded border-2 checked:bg-brand-blue checked:border-brand-blue'
-                      onClick={(e) => e.stopPropagation()}
                     />
                     <span className='text-sm text-brand-black'>
                       {checklistState[item.id] === 'match'

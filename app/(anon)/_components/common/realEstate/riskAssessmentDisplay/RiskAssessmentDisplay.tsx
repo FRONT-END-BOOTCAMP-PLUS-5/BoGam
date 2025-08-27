@@ -55,6 +55,8 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   });
 
   console.log('displayResponse', displayResponse);
+  console.log('riskAssessmentDisplay', riskAssessment);
+  console.log('initialJsonData', initialJsonData);
 
   const { addJsonData, getJsonData } = useRiskAssessmentStore();
 
@@ -146,6 +148,13 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
       setCurrentJsonData(processedJsonData);
       setOriginalJsonData(processedJsonData);
+
+      // 새로고침 후 DB에서 불러온 데이터를 store에 저장
+      console.log(
+        '🔄 RiskAssessmentDisplay: DB에서 불러온 데이터를 store에 저장:',
+        processedJsonData
+      );
+      addJsonData(processedJsonData);
     } else {
       // currentJsonData를 riskAssessment 데이터로 초기화
       const newJsonData: RiskAssessmentJsonData = {};
@@ -165,11 +174,10 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           newJsonData[item.label] = item.checked ? 'match' : 'mismatch';
         }
       });
-
       setCurrentJsonData(newJsonData);
       setOriginalJsonData(newJsonData);
     }
-  }, [initialJsonData, riskAssessment.keywordChecks]);
+  }, [initialJsonData, riskAssessment.keywordChecks, addJsonData]);
 
   // 체크리스트 상태 복원 (별도 useEffect로 무한 루프 방지)
   useEffect(() => {
@@ -194,6 +202,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           }
         });
       }
+      addJsonData(initialJsonData as RiskAssessmentJsonData);
     }
   }, [initialJsonData]); // initialJsonData만 의존성으로 설정
 
@@ -256,6 +265,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
     // 2. 현재 단계의 데이터만 DB에 저장 (기존 데이터 덮어쓰기)
     try {
+      const currentJsonData = getJsonData();
       console.log(
         '🔍 RiskAssessmentDisplay: 현재 단계 데이터만 DB에 저장:',
         latestJsonData
@@ -264,7 +274,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       await saveRiskAssessmentMutation.mutateAsync({
         stepNumber,
         detail,
-        jsonData: latestJsonData, // store의 전체 데이터가 아닌 현재 단계 데이터만
+        jsonData: currentJsonData, // store의 전체 데이터가 아닌 현재 단계 데이터만
         domain,
         userAddressNickname,
       });

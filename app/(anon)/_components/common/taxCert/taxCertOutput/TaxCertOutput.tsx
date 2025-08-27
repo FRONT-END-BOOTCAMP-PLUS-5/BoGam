@@ -26,6 +26,7 @@ export const TaxCertOutput = ({
   existsData,
 }: TaxCertOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
+
   const {
     displayResponse,
     riskAssessment,
@@ -34,6 +35,13 @@ export const TaxCertOutput = ({
   } = useTaxCertOutput({ response, loading, existsData });
 
   console.log('displayResponse', displayResponse);
+  console.log('displayResponse.data', displayResponse?.data);
+  console.log('displayResponse.data.data', displayResponse?.data?.data);
+  console.log(
+    'displayResponse.data.data.resOriGinalData1',
+    (displayResponse?.data as { data?: { resOriGinalData1?: string } })?.data
+      ?.resOriGinalData1
+  );
 
   const pathname = window.location.pathname;
   const stepUrlData = parseStepUrl(pathname);
@@ -65,6 +73,8 @@ export const TaxCertOutput = ({
   });
 
   console.log('savedRiskData', savedRiskData);
+  console.log('savedRiskData?.jsonData', savedRiskData?.jsonData);
+  console.log('savedRiskData?.domain', savedRiskData?.domain);
 
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
     useState(false);
@@ -127,7 +137,13 @@ export const TaxCertOutput = ({
   useEffect(() => {
     const performRiskAssessment = async () => {
       // taxCert 도메인의 step-result 데이터가 있으면 위험도 검사 실행하지 않음
-      if (savedRiskData?.jsonData && savedRiskData?.domain === 'taxCert') {
+      if (
+        savedRiskData?.jsonData &&
+        Object.keys(savedRiskData.jsonData).length > 0 &&
+        savedRiskData?.domain === 'taxCert'
+      ) {
+        console.log('✅ 저장된 위험도 검사 데이터가 있어서 자동 실행하지 않음');
+        console.log('저장된 데이터:', savedRiskData.jsonData);
         return;
       }
 
@@ -144,23 +160,7 @@ export const TaxCertOutput = ({
           hasPerformedRiskAssessment.current = true;
           setIsPerformingRiskAssessment(true);
 
-          // 납세증명서 위험도 검사 시작 시 항상 기존 데이터 초기화
-          console.log('납세증명서 위험도 검사 시작 - 기존 데이터 초기화');
-
-          // 1. 기존 데이터를 완전히 초기화
-          await saveRiskAssessmentMutation.mutateAsync({
-            stepNumber,
-            detail,
-            jsonData: {},
-            domain: 'taxCert',
-            userAddressNickname: selectedAddress.nickname,
-          });
-
-          // 2. 캐시 무효화
-          invalidateRiskDataCache();
-
-          // 3. 잠시 대기
-          await new Promise((resolve) => setTimeout(resolve, 200));
+          console.log('🔄 새로운 납세증명서 데이터로 위험도 검사 시작');
 
           // hook에서 계산된 위험도 검사 결과 사용
           setCalculatedRiskAssessment(
@@ -207,7 +207,7 @@ export const TaxCertOutput = ({
     detail,
     saveRiskAssessmentMutation,
     invalidateRiskDataCache,
-    hookRiskAssessment,
+    // hookRiskAssessment 제거 - 무한 루프 방지
   ]);
 
   // 로딩 중일 때 (새로운 데이터 로딩 또는 위험도 검사 실행 중)
