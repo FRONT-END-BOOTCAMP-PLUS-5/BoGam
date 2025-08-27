@@ -322,7 +322,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       }
     }
   };
-
+console.log('displayResponse',displayResponse)
   return (
     <div className={styles.riskSection}>
       <div className={styles.headerContainer}>
