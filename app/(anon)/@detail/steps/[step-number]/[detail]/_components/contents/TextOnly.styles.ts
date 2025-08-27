@@ -6,7 +6,7 @@ const styles = {
   sectionSubtitle: 'text-base font-medium mb-2 text-black',
   subtitlesContainer: 'mb-4 space-y-2',
   contents: 'mb-3',
-  contentItem: 'text-base mb-1 last:mb-0 text-black leading-relaxed',
+  contentItem: 'block text-base mb-1 last:mb-0 text-black leading-relaxed',
   contentSectionsContainer: 'space-y-6',
   contentSection: 'mb-6',
   summary: 'mt-3 p-4 bg-brand/10 border border-brand/20 rounded-lg text-base text-brand-black font-medium',
