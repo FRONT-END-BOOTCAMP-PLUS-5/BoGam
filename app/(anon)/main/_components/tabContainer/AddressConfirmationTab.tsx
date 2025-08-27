@@ -130,7 +130,7 @@ export const AddressConfirmationTab: React.FC = () => {
           variant='primary'
           className={styles.searchButton}
         >
-          검색
+          검색하기
         </Button>
       </div>
 
@@ -173,7 +173,7 @@ export const AddressConfirmationTab: React.FC = () => {
           variant='primary'
           className={styles.saveButton}
         >
-          저장하기
+          주소 저장하기
         </Button>
       </div>
 

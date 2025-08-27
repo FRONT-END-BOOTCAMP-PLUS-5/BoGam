@@ -24,7 +24,7 @@ export const styles = {
 
   // 버튼 행
   confirmButton: '!mt-0 w-auto px-3 !py-2 !h-auto text-xs rounded shadow-sm',
-  saveButton: '!mt-0 w-full px-2 py-1 text-xs',
+  saveButton: '!mt-0 w-full px-2 py-1',
 
   // 동/호 입력 컨테이너
   dongHoContainer: 'flex items-center gap-1',
