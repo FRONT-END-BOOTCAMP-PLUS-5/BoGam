@@ -289,9 +289,6 @@ export const TaxCertOutput = ({
 
   return (
     <div>
-      <div className={styles.buttonContainer}>
-        <OriginalDocumentButton displayResponse={displayResponse} />
-      </div>
       <RiskAssessmentDisplay
         riskAssessment={convertedRiskAssessment}
         displayResponse={displayResponse}

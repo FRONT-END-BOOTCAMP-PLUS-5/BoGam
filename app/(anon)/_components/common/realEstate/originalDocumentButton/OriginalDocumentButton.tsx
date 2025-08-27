@@ -24,23 +24,28 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
             ?.realEstateJson?.data
         : undefined;
     const newData = displayResponse?.data?.data;
-    const data = oldData || newData;
+    const taxCertData = (displayResponse?.data as any)?.taxCertJson?.data;
+    const data = oldData || newData || taxCertData;
 
     if (
       data &&
       typeof data === 'object' &&
-      'resOriGinalData' in data &&
-      typeof (data as RealEstateData).resOriGinalData === 'string'
+      ('resOriGinalData' in data || 'resOriGinalData1' in data) &&
+      (typeof (data as RealEstateData).resOriGinalData === 'string' ||
+        typeof (data as any).resOriGinalData1 === 'string')
     ) {
       setIsLoading(true);
       try {
-        const pdfData = (data as RealEstateData).resOriGinalData!;
-        const blob = new Blob(
-          [Uint8Array.from(atob(pdfData), (c) => c.charCodeAt(0))],
-          { type: 'application/pdf' }
-        );
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
+        // resOriGinalData 또는 resOriGinalData1에서 PDF 데이터 가져오기
+        const pdfData = (data as RealEstateData).resOriGinalData || (data as any).resOriGinalData1;
+        if (pdfData) {
+          const blob = new Blob(
+            [Uint8Array.from(atob(pdfData), (c) => c.charCodeAt(0))],
+            { type: 'application/pdf' }
+          );
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank');
+        }
       } catch (error) {
         console.error('PDF 열기 중 오류 발생:', error);
         alert('PDF 파일을 열 수 없습니다.');
@@ -49,7 +54,7 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
       }
     }
   };
-
+  
   // 기존 데이터 구조 또는 새로운 데이터 구조에서 PDF 데이터 존재 여부 확인
   const oldData =
     'realEstateJson' in (displayResponse?.data || {})
@@ -57,13 +62,15 @@ export const OriginalDocumentButton: React.FC<OriginalDocumentButtonProps> = ({
           ?.realEstateJson?.data
       : undefined;
   const newData = displayResponse?.data?.data;
-  const data = oldData || newData;
+  const taxCertData = (displayResponse?.data as any)?.taxCertJson?.data;
+  const data = oldData || newData || taxCertData;
   const hasOriginalData =
     data &&
     typeof data === 'object' &&
-    'resOriGinalData' in data &&
-    typeof (data as RealEstateData).resOriGinalData === 'string' &&
-    (data as RealEstateData).resOriGinalData;
+    ('resOriGinalData' in data || 'resOriGinalData1' in data) &&
+    (typeof (data as RealEstateData).resOriGinalData === 'string' ||
+      typeof (data as any).resOriGinalData1 === 'string') &&
+    ((data as RealEstateData).resOriGinalData || (data as any).resOriGinalData1);
 
   if (!hasOriginalData) {
     return null;
