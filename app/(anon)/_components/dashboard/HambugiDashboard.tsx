@@ -15,8 +15,6 @@ import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './HambugiDashboard.styles';
 import { STEP_TITLES } from '@libs/constants/stepDetailTitles';
 
-
-
 interface HambugiDashboardProps {
   onClose: () => void;
 }
@@ -29,20 +27,30 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   const clearUser = useUserStore((state) => state.clearUser);
   const clearUserAddressStore = useUserAddressStore((state) => state.clearAll);
   const setStep = useRootStep((state) => state.setStep);
-  
+
   // 사용자 주소 정보
   const { selectedAddress } = useUserAddressStore();
-  
-  // Step Results 데이터 가져오기
-  const { data: stepResultsData, isLoading, isError } = useGetStepResult({
+
+  // Step Results 데이터 가져오기 - selectedAddress가 있을 때만 실행
+  const {
+    data: stepResultsData,
+    isLoading,
+    isError,
+  } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
     stepNumber: '',
-    detail: ''
+    detail: '',
   });
-  
+
   // guideSteps 데이터 처리 - data가 배열인 경우 그대로 사용, 객체인 경우 results 배열 추출
-  const guideSteps: GuideStepData[] = Array.isArray(stepResultsData) ? stepResultsData : 
-    (stepResultsData && typeof stepResultsData === 'object' && 'results' in stepResultsData && Array.isArray(stepResultsData.results) ? stepResultsData.results : []);
+  const guideSteps: GuideStepData[] = Array.isArray(stepResultsData)
+    ? stepResultsData
+    : stepResultsData &&
+      typeof stepResultsData === 'object' &&
+      'results' in stepResultsData &&
+      Array.isArray(stepResultsData.results)
+    ? stepResultsData.results
+    : [];
   // currentStep에 따라 isActive 동적 설정
   const steps = useMemo(
     () => [
@@ -82,24 +90,39 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
         isActive: currentStep === 6,
         isCompleted: false,
       },
-      { 
-        id: 7, 
-        title: STEP_TITLES[6], 
-        isActive: currentStep === 7, 
-        isCompleted: false 
+      {
+        id: 7,
+        title: STEP_TITLES[6],
+        isActive: currentStep === 7,
+        isCompleted: false,
       },
     ],
     [currentStep]
   );
 
-
+  // selectedAddress가 없을 때 처리
+  if (!selectedAddress?.nickname) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          <div className={styles.errorContent}>
+            <div className={styles.errorIcon}>📍</div>
+            <h2 className={styles.errorTitle}>주소를 선택해주세요</h2>
+            <p className={styles.errorMessage}>
+              대시보드를 보려면 먼저 주소를 선택해주세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // 로딩 상태 처리
   if (isLoading) {
     return (
-      <LoadingOverlay 
+      <LoadingOverlay
         isVisible={true}
-        title="데이터를 불러오는 중입니다..."
+        title='데이터를 불러오는 중입니다...'
         currentStep={1}
         totalSteps={1}
       />
@@ -114,9 +137,11 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>데이터를 불러오는데 실패했습니다.</p>
-            <button 
-              onClick={() => window.location.reload()} 
+            <p className={styles.errorMessage}>
+              데이터를 불러오는데 실패했습니다.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
               className={styles.errorButton}
             >
               다시 시도
@@ -138,7 +163,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   };
 
   const handleLogout = async () => {
-    
     try {
       // 1. 클라이언트 상태 초기화
       clearUser();
@@ -160,7 +184,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
 
       // 5. 대시보드 닫기
       onClose();
-      
+
       // 6. 홈페이지로 강제 리디렉트 (브라우저 새로고침)
       window.location.href = '/';
     } catch (error) {
