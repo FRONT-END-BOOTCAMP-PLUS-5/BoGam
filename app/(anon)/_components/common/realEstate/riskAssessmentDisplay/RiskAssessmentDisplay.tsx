@@ -202,9 +202,8 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
           }
         });
       }
-      addJsonData(initialJsonData as RiskAssessmentJsonData);
     }
-  }, [initialJsonData]); // initialJsonData만 의존성으로 설정
+  }, [initialJsonData, onChecklistItemChange, checklistItems]); // 의존성 배열 수정
 
   // 수정 여부 확인
   useEffect(() => {
@@ -322,7 +321,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       }
     }
   };
-console.log('displayResponse',displayResponse)
   return (
     <div className={styles.riskSection}>
       <div className={styles.headerContainer}>
