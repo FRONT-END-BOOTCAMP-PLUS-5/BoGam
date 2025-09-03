@@ -25,15 +25,15 @@ interface CodefConfig {
 export const CODEF_CONFIG = {
   // 데모 버전 (테스트용)
   demo: {
-    clientId: process.env.CODEF_DEMO_CLIENT_ID_NO,
-    clientSecret: process.env.CODEF_DEMO_CLIENT_SECRET_NO,
+    clientId: process.env.CODEF_DEMO_CLIENT_ID_KIM,
+    clientSecret: process.env.CODEF_DEMO_CLIENT_SECRET_KIM,
     apiUrl: 'https://development.codef.io',
     oauthBaseUrl: 'https://oauth.codef.io',
     timeout: parseInt(process.env.CODEF_TIMEOUT || '30000'),
   },
 
   // 공개키 (필수)
-  publicKey: process.env.CODEF_PUBLIC_KEY_NO,
+  publicKey: process.env.CODEF_PUBLIC_KEY_KIM,
 
   // 현재 사용할 환경 (데모만 사용)
   environment: 'demo' as const,
@@ -81,15 +81,15 @@ export function validateCodefConfig(config: CodefConfig) {
   const errors: string[] = [];
 
   if (!config.oauth.clientId) {
-    errors.push('CODEF_DEMO_CLIENT_ID_JO 환경변수가 설정되지 않았습니다.');
+    errors.push('CODEF_DEMO_CLIENT_ID_KIM 환경변수가 설정되지 않았습니다.');
   }
 
   if (!config.oauth.clientSecret) {
-    errors.push('CODEF_DEMO_CLIENT_SECRET_JO 환경변수가 설정되지 않았습니다.');
+    errors.push('CODEF_DEMO_CLIENT_SECRET_KIM 환경변수가 설정되지 않았습니다.');
   }
 
   if (!config.encryption.publicKey) {
-    errors.push('CODEF_PUBLIC_KEY_JO 환경변수가 설정되지 않았습니다.');
+    errors.push('CODEF_PUBLIC_KEY_KIM 환경변수가 설정되지 않았습니다.');
   }
 
   return {
