@@ -1,4 +1,4 @@
-<img src="./public/images/Logo.png" width="280"/>
+<img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/images/Logo.png" width="280"/>
 
 # **전세보감**
 
@@ -417,57 +417,57 @@ scripts/                 # 빌드 스크립트
 
 ### 🖥 화면 구성
 
-| 온보딩 페이지                                                 |
-| ------------------------------------------------------------- |
-| <img src="./public/previews/onboardingpage.gif" width="280"/> |
+| 온보딩 페이지                                                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/onboardingpage.gif" width="280"/> |
 
-| 메인 페이지                                             |
-| ------------------------------------------------------- |
-| <img src="./public/previews/mainpage.png" width="280"/> |
+| 메인 페이지                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/mainpage.png" width="280"/> |
 
-| 대단계 페이지                                               |
-| ----------------------------------------------------------- |
-| <img src="./public/previews/bigsteppage.gif" width="300" /> |
+| 대단계 페이지                                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/bigsteppage.gif" width="300" /> |
 
-| 중단계 페이지                                                  |
-| -------------------------------------------------------------- |
-| <img src="./public/previews/middlesteppage.gif" width="300" /> |
+| 중단계 페이지                                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/middlesteppage.gif" width="300" /> |
 
-| 소단계 페이지                                                 |
-| ------------------------------------------------------------- |
-| <img src="./public/previews/smallsteppage.gif" width="300" /> |
+| 소단계 페이지                                                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/smallsteppage.gif" width="300" /> |
 
-| 로그인 페이지                                         | 회원가입 페이지                                            |
-| ----------------------------------------------------- | ---------------------------------------------------------- |
-| <img src="./public/previews/login.png" width="300" /> | <img src="./public/previews/signuppage.png" width="300" /> |
+| 로그인 페이지                                                                                                              | 회원가입 페이지                                                                                                                 |
+| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/login.png" width="300" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/signuppage.png" width="300" /> |
 
-| 대시보드 페이지                                               | 마이 페이지                                            |
-| ------------------------------------------------------------- | ------------------------------------------------------ |
-| <img src="./public/previews/dashboardpage.png" width="300" /> | <img src="./public/previews/mypage.png" width="300" /> |
+| 대시보드 페이지                                                                                                                    | 마이 페이지                                                                                                                 |
+| ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/dashboardpage.png" width="300" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/mypage.png" width="300" /> |
 
-| 등기부등본 발급 입력 부분                                       | 납세증명서 발급 입력 부분                                    | 부동산 중개업자 입력 부분                                   |
-| --------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
-| <img src="./public/previews/realestateinput.png" width="300" /> | <img src="./public/previews/taxcertinput.png" width="300" /> | <img src="./public/previews/brokerinput.png" width="300" /> |
+| 등기부등본 발급 입력 부분                                                                                                            | 납세증명서 발급 입력 부분                                                                                                         | 부동산 중개업자 입력 부분                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/realestateinput.png" width="300" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/taxcertinput.png" width="300" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/brokerinput.png" width="300" /> |
 
-| 등기부등본 데이터 시각화                                         | 납세 증명서 데이터 시각화                                     | 부동산 중개업자 데이터 시각화                                |
-| ---------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
-| <img src="./public/previews/realestateresult.png" width="300" /> | <img src="./public/previews/taxcertresult.png" width="300" /> | <img src="./public/previews/brokerresult.png" width="300" /> |
+| 등기부등본 데이터 시각화                                                                                                              | 납세 증명서 데이터 시각화                                                                                                          | 부동산 중개업자 데이터 시각화                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/realestateresult.png" width="300" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/taxcertresult.png" width="300" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/brokerresult.png" width="300" /> |
 
-| 실거래가 입력 부분                                                   | 실거래가 확인 모달                                                   | 실거래가 데이터 시각화                                                |
-| -------------------------------------------------------------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| <img src="./public/previews/realtransactioninput.png" width="280" /> | <img src="./public/previews/realtransactionmodal.png" width="280" /> | <img src="./public/previews/realtransactionresult.png" width="280" /> |
+| 실거래가 입력 부분                                                                                                                        | 실거래가 확인 모달                                                                                                                        | 실거래가 데이터 시각화                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/realtransactioninput.png" width="280" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/realtransactionmodal.png" width="280" /> | <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/realtransactionresult.png" width="280" /> |
 
-| 신청 방법 가이드                                                   |
-| ------------------------------------------------------------------ |
-| <img src="./public/previews/smallstepchecklist.png" width="280" /> |
+| 신청 방법 가이드                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/smallstepchecklist.png" width="280" /> |
 
-| 전세금 반환 보증금 계산 입력 부분                            |
-| ------------------------------------------------------------ |
-| <img src="./public/previews/accountinput.png" width="280" /> |
+| 전세금 반환 보증금 계산 입력 부분                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/accountinput.png" width="280" /> |
 
-| 전세금 반환 보증금 계산 데이터 시각화                   |
-| ------------------------------------------------------- |
-| <img src="./public/previews/account.png" width="280" /> |
+| 전세금 반환 보증금 계산 데이터 시각화                                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------------- |
+| <img src="https://raw.githubusercontent.com/FRONT-END-BOOTCAMP-PLUS-5/BoGam/main/public/previews/account.png" width="280" /> |
 
 <br>
 
