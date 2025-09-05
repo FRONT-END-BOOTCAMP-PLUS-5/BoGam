@@ -117,6 +117,211 @@ $ npm run dev
 
 <br>
 
+### 🎯 컨벤션
+
+<details>
+<summary><strong>개발 컨벤션 보기</strong></summary>
+<div markdown="1">
+
+#### 1. 함수 작성 규칙
+
+```typescript
+// 기본 함수 형태
+export default function ComponentName() {
+  return (
+    // JSX
+  )
+}
+```
+
+#### 2. 페이지 이름 규칙
+
+- **Prefix**: Next.js App Router 규칙 준수
+- **URL**: 케밥 케이스 (kebab-case)
+- **컴포넌트명**: 대문자 시작, 카멜 케이스
+
+#### 3. 컴포넌트 관리
+
+**기본 컴포넌트**
+
+```typescript
+const Component = () => {
+  return (
+    // JSX
+  )
+}
+
+export default Component;
+```
+
+**Props 타입 정의**
+
+```typescript
+// Component.tsx
+const Component = ({}: ComponentProps) => {
+  // 컴포넌트 로직
+};
+
+// types/ComponentProps.ts
+export type ComponentProps = {
+  // Props 타입 정의
+};
+```
+
+#### 4. CSS 스타일링
+
+- **Tailwind CSS** 사용
+- **디자인 레퍼런스**: 토스 앱
+- **CSS 변수**: Camel case (headerBox)
+
+#### 5. 패키지 매니저
+
+- **npm** 사용
+
+#### 6. 코드 스타일
+
+- **ESLint & Prettier**
+- 자동화된 ESLint (승연님이 추가 예정)
+- Prettier 포맷팅
+
+**API 폴더명 규칙**
+
+- `/api/kebab-text` 형식
+
+**식별자 규칙**
+
+| 항목             | 규칙             | 예시                              |
+| ---------------- | ---------------- | --------------------------------- |
+| 변수명           | camelCase        | userName, isLoggedIn              |
+| 함수명           | camelCase        | getUserInfo(), handleSubmit()     |
+| 클래스명         | PascalCase       | UserService, AuthController       |
+| React 컴포넌트명 | PascalCase       | UserCard.tsx, TaxCertForm.tsx     |
+| 상수             | UPPER_SNAKE_CASE | DEFAULT_TIMEOUT, API_URL          |
+| 훅 이름          | use + camelCase  | useUserStore(), useTaxCertQuery() |
+
+**파일명 규칙**
+
+| 파일 종류      | 규칙           | 예시                              |
+| -------------- | -------------- | --------------------------------- |
+| 일반 파일      | kebab-case.ts  | tax-cert-form.ts, user-service.ts |
+| React 컴포넌트 | PascalCase.tsx | TaxCertForm.tsx, UserProfile.tsx  |
+| 폴더명         | kebab-case/    | components/, api/, tax-cert/      |
+| 훅 폴더        | hooks/useX.ts  | hooks/useTaxCert.ts               |
+| 유틸 함수      | utils/xxx.ts   | utils/formatDate.ts               |
+
+**변수명 규칙**
+
+- **Boolean 타입**: is, has, can 등으로 시작
+  - `isLoggedIn`, `hasPermission`, `canSubmit`
+- **함수**: '동사 + 명사' 형태
+  - 좋은 예: `fetchUserData()`, `calculateTotalPrice()`
+  - 나쁜 예: `data()`, `price()`
+- **코드 스타일**: string은 작은 따옴표(')로 감싸기
+- **약어 금지**: 명확성이 떨어지면 전체 단어 사용
+  - 좋은 예: `userProfile`
+  - 나쁜 예: `usrProf`
+
+#### 7. 전역 상태관리
+
+- **Zustand** 사용
+
+#### 8. Git 관리
+
+**브랜치 전략**
+
+```
+main
+└── dev
+    ├── feat/#1
+    ├── feat/#2
+    ├── feat/#78
+    ├── refactor/#29
+    └── fix/#2
+```
+
+**작업 플로우**
+
+1. **Issue 작성** → 작업 전 이슈 작성
+   - Summary: 작업 한줄 요약
+   - Descriptions: 문제와 해결 방안 설명
+2. **커밋** → 유연한 단위로 커밋
+3. **PR 작성** → 매일 5시에 PR 생성
+   - 리뷰어: 코드 작성 관련 2인 이상
+   - Assignees: 작업자 지정
+   - Approve 2명 이상 시 Merge
+
+**PR 템플릿**
+
+```markdown
+## 🔍 개요 (Overview)
+
+이 PR은 어떤 변경사항을 담고 있나요? 관련 이슈가 있다면 연결해주세요.
+(예: Closes #이슈번호)
+
+## ✅ 작업 사항 (Work Done)
+
+- [ ] 작업 내역 1
+- [ ] 작업 내역 2
+- [ ] UI 변경이 있다면 스크린샷을 첨부해주세요.
+
+## 📸 스크린샷 (Screenshots)
+
+| Before | After |
+| :----: | :---: |
+|        |       |
+
+## reviewers에게
+
+- 리뷰어가 특별히 신경써서 봐야 할 부분이 있다면 알려주세요.
+- 궁금한 점이나 논의가 필요한 부분도 좋습니다.
+```
+
+**커밋 메시지 양식**
+
+한글 형식: `<type>: <subject>(한국어)`
+
+- **글자수 제한**: 각 줄 최대 72글자 준수
+- **Body**: 무엇을 왜 변경했는지 설명
+
+예시:
+
+```
+feat: 랭킹 리스트 조회 기능 구현
+주니어 랭킹 조회를 위해 getRankingLists 함수 추가
+```
+
+**커밋 타입**
+
+| 타입     | 설명              |
+| -------- | ----------------- |
+| feat     | 새로운 기능 추가  |
+| fix      | 버그 수정         |
+| docs     | 문서 수정         |
+| style    | 코드 스타일 변경  |
+| design   | UI 디자인 변경    |
+| test     | 테스트 코드 작성  |
+| refactor | 코드 리팩토링     |
+| build    | 빌드 파일 수정    |
+| ci       | CI 설정 파일 수정 |
+| perf     | 성능 개선         |
+| chore    | 자잘한 수정       |
+| rename   | 파일/폴더명 수정  |
+| remove   | 파일 삭제         |
+
+**Push 규칙**
+
+- 집 갈 때 한 번은 push하기
+
+**PR 전 체크리스트**
+
+- [ ] 최신 dev 브랜치 머지: PR 보내기 전 local에서 최신 dev를 merge해서 충돌 처리
+- [ ] 빌드 확인: `npm run build` 실행하여 빌드가 정상적으로 되는지 확인 후 dev에 merge
+
+</div>
+</details>
+
+<br>
+
 ### ⭐️ 주요 기능
 
 - 복잡한 전세 사기 예방 데이터 시각화 및 저장 기능
