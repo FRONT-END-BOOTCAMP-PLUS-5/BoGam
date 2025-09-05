@@ -15,8 +15,8 @@ export const styles = {
   // 제목 (펼쳐진 상태): truncate 없이 전체 텍스트 표시
   subtitleExpanded: "font-normal text-brand-black ml-1",
   
-  // 숫자 영역: flex-shrink-0으로 줄어들지 않도록 고정 크기 유지
-  numbers: "flex items-center space-x-4 text-xs text-brand-black flex-shrink-0",
+  // 숫자 영역: flex-shrink-0으로 줄어들지 않도록 고정 크기 유지, 모바일 반응형으로 수정
+  numbers: "flex items-center space-x-2 sm:space-x-4 text-xs text-brand-black flex-shrink-0",
   numberItem: "w-4 text-center",
   
   // 화살표 아이콘들: flex-shrink-0으로 줄어들지 않도록 고정 크기 유지
@@ -26,6 +26,6 @@ export const styles = {
   // 아코디언 내용 영역
   content: "bg-brand-light-gray/20 border-t border-brand-light-gray/20 overflow-hidden transition-all duration-300 ease-in-out",
   contentClosed: "max-h-0 py-0 px-0 opacity-0 border-t-0",
-  contentOpen: "max-h-[1000px] py-4 px-4 opacity-100",
+  contentOpen: "py-4 px-4 opacity-100",
   bottomBorder: "border-b border-brand-light-gray"
 } as const;

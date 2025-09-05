@@ -10,16 +10,6 @@ import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/Ci
 import { CheckListGroupSection } from './types';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
-interface ChecklistItem {
-  id: string;
-  text: string;
-}
-
-interface ChecklistGroup {
-  title: string;
-  items: ChecklistItem[];
-}
-
 type ContentSection = CheckListGroupSection['data'][0];
 
 interface CheckListGroupProps {
@@ -60,7 +50,11 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
     if (stepData) {
       // stepData가 배열인 경우 첫 번째 항목 사용, 단일 객체인 경우 그대로 사용
       const stepDataItem = Array.isArray(stepData) ? stepData[0] : stepData;
-      if (stepDataItem?.jsonDetails) {
+      if (
+        stepDataItem &&
+        'jsonDetails' in stepDataItem &&
+        stepDataItem.jsonDetails
+      ) {
         setLocalStepDetails(stepDataItem.jsonDetails);
       }
     }
@@ -78,7 +72,10 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
     // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
     const shouldInitialize =
       (isError && !hasInitialized.current) ||
-      (stepDataItem?.jsonDetails && Object.keys(stepDataItem.jsonDetails).length === 0);
+      (stepDataItem &&
+        'jsonDetails' in stepDataItem &&
+        stepDataItem.jsonDetails &&
+        Object.keys(stepDataItem.jsonDetails).length === 0);
 
     if (shouldInitialize && selectedAddress?.id) {
       // 체크리스트 항목이 실제로 존재하는지 확인
@@ -100,9 +97,9 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
 
       // 체크리스트 항목이 실제로 존재할 때만 초기화 진행
       if (hasChecklistItems && Object.keys(uncheckedDetails).length > 0) {
-        const logMessage = isError
-          ? '400 에러 시 초기화 진행'
-          : '빈 jsonDetails 시 초기화 진행';
+        // const logMessage = isError
+        //   ? '400 에러 시 초기화 진행'
+        //   : '빈 jsonDetails 시 초기화 진행';
 
         // 로컬 상태도 즉시 업데이트
         setLocalStepDetails(uncheckedDetails);
@@ -154,9 +151,9 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
   // 로딩 중일 때
   if (isLoading) {
     return (
-      <LoadingOverlay 
+      <LoadingOverlay
         isVisible={true}
-        title="데이터를 불러오는 중입니다..."
+        title='데이터를 불러오는 중입니다...'
         currentStep={1}
         totalSteps={1}
       />
@@ -166,9 +163,9 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
   // 에러 상태 (400 에러 시 초기화 진행 중)
   if (isError && !hasInitialized.current) {
     return (
-      <LoadingOverlay 
+      <LoadingOverlay
         isVisible={true}
-        title="데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중..."
+        title='데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...'
         currentStep={1}
         totalSteps={1}
       />

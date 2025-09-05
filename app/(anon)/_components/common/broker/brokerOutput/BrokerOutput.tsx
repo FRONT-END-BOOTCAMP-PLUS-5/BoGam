@@ -10,6 +10,7 @@ import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './BrokerOutput.styles';
+import { BrokerApiResponse } from '@be/domain/entities/Broker';
 
 interface BrokerData {
   brkrNm: string;
@@ -50,10 +51,13 @@ export const BrokerOutput = ({
 
   // 위험도 검사 저장 훅
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
+    console.log('data', data);
     if (data.success) {
       invalidateRiskDataCache();
     }
   });
+
+  console.log('savedRiskData', savedRiskData);
 
   // 위험도 검사 실행 상태 관리
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
@@ -75,7 +79,10 @@ export const BrokerOutput = ({
     selectedBroker ||
     (brokerCopyQuery.data?.data as { brokerData?: BrokerData })?.brokerData ||
     null;
+
+  console.log('brokerData', brokerData);
   const brokerRiskAssessment = useBrokerRiskAssessment(brokerData);
+  console.log('brokerRiskAssessment', brokerRiskAssessment);
 
   // BrokerRiskAssessmentResult를 RiskAssessmentResult로 변환하는 함수
   const convertToRiskAssessmentResult = (

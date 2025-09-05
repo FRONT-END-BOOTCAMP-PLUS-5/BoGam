@@ -6,22 +6,14 @@ import { signOut } from 'next-auth/react';
 import { useUserStore } from '@libs/stores/userStore';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRootStep } from '@libs/stores/rootStepStore';
-import { useStepResults } from '@/hooks/useStepResults';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import DashboardHeader from './DashboardHeader';
 import UserInfo from './UserInfo';
 import StepNavigation from './StepNavigation';
-import StepDetailContent from './StepDetailContent';
+import StepDetailContent, { GuideStepData } from './StepDetailContent';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './HambugiDashboard.styles';
-
-interface StepDetail {
-  id: string;
-  title: string;
-  content: string;
-  status: 'match' | 'mismatch' | 'unchecked';
-  actionLink?: string;
-  actionText?: string;
-}
+import { STEP_TITLES } from '@libs/constants/stepDetailTitles';
 
 interface HambugiDashboardProps {
   onClose: () => void;
@@ -35,100 +27,102 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   const clearUser = useUserStore((state) => state.clearUser);
   const clearUserAddressStore = useUserAddressStore((state) => state.clearAll);
   const setStep = useRootStep((state) => state.setStep);
-  
+
   // 사용자 주소 정보
   const { selectedAddress } = useUserAddressStore();
-  
-  // Step Results 데이터 가져오기
-  const { guideSteps, isLoading, error } = useStepResults(selectedAddress?.nickname);
 
+  // Step Results 데이터 가져오기 - selectedAddress가 있을 때만 실행
+  const {
+    data: stepResultsData,
+    isLoading,
+    isError,
+  } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: '',
+    detail: '',
+  });
+
+  // guideSteps 데이터 처리 - data가 배열인 경우 그대로 사용, 객체인 경우 results 배열 추출
+  const guideSteps: GuideStepData[] = Array.isArray(stepResultsData)
+    ? stepResultsData
+    : stepResultsData &&
+      typeof stepResultsData === 'object' &&
+      'results' in stepResultsData &&
+      Array.isArray(stepResultsData.results)
+    ? stepResultsData.results
+    : [];
   // currentStep에 따라 isActive 동적 설정
   const steps = useMemo(
     () => [
       {
         id: 1,
-        title: '집 고를 때',
+        title: STEP_TITLES[0],
         isActive: currentStep === 1,
         isCompleted: true,
       },
       {
         id: 2,
-        title: '임대인 확인할 때',
+        title: STEP_TITLES[1],
         isActive: currentStep === 2,
         isCompleted: true,
       },
       {
         id: 3,
-        title: '계약서 작성할 때때',
+        title: STEP_TITLES[2],
         isActive: currentStep === 3,
         isCompleted: false,
       },
       {
         id: 4,
-        title: '계약한 직후후',
+        title: STEP_TITLES[3],
         isActive: currentStep === 4,
         isCompleted: false,
       },
       {
         id: 5,
-        title: '입주한 이유유',
+        title: STEP_TITLES[4],
         isActive: currentStep === 5,
         isCompleted: false,
       },
       {
         id: 6,
-        title: '계약기간이 끝난 후후',
+        title: STEP_TITLES[5],
         isActive: currentStep === 6,
         isCompleted: false,
       },
-      { 
-        id: 7, 
-        title: '특수 사기 유형 예방', 
-        isActive: currentStep === 7, 
-        isCompleted: false 
+      {
+        id: 7,
+        title: STEP_TITLES[6],
+        isActive: currentStep === 7,
+        isCompleted: false,
       },
     ],
     [currentStep]
   );
 
-  // 실제 데이터를 기반으로 stepDetails 동적 생성
-  const stepDetails = useMemo(() => {
-    if (!guideSteps || guideSteps.length === 0) {
-      return {};
-    }
-
-    const details: Record<number, { title: string; details: StepDetail[] }> = {};
-
-    // 각 스텝별로 데이터 그룹화
-    guideSteps.forEach((step) => {
-      const stepNumber = step.stepNumber;
-      if (!details[stepNumber]) {
-        details[stepNumber] = {
-          title: `${stepNumber}단계`,
-          details: []
-        };
-      }
-
-      // 각 detail에 대한 정보 생성
-      const detail: StepDetail = {
-        id: `${stepNumber}-${step.detail}`,
-        title: `Detail ${step.detail}`,
-        content: `Match: ${step.match}, Mismatch: ${step.mismatch}, Unchecked: ${step.unchecked}`,
-        status: step.match > 0 ? 'match' : step.mismatch > 0 ? 'mismatch' : 'unchecked'
-      };
-
-      details[stepNumber].details.push(detail);
-    });
-
-    return details;
-  }, [guideSteps]);
+  // selectedAddress가 없을 때 처리
+  if (!selectedAddress?.nickname) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>
+          <div className={styles.errorContent}>
+            <div className={styles.errorIcon}>📍</div>
+            <h2 className={styles.errorTitle}>주소를 선택해주세요</h2>
+            <p className={styles.errorMessage}>
+              대시보드를 보려면 먼저 주소를 선택해주세요.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // 로딩 상태 처리
   if (isLoading) {
     return (
-      <LoadingOverlay 
+      <LoadingOverlay
         isVisible={true}
-        title="데이터를 불러오는 중입니다..."
+        title='데이터를 불러오는 중입니다...'
         currentStep={1}
         totalSteps={1}
       />
@@ -136,16 +130,18 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   }
 
   // 에러 상태 처리
-  if (error) {
+  if (isError) {
     return (
       <div className={styles.container}>
         <div className={styles.errorContainer}>
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
+            <p className={styles.errorMessage}>
+              데이터를 불러오는데 실패했습니다.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
               className={styles.errorButton}
             >
               다시 시도
@@ -167,7 +163,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   };
 
   const handleLogout = async () => {
-    
     try {
       // 1. 클라이언트 상태 초기화
       clearUser();
@@ -189,7 +184,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
 
       // 5. 대시보드 닫기
       onClose();
-      
+
       // 6. 홈페이지로 강제 리디렉트 (브라우저 새로고침)
       window.location.href = '/';
     } catch (error) {
@@ -202,11 +197,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
 
   const handleActionClick = (actionLink: string) => {
     // 액션 링크 처리
-  };
-
-  const currentStepData = stepDetails[currentStep] || {
-    title: '단계 정보 없음',
-    details: [],
   };
 
   return (
@@ -237,9 +227,10 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
         {/* 오른쪽: 단계 상세 내용 */}
         <div className={styles.rightPanel}>
           <StepDetailContent
-            stepTitle={currentStepData.title}
-            details={currentStepData.details}
+            stepTitle={STEP_TITLES[currentStep - 1] || '단계 정보'}
+            guideSteps={guideSteps}
             onActionClick={handleActionClick}
+            currentStep={currentStep}
           />
         </div>
       </div>

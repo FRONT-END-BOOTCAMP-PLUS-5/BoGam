@@ -92,7 +92,6 @@ export const useUserAddressStore = create<UserAddressStore>()(
 
         // 휘발성 주소 추가 (DB 저장 없음)
         addVolatileAddress: (newAddress: UserAddress) => {
-
           // 즉시 UI 업데이트 및 자동 선택
           set(
             (state) => {
@@ -262,8 +261,8 @@ export const useUserAddressStore = create<UserAddressStore>()(
               // 현재 주소의 isPrimary 상태만 토글 (다른 주소에는 영향 없음)
               return {
                 userAddresses: state.userAddresses.map((addr) =>
-                  addr.id === id 
-                    ? { ...addr, isPrimary: !isCurrentlyPrimary } 
+                  addr.id === id
+                    ? { ...addr, isPrimary: !isCurrentlyPrimary }
                     : addr
                 ),
               };
@@ -346,10 +345,13 @@ export const useUserAddressStore = create<UserAddressStore>()(
         clearError: () => set({ error: null }, false, 'clearError'),
 
         // getter - 휘발성 주소 제외
-        getPersistentAddresses: () => get().userAddresses.filter(addr => !addr.isVolatile),
+        getPersistentAddresses: () =>
+          get().userAddresses.filter((addr) => !addr.isVolatile),
         getPersistentSelectedAddress: () => {
           const current = get();
-          return current.selectedAddress && !current.selectedAddress.isVolatile ? current.selectedAddress : null;
+          return current.selectedAddress && !current.selectedAddress.isVolatile
+            ? current.selectedAddress
+            : null;
         },
       }),
       {

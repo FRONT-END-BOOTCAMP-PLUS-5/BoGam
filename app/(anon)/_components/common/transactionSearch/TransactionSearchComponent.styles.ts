@@ -63,4 +63,7 @@ export const styles = {
   
   // New search button
   newSearchButton: 'px-4 py-2',
-};
+  
+  // 하단 여백
+  bottomSpacer: 'pb-20',
+} as const;

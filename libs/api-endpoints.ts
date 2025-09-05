@@ -100,6 +100,21 @@ export const REAL_ESTATE_TRANSACTION_API_CONFIG = {
   // },
 } as const;
 
+// 전세자금보증 API 엔드포인트 설정
+export const JEONSE_GUARANTEE_API_CONFIG = {
+  // 기본 URL
+  BASE_URL:
+    'https://apis.data.go.kr/B551408/jnse-rcmd-info-v2/jnse-rcmd-list-v2',
+
+  // 서비스키 환경변수명
+  SERVICE_KEY_ENV: 'RTMSDATA_TRANSACTION_PRICE_KEY_DECODING',
+
+  // 전체 URL
+  get FULL_URL() {
+    return this.BASE_URL;
+  },
+} as const;
+
 // API 엔드포인트 상수
 export const API_ENDPOINTS = {
   // 내부 API 엔드포인트 (Next.js API Routes)
@@ -132,6 +147,9 @@ export const API_ENDPOINTS = {
     REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_TRADE_FULL_URL,
   // REAL_ESTATE_DETACHED_HOUSE_RENT: REAL_ESTATE_TRANSACTION_API_CONFIG.DETACHED_HOUSE_RENT_FULL_URL,
   // REAL_ESTATE_OFFICETEL_RENT: REAL_ESTATE_TRANSACTION_API_CONFIG.OFFICETEL_RENT_FULL_URL,
+
+  // 외부 API 엔드포인트 (전세자금보증)
+  JEONSE_GUARANTEE: JEONSE_GUARANTEE_API_CONFIG.FULL_URL,
 } as const;
 
 // API 환경별 설정

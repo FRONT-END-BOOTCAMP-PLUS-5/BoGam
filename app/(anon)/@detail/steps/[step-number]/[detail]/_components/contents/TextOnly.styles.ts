@@ -17,9 +17,9 @@ const styles = {
   noDataContainer: 'text-center py-10 text-black',
 
   // 스텝 데이터 표시 스타일
-  stepDataSection: 'mt-8 p-5 border border-brand-light-gray rounded-lg bg-brand-light-gray',
-  stepDataTitle: 'text-lg font-semibold mb-3 text-black',
-  badgeContainer: 'flex flex-wrap gap-2',
+  stepDataSection: 'mt-8 flex justify-end',
+  stepDataTitle: 'text-sm text-brand-dark-gray ml-2',
+  badgeContainer: 'flex items-center',
 
   // 이미지 스타일
   imageContainer: 'my-6 flex justify-center',

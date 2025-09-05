@@ -5,15 +5,62 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import GuideResultSummary from './_components/GuideResultSummary';
 import GuideResultView from './_components/GuideResultView';
+import DocumentCard from './_components/DocumentCard';
+import WithdrawButton from './_components/WithdrawButton';
 import { styles } from './page.styles';
-import { useStepResults } from '@/hooks/useStepResults';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { StepResultData } from '@libs/api_front/stepResultQueries.api';
 import Profile from '@/(anon)/_components/common/profile/Profile';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
+
+// 가이드 요약 데이터 타입 정의
+interface GuideSummaryData {
+  totalMatch: number;
+  totalMismatch: number;
+  totalUnchecked: number;
+}
+
+// API 응답 데이터 타입 정의
+interface StepResultResponseData {
+  results: StepResultData[];
+  summary: {
+    totalMismatch: number;
+    totalMatch: number;
+    totalUnchecked: number;
+    stepCount: number;
+    stepNumber: number;
+  };
+}
 
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
   const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
-  const { guideSummary, guideSteps, isLoading, error } = useStepResults(selectedAddress?.nickname);
+  const { data: stepResultsData, isLoading, isError } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: '',
+    detail: ''
+  });
+
+  // guideSteps와 guideSummary 데이터 처리
+  let guideSteps: StepResultData[] = [];
+  let guideSummary: GuideSummaryData = { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 };
+
+  if (stepResultsData) {
+    if ((stepResultsData as StepResultResponseData).results && (stepResultsData as StepResultResponseData).summary) {
+      // {results: Array, summary: {...}} 구조
+      const responseData = stepResultsData as StepResultResponseData;
+      guideSteps = responseData.results;
+      guideSummary = {
+        totalMatch: responseData.summary.totalMatch || 0,
+        totalMismatch: responseData.summary.totalMismatch || 0,
+        totalUnchecked: responseData.summary.totalUnchecked || 0
+      };
+    }
+  }
+
+  console.log('stepResultsData', stepResultsData);
+  console.log('guideSteps', guideSteps);
+  console.log('guideSummary', guideSummary);
 
   // 로딩 상태 처리
   if (isLoading) {
@@ -31,7 +78,7 @@ export default function MyPage() {
   }
 
   // 에러 상태 처리
-  if (error) {
+  if (isError) {
     return (
       <div className={styles.container}>
         <div className={styles.gradientBackground}></div>
@@ -39,7 +86,7 @@ export default function MyPage() {
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>{error}</p>
+            <p className={styles.errorMessage}>데이터를 불러오는데 실패했습니다.</p>
             <button 
               onClick={() => window.location.reload()} 
               className={styles.errorButton}
@@ -57,7 +104,7 @@ export default function MyPage() {
       {/* 그라데이션 배경 */}
       <div className={styles.gradientBackground}></div>
       
-      {/* 프로필 헤더 (임시) */}
+      {/* 프로필 헤더 */}
       <div className={styles.profileHeader}>
         <div className={styles.profileContent}>
           <Profile size="md" />
@@ -81,19 +128,13 @@ export default function MyPage() {
         />
 
         {/* 문서 카드 */}
-        <div className={styles.card}>
-          <div className={styles.cardTitle}>문서</div>
-          <div className={styles.documentButtons}>
-            <span className={styles.documentButton}>등기부등본</span>
-            <span className={styles.documentButton}>납세증명서</span>
-          </div>
-        </div>
+        <DocumentCard />
 
         {/* 가이드 결과 요약 */}
         <GuideResultSummary
-          match={guideSummary.match}
-          mismatch={guideSummary.mismatch}
-          unchecked={guideSummary.unchecked}
+          match={guideSummary.totalMatch}
+          mismatch={guideSummary.totalMismatch}
+          unchecked={guideSummary.totalUnchecked}
         />
 
         {/* 가이드 결과 보기 */}
@@ -102,11 +143,7 @@ export default function MyPage() {
         />
 
         {/* 회원탈퇴 버튼 */}
-        <div className={styles.withdrawButton}>
-          <button className={styles.withdrawBtn}>
-            회원탈퇴
-          </button>
-        </div>
+        <WithdrawButton />
       </div>
     </div>
   );

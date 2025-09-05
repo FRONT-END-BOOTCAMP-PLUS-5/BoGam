@@ -1,27 +1,46 @@
 'use client';
 
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { TaxCertInput } from '@/(anon)/_components/common/taxCert/TaxCertInput';
 import { TaxCertOutput } from '@/(anon)/_components/common/taxCert/taxCertOutput/TaxCertOutput';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useTaxCertContainer } from '@/hooks/useTaxCertContainer';
 
-export const TaxCertContainer = () => {
+interface TaxCertContainerProps {
+  onShowSimpleAuthModal: () => void;
+  onSimpleAuthApprove: () => void;
+  onSimpleAuthCancel: () => void;
+}
+
+export interface TaxCertContainerRef {
+  handleSimpleAuthApprove: () => void;
+}
+
+export const TaxCertContainer = forwardRef<
+  TaxCertContainerRef,
+  TaxCertContainerProps
+>(({ onShowSimpleAuthModal, onSimpleAuthApprove, onSimpleAuthCancel }, ref) => {
   const {
     formData,
     response,
-    showSimpleAuthModal,
     existsData,
     submitTaxCertMutation,
     submitTwoWayAuthMutation,
     isDataLoading,
     activeTab,
     setActiveTab,
-    handleSimpleAuthApprove,
-    handleSimpleAuthCancel,
     handleSubmit,
-  } = useTaxCertContainer();
+    handleSimpleAuthApprove,
+  } = useTaxCertContainer({
+    onShowSimpleAuthModal,
+    onSimpleAuthApprove,
+    onSimpleAuthCancel,
+  });
+
+  // ref를 통해 외부에서 접근할 수 있는 메서드 노출
+  useImperativeHandle(ref, () => ({
+    handleSimpleAuthApprove,
+  }));
 
   // 입력 컴포넌트
   const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
@@ -30,6 +49,9 @@ export const TaxCertContainer = () => {
       onSubmit={handleSubmit}
       loading={submitTaxCertMutation.isPending}
       onSuccess={onSuccess}
+      onAuthMethodSelect={() => {}}
+      isAuthMethodModalOpen={false}
+      setIsAuthMethodModalOpen={() => {}}
     />
   );
 
@@ -64,35 +86,15 @@ export const TaxCertContainer = () => {
   };
 
   return (
-    <>
-      <DataContainer
-        title='납세증명서 관리'
-        inputComponent={inputComponent}
-        outputComponent={outputComponent}
-        checkExistsQuery={checkExistsQuery}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
-
-      {/* 간편인증 추가인증 모달 */}
-      <ConfirmModal
-        isOpen={showSimpleAuthModal}
-        title='🔐 간편인증 추가인증'
-        onCancel={handleSimpleAuthCancel}
-        cancelText='❌ 취소'
-        icon='info'
-        isLoading={false}
-        onConfirm={handleSimpleAuthApprove}
-        confirmText='✅ 승인'
-      >
-        <div className='space-y-3'>
-          <p>📱 모바일에서 카카오 인증을 완료해주세요.</p>
-          <p>✅ 인증 완료 후 아래 버튼을 클릭하여 승인해주세요.</p>
-          <p className='text-sm text-gray-600'>
-            * 4분 30초 내에 승인/취소를 완료해주세요.
-          </p>
-        </div>
-      </ConfirmModal>
-    </>
+    <DataContainer
+      title='납세증명서 관리'
+      inputComponent={inputComponent}
+      outputComponent={outputComponent}
+      checkExistsQuery={checkExistsQuery}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    />
   );
-};
+});
+
+TaxCertContainer.displayName = 'TaxCertContainer';

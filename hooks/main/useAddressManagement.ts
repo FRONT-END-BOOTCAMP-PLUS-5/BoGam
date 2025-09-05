@@ -84,9 +84,9 @@ export const useAddressManagement = () => {
 
       // 드롭다운 주소로 메인 상태 업데이트
       setRoadAddress(baseAddress);
-      // 동만 업데이트 (호는 기존 값 유지)
+      // 동만 업데이트 (호는 AddressConfirmationTab에서 관리)
       setDong(extractedDong || '');
-      setHo('');
+      // setHo('') 제거 - AddressConfirmationTab에서 호를 관리하도록 함
       setSearchQuery(storeSelectedAddress.completeAddress);
       setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
 
@@ -280,6 +280,7 @@ export const useAddressManagement = () => {
       try {
         // API 호출로 좌표 가져오기 (호는 사용하지 않음)
         const completeAddress = `${roadAddress} ${dongValue}동`;
+        console.log('completeAddress', completeAddress);
         const searchData = await placesApi.searchByKeyword(completeAddress);
 
         if (searchData && searchData.length > 0) {

@@ -27,7 +27,7 @@ export const RealEstateInput = ({
     { value: '0', label: '토지+건물' },
     { value: '1', label: '집합건물' },
     { value: '2', label: '토지' },
-    { value: '3', label: '건물' }
+    { value: '3', label: '건물' },
   ];
 
   // 발행구분 옵션
@@ -35,7 +35,7 @@ export const RealEstateInput = ({
     { value: '0', label: '발급' },
     { value: '1', label: '열람' },
     { value: '2', label: '고유번호조회' },
-    { value: '3', label: '원문데이터로 결과처리' }
+    { value: '3', label: '원문데이터로 결과처리' },
   ];
 
   const handleFormSubmit = (data: RealEstateFormData) => {
@@ -55,7 +55,6 @@ export const RealEstateInput = ({
 
   return (
     <FormContainer
-      title='부동산등기부등본 조회'
       onSubmit={handleSubmit(handleFormSubmit)}
       isLoading={loading}
       submitText='등본 가져오기'

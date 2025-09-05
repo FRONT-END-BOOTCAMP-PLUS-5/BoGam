@@ -57,7 +57,7 @@ export default function MainPage() {
           </div>
 
           <div className={styles.searchGuide}>
-            관심 전세매물을 검색하여 전세보감의 가이드를 이용해 보세요!
+            전세매물을 검색하여 전세보감의 가이드를 이용해 보세요!
           </div>
 
           {/* 탭 컨테이너 */}

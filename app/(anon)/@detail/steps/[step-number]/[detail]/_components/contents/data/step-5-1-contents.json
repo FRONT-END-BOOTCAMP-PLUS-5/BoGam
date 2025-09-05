@@ -1,0 +1,39 @@
+{
+  "dataType": "CombinedContent",
+  "sections": [
+    {
+      "type": "TaxCertIntro",
+      "data": {
+        "contentSections": [
+          {
+            "subtitle": "납세증명서란?",
+            "contents": [
+              "납세증명서는 개인이나 법인이 특정 기간 동안의 소득세, 부가가치세 등의 납세 실적을 증명하는 공식 문서입니다."
+            ]
+          }
+        ],
+        "image": {
+          "src": "/images/5-1.png",
+          "alt": "납세증명서 샘플 이미지",
+          "width": 400,
+          "height": 300
+        },
+        "checklistItems": [
+          {
+            "id": "nameMatch",
+            "label": "서류와 임대인의 이름 일치 여부",
+            "defaultValue": "mismatch"
+          },
+          {
+            "id": "noUnpaid",
+            "label": "미납 내역 없음",
+            "defaultValue": "mismatch"
+          }
+        ]
+      }
+    },
+    {
+      "type": "TaxCertContainer"
+    }
+  ]
+}

@@ -19,6 +19,8 @@ export const useTaxCertOutput = ({
     response ? null : selectedAddress?.nickname || null
   );
 
+  console.log('dbResponse', dbResponse);
+
   // response prop이 있으면 그것을 사용, 없으면 dbResponse 사용
   const displayResponse = useMemo(() => {
     if (response) {
@@ -53,7 +55,7 @@ export const useTaxCertOutput = ({
 
   const totalLoading = loading || dbLoading;
 
-  // 등기부등본과 동일한 hasData 로직
+  // 표준 hasData 로직
   const hasData = useMemo(() => {
     return (
       displayResponse &&

@@ -6,13 +6,15 @@ import { encryptJson } from '@utils/encryption';
 export class CreateBrokerCopyUsecase {
   constructor(private brokerCopyRepository: BrokerCopyRepository) {}
 
-  async execute(request: CreateBrokerCopyRequestDto): Promise<CreateBrokerCopyResponseDto> {
+  async execute(
+    request: CreateBrokerCopyRequestDto
+  ): Promise<CreateBrokerCopyResponseDto> {
     try {
       const { userAddressId, brokerJson } = request;
-      
+
       // JSON 문자열을 암호화된 문자열로 변환
       const encryptedData = encryptJson(JSON.parse(brokerJson));
-      
+
       // 중개사 복사본 생성/수정
       const brokerCopy = await this.brokerCopyRepository.upsertByUserAddressId(
         userAddressId,
@@ -23,7 +25,7 @@ export class CreateBrokerCopyUsecase {
       if (!brokerCopy || !brokerCopy.id) {
         return {
           success: false,
-          error: '중개사 복사본 저장에 실패했습니다.'
+          error: '중개사 복사본 저장에 실패했습니다.',
         };
       }
 
@@ -33,14 +35,14 @@ export class CreateBrokerCopyUsecase {
         data: {
           id: brokerCopy.id,
           userAddressId: userAddressId,
-          updatedAt: brokerCopy.updatedAt || new Date()
-        }
+          updatedAt: brokerCopy.updatedAt || new Date(),
+        },
       };
     } catch (error) {
       console.error('CreateBrokerCopyUsecase 실행 중 오류:', error);
       return {
         success: false,
-        error: '중개사 복사본 저장 중 오류가 발생했습니다.'
+        error: '중개사 복사본 저장 중 오류가 발생했습니다.',
       };
     }
   }

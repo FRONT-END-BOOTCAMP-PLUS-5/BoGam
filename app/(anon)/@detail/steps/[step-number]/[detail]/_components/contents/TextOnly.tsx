@@ -72,7 +72,10 @@ const TextOnly = ({ data }: TextOnlyProps) => {
 
   // stepData가 배열인지 단일 객체인지 확인하고 jsonDetails 추출
   const stepResultData = Array.isArray(stepData) ? stepData[0] : stepData;
-  const jsonDetails = stepResultData?.jsonDetails;
+  const jsonDetails =
+    stepResultData && 'jsonDetails' in stepResultData
+      ? stepResultData.jsonDetails
+      : undefined;
 
   // json이 {}이거나 에러 시 기본값으로 초기화
   useEffect(() => {
@@ -151,17 +154,15 @@ const TextOnly = ({ data }: TextOnlyProps) => {
   // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
   const renderStepData = () => (
     <div className={styles.stepDataSection}>
-      <div className={styles.stepDataTitle}>스텝 데이터</div>
-      <div>
-        <div className={styles.badgeContainer}>
-          {Object.entries(jsonDetails || {}).map(([key, value]) => (
-            <CircularIconBadge
-              key={key}
-              type={value as 'match' | 'mismatch' | 'unchecked'}
-              size='xsm'
-            />
-          ))}
-        </div>
+      <div className={styles.badgeContainer}>
+        {Object.entries(jsonDetails || {}).map(([key, value]) => (
+          <CircularIconBadge
+            key={key}
+            type={value as 'match' | 'mismatch' | 'unchecked'}
+            size='sm'
+          />
+        ))}
+        <span className={styles.stepDataTitle}>읽음</span>
       </div>
     </div>
   );
@@ -273,7 +274,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
           </div>
         ))}
 
-        {renderStepData()}
+        {/* Step5Detail3Component에서는 스텝 데이터를 표시하지 않음 */}
+        {!window.location.pathname.includes('/5/3') && renderStepData()}
       </div>
     );
   }
@@ -283,7 +285,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     <div className={styles.container}>
       <div className={styles.noDataContainer}>데이터가 없습니다.</div>
 
-      {renderStepData()}
+      {/* Step5Detail3Component에서는 스텝 데이터를 표시하지 않음 */}
+      {!window.location.pathname.includes('/5/3') && renderStepData()}
     </div>
   );
 };

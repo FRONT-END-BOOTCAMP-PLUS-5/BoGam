@@ -10,3 +10,38 @@
 export function formatPhone(raw: string): string {
   return raw.replace(/\D/g, '').slice(0, 11);
 }
+
+// 숫자 포맷팅 유틸리티 함수들
+
+// 천 단위 콤마 추가
+export const formatNumberWithComma = (value: number): string => {
+  return value.toLocaleString();
+};
+
+// 숫자를 한글 단위로 변환하는 함수
+export const formatToKoreanUnit = (value: number): string => {
+  if (value === 0) return '';
+
+  const units = [
+    { value: 1000000000000, label: '조' },
+    { value: 100000000, label: '억' },
+    { value: 10000, label: '만' },
+  ];
+
+  let result = '';
+  let remaining = value;
+
+  for (const unit of units) {
+    if (remaining >= unit.value) {
+      const count = Math.floor(remaining / unit.value);
+      result += count + unit.label;
+      remaining %= unit.value;
+    }
+  }
+
+  if (remaining > 0) {
+    result += remaining;
+  }
+
+  return result + '원';
+};

@@ -11,11 +11,14 @@ import { useTaxCertOutput } from '@/hooks/useTaxCertOutput';
 import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { parseStepUrl } from '@utils/stepUrlParser';
 import {
   useTaxCertRiskAssessment,
   TaxCertRiskAssessmentResult,
 } from '@/hooks/useTaxCertRiskAssessment';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
+import { TaxCertData } from '@/(anon)/_components/common/taxCert/types';
 
 export const TaxCertOutput = ({
   response,
@@ -23,6 +26,7 @@ export const TaxCertOutput = ({
   existsData,
 }: TaxCertOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
+
   const {
     displayResponse,
     riskAssessment,
@@ -30,10 +34,26 @@ export const TaxCertOutput = ({
     hasData,
   } = useTaxCertOutput({ response, loading, existsData });
 
+  console.log('displayResponse', displayResponse);
+  console.log('displayResponse.data', displayResponse?.data);
+  console.log('displayResponse.data.data', displayResponse?.data?.data);
+  console.log(
+    'displayResponse.data.data.resOriGinalData1',
+    (displayResponse?.data as { data?: { resOriGinalData1?: string } })?.data
+      ?.resOriGinalData1
+  );
+
   const pathname = window.location.pathname;
-  const stepUrlData = pathname.match(/\/steps\/(\d+)\/(\d+)/);
-  const stepNumber = stepUrlData ? parseInt(stepUrlData[1]) : 1;
-  const detail = stepUrlData ? parseInt(stepUrlData[2]) : 5;
+  const stepUrlData = parseStepUrl(pathname);
+  const stepNumber = stepUrlData?.stepNumber || 1;
+  const detail = stepUrlData?.detail || 5;
+
+  // 전체 step-result 데이터 요청 (TaxCertIntro 데이터 포함)
+  const { data: stepResultData } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepNumber.toString(),
+    detail: detail.toString(),
+  });
 
   const {
     data: savedRiskData,
@@ -47,9 +67,14 @@ export const TaxCertOutput = ({
 
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
     if (data.success) {
+      console.log('saveRiskAssessmentMutation', data);
       invalidateRiskDataCache();
     }
   });
+
+  console.log('savedRiskData', savedRiskData);
+  console.log('savedRiskData?.jsonData', savedRiskData?.jsonData);
+  console.log('savedRiskData?.domain', savedRiskData?.domain);
 
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
     useState(false);
@@ -66,12 +91,14 @@ export const TaxCertOutput = ({
   );
 
   // 위험도 검사 hook 사용
-  const taxCertData = displayResponse?.data?.taxCertJson;
+  const taxCertData = displayResponse?.data as TaxCertData | null;
   const hookRiskAssessment = useTaxCertRiskAssessment(
-    taxCertData || null,
+    taxCertData,
     selectedAddress?.nickname,
     checklistState
   );
+
+  console.log('hookRiskAssessment', hookRiskAssessment);
 
   const handleChecklistItemChange = (itemId: string, checked: boolean) => {
     // 체크리스트 상태 업데이트
@@ -86,7 +113,7 @@ export const TaxCertOutput = ({
 
   // 새로운 데이터가 로드되었을 때 기존 위험도 검사 데이터 무효화
   useEffect(() => {
-    const newData = displayResponse?.data?.taxCertJson;
+    const newData = displayResponse?.data;
     const currentData = newData;
 
     if (currentData) {
@@ -104,29 +131,36 @@ export const TaxCertOutput = ({
 
       lastDataHash.current = currentDataHash;
     }
-  }, [displayResponse?.data?.taxCertJson, invalidateRiskDataCache]);
+  }, [displayResponse?.data, invalidateRiskDataCache]);
 
   // 위험도 검사 결과가 없을 때 자동으로 위험도 검사 실행
   useEffect(() => {
     const performRiskAssessment = async () => {
-      // step-result 데이터가 있으면 위험도 검사 실행하지 않음
-      if (savedRiskData?.jsonData) {
+      // taxCert 도메인의 step-result 데이터가 있으면 위험도 검사 실행하지 않음
+      if (
+        savedRiskData?.jsonData &&
+        Object.keys(savedRiskData.jsonData).length > 0 &&
+        savedRiskData?.domain === 'taxCert'
+      ) {
+        console.log('✅ 저장된 위험도 검사 데이터가 있어서 자동 실행하지 않음');
+        console.log('저장된 데이터:', savedRiskData.jsonData);
         return;
       }
 
-      // step-result 데이터가 없고, 원문 데이터가 있을 때만 위험도 검사 실행
+      // 납세증명서 데이터가 있고, 위험도 검사가 실행되지 않았을 때만 실행
       if (
         !loadLoading &&
-        !savedRiskData?.jsonData &&
         !isPerformingRiskAssessment &&
         !hasPerformedRiskAssessment.current &&
         hasData &&
-        displayResponse?.data?.taxCertJson &&
+        displayResponse?.data &&
         selectedAddress?.nickname
       ) {
         try {
           hasPerformedRiskAssessment.current = true;
           setIsPerformingRiskAssessment(true);
+
+          console.log('🔄 새로운 납세증명서 데이터로 위험도 검사 시작');
 
           // hook에서 계산된 위험도 검사 결과 사용
           setCalculatedRiskAssessment(
@@ -136,11 +170,18 @@ export const TaxCertOutput = ({
           // 초기 체크리스트 상태 설정
           if (hookRiskAssessment?.checklistItems) {
             const initialChecklistState: Record<string, boolean> = {};
+            console.log(
+              'hookRiskAssessment.checklistItems',
+              hookRiskAssessment.checklistItems
+            );
             hookRiskAssessment.checklistItems.forEach((item) => {
               initialChecklistState[item.id] = item.checked;
             });
             setChecklistState(initialChecklistState);
           }
+
+          console.log('initialChecklistState', checklistState);
+          console.log('hookRiskAssessment', hookRiskAssessment);
 
           setDataChanged(false);
         } catch (error) {
@@ -160,13 +201,13 @@ export const TaxCertOutput = ({
     dataChanged,
     isPerformingRiskAssessment,
     hasData,
-    displayResponse?.data?.taxCertJson,
+    displayResponse?.data,
     selectedAddress,
     stepNumber,
     detail,
     saveRiskAssessmentMutation,
     invalidateRiskDataCache,
-    hookRiskAssessment,
+    // hookRiskAssessment 제거 - 무한 루프 방지
   ]);
 
   // 로딩 중일 때 (새로운 데이터 로딩 또는 위험도 검사 실행 중)
@@ -229,6 +270,16 @@ export const TaxCertOutput = ({
     };
   };
 
+  // 전체 step-result 데이터에서 jsonDetails 추출 (TaxCertIntro 데이터 포함)
+  const getInitialJsonData = () => {
+    if (Array.isArray(stepResultData)) {
+      return stepResultData[0]?.jsonDetails || {};
+    } else if (stepResultData && 'jsonDetails' in stepResultData) {
+      return stepResultData.jsonDetails;
+    }
+    return savedRiskData?.jsonData || {};
+  };
+
   // 변환된 위험도 검사 결과
   const convertedRiskAssessment = hookRiskAssessment
     ? convertToRiskAssessmentResult(hookRiskAssessment)
@@ -238,9 +289,6 @@ export const TaxCertOutput = ({
 
   return (
     <div>
-      <div className={styles.buttonContainer}>
-        <OriginalDocumentButton displayResponse={displayResponse} />
-      </div>
       <RiskAssessmentDisplay
         riskAssessment={convertedRiskAssessment}
         displayResponse={displayResponse}
@@ -250,7 +298,7 @@ export const TaxCertOutput = ({
         detail={detail}
         userAddressNickname={selectedAddress?.nickname}
         domain='taxCert'
-        initialJsonData={savedRiskData?.jsonData}
+        initialJsonData={getInitialJsonData()}
         showSaveButton={true} // 결과 탭에서도 저장 버튼 활성화
       />
     </div>

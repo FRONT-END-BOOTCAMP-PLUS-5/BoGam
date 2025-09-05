@@ -56,12 +56,12 @@ export default function Header() {
               </button>
             )}
           </div>
-          
+
           {/* 중앙: 페이지 제목 */}
           <div className={styles.centerSection}>
             <PageTitle pathname={pathname} />
           </div>
-          
+
           {/* 오른쪽: 프로필 버튼 */}
           <div className={styles.rightSection}>
             <button
@@ -75,14 +75,16 @@ export default function Header() {
         </div>
       </header>
 
-      <div 
-        className={`${styles.slidePanel} ${
-          isDashboardOpen ? styles.slideIn : styles.slideOut
-        }`}
-        data-dashboard="true"
-      >
-        <HambugiDashboard onClose={() => setIsDashboardOpen(false)} />
-      </div>
+      {isDashboardOpen && (
+        <div
+          className={`${styles.slidePanel} ${
+            isDashboardOpen ? styles.slideIn : styles.slideOut
+          }`}
+          data-dashboard='true'
+        >
+          <HambugiDashboard onClose={() => setIsDashboardOpen(false)} />
+        </div>
+      )}
     </>
   );
 }

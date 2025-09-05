@@ -12,4 +12,8 @@ export const styles = {
     transform: `translateY(${translateY}px)`,
     transition: isDragging ? 'none' : 'transform 0.3s ease-out',
   }),
+
+  // 간편인증 모달 관련 스타일
+  simpleAuthModalContent: 'space-y-3',
+  simpleAuthModalText: 'text-sm text-brand-gray',
 } as const;

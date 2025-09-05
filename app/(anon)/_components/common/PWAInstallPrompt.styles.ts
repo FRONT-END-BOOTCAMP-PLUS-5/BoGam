@@ -8,11 +8,11 @@ export const styles = {
   // 텍스트 섹션 - 제목과 설명이 들어가는 영역
   textSection: "flex-1",
   
-  // 제목 - brand 컬러 사용, 큰 글씨, 굵은 폰트
-  title: "text-lg font-bold text-brand mb-0.5",
+  // 제목 - brand 컬러 사용, 글씨 크기 줄임, 굵은 폰트
+  title: "text-base font-bold text-brand mb-0.5",
   
-  // 설명 - 회색 텍스트, 작은 글씨
-  description: "text-sm text-brand-dark-gray mt-1",
+  // 설명 - 회색 텍스트, 글씨 크기 줄임
+  description: "text-xs text-brand-dark-gray mt-1",
   
   // 버튼 섹션 - 나중에와 설치 버튼이 들어가는 영역
   buttonSection: "flex gap-2 ml-4",

@@ -18,8 +18,8 @@ export default function StateIcon({
   return (
     <div className={styles.container}>
       <StateIconItem type='completed' count={completedCount} />
-      <StateIconItem type='unconfirmed' count={unconfirmedCount} />
       <StateIconItem type='warning' count={warningCount} />
+      <StateIconItem type='unconfirmed' count={unconfirmedCount} />
     </div>
   );
 }

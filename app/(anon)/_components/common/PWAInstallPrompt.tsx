@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { styles } from './PWAInstallPrompt.styles';
+import { useSession } from 'next-auth/react';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -19,6 +20,7 @@ interface NavigatorWithStandalone extends Navigator {
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     // PWA가 이미 설치되어 있는지 확인
@@ -41,6 +43,16 @@ export default function PWAInstallPrompt() {
         setIsInstalled(true);
         return;
       }
+      
+      // 로그인된 사용자의 경우, 해당 사용자별로 닫기 버튼 클릭 상태 확인
+      if (session?.user?.email) {
+        const userKey = `pwa-dismissed-${session.user.email}`;
+        const dismissedStatus = sessionStorage.getItem(userKey);
+        if (dismissedStatus === 'true') {
+          setIsInstalled(true);
+          return;
+        }
+      }
     };
 
     checkIfInstalled();
@@ -55,7 +67,7 @@ export default function PWAInstallPrompt() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
     };
-  }, []);
+  }, [session]); // session 변경 시 효과 다시 적용
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
@@ -75,7 +87,13 @@ export default function PWAInstallPrompt() {
   };
 
   const handleDismiss = () => {
-    // 닫기 버튼 클릭 시 아무것도 하지 않음 (항상 표시)
+    // 닫기 버튼 클릭 시 해당 로그인 세션이 유지되는 동안은 다시 표시되지 않도록 함
+    // 사용자별로 sessionStorage에 상태 저장
+    if (session?.user?.email) {
+      const userKey = `pwa-dismissed-${session.user.email}`;
+      sessionStorage.setItem(userKey, 'true');
+    }
+    setIsInstalled(true); // 프롬프트를 숨김
   };
 
   // 이미 설치된 경우 프롬프트를 표시하지 않음

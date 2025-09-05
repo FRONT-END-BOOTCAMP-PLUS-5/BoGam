@@ -35,33 +35,96 @@ export default function GuideResultSummary({
   // 각 항목의 비율 계산 (퍼센트)
   const matchPercentage = total > 0 ? Math.round((match / total) * 100) : 0;
 
-  // Chart.js 데이터 설정
+  // 실제 데이터가 있는 항목들만 필터링
+  const hasMatch = match > 0;
+  const hasMismatch = mismatch > 0;
+  const hasUnchecked = unchecked > 0;
+  
+  // 실제 항목 개수 계산
+  const itemCount = (hasMatch ? 1 : 0) + (hasMismatch ? 1 : 0) + (hasUnchecked ? 1 : 0);
+  
+  // 간격 개수 계산 (항목이 1개면 간격 0개, 2개면 간격 1개, 3개면 간격 2개)
+  const gapCount = Math.max(0, itemCount - 1);
+  // 간격 크기를 1.5%로 고정 (total 값과 상관없이 항상 동일한 퍼센트)
+  const gapSize = gapCount > 0 ? 1.5 : 0; // 간격이 있으면 1.5%로 고정, 없으면 0
+
+  // Chart.js 데이터 설정 - 동적으로 간격 조정
   const chartData = {
-    labels: ['안전', '간격1', '경고', '간격2', '미확인'],
+    labels: ['안전', '간격1', '경고', '간격2', '미확인'].slice(0, itemCount + gapCount), // 필요한 라벨만 표시
     datasets: [
       {
-        data: [match, 0.3, mismatch, 0.3, unchecked], // 0.3으로 간격 줄임
-        backgroundColor: [
-          matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
-          '#ffffff', 
-          '#c24a4a', 
-          '#ffffff', 
-          '#e5e7eb'
-        ],
-        borderColor: [
-          matchPercentage === 100 ? '#3E92F9' : '#4fa373', // 100%면 파란색, 아니면 원래 색상
-          '#ffffff', 
-          '#c24a4a', 
-          '#ffffff', 
-          '#e5e7eb'
-        ],
+        data: (() => {
+          const data: number[] = [];
+          
+          if (hasMatch) {
+            // 간격이 있으면 간격의 절반만큼 빼기
+            const adjustedMatchPercentage = gapCount > 0 ? matchPercentage - (gapSize / 2) : matchPercentage;
+            data.push(adjustedMatchPercentage);
+            if (gapCount > 0) data.push(gapSize);
+          }
+          
+          if (hasMismatch) {
+            const mismatchPercentage = total > 0 ? Math.round((mismatch / total) * 100) : 0;
+            // 간격이 2개 이상이면 양쪽 간격의 절반씩 빼기
+            const adjustedMismatchPercentage = gapCount > 1 ? mismatchPercentage - gapSize : mismatchPercentage;
+            data.push(adjustedMismatchPercentage);
+            if (gapCount > 1) data.push(gapSize);
+          }
+          
+          if (hasUnchecked) {
+            const uncheckedPercentage = total > 0 ? Math.round((unchecked / total) * 100) : 0;
+            // 간격이 있으면 간격의 절반만큼 빼기
+            const adjustedUncheckedPercentage = gapCount > 0 ? uncheckedPercentage - (gapSize / 2) : uncheckedPercentage;
+            data.push(adjustedUncheckedPercentage);
+          }
+          
+          console.log('data :', data);
+          return data;
+        })(),
+        backgroundColor: (() => {
+          const colors: string[] = [];
+          
+          if (hasMatch) {
+            colors.push(matchPercentage === 100 ? '#3E92F9' : '#4fa373');
+            if (gapCount > 0) colors.push('#ffffff');
+          }
+          
+          if (hasMismatch) {
+            colors.push('#c24a4a');
+            if (gapCount > 1) colors.push('#ffffff');
+          }
+          
+          if (hasUnchecked) {
+            colors.push('#e5e7eb');
+          }
+          
+          return colors;
+        })(),
+        borderColor: (() => {
+          const colors: string[] = [];
+          
+          if (hasMatch) {
+            colors.push(matchPercentage === 100 ? '#3E92F9' : '#4fa373');
+            if (gapCount > 0) colors.push('#ffffff');
+          }
+          
+          if (hasMismatch) {
+            colors.push('#c24a4a');
+            if (gapCount > 1) colors.push('#ffffff');
+          }
+          
+          if (hasUnchecked) {
+            colors.push('#e5e7eb');
+          }
+          
+          return colors;
+        })(),
         borderWidth: 0,
         cutout: '80%', // 중앙 구멍을 더 늘려서 차트를 더 얇게 만듦
         circumference: 180, // 반원형 (180도)
         rotation: -90, // 서쪽(왼쪽)에서 시작
       }
     ]
-
   };
 
   // Chart.js 옵션 설정
