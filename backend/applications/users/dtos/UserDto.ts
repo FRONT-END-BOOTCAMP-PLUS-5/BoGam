@@ -3,6 +3,8 @@ export interface UserInfo {
   nickname: string;
   username?: string;
   phoneNumber?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface GetUserInfoResponseDto {

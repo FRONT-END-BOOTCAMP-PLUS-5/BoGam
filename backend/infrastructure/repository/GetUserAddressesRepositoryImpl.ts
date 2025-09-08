@@ -33,6 +33,7 @@ export class GetUserAddressesRepositoryImpl
         roadAddress: userAddress.address.roadAddress || '',
       },
       isPrimary: userAddress.isPrimary,
+      isSelected: userAddress.isSelected,
     }));
   }
 }
