@@ -16,5 +16,9 @@ export async function GET(req: NextRequest) {
   const useCase = new IsNicknameTakenUseCase(new UserRepositoryImpl());
   const result = await useCase.execute(nickname);
 
-  return NextResponse.json(result); // 닉네임이 이미 사용중이라면 : true , 아니라면 : false
+  // 반환 형태 예시
+  //{ available: true } : 사용 가능
+  //{ available: false }  : 중복
+
+  return NextResponse.json(result);
 }

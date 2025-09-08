@@ -143,6 +143,6 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await prisma.user.findUnique({
       where: { nickname },
     });
-    return !!user; // 중복 여부만 반환
+    return !!user; // 중복 여부만 반환 - 존재하면 true, 존재하지 않으면 false
   }
 }

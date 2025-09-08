@@ -9,7 +9,7 @@ export interface DeleteUserResponse {
 class AuthApi {
   private static instance: AuthApi;
   private constructor() {}
-  
+
   public static getInstance(): AuthApi {
     if (!AuthApi.instance) {
       AuthApi.instance = new AuthApi();
@@ -19,8 +19,10 @@ class AuthApi {
 
   public async deleteUser(): Promise<DeleteUserResponse> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
-    
-    const response = await axiosInstance.delete<DeleteUserResponse>('/api/auth/delete-user');
+
+    const response = await axiosInstance.delete<DeleteUserResponse>(
+      '/api/users/delete-user'
+    );
     return response.data;
   }
 }

@@ -39,9 +39,9 @@ export default function SignupForm() {
 
   const onSubmit = async (data: SignupInput) => {
     setSignupError(''); // 이전 에러 메시지 초기화
-    
+
     try {
-      await axiosInstance.post('/auth/signup', data);
+      await axiosInstance.post('/api/users/signup', data);
       setIsModalOpen(true);
     } catch (error) {
       if (
@@ -64,17 +64,20 @@ export default function SignupForm() {
         };
 
         if (errRes.response.status === 409) {
-          const errorMessage = errRes.response.data.message || '이미 존재하는 닉네임, 유저이름 또는 전화번호입니다.';
+          const errorMessage =
+            errRes.response.data.message ||
+            '이미 존재하는 닉네임, 유저이름 또는 전화번호입니다.';
           setSignupError(errorMessage);
           setIsErrorModalOpen(true);
         } else if (Array.isArray(errRes.response.data.issues)) {
-          const validationErrors = errRes.response.data.issues.map(issue => 
-            `${issue.path[0]}: ${issue.message}`
-          ).join(', ');
+          const validationErrors = errRes.response.data.issues
+            .map((issue) => `${issue.path[0]}: ${issue.message}`)
+            .join(', ');
           setSignupError(`입력 정보를 확인해주세요: ${validationErrors}`);
           setIsErrorModalOpen(true);
         } else {
-          const errorMessage = errRes.response.data.message || '회원가입에 실패했습니다.';
+          const errorMessage =
+            errRes.response.data.message || '회원가입에 실패했습니다.';
           setSignupError(errorMessage);
           setIsErrorModalOpen(true);
         }
@@ -93,7 +96,7 @@ export default function SignupForm() {
 
     setChecking(true);
     try {
-      const res = await axiosInstance.get('/auth/check-nickname', {
+      const res = await axiosInstance.get('/api/users/check-nickname', {
         params: { nickname },
       });
 
@@ -113,6 +116,8 @@ export default function SignupForm() {
       setChecking(false);
     }
   };
+
+  
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.formRow}>
       <Field id='name' label='이름'>
@@ -215,9 +220,7 @@ export default function SignupForm() {
         )}
       </Field>
 
-      {errors.root && (
-        <p className={styles.error}>{errors.root.message}</p>
-      )}
+      {errors.root && <p className={styles.error}>{errors.root.message}</p>}
 
       <Button variant='primary' type='submit' fullWidth disabled={isSubmitting}>
         {isSubmitting ? '가입 중...' : '회원가입'}
