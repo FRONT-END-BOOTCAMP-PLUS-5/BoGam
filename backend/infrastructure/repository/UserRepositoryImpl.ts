@@ -4,32 +4,58 @@ import { UserEntity } from '@be/domain/entities/User';
 import { UserInfo } from '@be/applications/users/dtos/UserDto';
 
 export class UserRepositoryImpl implements UserRepository {
-  async findByNickname(nickname: string): Promise<UserInfo | null> {
+  async findByNickname(nickname: string): Promise<UserEntity | null> {
     const user = await prisma.user.findFirst({
       where: { nickname },
-      select: { id: true, nickname: true },
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        username: true,
+        password: true,
+        pinNumber: true,
+        phoneNumber: true,
+      },
     });
 
     if (!user) return null;
 
-    return {
-      id: user.id,
-      nickname: user.nickname,
-    };
+    return new UserEntity(
+      user.id,
+      user.name,
+      user.nickname,
+      user.username,
+      user.password,
+      user.pinNumber,
+      user.phoneNumber
+    );
   }
 
-  async findByUserId(userId: string): Promise<UserInfo | null> {
+  async findByUserId(userId: string): Promise<UserEntity | null> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, nickname: true },
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        username: true,
+        password: true,
+        pinNumber: true,
+        phoneNumber: true,
+      },
     });
 
     if (!user) return null;
 
-    return {
-      id: user.id,
-      nickname: user.nickname,
-    };
+   return new UserEntity(
+    user.id,
+    user.name,
+    user.nickname,
+    user.username,
+    user.password,
+    user.pinNumber,
+    user.phoneNumber
+  );
   }
 
   async create(userData: {

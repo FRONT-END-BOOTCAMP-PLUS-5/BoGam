@@ -26,17 +26,13 @@ export async function POST(req: Request) {
     // 중복 검사
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { nickname },
-          { username },
-          { phoneNumber: formatPhone(phoneNumber) }, // 비교 시에도 포맷 맞추기
-        ],
+        OR: [{ nickname }],
       },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { message: '이미 존재하는 닉네임, 유저이름 또는 전화번호입니다.' },
+        { message: '이미 존재하는 유저이름입니다.' },
         { status: 409 }
       );
     }
@@ -69,4 +65,8 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+//HTTP 메서드 제한 (POST 외 방지)
+export async function GET() {
+  return NextResponse.json({ message: 'Method Not Allowed' }, { status: 405 });
 }
