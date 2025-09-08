@@ -1,5 +1,6 @@
-import { prisma } from '@utils/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { IsNicknameTakenUseCase } from '@be/applications/users/usecases/IsNicknameTakenUseCase';
+import { UserRepositoryImpl } from '@be/infrastructure/repository/UserRepositoryImpl';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -12,9 +13,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const existingUser = await prisma.user.findUnique({
-    where: { nickname },
-  });
+  const useCase = new IsNicknameTakenUseCase(new UserRepositoryImpl());
+  const result = await useCase.execute(nickname);
 
-  return NextResponse.json({ available: !existingUser });
+  return NextResponse.json(result); // 닉네임이 이미 사용중이라면 : true , 아니라면 : false
 }

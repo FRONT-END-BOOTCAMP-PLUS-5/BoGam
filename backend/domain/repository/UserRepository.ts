@@ -14,5 +14,5 @@ export interface UserRepository {
   update(id: string, userData: Partial<UserEntity>): Promise<UserEntity | null>;
   delete(id: string): Promise<boolean>;
   deleteByNickname(nickname: string): Promise<boolean>;
+  isNicknameTaken(nickname: string): Promise<boolean>;
 }
- 

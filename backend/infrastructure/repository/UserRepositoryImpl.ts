@@ -47,15 +47,15 @@ export class UserRepositoryImpl implements UserRepository {
 
     if (!user) return null;
 
-   return new UserEntity(
-    user.id,
-    user.name,
-    user.nickname,
-    user.username,
-    user.password,
-    user.pinNumber,
-    user.phoneNumber
-  );
+    return new UserEntity(
+      user.id,
+      user.name,
+      user.nickname,
+      user.username,
+      user.password,
+      user.pinNumber,
+      user.phoneNumber
+    );
   }
 
   async create(userData: {
@@ -137,5 +137,12 @@ export class UserRepositoryImpl implements UserRepository {
     } catch (error) {
       return false;
     }
+  }
+
+  async isNicknameTaken(nickname: string): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { nickname },
+    });
+    return !!user; // 중복 여부만 반환
   }
 }
