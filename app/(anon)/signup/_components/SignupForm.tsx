@@ -96,7 +96,7 @@ export default function SignupForm() {
 
     setChecking(true);
     try {
-      const res = await axiosInstance.get('/api/users/check-nickname', {
+      const res = await axiosInstance.get('/users/check-nickname', {
         params: { nickname },
       });
 
@@ -117,7 +117,6 @@ export default function SignupForm() {
     }
   };
 
-  
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.formRow}>
       <Field id='name' label='이름'>
@@ -125,12 +124,7 @@ export default function SignupForm() {
         {errors.name && <p className={styles.error}>{errors.name.message}</p>}
       </Field>
 
-      <Field
-        id='nickname'
-        label='닉네임'
-        hint='2~12자, 특수문자 제외'
-        required={false}
-      >
+      <Field id='nickname' label='닉네임' hint='2~12자, 특수문자 제외'>
         <TextInput
           id='nickname'
           {...register('nickname')}
