@@ -96,6 +96,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         addressId,
         nickname: addressNickname || autoNickname,
         isPrimary: false,
+        isSelected: false,
       },
       include: {
         address: true,

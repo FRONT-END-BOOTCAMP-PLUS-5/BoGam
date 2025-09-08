@@ -6,6 +6,8 @@ export class UserEntity {
     public readonly username: string,
     public readonly password: string,
     public readonly pinNumber: string,
-    public readonly phoneNumber: string
+    public readonly phoneNumber: string,
+    public readonly createdAt: Date,
+    public readonly updatedAt: Date
   ) {}
 }
