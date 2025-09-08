@@ -15,6 +15,8 @@ model User {
   password      String
   pinNumber     String        @map("pin_number")
   phoneNumber   String        @unique(map: "users_unique_phone_number") @map("phone_number")
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
   userAddresses UserAddress[]
 
   @@map("users")
@@ -50,6 +52,7 @@ model UserAddress {
   userId      String       @map("user_id") @db.Uuid
   addressId   Int          @map("address_id")
   isPrimary   Boolean      @default(false) @map("is_primary")
+  isSelected  Boolean      @default(false) @map("is_selected")
   createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
   nickname    String
   realEstates RealEstate?
