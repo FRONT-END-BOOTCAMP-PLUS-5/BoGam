@@ -3,23 +3,18 @@
 import React from 'react';
 import { styles } from './StateIcon.styles';
 import StateIconItem from './StateIconItem';
-
 interface StateIconProps {
-  completedCount: number;
-  unconfirmedCount: number;
-  warningCount: number;
+  checked: number;
+  unchecked: number;
+  mismatch: number;
 }
 
-export default function StateIcon({
-  completedCount,
-  unconfirmedCount,
-  warningCount,
-}: StateIconProps) {
+export default function StateIcon({ checked, unchecked, mismatch }: StateIconProps) {
   return (
     <div className={styles.container}>
-      <StateIconItem type='completed' count={completedCount} />
-      <StateIconItem type='warning' count={warningCount} />
-      <StateIconItem type='unconfirmed' count={unconfirmedCount} />
+      <StateIconItem type='completed' count={checked} />
+      <StateIconItem type='warning' count={mismatch} />
+      <StateIconItem type='unconfirmed' count={unchecked} />
     </div>
   );
 }

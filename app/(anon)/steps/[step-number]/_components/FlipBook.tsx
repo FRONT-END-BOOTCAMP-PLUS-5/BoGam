@@ -1,0 +1,114 @@
+'use client';
+
+import { useRef, useState, ReactNode } from 'react';
+import HTMLFlipBook from 'react-pageflip';
+import { styles } from '../page.styles';
+
+// HTMLFlipBook 인스턴스 타입 정의
+interface FlipBookInstance {
+  object: {
+    flip: (pageIndex: number) => void;
+    turnToPage: (pageIndex: number) => void;
+  };
+}
+
+// bookRef 타입 정의
+type BookRefType = {
+  object: {
+    flip: (pageIndex: number) => void;
+    turnToPage: (pageIndex: number) => void;
+  };
+} | null;
+
+interface FlipBookProps {
+  flipPages: ReactNode[];
+  currentPage: number;
+  marginLeft: string;
+  onPageChange: (page: number) => void;
+  onFlipBookInit: (flipBook: FlipBookInstance) => void;
+  flipBookRef?: React.RefObject<FlipBookInstance | null>;
+}
+
+export default function FlipBook({
+  flipPages,
+  currentPage,
+  marginLeft,
+  onPageChange,
+  onFlipBookInit,
+  flipBookRef,
+}: FlipBookProps) {
+  const bookRef = useRef<BookRefType>(null);
+  const [isManualFlip, setIsManualFlip] = useState(false);
+  const [flipBookInstance, setFlipBookInstance] = useState<FlipBookInstance | null>(null);
+
+  const handleFlip = (e: { data: number }) => {
+    // 수동 페이지 넘김이 아닐 때만 currentPage 업데이트
+    if (!isManualFlip) {
+      // e.data는 flipPages 배열의 인덱스
+      // 실제 콘텐츠 페이지는 0, 2, 4... 위치에 있으므로 2로 나눔
+      const calculatedPage = Math.floor((e.data + 1) / 2);
+      // 계산된 페이지가 유효한 범위 내에 있는지 확인
+      if (calculatedPage >= 0) {
+        onPageChange(calculatedPage);
+      }
+    }
+    // 플래그 리셋 (약간의 지연을 두어 수동 설정이 우선되도록 함)
+    setTimeout(() => {
+      setIsManualFlip(false);
+    }, 50);
+  };
+
+  const handleInit = (flipBook: FlipBookInstance) => {
+    // flipBook 객체를 별도로 저장
+    setFlipBookInstance(flipBook);
+    bookRef.current = flipBook;
+    onFlipBookInit(flipBook);
+    
+    // 외부 ref에 할당
+    if (flipBookRef) {
+      flipBookRef.current = flipBook;
+    }
+  };
+
+
+  return (
+    <div className={styles.flipBookArea}>
+      <HTMLFlipBook
+        ref={bookRef}
+        className={styles.demoBook}
+        width={450}
+        height={650}
+        size='stretch'
+        minWidth={350}
+        maxWidth={550}
+        minHeight={450}
+        maxHeight={700}
+        maxShadowOpacity={0.5}
+        showCover={true}
+        mobileScrollSupport={true}
+        startPage={currentPage * 2} // 저장된 페이지 정보를 반영하여 시작 페이지 설정
+        drawShadow={true}
+        flippingTime={1000}
+        usePortrait={false}
+        style={
+          marginLeft.startsWith('translateX')
+            ? { transform: marginLeft }
+            : { marginLeft }
+        }
+        startZIndex={0}
+        autoSize={true}
+        clickEventForward={true}
+        useMouseEvents={true}
+        swipeDistance={30}
+        showPageCorners={false}
+        disableFlipByClick={false}
+        onInit={handleInit}
+        onFlip={handleFlip}
+      >
+        {flipPages}
+      </HTMLFlipBook>
+    </div>
+  );
+}
+
+export { type FlipBookInstance, type BookRefType };
