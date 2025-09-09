@@ -12,5 +12,6 @@ export const styles = {
   addressSection: "",
   addressTitle: "text-sm font-medium text-brand-dark-gray",
   addressContent: "flex items-center",
-  addressText: "text-sm text-brand-black break-words leading-relaxed"
+  addressText: "text-sm text-brand-black break-words leading-relaxed",
+  starIcon: "inline mr-1"
 };

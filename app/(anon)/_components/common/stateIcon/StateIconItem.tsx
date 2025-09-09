@@ -5,18 +5,18 @@ import { Check, X } from 'lucide-react';
 import { getItemStyle, getTextStyle, styles } from './StateIcon.styles';
 
 interface StateIconItemProps {
-  type: 'completed' | 'unconfirmed' | 'warning';
+  type: 'match' | 'unchecked' | 'mismatch';
   count: number;
 }
 
 export default function StateIconItem({ type, count }: StateIconItemProps) {
   const getLabel = () => {
     switch (type) {
-      case 'completed':
+      case 'match':
         return '안전';
-      case 'unconfirmed':
+      case 'unchecked':
         return '미확인';
-      case 'warning':
+      case 'mismatch':
         return '경고';
       default:
         return '';
@@ -25,11 +25,11 @@ export default function StateIconItem({ type, count }: StateIconItemProps) {
 
   const getIcon = () => {
     switch (type) {
-      case 'completed':
+      case 'match':
         return <Check className='w-4 h-4 text-white' strokeWidth={3} />;
-      case 'unconfirmed':
+      case 'unchecked':
         return <X className='w-4 h-4 text-brand-dark-gray' strokeWidth={3} />;
-      case 'warning':
+      case 'mismatch':
         return <span style={{ fontSize: '14px' }}>😱</span>;
       default:
         return null;
@@ -42,9 +42,9 @@ export default function StateIconItem({ type, count }: StateIconItemProps) {
       <div className={`${getTextStyle(type)}`}>{getLabel()}</div>
       <div
         className={`${styles.count} ${
-          type === 'completed'
+          type === 'match'
             ? 'text-white'
-            : type === 'unconfirmed'
+            : type === 'unchecked'
             ? 'text-brand-black'
             : 'text-white'
         }`}

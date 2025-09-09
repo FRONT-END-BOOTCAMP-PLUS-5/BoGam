@@ -48,6 +48,23 @@ export const styles = {
   analysisWarning: 'analysis-warning bg-brand-error/10 p-3 rounded-lg border-l-4 border-brand-error',
   analysisSafe: 'analysis-safe bg-brand-green/10 p-3 rounded-lg border-l-4 border-brand-green',
   
+  // Analysis warning/safe styles
+  warningTitle: 'font-semibold text-brand-error mb-1',
+  warningText: 'text-brand-error',
+  warningSubText: 'text-sm text-brand-error mt-1',
+  safeTitle: 'font-semibold text-brand-green mb-1',
+  safeText: 'text-brand-green',
+  safeSubText: 'text-sm text-brand-green mt-1',
+  
+  // Saving state
+  savingContainer: 'mt-4 text-center',
+  savingText: 'text-sm text-brand-dark-gray',
+  
+  // Form hints and errors
+  danjiHint: 'text-sm text-orange-600 mt-1',
+  priceHint: 'text-sm text-gray-500 mt-1',
+  complexError: 'text-sm text-red-600 mt-2 text-center',
+  
   // Average prices
   averagePrices: 'average-prices mb-6',
   averagePricesTitle: 'average-prices-title text-lg font-semibold text-brand-black mb-3',
