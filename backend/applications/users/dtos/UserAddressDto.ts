@@ -7,6 +7,7 @@ export interface UserAddressInfo {
   nickname: string;
   createdAt: Date;
   isPrimary: boolean;
+  isSelected: boolean;
   address: {
     id: number;
     latitude?: number;
@@ -26,6 +27,7 @@ export interface UserAddressWithAddressInfo {
   nickname: string;
   createdAt: Date;
   isPrimary: boolean;
+  isSelected: boolean;
   address: {
     id: number;
     latitude?: number;

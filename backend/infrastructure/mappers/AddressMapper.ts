@@ -39,6 +39,7 @@ export function mapUserAddressToUserAddressInfo(userAddress: {
   nickname: string;
   createdAt: Date;
   isPrimary: boolean;
+  isSelected: boolean;
   address: {
     id: number;
     latitude: number | null;
@@ -57,6 +58,7 @@ export function mapUserAddressToUserAddressInfo(userAddress: {
     nickname: userAddress.nickname,
     createdAt: userAddress.createdAt,
     isPrimary: userAddress.isPrimary,
+    isSelected: userAddress.isSelected,
     address: {
       id: userAddress.address.id,
       latitude: userAddress.address.latitude || undefined,
