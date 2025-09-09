@@ -23,11 +23,12 @@ export default function SummaryPage({ title, contents, stepNumber }: SummaryPage
       <div className={styles.rightContainer}>
         {/* 상단 영역 */}
         <header className={styles.rightFirstOutsideBox}>
-          <div className={styles.rightFirstInsideBox}>
-            <h2 id={`summary-title-${stepNumber}`} className={styles.smallFont}>
-              {title}
-            </h2>
-          </div>
+          <h2 
+            id={`summary-title-${stepNumber}`} 
+            className={styles.summaryTitle}
+          >
+            {title}
+          </h2>
         </header>
         
         {/* 하단 영역 */}

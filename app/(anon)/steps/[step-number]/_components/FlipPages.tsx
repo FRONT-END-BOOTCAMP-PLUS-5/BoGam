@@ -18,7 +18,7 @@ interface GeneralPageData {
   type: 'general';
   title: string;
   category: string;
-  content: string;
+  content: string[];
 }
 
 type PageData = SummaryPageData | GeneralPageData;
@@ -48,7 +48,7 @@ export default function FlipPages({ pages, stepNumber }: FlipPagesProps): ReactN
           <GeneralPage
             title={page.title ?? ''}
             category={page.category ?? ''}
-            content={page.content ?? ''}
+            content={page.content ?? []}
             pageIdx={idx}
             stepNumber={stepNumber}
           />

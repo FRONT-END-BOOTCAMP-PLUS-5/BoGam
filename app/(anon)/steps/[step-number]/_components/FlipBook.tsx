@@ -41,17 +41,29 @@ export default function FlipBook({
   const [flipBookInstance, setFlipBookInstance] = useState<FlipBookInstance | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [marginLeft, setMarginLeft] = useState('translateX(-40.5%)');
+  const [bookSize, setBookSize] = useState({ width: 400, height: 600 });
   
-  // 반응형 marginLeft 설정
+  // 책 크기 계산 및 마진 계산을 위한 useEffect
   useEffect(() => {
-    const width = window.innerWidth;
-    if (width <= 400) {
-      setMarginLeft('translateX(-48.5%)');
-    } else if (width <= 430) {
-      setMarginLeft('translateX(-45.5%)');
-    } else {
-      setMarginLeft('translateX(-40.5%)');
-    }
+    const handleResize = () => {
+      if (typeof window === 'undefined') return;
+      
+      const vh = window.innerHeight;
+      const height = vh * 0.55;
+      const width = height / 1.44;
+      const newBookSize = { width: Math.round(width), height: Math.round(height) };
+      setBookSize(newBookSize);
+
+      const containerWidth = Math.min(window.innerWidth, 480);
+      const marginLeftPixels = (containerWidth - 3 * newBookSize.width) / 2;
+      setMarginLeft(`translateX(${marginLeftPixels}px)`);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const handleFlip = (e: { data: number }) => {
@@ -98,13 +110,13 @@ export default function FlipBook({
       <HTMLFlipBook
         ref={bookRef}
         className={styles.flipBook}
-        width={450}
-        height={650}
-        size='stretch'
-        minWidth={350}
-        maxWidth={550}
-        minHeight={450}
-        maxHeight={700}
+        width={bookSize.width}
+        height={bookSize.height}
+        size='fixed'
+        minWidth={bookSize.width}
+        maxWidth={bookSize.width}
+        minHeight={bookSize.height}
+        maxHeight={bookSize.height}
         maxShadowOpacity={0.5}
         showCover={true}
         mobileScrollSupport={true}

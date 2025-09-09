@@ -4,17 +4,25 @@ import GoInsideButton from './GoInsideButton';
 interface pageType {
   title: string;
   category: string;
-  content: string | string[];
+  content: string[];
   pageIdx: number;
   stepNumber: string;
 }
 
-// \n을 <br> 태그로 변환하는 함수
-const formatContent = (content: string | string[]): string => {
-  if (Array.isArray(content)) {
-    return content.join('\n').replace(/\n/g, '<br>');
-  }
-  return content.replace(/\n/g, '<br>');
+// content를 렌더링하는 함수
+const renderContent = (content: string[]) => {
+  return content.map((paragraph, index) => {
+    // 빈 문자열인 경우 빈 줄로 처리
+    if (paragraph === '') {
+      return <div key={index} className={styles.emptyLine}></div>;
+    }
+    // 일반 문단인 경우
+    return (
+      <p key={index} className={styles.paragraph}>
+        {paragraph}
+      </p>
+    );
+  });
 };
 
 export default function GeneralPage({
@@ -41,10 +49,11 @@ export default function GeneralPage({
         </h3>
         <div
           className={styles.content}
-          dangerouslySetInnerHTML={{ __html: formatContent(content) }}
           role="region"
           aria-label="단계별 상세 내용"
-        />
+        >
+          {renderContent(content)}
+        </div>
       </section>
       
       {/* 하단 */}
