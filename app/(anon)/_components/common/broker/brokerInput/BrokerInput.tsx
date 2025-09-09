@@ -113,11 +113,6 @@ export const BrokerInput = ({
         }
         disabled={!brkrNm.trim()}
       >
-        {/* 선택된 주소 정보 표시 */}
-        <Field id='selected-address' label='선택된 주소'>
-          <p className={styles.addressText}>{selectedAddress.roadAddress}</p>
-        </Field>
-
         <Field id='broker-name' label='중개업자명' required>
           <TextInput
             type='text'

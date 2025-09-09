@@ -6,7 +6,6 @@ import { useTransactionDataStore } from '@libs/stores/transactionData/transactio
 import { useQueryClient } from '@tanstack/react-query';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { placesApi } from '@libs/api_front/places.api';
-import { useModalStore } from '@libs/stores/modalStore';
 import {
   extractBaseAddress,
   extractDongHo,
@@ -14,10 +13,11 @@ import {
   createUserAddressFromSearch,
 } from '@utils/main/addressUtils';
 import { createLocationFromCoordinates } from '@utils/main/mapUtils';
+import { useToastStore } from '@libs/stores/toastStore';
 
 export const useAddressManagement = () => {
   const queryClient = useQueryClient();
-  const { openModal } = useModalStore();
+  const { showSuccess, showError } = useToastStore();
 
   // 무한 루프 방지를 위한 ref
   const lastProcessedAddressId = useRef<number | null>(null);
@@ -143,11 +143,7 @@ export const useAddressManagement = () => {
   // 주소 수동 저장 함수 (DB에 실제 저장) - 호 데이터 사용
   const saveAddressToUser = async (dongValue?: string, hoValue?: string) => {
     if (!storeSelectedAddress) {
-      openModal({
-        title: '알림',
-        content: '저장할 주소가 선택되지 않았습니다.',
-        icon: 'warning',
-      });
+      showError('저장할 주소가 선택되지 않았습니다.');
       return;
     }
 
@@ -156,11 +152,7 @@ export const useAddressManagement = () => {
     const currentHo = hoValue || ho || '';
 
     if (!currentDong) {
-      openModal({
-        title: '알림',
-        content: '동을 입력해주세요.',
-        icon: 'warning',
-      });
+      showError('동을 입력해주세요.');
       return;
     }
 
@@ -178,11 +170,7 @@ export const useAddressManagement = () => {
       );
 
       if (isDuplicate) {
-        openModal({
-          title: '알림',
-          content: '이미 저장된 주소입니다.',
-          icon: 'warning',
-        });
+        showError('이미 저장된 주소입니다.');
         return;
       }
 
@@ -212,11 +200,7 @@ export const useAddressManagement = () => {
           queryKey: ['userAddresses'],
         });
 
-        openModal({
-          title: '성공',
-          content: '주소가 성공적으로 저장되었습니다!',
-          icon: 'success',
-        });
+        showSuccess('주소가 성공적으로 저장되었습니다!');
       } else {
         // 기존 주소의 동/호 정보만 업데이트하는 경우
         // TODO: 기존 주소 업데이트 API 호출 필요
@@ -228,19 +212,11 @@ export const useAddressManagement = () => {
         };
 
         selectAddress(updatedAddress);
-        openModal({
-          title: '성공',
-          content: '주소 정보가 업데이트되었습니다!',
-          icon: 'success',
-        });
+        showSuccess('주소가 성공적으로 저장되었습니다!');
       }
     } catch (error) {
       console.error('주소 저장 실패:', error);
-      openModal({
-        title: '오류',
-        content: '주소 저장 중 오류가 발생했습니다.',
-        icon: 'error',
-      });
+      showError('주소 저장 중 오류가 발생했습니다.');
     }
   };
 
@@ -250,11 +226,8 @@ export const useAddressManagement = () => {
     const dongValue = currentDong || dong || '';
 
     if (!dongValue) {
-      openModal({
-        title: '알림',
-        content: '동을 입력해주세요.',
-        icon: 'warning',
-      });
+      showError('동을 입력해주세요.');
+
       return;
     }
 
@@ -267,11 +240,7 @@ export const useAddressManagement = () => {
     if (needsNewSearch) {
       // 새로운 주소 검색 - API 호출 필요
       if (!roadAddress) {
-        openModal({
-          title: '알림',
-          content: '상세 주소를 입력해주세요.',
-          icon: 'warning',
-        });
+        showError('상세 주소를 입력해주세요.');
         return;
       }
 
@@ -291,19 +260,11 @@ export const useAddressManagement = () => {
           setMapCenter(location);
           setSearchLocationMarker(location);
         } else {
-          openModal({
-            title: '알림',
-            content: '해당 주소를 찾을 수 없습니다.',
-            icon: 'warning',
-          });
+          showError('해당 주소를 찾을 수 없습니다.');
         }
       } catch (error) {
         console.error('키워드 검색 실패 (지도 이동 전용):', error);
-        openModal({
-          title: '오류',
-          content: '키워드 검색 중 오류가 발생했습니다.',
-          icon: 'error',
-        });
+        showError('키워드 검색 중 오류가 발생했습니다.');
       }
     } else {
       // ✅ 기존 저장된 주소 사용 - API 호출 불필요

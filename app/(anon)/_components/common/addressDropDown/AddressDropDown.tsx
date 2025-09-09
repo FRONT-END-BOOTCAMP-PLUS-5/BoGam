@@ -16,6 +16,7 @@ import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { useModalStore } from '@libs/stores/modalStore';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { AuthRequiredState } from './_components/AuthRequiredState';
+import { useToastStore } from '@libs/stores/toastStore';
 
 const DEFAULT_PROPS = {
   title: '현재 열람',
@@ -63,6 +64,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   // 모달 스토어
   const { openModal } = useModalStore();
+  const { showError } = useToastStore();
 
   // React Query 제거 - Zustand store만 사용
   // const { isLoading, isAuthenticated } = useUserAddresses();
@@ -86,7 +88,10 @@ export function AddressDropDown(props: AddressDropDownProps) {
   // 외부 클릭으로 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsExpanded(false);
       }
     };
@@ -144,11 +149,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
           // 삭제 성공 시 모달이 자동으로 닫힘 (useModalStore의 기본 동작)
         } catch (error) {
           console.error('주소 삭제 실패:', error);
-          openModal({
-            title: '오류',
-            content: '주소 삭제 중 오류가 발생했습니다.',
-            icon: 'error',
-          });
+          showError('주소 삭제 중 오류가 발생했습니다.');
         }
       },
     });
@@ -168,9 +169,9 @@ export function AddressDropDown(props: AddressDropDownProps) {
   // 로딩 상태 표시
   if (isLoading) {
     return (
-      <LoadingOverlay 
+      <LoadingOverlay
         isVisible={true}
-        title={title || "주소를 불러오는 중입니다..."}
+        title={title || '주소를 불러오는 중입니다...'}
         currentStep={1}
         totalSteps={1}
       />
@@ -191,7 +192,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
           {selectedAddress ? (
             <div className={styles.selectedAddress}>
               {showFavoriteToggle && isClient && (
-                <div 
+                <div
                   onClick={(e) => {
                     e.stopPropagation(); // 드롭다운 토글 방지
                     if (selectedAddress) {

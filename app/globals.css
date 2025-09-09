@@ -3,6 +3,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Toast 커스터마이징 */
+.toast-container {
+  font-family: 'Pretendard', sans-serif;
+}
+
+.toast-container .Toastify__toast {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  width: auto !important;
+  min-width: 300px;
+  max-width: 90vw;
+  padding: 12px 16px;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .toast-container .Toastify__toast {
+    min-width: 280px;
+    max-width: 95vw;
+    margin: 8px;
+    font-size: 14px;
+  }
+
+  .toast-container .Toastify__toast-container {
+    padding: 0 16px;
+  }
+}
+
 /* ==== Theme Variables ==== */
 :root {
   --brand-white: #ffffff;
