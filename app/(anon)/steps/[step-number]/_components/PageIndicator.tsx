@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { styles } from '../page.styles';
+import { styles } from './PageIndicator.styles';
 import { FlipBookInstance } from './FlipBook';
 
 interface PageIndicatorProps {

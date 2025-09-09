@@ -12,8 +12,8 @@ export default function SummaryPage({ title, contents, stepNumber }: SummaryPage
     ? styles.bookCover
     : styles.bookCoverGreen;
   return (
-    <div className={bookCoverClass}>
-      <div className={styles.leftDiv}>
+    <article className={bookCoverClass} role="article" aria-labelledby={`summary-title-${stepNumber}`}>
+      <div className={styles.leftDiv} role="presentation" aria-hidden="true">
         <div className={styles.leftFirst}></div>
         <div className={styles.leftCenter}></div>
         <div className={styles.leftCenter}></div>
@@ -22,24 +22,32 @@ export default function SummaryPage({ title, contents, stepNumber }: SummaryPage
       </div>
       <div className={styles.rightContainer}>
         {/* 상단 영역 */}
-        <div className={styles.rightFirstOutsideBox}>
+        <header className={styles.rightFirstOutsideBox}>
           <div className={styles.rightFirstInsideBox}>
-            <p className={styles.smallFont}> {title} </p>
+            <h2 id={`summary-title-${stepNumber}`} className={styles.smallFont}>
+              {title}
+            </h2>
           </div>
-        </div>
+        </header>
         
         {/* 하단 영역 */}
-        <div className={styles.whitePaper}>
+        <main className={styles.whitePaper} role="main" aria-label="요약 내용">
           {contents.map((block, i) => (
-            <div key={i}>
-              <h6 className={styles.topic}>{block.subtitle}</h6>
-              {block.items.map((item, j) => (
-                <p key={j} className={styles.introContent}>{item}</p>
-              ))}
-            </div>
+            <section key={i} aria-labelledby={`summary-subtitle-${stepNumber}-${i}`}>
+              <h3 id={`summary-subtitle-${stepNumber}-${i}`} className={styles.topic}>
+                {block.subtitle}
+              </h3>
+              <ul role="list" aria-label={`${block.subtitle} 항목들`}>
+                {block.items.map((item, j) => (
+                  <li key={j} className={styles.introContent} role="listitem">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
           ))}
-        </div>
+        </main>
       </div>
-    </div>
+    </article>
   );
 }

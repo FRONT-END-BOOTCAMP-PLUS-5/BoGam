@@ -1,16 +1,10 @@
-'use client';
-
-import { useEffect, useRef, useState } from 'react';
-
+import { cookies } from 'next/headers';
+import { Metadata } from 'next';
 import { styles } from './page.styles';
 import StateIcon from '@/(anon)/_components/common/stateIcon/StateIcon';
 import ProgressBarChart from '@/(anon)/_components/common/stateIcon/ProgressBarChart';
-import FlipBook, { FlipBookInstance } from '@/(anon)/steps/[step-number]/_components/FlipBook';
-import PageIndicator from '@/(anon)/steps/[step-number]/_components/PageIndicator';
+import FlipBookSection from '@/(anon)/steps/[step-number]/_components/FlipBookSection';
 import FlipPages, { PageData } from '@/(anon)/steps/[step-number]/_components/FlipPages';
-import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
-import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
-
 
 // API 응답 타입 정의
 interface StepResultSummary {
@@ -40,177 +34,355 @@ interface StepResultResponse {
   summary: StepResultSummary;
 }
 
+// 단계별 맞춤 키워드 및 메타데이터 (공통 함수)
+const getStepSpecificMetadata = (stepNum: string) => {
+  const step = parseInt(stepNum);
+  
+  switch (step) {
+    case 1:
+      return {
+        title: `깡통주택 사기 피하기 | 전세 사기 예방 가이드 1단계 | BoGam`,
+        description: `깡통주택 사기 피하기, 실거래가 확인, 등기부등본 분석, 전세반환보증보험 가입조건 확인 방법을 단계별로 안내합니다.`,
+        keywords: [
+          '깡통주택', '깡통주택 사기', '전세 사기', '등기부등본', '실거래가', '전세반환보증보험',
+          '근저당권', '채권최고액', '납세증명서', '전세보증금', '전세 사기 예방', '안전한 전세',
+          '전세계약', '임대인 확인', '전세 피해 예방', 'BoGam'
+        ]
+      };
+    case 2:
+      return {
+        title: `가짜 임대인 피하기 | 전세 사기 예방 가이드 2단계 | BoGam`,
+        description: `가짜 임대인 피하기, 신탁원부 확인, 등기부등본 상세분석, 확정일자 확인동의서 방법을 안내합니다.`,
+        keywords: [
+          '가짜 임대인', '임대인 확인', '신탁원부', '등기부등본 분석', '확정일자', '확정일자 확인동의서',
+          '다가구주택', '대리인 계약', '명의도용', '전세 사기 예방', '안전한 전세계약', '임대인 위임장',
+          '부동산 신탁', '전세보증금 보호', '전세 피해 예방', 'BoGam'
+        ]
+      };
+    case 3:
+      return {
+        title: `공인중개사 확인 | 전세 사기 예방 가이드 3단계 | BoGam`,
+        description: `공인중개사 자격증 확인, 최우선변제 금액 안내, 공제증서 발급 방법을 통해 안전한 계약서 작성을 돕습니다.`,
+        keywords: [
+          '공인중개사', '중개사 자격증', '최우선변제', '공제증서', '주택임대차보호법', '월셋집 전세',
+          '이중계약', '중개사무소', '무자격 중개', '전세계약서', '안전한 계약', '전세보증금 보호',
+          '전세 사기 예방', '전세 피해 예방', 'BoGam'
+        ]
+      };
+    case 4:
+      return {
+        title: `계약 후 전세 사기 예방 | 전세 사기 예방 가이드 4단계 | BoGam`,
+        description: `계약 후 등기부등본 확인, 특약조항 추가, 전입신고 확정일자, 전세권 설정 등기 방법을 안내합니다.`,
+        keywords: [
+          '계약 후 전세사기', '등기부등본 확인', '특약조항', '전입신고', '확정일자', '전세권 설정등기',
+          '주택담보대출', '이중계약', '선순위 근저당', '신탁등기말소', '전세보증금 보호', '안전한 전세',
+          '전세계약 특약', '전세 사기 예방', '전세 피해 예방', 'BoGam'
+        ]
+      };
+    case 5:
+      return {
+        title: `입주 후 전세 사기 예방 | 전세 사기 예방 가이드 5단계 | BoGam`,
+        description: `입주 후 납세증명서 확인, 등기부등본 압류가압류 확인, 전세보증금반환보증 가입 방법을 안내합니다.`,
+        keywords: [
+          '입주 후 전세사기', '납세증명서', '미납국세', '압류 가압류', '전세보증금반환보증', '전출신고',
+          '대항력', '전세금 보호', '임대인 세금', '당해세', '경매', '전세사기 예방', '안전한 전세',
+          '전세 피해 예방', 'BoGam'
+        ]
+      };
+    case 6:
+      return {
+        title: `계약 종료 후 전세 사기 예방 | 전세 사기 예방 가이드 6단계 | BoGam`,
+        description: `계약 종료 후 내용증명, 임차권등기명령, 지급명령 신청 방법을 통해 전세보증금 반환을 보장합니다.`,
+        keywords: [
+          '계약 종료', '전세보증금 반환', '내용증명', '임차권등기명령', '지급명령', '전세금 소송',
+          '전세사기 예방', '보증금 회수', '법적 대응', '전세계약 종료', '안전한 전세', '전세 분쟁',
+          '전세금 반환 소송', '전세 피해 예방', 'BoGam'
+        ]
+      };
+    case 7:
+      return {
+        title: `전세 사기 사례 및 대처방법 | 전세 사기 예방 가이드 7단계 | BoGam`,
+        description: `명의도용 대출사기, 브로커를 통한 전세보증사기 등 다양한 전세사기 사례와 대처방법을 안내합니다.`,
+        keywords: [
+          '전세사기 사례', '명의도용 대출', '브로커 사기', '전세대출보증', '명의 빌려주기', '전세보증 사기',
+          '전세 사기', '전세 사기 예방', '사기 대처방법', '안전한 전세', '전세계약 주의사항',
+          '전세 피해 예방', 'BoGam'
+        ]
+      };
+    default:
+      return {
+        title: `전세 사기 예방 가이드 ${stepNum}단계 | BoGam`,
+        description: `전세 ${stepNum}단계별 사기 예방 가이드와 체크리스트를 제공합니다.`,
+        keywords: [
+          '전세', '전세 사기', '전세 사기 예방', '가이드', `${stepNum}단계`, '체크리스트', '안전한 전세',
+          '전세 피해 예방', '전세정보', 'BoGam'
+        ]
+      };
+  }
+};
 
-export default function MiddleStepPage() {
-  const [marginLeft, setMarginLeft] = useState('-73%');
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pages, setPages] = useState<PageData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const flipBookRef = useRef<FlipBookInstance | null>(null);
+// 메타데이터 생성 함수
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ 'step-number': string }> 
+}): Promise<Metadata> {
+  const { 'step-number': stepNumber } = await params;
   
-  // stepResults 데이터 상태
-  const [stepData, setStepData] = useState<StepResultResponse | null>(null);
-  const [stepDataLoading, setStepDataLoading] = useState(true);
+  // 환경별 API URL 설정
+  const isProduction = process.env.NODE_ENV === 'production';
+  const baseUrl = isProduction ? 'https://lion5-bogam.site' : 'http://localhost:3000';
   
-  // 세션 스토리지에서 selectedAddress 가져오기
-  const [selectedAddress, setSelectedAddress] = useState<UserAddress | null>(null);
-  
-  // 딱 1번만 실행하기 위한 ref
-  const hasInitialized = useRef(false);
-
-  // 컴포넌트 마운트 시 딱 1번만 실행
-  if (!hasInitialized.current && typeof window !== 'undefined') {
-    hasInitialized.current = true;
-    
-    const savedPage = sessionStorage.getItem('saved-page');
-    
-    // saved-page가 있으면 페이지 복원
-    if (savedPage !== null) {
-      const pageIndex = parseInt(savedPage);
-      if (!isNaN(pageIndex) && pageIndex >= 0) {
-        setCurrentPage(pageIndex);
-      }
-    } else {
-      setCurrentPage(0);
+  // 페이지 데이터 가져오기
+  let pages: PageData[] = [];
+  try {
+    const pagesData = await import(`./stepData/${stepNumber}.json`);
+    if (Array.isArray(pagesData.default)) {
+      pages = pagesData.default[0]?.pages || [];
+    } else if (pagesData.default?.pages) {
+      pages = pagesData.default.pages;
+    } else if (Array.isArray(pagesData)) {
+      pages = pagesData[0]?.pages || [];
+    } else if (pagesData.pages) {
+      pages = pagesData.pages;
     }
- 
-    // 복원 후 플래그 제거
-    sessionStorage.removeItem('saved-page');
+  } catch (error) {
+    console.error('JSON 파일 로드 실패:', error);
+    pages = [];
   }
 
-  // 세션 스토리지에서 selectedAddress 가져오기
-  useEffect(() => {
-    const sessionData = sessionStorage.getItem('user-address-store');
-    if (sessionData) {
-      try {
-        const parsed = JSON.parse(sessionData) as { state: { selectedAddress: UserAddress | null } };
-        setSelectedAddress(parsed.state?.selectedAddress || null);
-      } catch (error) {
-        console.error('세션 데이터 파싱 실패:', error);
-        setSelectedAddress(null);
+  const stepMetadata = getStepSpecificMetadata(stepNumber);
+
+  return {
+    title: stepMetadata.title,
+    description: stepMetadata.description,
+    keywords: stepMetadata.keywords,
+    openGraph: {
+      title: stepMetadata.title,
+      description: stepMetadata.description,
+      type: 'website',
+      url: `${baseUrl}/steps/${stepNumber}`,
+      siteName: 'BoGam',
+      images: [
+        {
+          url: `${baseUrl}/images/Logo.png`,
+          width: 1200,
+          height: 630,
+          alt: `${stepMetadata.title}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: stepMetadata.title,
+      description: stepMetadata.description,
+      images: [`${baseUrl}/images/Logo.png`],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    alternates: {
+      canonical: `${baseUrl}/steps/${stepNumber}`,
+    },
+    other: {
+      'application-name': 'BoGam',
+      'apple-mobile-web-app-title': 'BoGam',
+      'msapplication-TileColor': '#2563eb',
+      'theme-color': '#2563eb',
+    },
+  };
+}
+
+export default async function MiddleStepPage({ 
+  params 
+}: { 
+  params: Promise<{ 'step-number': string }> 
+}) {
+  const { 'step-number': stepNumber } = await params;
+  
+  // 환경별 API URL 설정 (중복 제거)
+  const isProduction = process.env.NODE_ENV === 'production';
+  const baseUrl = isProduction ? 'https://lion5-bogam.site' : 'http://localhost:3000';
+
+  // 서버에서 페이지 데이터 가져오기
+  let pages: PageData[] = [];
+  try {
+    const pagesData = await import(`./stepData/${stepNumber}.json`);
+    if (Array.isArray(pagesData.default)) {
+      pages = pagesData.default[0]?.pages || [];
+    } else if (pagesData.default?.pages) {
+      pages = pagesData.default.pages;
+    } else if (Array.isArray(pagesData)) {
+      pages = pagesData[0]?.pages || [];
+    } else if (pagesData.pages) {
+      pages = pagesData.pages;
+    }
+  } catch (error) {
+    console.error('JSON 파일 로드 실패:', error);
+    pages = [];
+  }
+
+  // 서버에서 선택된 주소 가져오기
+  let selectedAddressNickname: string | null = null;
+  try {
+    const cookieStore = await cookies();
+    const response = await fetch(`${baseUrl}/api/user-address/my-address-list`, {
+      cache: 'no-store',
+      headers: {
+        'Cookie': cookieStore.toString(),
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success) {
+        const selectedAddr = data.data?.find((addr: { isSelected: boolean; nickname: string }) => addr.isSelected);
+        if (selectedAddr) {
+          selectedAddressNickname = selectedAddr.nickname;
+        }
       }
     }
-  }, []);
+  } catch (error) {
+    console.error('Error fetching selected address:', error);
+  }
 
-  useEffect(() => {
-    const match = window.location.pathname.match(/\/steps\/(\d+)/);
-    const stepNumber = match ? match[1] : '1';
-    import(`./stepData/${stepNumber}.json`)
-      .then((data) => {
-        if (Array.isArray(data.default)) {
-          setPages(data.default[0]?.pages || []);
-        } else if (data.default?.pages) {
-          setPages(data.default.pages);
-        } else if (Array.isArray(data)) {
-          setPages(data[0]?.pages || []);
-        } else if (data.pages) {
-          setPages(data.pages);
-        } else {
-          setPages([]);
+  // 서버에서 stepResults 데이터 가져오기
+  let stepData: StepResultResponse | null = null;
+  if (selectedAddressNickname) {
+    try {
+      const cookieStore = await cookies();
+      const response = await fetch(
+        `${baseUrl}/api/step-results?userAddressNickname=${encodeURIComponent(selectedAddressNickname)}&stepNumber=${stepNumber}`,
+        {
+          cache: 'no-store',
+          headers: {
+            'Cookie': cookieStore.toString(),
+          },
         }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('JSON 파일 로드 실패:', error);
-        setPages([]);
-        setLoading(false);
-      });
-  }, []);
+      );
 
-  // stepResults 데이터 가져오기
-  useEffect(() => {
-    const fetchStepData = async () => {
-      try {
-        const match = window.location.pathname.match(/\/steps\/(\d+)/);
-        const stepNumber = match ? match[1] : '1';
-        
-        // selectedAddress가 없으면 로딩 중단
-        if (!selectedAddress?.nickname) {
-          setStepDataLoading(false);
-          return;
-        }
-        
-        const response = await fetch(
-          `/api/step-results?userAddressNickname=${encodeURIComponent(selectedAddress.nickname)}&stepNumber=${stepNumber}`,
-          {
-            cache: 'no-store',
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch step results');
-        }
-
+      if (response.ok) {
         const data = await response.json();
-        
-        if (!data.success) {
-          throw new Error(data.error || 'Failed to fetch step results');
+        if (data.success) {
+          stepData = data.data;
         }
-
-        setStepData(data.data);
-      } catch (error) {
-        console.error('Error fetching step data:', error);
-        setStepData(null);
-      } finally {
-        setStepDataLoading(false);
       }
+    } catch (error) {
+      console.error('Error fetching step data:', error);
+    }
+  }
+
+  // 서버에서 FlipPages 렌더링
+  const flipPages = FlipPages({ pages, stepNumber });
+  
+  // marginLeft 기본값 설정
+  const marginLeft = 'translateX(-40.5%)';
+  
+  // 단계별 맞춤 JSON-LD 구조화 데이터 생성
+  const getStepSpecificJsonLd = (stepNum: string) => {
+    const stepMetadata = getStepSpecificMetadata(stepNum);
+    const step = parseInt(stepNum);
+    
+    const stepNames = {
+      1: "깡통주택 사기 피하기",
+      2: "가짜 임대인 피하기", 
+      3: "공인중개사 확인",
+      4: "계약 후 전세 사기 예방",
+      5: "입주 후 전세 사기 예방",
+      6: "계약 종료 후 전세 사기 예방",
+      7: "전세 사기 사례 및 대처방법"
     };
 
-    fetchStepData();
-  }, [selectedAddress?.nickname]);
+    return {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": stepMetadata.title,
+      "description": stepMetadata.description,
+      "image": `${baseUrl}/images/Logo.png`,
+      "url": `${baseUrl}/steps/${stepNumber}`,
+      "author": {
+        "@type": "Organization",
+        "name": "BoGam",
+        "url": baseUrl
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "BoGam",
+        "url": baseUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${baseUrl}/images/Logo.png`
+        }
+      },
+      "datePublished": new Date().toISOString(),
+      "dateModified": new Date().toISOString(),
+      "inLanguage": "ko-KR",
+      "about": {
+        "@type": "Thing",
+        "name": stepNames[step as keyof typeof stepNames] || "전세 사기 예방 가이드",
+        "description": "전세 거래 시 발생할 수 있는 사기와 위험을 예방하는 방법"
+      },
+      "keywords": stepMetadata.keywords.join(", "),
+      "step": pages.map((page, index) => ({
+        "@type": "HowToStep",
+        "position": index + 1,
+        "name": page.title,
+        "text": page.type === 'general' 
+          ? page.content 
+          : page.type === 'summary' 
+            ? page.contents?.map((c: { subtitle: string }) => c.subtitle).join(', ')
+            : '',
+        "url": `${baseUrl}/steps/${stepNumber}#step-${index + 1}`,
+        "image": `${baseUrl}/images/Logo.png`
+      }))
+    };
+  };
 
-  const match =
-    typeof window !== 'undefined'
-      ? window.location.pathname.match(/\/steps\/(\d+)/)
-      : null;
-  const stepNumber = match ? match[1] : '1';
-
-  useEffect(() => {
-    const width = window.innerWidth;
-    if (width <= 400) {
-      setMarginLeft('translateX(-48.5%)');
-    } else if (width <= 430) {
-      setMarginLeft('translateX(-45.5%)');
-    } else {
-      setMarginLeft('translateX(-40.5%)');
-    }
-  }, []);
-
-  if (loading || stepDataLoading) return <LoadingOverlay isVisible={true} title="데이터를 불러오는 중..." currentStep={1} totalSteps={3} />;
+  const jsonLd = getStepSpecificJsonLd(stepNumber);
   
   return (
-    <div className={styles.mainContainer}>
-      <div className={styles.stateIconArea}>
-        <div className="flex flex-col gap-4">
-          <StateIcon 
-            checked={stepData?.summary?.totalMatch || 0}
-            unchecked={stepData?.summary?.totalUnchecked || 0}
-            mismatch={stepData?.summary?.totalMismatch || 0}
-          />
-          <ProgressBarChart 
-            checked={stepData?.summary?.totalMatch || 0}
-            unchecked={stepData?.summary?.totalUnchecked || 0}
-            mismatch={stepData?.summary?.totalMismatch || 0}
-          />
-        </div>
-      </div>
+    <>
+      {/* JSON-LD 구조화 데이터 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
-      <FlipBook
-        flipPages={FlipPages({ pages, stepNumber, currentPage })}
-        currentPage={currentPage}
-        marginLeft={marginLeft}
-        onPageChange={setCurrentPage}
-        onFlipBookInit={() => {}}
-        flipBookRef={flipBookRef}
-      />
-
-      <PageIndicator
-        currentPage={currentPage}
-        totalPages={pages.length}
-        stepNumber={stepNumber}
-        flipBookInstance={flipBookRef.current}
-        onPageChange={setCurrentPage}
-      />
-     </div>
-   );
+      <main className={styles.mainContainer} role="main">
+      <header className={styles.stateIconArea} role="banner">
+        <h1 className={styles.srOnly}>{stepNumber}단계: 전세 안전 가이드</h1>
+        <section aria-label="진행 상황">
+          <div className={styles.progressContainer}>
+            <StateIcon 
+              checked={stepData?.summary?.totalMatch || 0}
+              unchecked={stepData?.summary?.totalUnchecked || 0}
+              mismatch={stepData?.summary?.totalMismatch || 0}
+            />
+            <ProgressBarChart 
+              checked={stepData?.summary?.totalMatch || 0}
+              unchecked={stepData?.summary?.totalUnchecked || 0}
+              mismatch={stepData?.summary?.totalMismatch || 0}
+            />
+          </div>
+        </section>
+      </header>
+      
+      <section className={styles.flipBookArea} aria-label="단계별 가이드">
+        <FlipBookSection
+          flipPages={flipPages}
+          stepNumber={stepNumber}
+          marginLeft={marginLeft}
+        />
+      </section>
+    </main>
+    </>
+  );
  }

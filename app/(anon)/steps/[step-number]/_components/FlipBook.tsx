@@ -2,7 +2,7 @@
 
 import { useRef, useState, ReactNode } from 'react';
 import HTMLFlipBook from 'react-pageflip';
-import { styles } from '../page.styles';
+import { styles } from './FlipBook.styles';
 
 // HTMLFlipBook 인스턴스 타입 정의
 interface FlipBookInstance {
@@ -72,10 +72,10 @@ export default function FlipBook({
 
 
   return (
-    <div className={styles.flipBookArea}>
+    <div className={styles.flipBookContainer}>
       <HTMLFlipBook
         ref={bookRef}
-        className={styles.demoBook}
+        className={styles.flipBook}
         width={450}
         height={650}
         size='stretch'

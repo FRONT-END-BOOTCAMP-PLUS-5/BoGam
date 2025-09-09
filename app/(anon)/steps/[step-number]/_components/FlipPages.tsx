@@ -1,7 +1,5 @@
-'use client';
-
 import { ReactNode } from 'react';
-import { styles } from '../page.styles';
+import { styles } from './FlipPages.styles';
 import GeneralPage from './GeneralPage';
 import SummaryPage from './SummaryPage';
 
@@ -28,10 +26,9 @@ type PageData = SummaryPageData | GeneralPageData;
 interface FlipPagesProps {
   pages: PageData[];
   stepNumber: string;
-  currentPage: number;
 }
 
-export default function FlipPages({ pages, stepNumber, currentPage }: FlipPagesProps): ReactNode[] {
+export default function FlipPages({ pages, stepNumber }: FlipPagesProps): ReactNode[] {
   const flipPages: ReactNode[] = [];
   
   pages.forEach((page: PageData, idx: number) => {
@@ -54,7 +51,6 @@ export default function FlipPages({ pages, stepNumber, currentPage }: FlipPagesP
             content={page.content ?? ''}
             pageIdx={idx}
             stepNumber={stepNumber}
-            currentPage={currentPage}
           />
         </div>
       );
