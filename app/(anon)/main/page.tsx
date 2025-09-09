@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
 import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
 import FloatingButton from '@/(anon)/main/_components/floatingButton/FloatingButton';
@@ -16,6 +16,11 @@ export default function MainPage() {
   const mainPageModule = useMainPageModule();
   const { gpsLoading, gpsError, currentLocationType } = mainPageModule;
 
+  // 페이지 타이틀 설정
+  useEffect(() => {
+    document.title = 'Bogam';
+  }, []);
+
   // 탭 변경 핸들러
   const handleTabChange = (tabIndex: number) => {
     setActiveTab(tabIndex);
@@ -23,7 +28,7 @@ export default function MainPage() {
 
   return (
     <div>
-      <div className={styles.container}>
+        <div className={styles.container}>
         {/* 상단 섹션 - 사용자 정보 및 선택된 주소 */}
         <TopSection />
 
