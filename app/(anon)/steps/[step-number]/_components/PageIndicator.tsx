@@ -11,6 +11,7 @@ interface PageIndicatorProps {
   stepNumber: string;
   flipBookInstance: FlipBookInstance | null;
   onPageChange: (page: number) => void;
+  isFlipBookReady: boolean;
 }
 
 export default function PageIndicator({
@@ -19,26 +20,29 @@ export default function PageIndicator({
   stepNumber,
   flipBookInstance,
   onPageChange,
+  isFlipBookReady,
 }: PageIndicatorProps) {
   const router = useRouter();
 
   const handlePageClick = (pageIndex: number) => {
-    // flipBookInstance의 object.flip 함수 사용
-    if (flipBookInstance?.object?.flip) {
-      onPageChange(pageIndex);
-      
-      // flipPages 배열에서 실제 콘텐츠 페이지의 인덱스 찾기
-      // 실제 콘텐츠는 0, 2, 4... 위치에 있고, 빈 페이지는 1, 3, 5... 위치에 있음
-      const actualPageIndex = pageIndex * 2;
-      
-      // turnToPage 함수가 있다면 사용 (애니메이션 없음, 더 정확함)
-      flipBookInstance.object.turnToPage(actualPageIndex);
-      
-      // 페이지 이동 후 currentPage를 강제로 설정 (안전장치)
-      setTimeout(() => {
-        onPageChange(pageIndex);
-      }, 100);
+    // HTMLFlipBook이 초기화되지 않았으면 무시
+    if (!isFlipBookReady || !flipBookInstance?.object?.flip) {
+      return;
     }
+    
+    onPageChange(pageIndex);
+    
+    // flipPages 배열에서 실제 콘텐츠 페이지의 인덱스 찾기
+    // 실제 콘텐츠는 0, 2, 4... 위치에 있고, 빈 페이지는 1, 3, 5... 위치에 있음
+    const actualPageIndex = pageIndex * 2;
+    
+    // turnToPage 함수가 있다면 사용 (애니메이션 없음, 더 정확함)
+    flipBookInstance.object.turnToPage(actualPageIndex);
+    
+    // 페이지 이동 후 currentPage를 강제로 설정 (안전장치)
+    setTimeout(() => {
+      onPageChange(pageIndex);
+    }, 100);
   };
 
   const handlePreviousStep = () => {
@@ -70,13 +74,14 @@ export default function PageIndicator({
           {Array.from({ length: totalPages }).map((_, j) => (
             <button
               key={j}
-              className={
+              className={`${
                 j === currentPage ? styles.dotActive : styles.dot
-              }
+              } ${!isFlipBookReady ? styles.disabled : ''}`}
               aria-label={`slide ${j}${
                 j === currentPage ? ' (current)' : ''
               }`}
               onClick={() => handlePageClick(j)}
+              disabled={!isFlipBookReady}
             />
           ))}
         </div>

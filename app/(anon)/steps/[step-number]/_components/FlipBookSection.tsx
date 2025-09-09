@@ -15,6 +15,7 @@ export default function FlipBookSection({
   stepNumber
 }: FlipBookSectionProps) {
   const [currentPage, setCurrentPage] = useState(0);
+  const [isFlipBookReady, setIsFlipBookReady] = useState(false);
   const flipBookRef = useRef<FlipBookInstance | null>(null);
   
   // 세션 스토리지에서 페이지 복원
@@ -39,7 +40,9 @@ export default function FlipBookSection({
           flipPages={flipPages}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
-          onFlipBookInit={() => {}}
+          onFlipBookInit={() => {
+            setIsFlipBookReady(true);
+          }}
           flipBookRef={flipBookRef}
         />
       </div>
@@ -51,6 +54,7 @@ export default function FlipBookSection({
           stepNumber={stepNumber}
           flipBookInstance={flipBookRef.current}
           onPageChange={setCurrentPage}
+          isFlipBookReady={isFlipBookReady}
         />
       </div>
     </div>

@@ -34,6 +34,7 @@ interface StepResultResponse {
   summary: StepResultSummary;
 }
 
+
 // 단계별 맞춤 키워드 및 메타데이터 (공통 함수)
 const getStepSpecificMetadata = (stepNum: string) => {
   const step = parseInt(stepNum);
@@ -361,14 +362,22 @@ export default async function MiddleStepPage({
         <section aria-label="진행 상황">
           <div className={styles.progressContainer}>
             <StateIcon 
-              checked={stepData?.summary?.totalMatch || 0}
-              unchecked={stepData?.summary?.totalUnchecked || 0}
-              mismatch={stepData?.summary?.totalMismatch || 0}
+              stepNumber={stepNumber}
+              userAddressNickname={selectedAddressNickname || ''}
+              initialData={{
+                checked: stepData?.summary?.totalMatch || 0,
+                unchecked: stepData?.summary?.totalUnchecked || 0,
+                mismatch: stepData?.summary?.totalMismatch || 0,
+              }}
             />
             <ProgressBarChart 
-              checked={stepData?.summary?.totalMatch || 0}
-              unchecked={stepData?.summary?.totalUnchecked || 0}
-              mismatch={stepData?.summary?.totalMismatch || 0}
+              stepNumber={stepNumber}
+              userAddressNickname={selectedAddressNickname || ''}
+              initialData={{
+                checked: stepData?.summary?.totalMatch || 0,
+                unchecked: stepData?.summary?.totalUnchecked || 0,
+                mismatch: stepData?.summary?.totalMismatch || 0,
+              }}
             />
           </div>
         </section>
