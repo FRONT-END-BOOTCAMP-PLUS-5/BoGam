@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef, useState, ReactNode } from 'react';
+import { useRef, useState, useEffect, ReactNode } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import { styles } from './FlipBook.styles';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 // HTMLFlipBook 인스턴스 타입 정의
 interface FlipBookInstance {
@@ -23,7 +24,6 @@ type BookRefType = {
 interface FlipBookProps {
   flipPages: ReactNode[];
   currentPage: number;
-  marginLeft: string;
   onPageChange: (page: number) => void;
   onFlipBookInit: (flipBook: FlipBookInstance) => void;
   flipBookRef?: React.RefObject<FlipBookInstance | null>;
@@ -32,7 +32,6 @@ interface FlipBookProps {
 export default function FlipBook({
   flipPages,
   currentPage,
-  marginLeft,
   onPageChange,
   onFlipBookInit,
   flipBookRef,
@@ -40,6 +39,20 @@ export default function FlipBook({
   const bookRef = useRef<BookRefType>(null);
   const [isManualFlip, setIsManualFlip] = useState(false);
   const [flipBookInstance, setFlipBookInstance] = useState<FlipBookInstance | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [marginLeft, setMarginLeft] = useState('translateX(-40.5%)');
+  
+  // 반응형 marginLeft 설정
+  useEffect(() => {
+    const width = window.innerWidth;
+    if (width <= 400) {
+      setMarginLeft('translateX(-48.5%)');
+    } else if (width <= 430) {
+      setMarginLeft('translateX(-45.5%)');
+    } else {
+      setMarginLeft('translateX(-40.5%)');
+    }
+  }, []);
 
   const handleFlip = (e: { data: number }) => {
     // 수동 페이지 넘김이 아닐 때만 currentPage 업데이트
@@ -68,11 +81,20 @@ export default function FlipBook({
     if (flipBookRef) {
       flipBookRef.current = flipBook;
     }
+    
+    // 로딩 완료
+    setIsLoading(false);
   };
 
 
   return (
     <div className={styles.flipBookContainer}>
+      <LoadingOverlay
+        isVisible={isLoading}
+        title="전세 사기 예방 가이드 로딩 중..."
+        currentStep={1}
+        totalSteps={1}
+      />
       <HTMLFlipBook
         ref={bookRef}
         className={styles.flipBook}

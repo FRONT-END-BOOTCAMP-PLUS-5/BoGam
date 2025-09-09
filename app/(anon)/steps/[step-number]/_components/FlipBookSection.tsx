@@ -8,13 +8,11 @@ import { styles } from './FlipBookSection.styles';
 interface FlipBookSectionProps {
   flipPages: ReactNode[];
   stepNumber: string;
-  marginLeft: string;
 }
 
 export default function FlipBookSection({ 
   flipPages, 
-  stepNumber, 
-  marginLeft 
+  stepNumber
 }: FlipBookSectionProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const flipBookRef = useRef<FlipBookInstance | null>(null);
@@ -40,7 +38,6 @@ export default function FlipBookSection({
         <FlipBook
           flipPages={flipPages}
           currentPage={currentPage}
-          marginLeft={marginLeft}
           onPageChange={setCurrentPage}
           onFlipBookInit={() => {}}
           flipBookRef={flipBookRef}

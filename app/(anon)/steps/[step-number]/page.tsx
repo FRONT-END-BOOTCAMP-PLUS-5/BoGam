@@ -231,6 +231,8 @@ export default async function MiddleStepPage({
   }
 
   // 서버에서 선택된 주소 가져오기
+  // 임시로 전체 주소를 가져와서 isSelected가 true인 주소를 가져옴
+  // 추후 선택된 주소를 가져오는 api가 구현되면 해당 api를 사용하는 로직으로 변경
   let selectedAddressNickname: string | null = null;
   try {
     const cookieStore = await cookies();
@@ -282,9 +284,6 @@ export default async function MiddleStepPage({
 
   // 서버에서 FlipPages 렌더링
   const flipPages = FlipPages({ pages, stepNumber });
-  
-  // marginLeft 기본값 설정
-  const marginLeft = 'translateX(-40.5%)';
   
   // 단계별 맞춤 JSON-LD 구조화 데이터 생성
   const getStepSpecificJsonLd = (stepNum: string) => {
@@ -379,7 +378,6 @@ export default async function MiddleStepPage({
         <FlipBookSection
           flipPages={flipPages}
           stepNumber={stepNumber}
-          marginLeft={marginLeft}
         />
       </section>
     </main>
