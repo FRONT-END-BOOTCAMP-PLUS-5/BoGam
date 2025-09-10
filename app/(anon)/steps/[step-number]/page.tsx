@@ -365,7 +365,7 @@ export default async function MiddleStepPage({
               stepNumber={stepNumber}
               userAddressNickname={selectedAddressNickname || ''}
               initialData={{
-                checked: stepData?.summary?.totalMatch || 0,
+                match: stepData?.summary?.totalMatch || 0,
                 unchecked: stepData?.summary?.totalUnchecked || 0,
                 mismatch: stepData?.summary?.totalMismatch || 0,
               }}
@@ -374,7 +374,7 @@ export default async function MiddleStepPage({
               stepNumber={stepNumber}
               userAddressNickname={selectedAddressNickname || ''}
               initialData={{
-                checked: stepData?.summary?.totalMatch || 0,
+                match: stepData?.summary?.totalMatch || 0,
                 unchecked: stepData?.summary?.totalUnchecked || 0,
                 mismatch: stepData?.summary?.totalMismatch || 0,
               }}
