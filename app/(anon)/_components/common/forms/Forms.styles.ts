@@ -6,8 +6,11 @@ export const styles = {
 
   label: 'text-sm text-brand-dark-gray font-semibold',
 
+  require: 'text-brand-error ml-1',
+
   action: 'text-sm text-brand',
 
+  control: 'relative',
 
   // 베이스 인풋
   inputBase:
