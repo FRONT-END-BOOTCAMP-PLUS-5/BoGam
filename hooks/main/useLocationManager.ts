@@ -22,13 +22,14 @@ export const useLocationManager = () => {
     fallbackLocation: { lat: 37.5665, lng: 126.978 }, // 서울 시청
   });
 
-  // 초기 위치 설정 로직
+  // 초기 위치 설정 로직 (DB의 isSelected=true 주소 우선)
   useEffect(() => {
     // 로그인되어 있고 사용자 주소가 있는 경우
     if (isAuthenticated && userAddresses.length > 0) {
-      // 대표 주소 또는 첫 번째 주소 선택
+      // DB에서 isSelected=true인 주소를 우선 선택, 없으면 대표 주소, 그것도 없으면 첫 번째 주소
       const targetAddress =
-        userAddresses.find((addr) => addr.isPrimary) || userAddresses[0];
+        userAddresses.find((addr) => addr.isSelected) ||
+        userAddresses.find((addr) => addr.isPrimary);
 
       if (targetAddress) {
         // 좌표 유효성 검사
@@ -44,6 +45,7 @@ export const useLocationManager = () => {
   }, [
     isAuthenticated,
     userAddresses.length,
+    userAddresses.find((addr) => addr.isSelected)?.id, // isSelected 주소 ID 변경 감지
     userAddresses.find((addr) => addr.isPrimary)?.id, // 대표 주소 ID 변경 감지
   ]);
 
