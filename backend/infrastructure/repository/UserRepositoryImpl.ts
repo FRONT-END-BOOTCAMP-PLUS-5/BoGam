@@ -1,13 +1,11 @@
 import { prisma } from '@utils/prisma';
 import { UserRepository } from '@be/domain/repository/UserRepository';
 import { UserEntity } from '@be/domain/entities/User';
-import { UserInfo } from '@be/applications/users/dtos/UserDto';
 
 export class UserRepositoryImpl implements UserRepository {
   async findByNickname(nickname: string): Promise<UserEntity | null> {
     const user = await prisma.user.findFirst({
       where: { nickname },
-      select: { id: true, nickname: true, createdAt: true, updatedAt: true },
       select: {
         id: true,
         name: true,
@@ -16,6 +14,7 @@ export class UserRepositoryImpl implements UserRepository {
         password: true,
         pinNumber: true,
         phoneNumber: true,
+        updatedAt: true,
       },
     });
 
@@ -25,19 +24,18 @@ export class UserRepositoryImpl implements UserRepository {
       user.id,
       user.name,
       user.nickname,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
       user.username,
       user.password,
       user.pinNumber,
-      user.phoneNumber
+      user.phoneNumber,
+      user.createdAt,
+      user.updatedAt
     );
   }
 
   async findByUserId(userId: string): Promise<UserEntity | null> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, nickname: true, createdAt: true, updatedAt: true },
       select: {
         id: true,
         name: true,
@@ -46,6 +44,8 @@ export class UserRepositoryImpl implements UserRepository {
         password: true,
         pinNumber: true,
         phoneNumber: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -55,32 +55,25 @@ export class UserRepositoryImpl implements UserRepository {
       user.id,
       user.name,
       user.nickname,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
       user.username,
       user.password,
       user.pinNumber,
-      user.phoneNumber
+      user.phoneNumber,
+      user.createdAt,
+      user.updatedAt
     );
   }
 
   async create(userData: {
-    name?: string;
-    nickname?: string;
-    username?: string;
-    password?: string;
-    pinNumber?: string;
-    phoneNumber?: string;
+    name: string;
+    nickname: string;
+    username: string;
+    password: string;
+    pinNumber: string;
+    phoneNumber: string;
   }): Promise<UserEntity> {
     const user = await prisma.user.create({
-      data: {
-        name: userData.name!,
-        nickname: userData.nickname!,
-        username: userData.username!,
-        password: userData.password!,
-        pinNumber: userData.pinNumber!,
-        phoneNumber: userData.phoneNumber!,
-      },
+      data: userData,
     });
 
     return new UserEntity(
@@ -133,7 +126,7 @@ export class UserRepositoryImpl implements UserRepository {
         where: { id },
       });
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -144,7 +137,7 @@ export class UserRepositoryImpl implements UserRepository {
         where: { nickname },
       });
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -153,6 +146,6 @@ export class UserRepositoryImpl implements UserRepository {
     const user = await prisma.user.findUnique({
       where: { nickname },
     });
-    return !!user; // 중복 여부만 반환 - 존재하면 true, 존재하지 않으면 false
+    return !!user;
   }
 }
