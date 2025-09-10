@@ -7,6 +7,7 @@ export class UserRepositoryImpl implements UserRepository {
   async findByNickname(nickname: string): Promise<UserEntity | null> {
     const user = await prisma.user.findFirst({
       where: { nickname },
+      select: { id: true, nickname: true, createdAt: true, updatedAt: true },
       select: {
         id: true,
         name: true,
@@ -24,6 +25,8 @@ export class UserRepositoryImpl implements UserRepository {
       user.id,
       user.name,
       user.nickname,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       user.username,
       user.password,
       user.pinNumber,
@@ -34,6 +37,7 @@ export class UserRepositoryImpl implements UserRepository {
   async findByUserId(userId: string): Promise<UserEntity | null> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
+      select: { id: true, nickname: true, createdAt: true, updatedAt: true },
       select: {
         id: true,
         name: true,
@@ -51,6 +55,8 @@ export class UserRepositoryImpl implements UserRepository {
       user.id,
       user.name,
       user.nickname,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
       user.username,
       user.password,
       user.pinNumber,
@@ -84,7 +90,9 @@ export class UserRepositoryImpl implements UserRepository {
       user.username,
       user.password,
       user.pinNumber,
-      user.phoneNumber
+      user.phoneNumber,
+      user.createdAt,
+      user.updatedAt
     );
   }
 
@@ -113,7 +121,9 @@ export class UserRepositoryImpl implements UserRepository {
       user.username,
       user.password,
       user.pinNumber,
-      user.phoneNumber
+      user.phoneNumber,
+      user.createdAt,
+      user.updatedAt
     );
   }
 
