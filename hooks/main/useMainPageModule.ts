@@ -86,6 +86,7 @@ export const useMainPageModule = () => {
         const newAddressWithId = {
           ...newAddressData,
           id: tempId,
+          isSelected: true, // 새로 추가된 주소를 선택된 주소로 설정
         };
         addVolatileAddress(newAddressWithId);
 

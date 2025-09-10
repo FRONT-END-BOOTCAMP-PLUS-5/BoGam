@@ -18,6 +18,7 @@ import { AuthRequiredState } from './_components/AuthRequiredState';
 import { useToastStore } from '@libs/stores/toastStore';
 import { useSession } from 'next-auth/react';
 import { useSelectedAddressMutation } from '@/hooks/useSelectedAddressMutation';
+import { useUserAddresses } from '@/hooks/useUserAddresses';
 
 const DEFAULT_PROPS = {
   title: '현재 열람',
@@ -68,8 +69,8 @@ export function AddressDropDown(props: AddressDropDownProps) {
   // 세션에서 사용자 정보 가져오기
   const { data: session } = useSession();
 
-  // React Query 제거 - Zustand store만 사용
-  // const { isLoading, isAuthenticated } = useUserAddresses();
+  // 주소 데이터 로딩을 위한 훅 사용
+  const { isLoading, isAuthenticated } = useUserAddresses();
 
   // Store에서 데이터 가져오기
   const {
@@ -78,9 +79,6 @@ export function AddressDropDown(props: AddressDropDownProps) {
     getPersistentAddresses,
     getPersistentSelectedAddress,
   } = useUserAddressStore();
-
-  // useUserAddresses 훅 제거 - store에서 직접 데이터 관리
-  // const { isLoading: userAddressesLoading } = useUserAddresses();
 
   // 낙관적 업데이트를 위한 mutation
   const selectedAddressMutation = useSelectedAddressMutation();
@@ -181,9 +179,8 @@ export function AddressDropDown(props: AddressDropDownProps) {
   const isEmpty = !addresses || addresses.length === 0;
 
   // 로딩 상태 표시 (mutation 진행 중에는 로딩하지 않음 - 낙관적 업데이트)
-  const isLoading = !isClient; // userAddressesLoading 제거
-  const isAuthenticated = true; // 인증 상태는 상위 컴포넌트에서 관리
-  if (isLoading) {
+  const isDataLoading = !isClient || isLoading;
+  if (isDataLoading) {
     return (
       <LoadingOverlay
         isVisible={true}

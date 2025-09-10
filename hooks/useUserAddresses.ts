@@ -1,4 +1,4 @@
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { userAddressApi } from '@libs/api_front/userAddress.api';
@@ -10,9 +10,10 @@ export const useUserAddresses = () => {
   const { initializeFromQuery } = useUserAddressStore();
   const queryClient = useQueryClient();
 
-  // 사용자 주소 데이터를 가져오는 mutation
-  const fetchUserAddressesMutation = useMutation({
-    mutationFn: async () => {
+  // 사용자 주소 데이터를 가져오는 query
+  const userAddressesQuery = useQuery({
+    queryKey: ['userAddresses', session?.user?.nickname],
+    queryFn: async (): Promise<UserAddress[]> => {
       const response = await userAddressApi.getMyAddressList();
 
       if (response.success && response.data) {
@@ -59,15 +60,17 @@ export const useUserAddresses = () => {
 
       return [];
     },
-    onSuccess: (data) => {
-      if (data && data.length > 0) {
-        initializeFromQuery(data);
-      }
-    },
-    onError: (error) => {
-      console.error('사용자 주소 데이터 조회 실패:', error);
-    },
+    enabled: status === 'authenticated' && !!session?.user?.nickname,
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    retry: 2,
   });
+
+  // 쿼리 데이터가 변경될 때마다 store 업데이트
+  useEffect(() => {
+    if (userAddressesQuery.data && userAddressesQuery.data.length > 0) {
+      initializeFromQuery(userAddressesQuery.data);
+    }
+  }, [userAddressesQuery.data, initializeFromQuery]);
 
   // 사용자 변경 시 이전 사용자의 캐시 무효화 및 sessionStorage 정리
   useEffect(() => {
@@ -95,18 +98,10 @@ export const useUserAddresses = () => {
     }
   }, [session?.user?.nickname, status, queryClient]);
 
-  // 인증 상태가 변경될 때 주소 데이터 가져오기
-  useEffect(() => {
-    if (status === 'authenticated' && session?.user?.nickname) {
-      fetchUserAddressesMutation.mutate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, session?.user?.nickname]); // fetchUserAddressesMutation 제거 (무한루프 방지)
-
   return {
-    isLoading: fetchUserAddressesMutation.isPending || status === 'loading',
-    error: fetchUserAddressesMutation.error,
-    fetchUserAddresses: fetchUserAddressesMutation.mutate,
+    isLoading: userAddressesQuery.isLoading || status === 'loading',
+    error: userAddressesQuery.error,
+    fetchUserAddresses: () => userAddressesQuery.refetch(),
     isAuthenticated: status === 'authenticated',
   };
 };

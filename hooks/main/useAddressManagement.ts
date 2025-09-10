@@ -181,6 +181,7 @@ export const useAddressManagement = () => {
           x: storeSelectedAddress.x,
           y: storeSelectedAddress.y,
           isPrimary: false,
+          isSelected: true, // 새로 추가된 주소를 선택된 주소로 설정
           legalDistrictCode: storeSelectedAddress.legalDistrictCode || '',
           dong: currentDong,
           ho: currentHo, // 호 데이터는 저장 시에만 사용
@@ -195,7 +196,7 @@ export const useAddressManagement = () => {
         // 휘발성 주소 삭제
         deleteVolatileAddress(storeSelectedAddress.id);
 
-        // 쿼리 무효화하여 최신 데이터 가져오기
+        // 쿼리 무효화하여 최신 데이터 가져오기 (새로 등록된 주소가 선택된 주소로 상태 변경)
         await queryClient.invalidateQueries({
           queryKey: ['userAddresses'],
         });
