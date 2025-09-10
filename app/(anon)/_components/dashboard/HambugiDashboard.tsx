@@ -231,6 +231,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
             guideSteps={guideSteps}
             onActionClick={handleActionClick}
             currentStep={currentStep}
+            onClose={onClose}
           />
         </div>
       </div>
