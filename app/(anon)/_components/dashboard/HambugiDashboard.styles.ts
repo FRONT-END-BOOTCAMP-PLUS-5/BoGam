@@ -1,6 +1,6 @@
 export const styles = {
   container:
-    'h-full w-full max-w-[480px] bg-brand-white shadow-xl flex flex-col z-10000',
+    'h-full w-full max-w-[480px] bg-brand-white shadow-xl flex flex-col',
   mainContent: 'flex flex-1 min-h-0',
   leftPanel: 'w-[25%] py-4',
   divider: 'w-[5%] bg-brand relative',

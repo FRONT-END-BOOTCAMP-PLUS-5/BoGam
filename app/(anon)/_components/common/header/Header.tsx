@@ -15,6 +15,23 @@ export default function Header() {
   const isMainPage = pathname === '/main';
   const hiddenRoutes = ['/', '/signin', '/signup'];
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleOpenDashboard = () => {
+    setIsDashboardOpen(true);
+    // 다음 프레임에서 애니메이션 시작
+    requestAnimationFrame(() => {
+      setIsAnimating(true);
+    });
+  };
+
+  const handleCloseDashboard = () => {
+    setIsAnimating(false);
+    // 애니메이션 완료 후 대시보드 닫기
+    setTimeout(() => {
+      setIsDashboardOpen(false);
+    }, 500); // duration과 동일하게 설정
+  };
 
   if (hiddenRoutes.includes(pathname)) return null;
 
@@ -66,7 +83,7 @@ export default function Header() {
           <div className={styles.rightSection}>
             <button
               type='button'
-              onClick={() => setIsDashboardOpen(true)}
+              onClick={handleOpenDashboard}
               aria-label='대시보드 열기'
             >
               <Profile size='sm' />
@@ -75,16 +92,17 @@ export default function Header() {
         </div>
       </header>
 
-      {isDashboardOpen && (
-        <div
-          className={`${styles.slidePanel} ${
-            isDashboardOpen ? styles.slideIn : styles.slideOut
-          }`}
-          data-dashboard='true'
-        >
-          <HambugiDashboard onClose={() => setIsDashboardOpen(false)} />
-        </div>
-      )}
+      <div
+        className={`${styles.slidePanel} ${
+          isAnimating ? styles.slidePanelOpen : styles.slidePanelClosed
+        }`}
+        data-dashboard='true'
+        style={{ display: isDashboardOpen ? 'block' : 'none' }}
+      >
+        {isDashboardOpen && (
+          <HambugiDashboard onClose={handleCloseDashboard} />
+        )}
+      </div>
     </>
   );
 }
