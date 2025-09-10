@@ -357,39 +357,30 @@ export default async function MiddleStepPage({
       />
       
       <main className={styles.mainContainer} role="main">
-      <header className={styles.stateIconArea} role="banner">
-        <h1 className={styles.srOnly}>{stepNumber}단계: 전세 안전 가이드</h1>
-        <section aria-label="진행 상황">
-          <div className={styles.progressContainer}>
-            <StateIcon 
-              stepNumber={stepNumber}
-              userAddressNickname={selectedAddressNickname || ''}
-              initialData={{
-                match: stepData?.summary?.totalMatch || 0,
-                unchecked: stepData?.summary?.totalUnchecked || 0,
-                mismatch: stepData?.summary?.totalMismatch || 0,
-              }}
-            />
-            <ProgressBarChart 
-              stepNumber={stepNumber}
-              userAddressNickname={selectedAddressNickname || ''}
-              initialData={{
-                match: stepData?.summary?.totalMatch || 0,
-                unchecked: stepData?.summary?.totalUnchecked || 0,
-                mismatch: stepData?.summary?.totalMismatch || 0,
-              }}
-            />
-          </div>
+        <header className={styles.stateIconArea} role="banner">
+          <h1 className={styles.srOnly}>{stepNumber}단계: 전세 안전 가이드</h1>
+          <section aria-label="진행 상황">
+            <div className={styles.progressContainer}>
+              <ProgressBarChart 
+                stepNumber={stepNumber}
+                userAddressNickname={selectedAddressNickname || ''}
+                initialData={{
+                  match: stepData?.summary?.totalMatch || 0,
+                  unchecked: stepData?.summary?.totalUnchecked || 0,
+                  mismatch: stepData?.summary?.totalMismatch || 0,
+                }}
+              />
+            </div>
+          </section>
+        </header>
+        
+        <section className={styles.flipBookArea} aria-label="단계별 가이드">
+          <FlipBookSection
+            flipPages={flipPages}
+            stepNumber={stepNumber}
+          />
         </section>
-      </header>
-      
-      <section className={styles.flipBookArea} aria-label="단계별 가이드">
-        <FlipBookSection
-          flipPages={flipPages}
-          stepNumber={stepNumber}
-        />
-      </section>
-    </main>
+      </main>
     </>
   );
  }
