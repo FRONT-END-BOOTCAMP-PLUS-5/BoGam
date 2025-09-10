@@ -14,6 +14,7 @@ export class UserRepositoryImpl implements UserRepository {
         password: true,
         pinNumber: true,
         phoneNumber: true,
+        createdAt: true,
         updatedAt: true,
       },
     });
