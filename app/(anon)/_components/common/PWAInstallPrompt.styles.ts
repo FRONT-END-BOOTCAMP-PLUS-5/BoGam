@@ -1,6 +1,6 @@
 export const styles = {
   // 메인 컨테이너 - 고정 위치, 중앙 정렬, 높은 z-index
-  container: "fixed left-1/2 bottom-8 transform -translate-x-1/2 z-[9999] min-w-[320px] max-w-[95vw] shadow-[0_8px_32px_0_rgba(75,114,166,0.18)] backdrop-blur-md bg-white/85 border border-brand-light-gray rounded-[1.25rem] p-6 animate-[fadeInPWA_0.4s_cubic-bezier(0.4,0,0.2,1)]",
+  container: "fixed left-1/2 bottom-8 transform -translate-x-1/2 z-40 min-w-[320px] max-w-[95vw] shadow-[0_8px_32px_0_rgba(75,114,166,0.18)] backdrop-blur-md bg-white/85 border border-brand-light-gray rounded-[1.25rem] p-6 animate-[fadeInPWA_0.4s_cubic-bezier(0.4,0,0.2,1)]",
   
   // 내용 영역 - flexbox로 텍스트와 버튼 배치
   content: "flex items-center justify-between gap-4",

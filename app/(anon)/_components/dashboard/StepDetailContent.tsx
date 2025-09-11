@@ -43,9 +43,10 @@ interface StepDetailContentProps {
   guideSteps: GuideStepData[];
   onActionClick: (actionLink: string) => void;
   currentStep?: number;
+  onClose?: () => void;
 }
 
-export default function StepDetailContent({ guideSteps, onActionClick, currentStep = 1 }: StepDetailContentProps) {
+export default function StepDetailContent({ guideSteps, onActionClick, currentStep = 1, onClose }: StepDetailContentProps) {
   // currentStep에 해당하는 스텝들만 필터링
   const currentStepData = guideSteps.filter(step => step.stepNumber === currentStep);
   
@@ -60,6 +61,7 @@ export default function StepDetailContent({ guideSteps, onActionClick, currentSt
           stepNumber={`${step.stepNumber}-${step.detail}`}
           title={STEP_DETAIL_TITLES[step.stepNumber]?.[step.detail - 1] || `${step.stepNumber}단계 서브 ${step.detail}`}
           showDivider={index < sortedStepData.length - 1}
+          onClose={onClose}
         >
           <GuideStepContent>
             {/* 통계 정보 표시 (GuideResultView와 동일한 스타일) */}
