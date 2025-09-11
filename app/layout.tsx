@@ -46,11 +46,6 @@ export default function RootLayout({
             pauseOnHover
             theme='light'
             className='toast-container'
-            toastStyle={{
-              width: 'auto',
-              minWidth: '300px',
-              maxWidth: '90vw',
-            }}
           />
         </Providers>
       </body>

@@ -10,12 +10,52 @@
 
 .toast-container .Toastify__toast {
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   font-weight: 500;
   width: auto !important;
   min-width: 300px;
   max-width: 90vw;
   padding: 12px 16px;
+  background-color: var(--brand-white);
+  color: var(--brand-dark-blue);
+  border: 1px solid var(--brand-light-blue);
+}
+
+/* Toast 타입별 스타일링 */
+.toast-container .Toastify__toast--success {
+  color: var(--brand-green);
+}
+
+.toast-container .Toastify__toast--error {
+  color: var(--error);
+}
+
+.toast-container .Toastify__toast--warning {
+  color: var(--brand-gold);
+}
+
+.toast-container .Toastify__toast--info {
+  color: var(--brand-blue);
+}
+
+/* Toast 진행 바 스타일 */
+.toast-container .Toastify__progress-bar {
+  background-color: var(--brand-blue);
+}
+
+.toast-container .Toastify__progress-bar--success {
+  background-color: var(--brand-green);
+}
+
+.toast-container .Toastify__progress-bar--error {
+  background-color: var(--error);
+}
+
+.toast-container .Toastify__progress-bar--warning {
+  background-color: var(--brand-gold);
+}
+
+.toast-container .Toastify__progress-bar--info {
+  background-color: var(--brand-blue);
 }
 
 /* 모바일 최적화 */
@@ -44,6 +84,7 @@
   --brand-green: #4fa373;
   --brand-dark-green: #527a6e;
   --brand-gold: #a68a56;
+  --brand-blue: #3b82f6;
   --error: #c24a4a;
   --brand-shadow: #4b72a659;
 

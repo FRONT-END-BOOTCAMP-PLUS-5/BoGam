@@ -19,7 +19,7 @@ export const selectedAddressApi = {
   ): Promise<UpdateSelectedAddressResponse> => {
     const response = await frontendAxiosInstance
       .getAxiosInstance()
-      .post('/api/update-selected-address', request);
+      .post('/api/user-address/selected/update', request);
 
     return response.data as UpdateSelectedAddressResponse;
   },
