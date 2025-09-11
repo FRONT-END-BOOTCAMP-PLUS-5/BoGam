@@ -46,7 +46,6 @@ export const AddressConfirmationTab: React.FC = () => {
   // 주소에서 동/호 파싱하는 함수
   const parseAddressForDongHo = (address: string) => {
     if (!address) return { address: '', dong: '', ho: '' };
-    console.log('parseAddressForDongHo address', address);
 
     // 정규식으로 동/호 패턴 찾기
     // 패턴: "xx동 xx호" 형태
@@ -79,25 +78,12 @@ export const AddressConfirmationTab: React.FC = () => {
     return parseAddressForDongHo(displaySearchQuery);
   }, [displaySearchQuery]);
 
-  console.log('parsedAddress.dong', parsedAddress.dong);
-  console.log('dong', dong);
-  console.log('parsedAddress.ho', parsedAddress.ho);
-  console.log('ho', ho);
   // 동/호가 파싱되면 자동으로 입력 필드에 설정
   useEffect(() => {
-    console.log(
-      'useEffect 실행됨 - parsedAddress.dong:',
-      parsedAddress.dong,
-      'parsedAddress.ho:',
-      parsedAddress.ho
-    );
-
     if (parsedAddress.dong) {
-      console.log('setDong 실행:', parsedAddress.dong);
       setDong(parsedAddress.dong);
     }
     if (parsedAddress.ho) {
-      console.log('setHo 실행:', parsedAddress.ho);
       setHo(parsedAddress.ho);
     }
   }, [

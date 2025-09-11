@@ -45,22 +45,22 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         skip: params.offset as number,
       });
 
-              return stepResults.map(
-          (result) =>
-            new StepResultEntity(
-              result.id,
-              result.userAddressId,
-              result.stepId,
-              result.mismatch,
-              result.match,
-              result.unchecked,
-              result.details, // Prisma에서는 여전히 'details' 필드 사용
-              result.createdAt,
-              result.updatedAt,
-              result.step?.mainNum, // Prisma에서는 여전히 'mainNum' 필드 사용
-              result.step?.subNum   // Prisma에서는 여전히 'subNum' 필드 사용
-            )
-        );
+      return stepResults.map(
+        (result) =>
+          new StepResultEntity(
+            result.id,
+            result.userAddressId,
+            result.stepId,
+            result.mismatch,
+            result.match,
+            result.unchecked,
+            result.details, // Prisma에서는 여전히 'details' 필드 사용
+            result.createdAt,
+            result.updatedAt,
+            result.step?.mainNum, // Prisma에서는 여전히 'mainNum' 필드 사용
+            result.step?.subNum // Prisma에서는 여전히 'subNum' 필드 사용
+          )
+      );
     } catch (error) {
       console.error('❌ StepResult 조회 오류:', error);
       throw new Error('스탭 결과 조회 중 오류가 발생했습니다.');
@@ -110,7 +110,7 @@ export class StepResultRepositoryImpl implements StepResultRepository {
         result.createdAt,
         result.updatedAt,
         result.step?.mainNum, // Prisma에서는 'mainNum' 필드 사용
-        result.step?.subNum   // Prisma에서는 'subNum' 필드 사용
+        result.step?.subNum // Prisma에서는 'subNum' 필드 사용
       );
     } catch (error) {
       console.error('❌ StepResult upsert 오류:', error);

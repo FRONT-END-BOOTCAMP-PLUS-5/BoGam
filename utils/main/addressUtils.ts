@@ -61,6 +61,7 @@ export const createUserAddressFromSearch = (searchData: {
     x: parseFloat(searchData.longitude),
     y: parseFloat(searchData.latitude),
     isPrimary: false,
+    isSelected: true, // 새로 검색된 주소를 선택된 주소로 설정
     isVolatile: true,
     legalDistrictCode: searchData.legalDistrictCode || '',
     lotAddress: searchData.lotAddress || '',
@@ -84,32 +85,38 @@ export const parseAddressString = (
   addrDong: string;
 } => {
   // 동/호 정보 제거 (예: 202동 101호, 100동, 101호 등)
-  const cleanAddress = address.replace(/\s+\d+동\s*\d*호?|\s+\d+동|\s+\d+호/g, '');
-  
+  const cleanAddress = address.replace(
+    /\s+\d+동\s*\d*호?|\s+\d+동|\s+\d+호/g,
+    ''
+  );
+
   // 정규식으로 [시·도] [시·군·구] [읍·면·동·구 + 도로명] 파싱
-  const regex = /^([가-힣]{2,}(?:특별시|광역시|도)?)\s+([가-힣]+(?:시|군|구))\s+([가-힣0-9]+(?:읍|면|동|구)(?:\s+[가-힣0-9]+(?:로|길|거리))?)/;
-  
+  const regex =
+    /^([가-힣]{2,}(?:특별시|광역시|도)?)\s+([가-힣]+(?:시|군|구))\s+([가-힣0-9]+(?:읍|면|동|구)(?:\s+[가-힣0-9]+(?:로|길|거리))?)/;
+
   const match = cleanAddress.match(regex);
-  
+
   if (match) {
     const sido = match[1] || '';
     const sigungu = match[2] || '';
     const dongAndRoad = match[3] || '';
-    
+
     // 동구와 도로명 분리
-    const dongRoadMatch = dongAndRoad.match(/^([가-힣0-9]+(?:읍|면|동|구))\s+([가-힣0-9]+(?:로|길|거리))?/);
-    
+    const dongRoadMatch = dongAndRoad.match(
+      /^([가-힣0-9]+(?:읍|면|동|구))\s+([가-힣0-9]+(?:로|길|거리))?/
+    );
+
     if (dongRoadMatch) {
       const dong = dongRoadMatch[1] || '';
       const road = dongRoadMatch[2] || '';
-      
+
       return {
         addrSido: sido,
         addrSigungu: `${sigungu} ${dong}`, // 시군구 + 동구
         addrDong: road, // 도로명만
       };
     }
-    
+
     // 동구만 있는 경우
     return {
       addrSido: sido,
@@ -117,7 +124,7 @@ export const parseAddressString = (
       addrDong: '',
     };
   }
-  
+
   // 정규식 매칭이 안 되면 기존 방식으로 fallback
   const parts = cleanAddress.split(' ');
   return {

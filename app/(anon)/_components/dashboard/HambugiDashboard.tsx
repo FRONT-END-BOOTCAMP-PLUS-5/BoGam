@@ -195,7 +195,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     }
   };
 
-  const handleActionClick = (actionLink: string) => {
+  const handleActionClick = () => {
     // 액션 링크 처리
   };
 

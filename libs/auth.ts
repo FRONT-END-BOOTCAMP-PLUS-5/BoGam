@@ -53,8 +53,8 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    strategy: 'jwt', //JSON Web Token 사용
+    maxAge: 24 * 60 * 60, // 세션 만료 시간(sec) - 1일
   },
   callbacks: {
     async jwt({ token, user }) {

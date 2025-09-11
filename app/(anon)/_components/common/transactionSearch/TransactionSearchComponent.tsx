@@ -290,19 +290,19 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
           
                      {isDangerous ? (
              <div className={styles.analysisWarning}>
-               <div className="font-semibold text-brand-error mb-1">⚠️ 주의!</div>
-               <div className="text-brand-error">전세 거래가가 매매 평균가에 맞먹습니다!</div>
-               <div className="text-sm text-brand-error mt-1">
+               <div className={styles.warningTitle}>⚠️ 주의!</div>
+               <div className={styles.warningText}>전세 거래가가 매매 평균가에 맞먹습니다!</div>
+               <div className={styles.warningSubText}>
                  전세 거래가 / 매매 평균가 = {percentage}%
                </div>
              </div>
            ) : (
              <div className={styles.analysisSafe}>
-               <div className="font-semibold text-brand-green mb-1">✅ 안전</div>
-               <div className="text-brand-green">
+               <div className={styles.safeTitle}>✅ 안전</div>
+               <div className={styles.safeText}>
                  전세 거래가가 매매 평균가의 {percentage}%입니다.
                </div>
-               <div className="text-sm text-brand-green mt-1">
+               <div className={styles.safeSubText}>
                  크게 위험한 수준이 아닙니다.
                </div>
              </div>
@@ -310,8 +310,8 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
            
            {/* 자동 저장 상태 표시 */}
            {isSaving && (
-             <div className="mt-4 text-center">
-               <div className="text-sm text-brand-dark-gray">
+             <div className={styles.savingContainer}>
+               <div className={styles.savingText}>
                  📝 결과를 자동으로 저장하고 있습니다...
                </div>
              </div>
@@ -391,7 +391,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
                  </Button>
                </div>
                {!danjiName && (
-                 <p className="text-sm text-orange-600 mt-1">
+                 <p className={styles.danjiHint}>
                    * 아파트, 연립/다세대, 오피스텔 검색을 위해서는 단지명이 필요합니다
                  </p>
                )}
@@ -418,7 +418,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
                   onChange={(e) => setTargetPrice(e.target.value)}
                   placeholder="예: 5억5천만"
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className={styles.priceHint}>
                   * &ldquo;억&rdquo;, &ldquo;천만&rdquo; 단위로 입력해주세요 (예: 5억5천만, 3억)
                 </p>
               </div>
@@ -434,7 +434,7 @@ export const TransactionSearchComponent: React.FC<TransactionSearchComponentProp
                 {isLoading ? '조회 중...' : '실거래가 조회하기'}
               </Button>
               {!complexName && (
-                <p className="text-sm text-red-600 mt-2 text-center">
+                <p className={styles.complexError}>
                   단지명을 먼저 검색해주세요
                 </p>
               )}

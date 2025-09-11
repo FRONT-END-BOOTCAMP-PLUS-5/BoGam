@@ -49,7 +49,7 @@ export default function UserInfo({ onUserClick }: UserInfoProps) {
                   fill="var(--brand-gold)"
                   stroke="var(--brand-gold)"
                   strokeWidth={1.5}
-                  className="inline mr-1"
+                  className={styles.starIcon}
                 />
               )}
               <span className={styles.addressText}>{displayAddress}</span>
