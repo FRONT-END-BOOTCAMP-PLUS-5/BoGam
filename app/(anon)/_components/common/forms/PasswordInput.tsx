@@ -3,7 +3,7 @@
 'use client';
 import '@/globals.css';
 import { useState } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 type Props = {
@@ -35,16 +35,29 @@ export default function PasswordInput({
         autoComplete='new-password'
         {...rest}
       />
-      <button
-        type='button'
-        className={styles.eyeBtn}
-        onMouseDown={() => setShow(true)}
-        onMouseUp={() => setShow(false)}
-        onMouseLeave={() => setShow(false)}
-        aria-label='비밀번호 보기'
-      >
-        <Eye width={18} height={18} />
-      </button>
+      {show ? (
+        <button
+          type='button'
+          className={styles.eyeBtn}
+          onClick={() => {
+            setShow(false);
+          }}
+          aria-label='비밀번호 가리기'
+        >
+          <EyeOff width={18} height={18} />
+        </button>
+      ) : (
+        <button
+          type='button'
+          className={styles.eyeBtn}
+          onClick={() => {
+            setShow(true);
+          }}
+          aria-label='비밀번호 보여주기'
+        >
+          <Eye width={18} height={18} />
+        </button>
+      )}
     </div>
   );
 }
