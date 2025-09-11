@@ -7,6 +7,14 @@ import FlipBookSection from '@/(anon)/steps/[step-number]/_components/FlipBookSe
 import FlipPages, { PageData } from '@/(anon)/steps/[step-number]/_components/FlipPages';
 import { getStepSpecificMetadata, getStepSpecificJsonLd } from '@metadata/stepMetadata';
 
+// step-number 유효성 검사 함수
+function validateStepNumber(stepNumber: string): void {
+  const stepNum = parseInt(stepNumber);
+  if (isNaN(stepNum) || stepNum < 1 || stepNum > 7) {
+    notFound();
+  }
+}
+
 // API 응답 타입 정의
 interface StepResultSummary {
   stepCount: number;
@@ -45,11 +53,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { 'step-number': stepNumber } = await params;
   
-  // step-number 유효성 검사 (1-7만 허용)
-  const stepNum = parseInt(stepNumber);
-  if (isNaN(stepNum) || stepNum < 1 || stepNum > 7) {
-    notFound();
-  }
+  // step-number 유효성 검사
+  validateStepNumber(stepNumber);
   
   // 환경별 API URL 설정
   const isProduction = process.env.NODE_ENV === 'production';
@@ -130,11 +135,8 @@ export default async function MiddleStepPage({
 }) {
   const { 'step-number': stepNumber } = await params;
   
-  // step-number 유효성 검사 (1-7만 허용)
-  const stepNum = parseInt(stepNumber);
-  if (isNaN(stepNum) || stepNum < 1 || stepNum > 7) {
-    notFound();
-  }
+  // step-number 유효성 검사
+  validateStepNumber(stepNumber);
   
   // 환경별 API URL 설정
   const isProduction = process.env.NODE_ENV === 'production';
