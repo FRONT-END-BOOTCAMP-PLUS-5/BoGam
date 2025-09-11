@@ -31,7 +31,7 @@ export default function FlipBookSection({
       // 복원 후 플래그 제거
       sessionStorage.removeItem('saved-page');
     }
-  }, []);
+  }, [typeof window !== 'undefined' ? sessionStorage.getItem('saved-page') : null]);
 
   return (
     <div className={styles.flipBookSection}>

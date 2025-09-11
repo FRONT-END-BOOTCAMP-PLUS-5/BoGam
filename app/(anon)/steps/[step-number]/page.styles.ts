@@ -2,7 +2,7 @@ export const styles = {
   // 메인 컨테이너 flex 스타일
   mainContainer: 'flex flex-col w-full max-w-[480px] h-[calc(100vh-4rem)]',
   
-  // StateIcon 영역 스타일 (15%)
+  // Progress 영역 스타일 (15%)
   stateIconArea: 'w-full h-[15%] relative flex flex-col p-4',
   
   // HTMLFlipBook 영역 스타일 (85%)
