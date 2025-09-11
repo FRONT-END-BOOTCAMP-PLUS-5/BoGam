@@ -17,13 +17,7 @@ export default function DetailSlot() {
     const isStepDetailUrl = !!match;
 
     if (isStepDetailUrl && match) {
-      const stepNumber = parseInt(match[1]);
-      
-      // step-number 유효성 검사 (1-7만 허용)
-      if (stepNumber < 1 || stepNumber > 7) {
-        notFound();
-        return;
-      }
+      // step-number 유효성 검사는 steps/[step-number]/page.tsx에서 이미 처리됨
 
       // 세션스토리지에서 프로그래밍 라우팅 플래그와 타임스탬프 확인
       const isProgrammaticNavigation = sessionStorage.getItem(
