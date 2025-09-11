@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { userAddressApi } from '@libs/api_front/userAddress.api';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
@@ -8,24 +8,12 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 export const useUserAddresses = () => {
   const { data: session, status } = useSession();
   const { initializeFromQuery } = useUserAddressStore();
+  const queryClient = useQueryClient();
 
-  // initializeFromQuery를 useCallback으로 메모이제이션
-  const memoizedInitializeFromQuery = useCallback(
-    (data: UserAddress[]) => {
-      initializeFromQuery(data);
-    },
-    [initializeFromQuery]
-  );
-
-  // React Query로 사용자 주소 데이터 가져오기
-  const {
-    data: userAddressesData,
-    isLoading,
-    error,
-    refetch: fetchUserAddresses,
-  } = useQuery({
+  // 사용자 주소 데이터를 가져오는 query
+  const userAddressesQuery = useQuery({
     queryKey: ['userAddresses', session?.user?.nickname],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserAddress[]> => {
       const response = await userAddressApi.getMyAddressList();
 
       if (response.success && response.data) {
@@ -55,6 +43,7 @@ export const useUserAddresses = () => {
             x: x,
             y: y,
             isPrimary: item.isPrimary,
+            isSelected: item.isSelected,
             legalDistrictCode: item.address.legalDistrictCode,
             lotAddress: item.address.lotAddress,
             roadAddress: item.address.roadAddress || '',
@@ -72,25 +61,47 @@ export const useUserAddresses = () => {
       return [];
     },
     enabled: status === 'authenticated' && !!session?.user?.nickname,
-    staleTime: Infinity, // 수동으로 무효화할 때까지 fresh 상태 유지
-    gcTime: 30 * 60 * 1000, // 30분간 메모리 유지
-    retry: 3, // 실패 시 3번 재시도
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // 지수 백오프
-    refetchOnWindowFocus: false, // 윈도우 포커스 시 refetch 방지
-    refetchOnMount: false, // 컴포넌트 마운트 시 refetch 방지 (캐시가 있으면)
+    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
+    retry: 2,
   });
 
-  // React Query에서 받은 데이터를 Zustand store에 동기화
+  // 쿼리 데이터가 변경될 때마다 store 업데이트
   useEffect(() => {
-    if (userAddressesData && userAddressesData.length > 0) {
-      memoizedInitializeFromQuery(userAddressesData);
+    if (userAddressesQuery.data && userAddressesQuery.data.length > 0) {
+      initializeFromQuery(userAddressesQuery.data);
     }
-  }, [userAddressesData, memoizedInitializeFromQuery]);
+  }, [userAddressesQuery.data, initializeFromQuery]);
+
+  // 사용자 변경 시 이전 사용자의 캐시 무효화 및 sessionStorage 정리
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.nickname) {
+      // 현재 사용자가 아닌 다른 사용자의 캐시된 주소 데이터 무효화
+      queryClient.invalidateQueries({
+        queryKey: ['userAddresses'],
+        exact: false, // userAddresses로 시작하는 모든 쿼리 무효화
+      });
+
+      // sessionStorage에서 이전 사용자의 주소 데이터 정리
+      try {
+        const storedData = sessionStorage.getItem('user-address-store');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          // 이전 사용자의 데이터인지 확인 (nickname이 다르면 정리)
+          if (parsedData.state?.userAddresses?.length > 0) {
+            sessionStorage.removeItem('user-address-store');
+            console.log('🧹 이전 사용자의 주소 데이터 정리됨');
+          }
+        }
+      } catch (error) {
+        console.error('sessionStorage 정리 중 오류:', error);
+      }
+    }
+  }, [session?.user?.nickname, status, queryClient]);
 
   return {
-    isLoading: isLoading || status === 'loading',
-    error,
-    fetchUserAddresses,
+    isLoading: userAddressesQuery.isLoading || status === 'loading',
+    error: userAddressesQuery.error,
+    fetchUserAddresses: () => userAddressesQuery.refetch(),
     isAuthenticated: status === 'authenticated',
   };
 };

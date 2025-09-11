@@ -1,24 +1,28 @@
-'use client';
-
 import { styles } from './GeneralPage.styles';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import GoInsideButton from './GoInsideButton';
 
 interface pageType {
   title: string;
   category: string;
-  content: string | string[];
+  content: string[];
   pageIdx: number;
   stepNumber: string;
-  currentPage: number;
 }
 
-// \n을 <br> 태그로 변환하는 함수
-const formatContent = (content: string | string[]): string => {
-  if (Array.isArray(content)) {
-    return content.join('\n').replace(/\n/g, '<br>');
-  }
-  return content.replace(/\n/g, '<br>');
+// content를 렌더링하는 함수
+const renderContent = (content: string[]) => {
+  return content.map((paragraph, index) => {
+    // 빈 문자열인 경우 빈 줄로 처리
+    if (paragraph === '') {
+      return <div key={index} className={styles.emptyLine}></div>;
+    }
+    // 일반 문단인 경우
+    return (
+      <p key={index} className={styles.paragraph}>
+        {paragraph}
+      </p>
+    );
+  });
 };
 
 export default function GeneralPage({
@@ -27,48 +31,38 @@ export default function GeneralPage({
   content,
   pageIdx,
   stepNumber,
-  currentPage,
 }: pageType) {
-  const router = useRouter();
-  const [, setStepNum] = useState<string>('');
-
-  const handleClick = async () => {
-    setStepNum(stepNumber);
-
-    const newUrl = `/steps/${stepNumber}/${pageIdx}`;
-
-    // 현재 보고 있는 페이지 정보를 sessionStorage에 저장 (뒤로가기 시 복원용)
-    sessionStorage.setItem('saved-page', currentPage.toString());
-    sessionStorage.setItem('programmatic-navigation', 'true');
-    sessionStorage.setItem('navigation-timestamp', Date.now().toString());
-    window.dispatchEvent(new PopStateEvent('popstate'));
-
-    router.push(newUrl);
-  };
 
   return (
-    <div className={styles.contents}>
+    <article className={styles.contents} role="article" aria-labelledby={`step-title-${pageIdx}`}>
       {/* 상단 */}
-      <div className={styles.topSection}>
-        <h3 className={styles.smallFont}> {title} </h3>
-      </div>
+      <header className={styles.topSection}>
+        <h2 id={`step-title-${pageIdx}`} className={styles.smallFont}>
+          {title}
+        </h2>
+      </header>
       
       {/* 중간 */}
-      <div className={styles.middleSection}>
-        <h5 className={styles.danger}> {category} </h5>
+      <section className={styles.middleSection} aria-labelledby={`step-category-${pageIdx}`}>
+        <h3 id={`step-category-${pageIdx}`} className={styles.danger}>
+          {category}
+        </h3>
         <div
           className={styles.content}
-          dangerouslySetInnerHTML={{ __html: formatContent(content) }}
-        />
-      </div>
+          role="region"
+          aria-label="단계별 상세 내용"
+        >
+          {renderContent(content)}
+        </div>
+      </section>
       
       {/* 하단 */}
-      <div className={styles.bottomSection}>
-        <button className={styles.goInside} onClick={handleClick}>
-          {' '}
-          바로가기{' '}
-        </button>
-      </div>
-    </div>
+      <footer className={styles.bottomSection}>
+        <GoInsideButton
+          stepNumber={stepNumber}
+          pageIdx={pageIdx}
+        />
+      </footer>
+    </article>
   );
 }

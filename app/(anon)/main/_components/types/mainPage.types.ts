@@ -35,6 +35,7 @@ export interface UserAddress {
   x: number; // longitude
   y: number; // latitude
   isPrimary: boolean; // 즐겨찾기
+  isSelected: boolean; // 선택된 주소
   legalDistrictCode?: string;
 
   // 주소 정보들
