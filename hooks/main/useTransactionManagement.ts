@@ -2,17 +2,16 @@ import { useTransactionDataStore } from '@libs/stores/transactionData/transactio
 import { useTransactionDetail } from './useTransactionDetail';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMainPageState } from './useMainPageState';
-import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { parseAddress } from '@utils/addressParser';
 import {
   createApartmentParams,
   createSingleParams,
   validateTransactionSearch,
 } from '@utils/main/transactionUtils';
-import { useModalStore } from '@libs/stores/modalStore';
+import { useToastStore } from '@libs/stores/toastStore';
 
 export const useTransactionManagement = () => {
-  const { openModal } = useModalStore();
+  const { showError } = useToastStore();
   // 실거래가 데이터 Store
   const {
     transactionData,
@@ -123,11 +122,7 @@ export const useTransactionManagement = () => {
       }
     } catch (error) {
       console.error('실거래가 조회 실패:', error);
-      openModal({
-        title: '오류',
-        content: '실거래가 조회 중 오류가 발생했습니다.',
-        icon: 'error',
-      });
+      showError('실거래가 조회 중 오류가 발생했습니다.');
     }
   };
 
@@ -185,11 +180,7 @@ export const useTransactionManagement = () => {
         });
       }
     } catch (error) {
-      openModal({
-        title: '오류',
-        content: '실거래가 조회 중 오류가 발생했습니다.',
-        icon: 'error',
-      });
+      showError('실거래가 조회 중 오류가 발생했습니다.');
     }
   };
 
