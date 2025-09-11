@@ -24,6 +24,8 @@ export class GetUserInfoUsecase {
         nickname: user.nickname,
         username: user.username,
         phoneNumber: user.phoneNumber,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       };
 
       return {
