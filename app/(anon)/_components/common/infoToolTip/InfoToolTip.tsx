@@ -148,7 +148,7 @@ export default function InfoToolTip({
       return definition.map((line, index) => (
         <div
           key={index}
-          className={index < definition.length - 1 ? 'mb-1' : ''}
+          className={index < definition.length - 1 ? styles.definitionLine : ''}
         >
           {line}
         </div>
@@ -159,16 +159,16 @@ export default function InfoToolTip({
 
   const getArrowClasses = () => {
     if (tooltipPosition.arrowDirection === 'top') {
-      return 'absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-brand-light-blue';
+      return styles.arrowTop;
     }
-    return 'absolute -top-1.5 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-b-3 border-transparent border-b-brand-light-blue';
+    return styles.arrowBottom;
   };
 
   const getArrowBorderClasses = () => {
     if (tooltipPosition.arrowDirection === 'top') {
-      return 'absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3.5 border-r-3.5 border-t-3.5 border-transparent border-t-brand-light-gray -z-10';
+      return styles.arrowBorderTop;
     }
-    return 'absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3.5 border-r-3.5 border-b-3.5 border-transparent border-b-brand-light-gray -z-10';
+    return styles.arrowBorderBottom;
   };
 
   return (
