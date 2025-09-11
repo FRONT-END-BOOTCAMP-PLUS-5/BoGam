@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useUserStore } from '@libs/stores/userStore';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
@@ -40,6 +41,11 @@ export default function MyPage() {
     stepNumber: '',
     detail: ''
   });
+
+  // 페이지 타이틀 설정
+  useEffect(() => {
+    document.title = '마이페이지 | Bogam';
+  }, []);
 
   // guideSteps와 guideSummary 데이터 처리
   let guideSteps: StepResultData[] = [];
