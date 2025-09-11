@@ -9,8 +9,8 @@ export const styles = {
   textBoxLeft: "left-0",
   textBoxRight: "right-0",
   bookTitle: "text-sm text-brand-dark-gray",
-  bookSubtitle: "text-base font-medium text-brand-black",
-  bookDescription: "text-sm text-brand-dark-gray",
+  bookSubtitle: "text-base font-medium text-brand-black mt-2",
+  bookDescription: "text-sm text-brand-dark-gray mt-2",
   divider: "h-px bg-brand-light-gray"
 } as const;
 
