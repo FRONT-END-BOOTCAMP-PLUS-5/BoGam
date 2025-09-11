@@ -29,6 +29,7 @@ export interface UserAddressWithAddressInfo {
   nickname: string;
   createdAt: Date;
   isPrimary: boolean;
+  isSelected: boolean;
   address: AddressInfo;
 }
 

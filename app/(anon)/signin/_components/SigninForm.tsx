@@ -23,7 +23,7 @@ type SigninInput = z.infer<typeof signinSchema>;
 export default function SigninForm() {
   const router = useRouter();
   const setNickname = useUserStore((state) => state.setNickname);
-  
+
   const {
     register,
     handleSubmit,
@@ -48,15 +48,17 @@ export default function SigninForm() {
       // 로그인 성공 시 세션에서 nickname을 가져와서 userStore에 설정
       if (res?.ok) {
         // next-auth 세션이 업데이트될 때까지 잠시 대기
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         // 세션에서 nickname 가져오기
-        const session = await fetch('/api/auth/session').then(res => res.json());
+        const session = await fetch('/api/auth/session').then((res) =>
+          res.json()
+        );
         if (session?.user?.nickname) {
           setNickname(session.user.nickname);
         }
       }
-      
+
       router.push('/main'); // 로그인 후 메인 페이지로 이동
     }
   };

@@ -10,8 +10,8 @@ import { useUserAddresses } from '../useUserAddresses';
 import { placesApi } from '@libs/api_front/places.api';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
-import { useModalStore } from '@libs/stores/modalStore';
 import { DaumPostcodeData } from '@/(anon)/main/_components/types/mainPage.types';
+import { useToastStore } from '@libs/stores/toastStore';
 
 export const useMainPageModule = () => {
   // 실거래가 조회 모달 상태
@@ -29,7 +29,7 @@ export const useMainPageModule = () => {
     useUserAddresses();
 
   // 모달 스토어
-  const { openModal } = useModalStore();
+  const { showError } = useToastStore();
 
   // Store에서 데이터 가져오기
   const {
@@ -86,6 +86,7 @@ export const useMainPageModule = () => {
         const newAddressWithId = {
           ...newAddressData,
           id: tempId,
+          isSelected: true, // 새로 추가된 주소를 선택된 주소로 설정
         };
         addVolatileAddress(newAddressWithId);
 
@@ -102,19 +103,11 @@ export const useMainPageModule = () => {
         const { setHo } = useUserAddressStore.getState();
         setHo('');
       } else {
-        openModal({
-          title: '알림',
-          content: '주소를 찾을 수 없습니다.',
-          icon: 'warning',
-        });
+        showError('주소를 찾을 수 없습니다.');
       }
     } catch (error) {
       console.error('주소 검색 실패:', error);
-      openModal({
-        title: '오류',
-        content: '주소 검색 중 오류가 발생했습니다.',
-        icon: 'error',
-      });
+      showError('주소 검색 중 오류가 발생했습니다.');
     }
   };
 
@@ -122,11 +115,7 @@ export const useMainPageModule = () => {
     handleDaumPostcodeComplete,
     mainPageState.setShowPostcode,
     (errorMessage: string) => {
-      openModal({
-        title: '오류',
-        content: errorMessage,
-        icon: 'error',
-      });
+      showError('주소 검색 중 오류가 발생했습니다.');
     }
   );
 

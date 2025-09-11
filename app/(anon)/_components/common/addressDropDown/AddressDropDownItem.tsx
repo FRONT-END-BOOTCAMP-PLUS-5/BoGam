@@ -18,6 +18,7 @@ interface AddressDropDownItemProps {
   showFavoriteToggle?: boolean;
   showDeleteButton?: boolean;
   animationDelay?: number;
+  isUpdating?: boolean;
 }
 
 export function AddressDropDownItem({
@@ -29,6 +30,7 @@ export function AddressDropDownItem({
   showFavoriteToggle = true,
   showDeleteButton = true,
   animationDelay = 0,
+  isUpdating = false,
 }: AddressDropDownItemProps) {
   const [isLoading, setIsLoading] = useState(false);
 
