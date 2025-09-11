@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useUserStore } from '@libs/stores/userStore';
@@ -22,6 +22,21 @@ interface HambugiDashboardProps {
 export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
+
+  // ESC 키로 대시보드 닫기
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
 
   // 스토어 초기화 함수들
   const clearUser = useUserStore((state) => state.clearUser);

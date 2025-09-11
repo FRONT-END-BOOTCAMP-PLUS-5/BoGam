@@ -27,6 +27,13 @@ const GuideStepItem = ({
 
   const handleClick = () => {
     const [step, detail] = stepNumber.split('-');
+    
+    // 세션 스토리지에 페이지 정보 저장
+    if (typeof window !== 'undefined') {
+      const pageIndex = detail ? parseInt(detail) : 0; // detail이 있으면 해당 페이지, 없으면 첫 페이지
+      sessionStorage.setItem('saved-page', pageIndex.toString());
+    }
+    
     router.push(`/steps/${step}`);
     // 라우팅 후 대시보드 닫기
     if (onClose) {
