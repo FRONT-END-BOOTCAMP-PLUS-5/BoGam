@@ -3,6 +3,7 @@
 import StepDetailPage from './steps/[step-number]/[detail]/StepDetail';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { notFound } from 'next/navigation';
 
 export default function DetailSlot() {
   const router = useRouter();
@@ -16,6 +17,14 @@ export default function DetailSlot() {
     const isStepDetailUrl = !!match;
 
     if (isStepDetailUrl && match) {
+      const stepNumber = parseInt(match[1]);
+      
+      // step-number 유효성 검사 (1-7만 허용)
+      if (stepNumber < 1 || stepNumber > 7) {
+        notFound();
+        return;
+      }
+
       // 세션스토리지에서 프로그래밍 라우팅 플래그와 타임스탬프 확인
       const isProgrammaticNavigation = sessionStorage.getItem(
         'programmatic-navigation'
@@ -36,12 +45,21 @@ export default function DetailSlot() {
         sessionStorage.removeItem('programmatic-navigation');
         sessionStorage.removeItem('navigation-timestamp');
       } else {
-        setShouldShow(false);
-        // 플래그가 남아있다면 제거
-        sessionStorage.removeItem('programmatic-navigation');
-        sessionStorage.removeItem('navigation-timestamp');
+
+        // 프로그래밍 라우팅이 아닌 경우 404 처리
+        notFound();
+        return;
       }
     } else {
+      // steps/로 시작하지만 패턴이 맞지 않는 경우 404
+      // 단, steps/숫자 (메인 steps 페이지)는 제외
+      const mainStepsPattern = /^\/steps\/(\d+)$/;
+      const isMainStepsPage = mainStepsPattern.test(pathname);
+      
+      if (pathname.startsWith('/steps/') && !isMainStepsPage) {
+        notFound();
+        return;
+      }
       setShouldShow(false);
     }
   }, [pathname]);
