@@ -41,7 +41,6 @@ export default function PasswordInput({
           className={styles.eyeBtn}
           onClick={() => {
             setShow(false);
-            console.log('얘 눌렀다');
           }}
           aria-label='비밀번호 가리기'
         >

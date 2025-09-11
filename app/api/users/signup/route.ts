@@ -32,7 +32,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: '이미 존재하는 유저이름입니다.' },
+        { message: '다른 사람이 사용하는 닉네임입니다.' },
         { status: 409 }
       );
     }

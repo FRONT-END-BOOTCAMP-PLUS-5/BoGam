@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { axiosInstance } from '@utils/axios';
+import { nicknameCheckApi } from '@libs/api_front/nicknameCheck.api';
 
 export function useNicknameCheck() {
   const [nicknameChecked, setNicknameChecked] = useState(false);
@@ -16,11 +16,7 @@ export function useNicknameCheck() {
 
     setChecking(true);
     try {
-      const res = await axiosInstance.get('/users/check-nickname', {
-        params: { nickname },
-      });
-
-      const data = res.data as { available: boolean };
+      const data = await nicknameCheckApi.checkNickname(nickname);
 
       if (data.available) {
         setNicknameChecked(true);
@@ -29,7 +25,7 @@ export function useNicknameCheck() {
         setNicknameChecked(false);
         setNicknameCheckMessage('이미 사용 중인 닉네임입니다.');
       }
-    } catch {
+    } catch (error) {
       setNicknameChecked(false);
       setNicknameCheckMessage('중복 확인 중 오류 발생');
     } finally {

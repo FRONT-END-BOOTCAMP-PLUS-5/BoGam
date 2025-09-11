@@ -20,5 +20,5 @@ export async function GET(req: NextRequest) {
   //{ available: true } : 사용 가능
   //{ available: false }  : 중복
 
-  return NextResponse.json(result);
+  return NextResponse.json(result, { status: 200 });
 }

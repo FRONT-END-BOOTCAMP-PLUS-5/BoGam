@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, SignupInput } from './schema';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { axiosInstance } from '@utils/axios';
+import { authApi } from '@libs/api_front/auth.api';
 
 export function useSignupForm() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export function useSignupForm() {
   const onSubmit = async (data: SignupInput) => {
     setSignupError('');
     try {
-      await axiosInstance.post('/users/signup', data);
+      await authApi.signup(data);
       setIsModalOpen(true);
     } catch (error) {
       if (
