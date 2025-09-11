@@ -89,16 +89,28 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
     });
     const autoNickname = `주소_${userAddressCount + 1}`;
 
-    // 새 사용자 주소 생성
+    // 새 사용자 주소 생성 (새로 추가된 주소를 선택된 주소로 설정)
     const userAddress = await prisma.userAddress.create({
       data: {
         userId,
         addressId,
         nickname: addressNickname || autoNickname,
         isPrimary: false,
+        isSelected: true, // 새로 추가된 주소를 선택된 주소로 설정
       },
       include: {
         address: true,
+      },
+    });
+
+    // 기존 선택된 주소들을 모두 false로 변경 (새 주소만 true로 유지)
+    await prisma.userAddress.updateMany({
+      where: {
+        userId,
+        id: { not: userAddress.id }, // 새로 생성된 주소 제외
+      },
+      data: {
+        isSelected: false,
       },
     });
 

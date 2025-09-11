@@ -11,11 +11,14 @@ import { AddressDropDownProps } from './types';
 import { AddressDropDownList } from './AddressDropDownList';
 import { formatAddress } from '@utils/addressUtils';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useUserStore } from '@libs/stores/userStore';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { useModalStore } from '@libs/stores/modalStore';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 import { AuthRequiredState } from './_components/AuthRequiredState';
+import { useToastStore } from '@libs/stores/toastStore';
+import { useSession } from 'next-auth/react';
+import { useSelectedAddressMutation } from '@/hooks/useSelectedAddressMutation';
+import { useUserAddresses } from '@/hooks/useUserAddresses';
 
 const DEFAULT_PROPS = {
   title: '현재 열람',
@@ -45,8 +48,6 @@ const ExpandIcon = ({ expanded }: { expanded: boolean }) => (
 export function AddressDropDown(props: AddressDropDownProps) {
   const {
     title = DEFAULT_PROPS.title,
-    addresses: propAddresses,
-    selectedAddress: propSelectedAddress,
     onDelete,
     onToggleFavorite,
     onSelect,
@@ -63,20 +64,24 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
   // 모달 스토어
   const { openModal } = useModalStore();
+  const { showError, showSuccess } = useToastStore();
 
-  // React Query 제거 - Zustand store만 사용
-  // const { isLoading, isAuthenticated } = useUserAddresses();
+  // 세션에서 사용자 정보 가져오기
+  const { data: session } = useSession();
+
+  // 주소 데이터 로딩을 위한 훅 사용
+  const { isLoading, isAuthenticated } = useUserAddresses();
 
   // Store에서 데이터 가져오기
   const {
-    userAddresses,
-    selectedAddress: storeSelectedAddress,
-    selectAddress,
     deleteAddress,
     toggleFavorite,
     getPersistentAddresses,
     getPersistentSelectedAddress,
   } = useUserAddressStore();
+
+  // 낙관적 업데이트를 위한 mutation
+  const selectedAddressMutation = useSelectedAddressMutation();
 
   // 클라이언트 마운트 확인
   useEffect(() => {
@@ -86,7 +91,10 @@ export function AddressDropDown(props: AddressDropDownProps) {
   // 외부 클릭으로 드롭다운 닫기
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsExpanded(false);
       }
     };
@@ -105,21 +113,34 @@ export function AddressDropDown(props: AddressDropDownProps) {
   const selectedAddress = isClient ? getPersistentSelectedAddress() : null;
 
   // Store 액션을 위한 래퍼 함수들
-  const handleSelect = (id: number) => {
+  const handleSelect = async (id: number) => {
     const address = addresses.find((addr: UserAddress) => addr.id === id);
-    if (address) {
-      // Store의 selectAddress 호출
-      selectAddress(address);
-
-      // props로 전달된 onSelect가 있으면 호출 (useMainPageModule의 handleAddressChangeWithTransaction)
-      if (onSelect) {
-        onSelect(id);
-      }
-    } else {
+    if (!address) {
       console.error('📍 AddressDropDown - 주소를 찾을 수 없음:', {
         id,
         addresses,
       });
+      return;
+    }
+
+    // 현재 사용자의 닉네임이 없으면 에러
+    if (!session?.user?.nickname) {
+      showError('사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    try {
+      // 낙관적 업데이트를 사용하여 즉시 UI 업데이트
+      await selectedAddressMutation.mutateAsync(id);
+
+      // 성공 시 메인 페이지 모듈에 알림
+      if (onSelect) {
+        onSelect(id);
+      }
+      showSuccess('주소가 선택되었습니다.');
+    } catch (error) {
+      console.error('📍 AddressDropDown - 주소 선택 API 오류:', error);
+      showError('주소 선택 중 오류가 발생했습니다.');
     }
   };
 
@@ -144,11 +165,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
           // 삭제 성공 시 모달이 자동으로 닫힘 (useModalStore의 기본 동작)
         } catch (error) {
           console.error('주소 삭제 실패:', error);
-          openModal({
-            title: '오류',
-            content: '주소 삭제 중 오류가 발생했습니다.',
-            icon: 'error',
-          });
+          showError('주소 삭제 중 오류가 발생했습니다.');
         }
       },
     });
@@ -161,16 +178,13 @@ export function AddressDropDown(props: AddressDropDownProps) {
   // 빈 상태 체크
   const isEmpty = !addresses || addresses.length === 0;
 
-  // 로딩 상태 표시 - React Query 제거로 인해 항상 false
-  const isLoading = false;
-  const isAuthenticated = true; // 인증 상태는 상위 컴포넌트에서 관리
-
-  // 로딩 상태 표시
-  if (isLoading) {
+  // 로딩 상태 표시 (mutation 진행 중에는 로딩하지 않음 - 낙관적 업데이트)
+  const isDataLoading = !isClient || isLoading;
+  if (isDataLoading) {
     return (
-      <LoadingOverlay 
+      <LoadingOverlay
         isVisible={true}
-        title={title || "주소를 불러오는 중입니다..."}
+        title={title || '주소를 불러오는 중입니다...'}
         currentStep={1}
         totalSteps={1}
       />
@@ -191,7 +205,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
           {selectedAddress ? (
             <div className={styles.selectedAddress}>
               {showFavoriteToggle && isClient && (
-                <div 
+                <div
                   onClick={(e) => {
                     e.stopPropagation(); // 드롭다운 토글 방지
                     if (selectedAddress) {
@@ -228,7 +242,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
         <button
           className={getExpandButtonStyle(isEmpty)}
           aria-label={isExpanded ? '목록 닫기' : '목록 열기'}
-          disabled={isEmpty}
+          disabled={isEmpty || selectedAddressMutation.isPending}
         >
           <ExpandIcon expanded={isExpanded} />
         </button>
@@ -240,20 +254,16 @@ export function AddressDropDown(props: AddressDropDownProps) {
         selectedAddress={selectedAddress}
         onDelete={handleDeleteWithConfirmation}
         onToggleFavorite={onToggleFavorite || toggleFavorite}
-        onSelect={(id) => {
-          // 상위 컴포넌트의 onSelect가 있으면 호출
-          if (onSelect) {
-            onSelect(id);
-          } else {
-            // 없으면 기본 handleSelect 호출
-            handleSelect(id);
-          }
+        onSelect={async (id) => {
+          // 기본 handleSelect 호출 (API 호출 포함)
+          await handleSelect(id);
           // 항상 드롭다운 닫기
           setIsExpanded(false);
         }}
         showFavoriteToggle={showFavoriteToggle}
         showDeleteButton={showDeleteButton}
         isExpanded={isExpanded}
+        isUpdating={selectedAddressMutation.isPending}
         maxHeight={maxHeight}
         isClient={isClient}
       />
