@@ -25,7 +25,8 @@
       "@libs/*": ["./libs/*"],
       "@prisma/*": ["./prisma/*"],
       "@/types/*": ["./types/*"],
-      "@/hooks/*": ["./hooks/*"]
+      "@/hooks/*": ["./hooks/*"],
+      "@metadata/*": ["./metadata/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
