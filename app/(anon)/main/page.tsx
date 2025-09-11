@@ -18,7 +18,7 @@ export default function MainPage() {
 
   // 페이지 타이틀 설정
   useEffect(() => {
-    document.title = 'Bogam';
+    document.title = '메인 | Bogam';
   }, []);
 
   // 탭 변경 핸들러

@@ -58,10 +58,6 @@ export default function MyPage() {
     }
   }
 
-  console.log('stepResultsData', stepResultsData);
-  console.log('guideSteps', guideSteps);
-  console.log('guideSummary', guideSummary);
-
   // 로딩 상태 처리
   if (isLoading) {
     return (
