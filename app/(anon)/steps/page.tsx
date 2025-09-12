@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BookLayout from './_components/BookLayout';
 import { stepsStyles } from './page.styles';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
@@ -9,6 +9,11 @@ import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/Add
 export default function Steps() {
   const [isAllBooksLoaded, setIsAllBooksLoaded] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
+
+  // 페이지 타이틀 설정
+  useEffect(() => {
+    document.title = '단계별 전세사기 예방 가이드 | Bogam';
+  }, []);
 
   const handleAllBooksLoaded = () => {
     setIsAllBooksLoaded(true);
