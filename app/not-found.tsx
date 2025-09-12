@@ -1,23 +1,19 @@
-'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { Metadata } from 'next';
 import clsx from 'clsx';
 import { styles } from './not-found.styles';
-import Button from '@/(anon)/_components/common/button/Button';
+import GoBackButton from '@/(anon)/_components/notFound/GoBackButton';
+
+// 서버에서 메타데이터 설정
+export const metadata: Metadata = {
+  title: '페이지를 찾을 수 없습니다 | Bogam',
+  description: '요청하신 URL을 서버에서 찾을 수 없습니다.',
+  robots: {
+    index: false, // 404 페이지는 검색 결과에서 제외
+    follow: false,
+  },
+};
 
 export default function NotFound() {
-  const router = useRouter();
-
-  // 페이지 타이틀 설정
-  useEffect(() => {
-    document.title = '페이지를 찾을 수 없습니다 | Bogam';
-  }, []);
-
-  const handleGoBack = () => {
-    router.back();
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -30,12 +26,7 @@ export default function NotFound() {
           요청하신 URL을 서버에서 찾을 수 없습니다.
         </p>
         <div className={styles.buttonGroup}>
-          <Button 
-            onClick={handleGoBack}
-            variant="primary"
-          >
-            이전 페이지로
-          </Button>
+          <GoBackButton />
         </div>
       </div>
     </div>
