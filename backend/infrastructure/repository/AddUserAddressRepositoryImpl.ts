@@ -115,12 +115,258 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
     });
 
     // 새 사용자 주소가 생성된 경우에만 stepResult 레코드들 생성
+    // createMany를 사용하되 각 단계별로 다른 details 설정
     await prisma.stepResult.createMany({
-      data: Array.from({ length: 26 }, (_, i) => ({
-        userAddressId: userAddress.id,
-        stepId: i + 1,
-        details: {},
-      })),
+      data: [
+        {
+          userAddressId: userAddress.id,
+          stepId: 1,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 2,
+          details: {
+            "깡통주택": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 3,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 4, // 1-4단계: 등기부등본 발급 오류 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 5,
+          details: {
+            "경매": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked",
+            "미납 내역 없음": "unchecked",
+            "서류와 임대인의 이름 일치 여부": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 6,
+          details: {
+            "보증신청인(1)": "unchecked",
+            "보증신청인(2)": "unchecked",
+            "보증신청인(3)": "unchecked",
+            "보증신청인(4)": "unchecked",
+            "임대차계약기간": "unchecked",
+            "전세보증금 금액": "unchecked",
+            "전세권 설정 여부": "unchecked",
+            "타세대 전입 여부": "unchecked",
+            "보증신청주택 종류": "unchecked",
+            "전세목적물 소유권": "unchecked",
+            "역전세 반환대출 여부": "unchecked",
+            "공인 중개사 계약 여부": "unchecked",
+            "전세금 전액 지불 여부": "unchecked",
+            "전세목적물 권리 침해 여부": "unchecked",
+            "전입신고 및 확정일자 여부": "unchecked",
+            "위반건축물 여부(아파트 제외)": "unchecked",
+            "타 기관 보증부 전세 대출 여부": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 7,
+          details: {
+            "owner_id_check": "unchecked",
+            "registry_check": "unchecked",
+            "deposit_account": "unchecked",
+            "phone_confirmation": "unchecked",
+            "proxy_verification": "unchecked",
+            "stamp_verification": "unchecked",
+            "proxy_account_agreement": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 8,
+          details: {
+            "registry_check": "unchecked",
+            "trust_register_check": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 9, // 2-3단계: 등기부등본 발급 오류 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 10,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 11, // 3-1단계: 이슈 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 12, // 3-2단계: 이슈 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 13,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 14, // 4-1단계: 등기부등본 발급 오류 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 15,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 16,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 17,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 18,
+          details: {
+            "경매": "unchecked",
+            "대표": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked",
+            "등록번호": "unchecked",
+            "공인중개사": "unchecked",
+            "사업자 상호": "unchecked",
+            "자격증 번호": "unchecked",
+            "중개업자 등록": "unchecked",
+            "미납 내역 없음": "unchecked",
+            "체납 내역 확인": "unchecked",
+            "납세상태 해당없음": "unchecked",
+            "발급일자 최신성 확인": "unchecked",
+            "유효기간 만료일 확인": "unchecked",
+            "납세자명과 임대인 명 일치 여부": "unchecked",
+            "서류와 임대인의 이름 일치 여부": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 19, // 5-2단계: 등기부등본 발급 오류 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 20,
+          details: {
+            "보증신청인(1)": "unchecked",
+            "보증신청인(2)": "unchecked",
+            "보증신청인(3)": "unchecked",
+            "보증신청인(4)": "unchecked",
+            "임대차계약기간": "unchecked",
+            "전세보증금 금액": "unchecked",
+            "전세권 설정 여부": "unchecked",
+            "타세대 전입 여부": "unchecked",
+            "보증신청주택 종류": "unchecked",
+            "전세목적물 소유권": "unchecked",
+            "역전세 반환대출 여부": "unchecked",
+            "공인 중개사 계약 여부": "unchecked",
+            "전세금 전액 지불 여부": "unchecked",
+            "전세목적물 권리 침해 여부": "unchecked",
+            "전입신고 및 확정일자 여부": "unchecked",
+            "위반건축물 여부(아파트 제외)": "unchecked",
+            "타 기관 보증부 전세 대출 여부": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 21,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 22,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 23,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 24, // 6-3단계: 등기부등본 발급 오류 해결시 수정
+          details: {},
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 25,
+          details: {
+            "열람": "unchecked"
+          },
+        },
+        {
+          userAddressId: userAddress.id,
+          stepId: 26,
+          details: {
+            "이면계약 작성하지 않기": "unchecked",
+            "신분증, 인감 빌려주지 않기": "unchecked",
+            "적법한 계약 절차가 아니면 거절하기": "unchecked"
+          },
+        },
+      ],
     });
 
     return {
