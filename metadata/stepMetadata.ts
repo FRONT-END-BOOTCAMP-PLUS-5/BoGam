@@ -1,4 +1,5 @@
 // 메타데이터 관련 함수들을 관리하는 파일
+import { STEP_TITLES } from '@libs/constants/stepDetailTitles';
 
 // 단계별 메타데이터 타입 정의
 export interface StepMetadata {
@@ -102,15 +103,6 @@ export const getStepSpecificJsonLd = (stepNum: string, pages: any[]) => {
   const isProduction = process.env.NODE_ENV === 'production';
   const baseUrl = isProduction ? 'https://lion5-bogam.site' : 'http://localhost:3000';
   
-  const stepNames = {
-    1: "깡통주택 사기 피하기",
-    2: "가짜 임대인 피하기", 
-    3: "공인중개사 확인",
-    4: "계약 후 전세 사기 예방",
-    5: "입주 후 전세 사기 예방",
-    6: "계약 종료 후 전세 사기 예방",
-    7: "전세 사기 사례 및 대처방법"
-  };
 
   return {
     "@context": "https://schema.org",
@@ -138,7 +130,7 @@ export const getStepSpecificJsonLd = (stepNum: string, pages: any[]) => {
     "inLanguage": "ko-KR",
     "about": {
       "@type": "Thing",
-      "name": stepNames[step as keyof typeof stepNames] || "전세 사기 예방 가이드",
+      "name": STEP_TITLES[step as keyof typeof STEP_TITLES] || "전세 사기 예방 가이드",
       "description": "전세 거래 시 발생할 수 있는 사기와 위험을 예방하는 방법"
     },
     "keywords": stepMetadata.keywords.join(", "),

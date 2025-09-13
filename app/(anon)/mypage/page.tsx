@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useUserStore } from '@libs/stores/userStore';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
@@ -41,6 +42,11 @@ export default function MyPage() {
     detail: ''
   });
 
+  // 페이지 타이틀 설정
+  useEffect(() => {
+    document.title = '마이페이지 | Bogam';
+  }, []);
+
   // guideSteps와 guideSummary 데이터 처리
   let guideSteps: StepResultData[] = [];
   let guideSummary: GuideSummaryData = { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 };
@@ -57,10 +63,6 @@ export default function MyPage() {
       };
     }
   }
-
-  console.log('stepResultsData', stepResultsData);
-  console.log('guideSteps', guideSteps);
-  console.log('guideSummary', guideSummary);
 
   // 로딩 상태 처리
   if (isLoading) {
