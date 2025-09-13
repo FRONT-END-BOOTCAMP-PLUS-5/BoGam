@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { styles } from './Table.styles';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 
 interface RegionData {
   region: string;
@@ -27,10 +28,29 @@ const Table = ({
   // option 필드가 있는 데이터만 필터링
   const dataWithOptions = data.filter((item) => item.option);
 
+  // 날짜 포맷팅 함수
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  };
+
   // 날짜 옵션 생성 (최신 날짜부터 정렬)
   const dateOptions = [
     ...new Set(dataWithOptions.map((item) => item.option)),
   ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+  // DropDown 컴포넌트용 옵션 데이터 변환
+  const dropdownOptions = [
+    { value: '', label: '전체' },
+    ...dateOptions.map((date) => ({
+      value: date,
+      label: `${formatDate(date)} 이후`
+    }))
+  ];
 
   // 선택된 날짜에 따른 데이터 설정
   useEffect(() => {
@@ -45,17 +65,8 @@ const Table = ({
     }
   }, [selectedDate]); // dataWithOptions 제거
 
-  const handleDateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedDate(event.target.value);
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
+  const handleDateChange = (value: string) => {
+    setSelectedDate(value);
   };
 
   // option이 있는 데이터가 없으면 드롭다운을 표시하지 않음
@@ -78,22 +89,14 @@ const Table = ({
       {/* 날짜 선택 드롭다운 - option이 있는 경우에만 표시 */}
       {shouldShowDropdown && (
         <div className={styles.dateSelector}>
-          <label htmlFor='date-select' className={styles.dateLabel}>
-            담보물건 설정일:
-          </label>
-          <select
-            id='date-select'
+          <DropDown
+            options={dropdownOptions}
             value={selectedDate}
             onChange={handleDateChange}
-            className={styles.dateSelect}
-          >
-            <option value=''>전체</option>
-            {dateOptions.map((date) => (
-              <option key={date} value={date}>
-                {formatDate(date)} 이후
-              </option>
-            ))}
-          </select>
+            placeholder="전체"
+            label="담보물건 설정일:"
+            id="date-select"
+          />
         </div>
       )}
 
