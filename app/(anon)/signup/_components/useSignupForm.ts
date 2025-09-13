@@ -6,6 +6,8 @@ import { signupSchema, SignupInput } from './schema';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { authApi } from '@libs/api_front/auth.api';
+import { useCheckNickname } from '@/hooks/useCheckNickname';
+import { useCheckUsername } from '@/hooks/useCheckUsername';
 
 export function useSignupForm() {
   const router = useRouter();
@@ -21,46 +23,50 @@ export function useSignupForm() {
     },
   });
 
+  // 닉네임 관련 상태
+  const nickname = form.watch('nickname');
+  const [triggerNicknameCheck, setTriggerNicknameCheck] = useState(false);
+  const { data: nicknameData, isSuccess: isNicknameSuccess } = useCheckNickname(
+    nickname,
+    triggerNicknameCheck
+  );
+  const nicknameAvailable = nicknameData?.available ?? false;
+
+  // 아이디(Username) 관련 상태
+  const username = form.watch('username');
+  const [triggerUsernameCheck, setTriggerUsernameCheck] = useState(false);
+  const { data: usernameData, isSuccess: isUsernameSuccess } = useCheckUsername(
+    username,
+    triggerUsernameCheck
+  );
+  const usernameAvailable = usernameData?.available ?? false;
+
   const onSubmit = async (data: SignupInput) => {
     setSignupError('');
+
+    // 닉네임 중복 확인 조건 검사
+    if (!isNicknameSuccess || !nicknameAvailable) {
+      form.setError('nickname', {
+        type: 'manual',
+        message: '닉네임 중복확인을 완료해주세요.',
+      });
+      return;
+    }
+
+    // 아이디(Username) 중복 확인 조건 검사
+    if (!isUsernameSuccess || !usernameAvailable) {
+      form.setError('username', {
+        type: 'manual',
+        message: '아이디 중복확인을 완료해주세요.',
+      });
+      return;
+    }
+
     try {
       await authApi.signup(data);
       setIsModalOpen(true);
     } catch (error) {
-      if (
-        typeof error === 'object' &&
-        error !== null &&
-        'response' in error &&
-        typeof error.response === 'object' &&
-        error.response !== null &&
-        'status' in error.response &&
-        'data' in error.response
-      ) {
-        const errRes = error as {
-          response: {
-            status: number;
-            data: {
-              message?: string;
-              issues?: { path: string[]; message: string }[];
-            };
-          };
-        };
-
-        if (errRes.response.status === 409) {
-          const errorMessage =
-            errRes.response.data.message || '이미 존재하는 아이디입니다.';
-          setSignupError(errorMessage);
-        } else if (Array.isArray(errRes.response.data.issues)) {
-          const validationErrors = errRes.response.data.issues
-            .map((issue) => `${issue.path[0]}: ${issue.message}`)
-            .join(', ');
-          setSignupError(`입력 정보를 확인해주세요: ${validationErrors}`);
-        } else {
-          setSignupError('회원가입에 실패했습니다.');
-        }
-      } else {
-        setSignupError('회원가입 중 오류가 발생했습니다.');
-      }
+      setSignupError('회원가입 중 오류가 발생했습니다.');
       setIsErrorModalOpen(true);
     }
   };
@@ -81,5 +87,9 @@ export function useSignupForm() {
       setIsModalOpen(false);
       router.push('/signin');
     },
+    triggerNicknameCheck,
+    setTriggerNicknameCheck,
+    triggerUsernameCheck,
+    setTriggerUsernameCheck,
   };
 }

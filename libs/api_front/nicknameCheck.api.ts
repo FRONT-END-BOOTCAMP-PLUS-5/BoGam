@@ -19,7 +19,7 @@ class NicknameApi {
     const axios = frontendAxiosInstance.getAxiosInstance();
 
     const response = await axios.get<NicknameCheckResponse>(
-      'users/check-nickname',
+      'api/users/check-nickname',
       {
         params: { nickname },
       }

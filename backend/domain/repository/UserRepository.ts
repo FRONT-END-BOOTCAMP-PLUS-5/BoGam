@@ -15,4 +15,5 @@ export interface UserRepository {
   delete(id: string): Promise<boolean>;
   deleteByNickname(nickname: string): Promise<boolean>;
   isNicknameTaken(nickname: string): Promise<boolean>;
+  isUsernameTaken(username: string): Promise<boolean>;
 }
