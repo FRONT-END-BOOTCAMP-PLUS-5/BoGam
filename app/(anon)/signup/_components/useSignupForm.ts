@@ -60,8 +60,8 @@ export function useSignupForm() {
 
     try {
       await authApi.signup(data);
-      showSuccess('회원가입이 완료되었습니다! 🎉');
-      router.push('/signin'); // ✅ 성공 후 로그인 페이지 이동
+      showSuccess('회원가입이 완료되었습니다!');
+      router.push('/signin'); 
     } catch (error) {
       showError('회원가입 중 오류가 발생했습니다.');
     }
