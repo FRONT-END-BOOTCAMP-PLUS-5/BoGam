@@ -8,13 +8,11 @@ import { useState } from 'react';
 import { authApi } from '@libs/api_front/auth.api';
 import { useCheckNickname } from '@/hooks/useCheckNickname';
 import { useCheckUsername } from '@/hooks/useCheckUsername';
+import { useToastStore } from '@libs/stores/toastStore';
 
 export function useSignupForm() {
   const router = useRouter();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-  const [signupError, setSignupError] = useState('');
+  const { showError, showSuccess } = useToastStore();
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
@@ -32,7 +30,7 @@ export function useSignupForm() {
   );
   const nicknameAvailable = nicknameData?.available ?? false;
 
-  // 아이디(Username) 관련 상태
+  // 아이디 관련 상태
   const username = form.watch('username');
   const [triggerUsernameCheck, setTriggerUsernameCheck] = useState(false);
   const { data: usernameData, isSuccess: isUsernameSuccess } = useCheckUsername(
@@ -42,9 +40,7 @@ export function useSignupForm() {
   const usernameAvailable = usernameData?.available ?? false;
 
   const onSubmit = async (data: SignupInput) => {
-    setSignupError('');
-
-    // 닉네임 중복 확인 조건 검사
+    // 닉네임 중복 확인 여부
     if (!isNicknameSuccess || !nicknameAvailable) {
       form.setError('nickname', {
         type: 'manual',
@@ -53,7 +49,7 @@ export function useSignupForm() {
       return;
     }
 
-    // 아이디(Username) 중복 확인 조건 검사
+    // 아이디 중복 확인 여부
     if (!isUsernameSuccess || !usernameAvailable) {
       form.setError('username', {
         type: 'manual',
@@ -64,10 +60,10 @@ export function useSignupForm() {
 
     try {
       await authApi.signup(data);
-      setIsModalOpen(true);
+      showSuccess('회원가입이 완료되었습니다! 🎉');
+      router.push('/signin'); // ✅ 성공 후 로그인 페이지 이동
     } catch (error) {
-      setSignupError('회원가입 중 오류가 발생했습니다.');
-      setIsErrorModalOpen(true);
+      showError('회원가입 중 오류가 발생했습니다.');
     }
   };
 
@@ -75,18 +71,6 @@ export function useSignupForm() {
     form,
     onSubmit,
     isSubmitting: form.formState.isSubmitting,
-    isModalOpen,
-    isErrorModalOpen,
-    signupError,
-    closeSuccessModal: () => setIsModalOpen(false),
-    closeErrorModal: () => {
-      setIsErrorModalOpen(false);
-      setSignupError('');
-    },
-    goToSignin: () => {
-      setIsModalOpen(false);
-      router.push('/signin');
-    },
     triggerNicknameCheck,
     setTriggerNicknameCheck,
     triggerUsernameCheck,
