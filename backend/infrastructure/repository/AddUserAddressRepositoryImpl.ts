@@ -142,7 +142,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         {
           userAddressId: userAddress.id,
           stepId: 4, // 1-4단계: 등기부등본 발급 오류 해결시 수정
-          details: {},
+          details: {
+            "경매": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
@@ -212,7 +226,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         {
           userAddressId: userAddress.id,
           stepId: 9, // 2-3단계: 등기부등본 발급 오류 해결시 수정
-          details: {},
+          details: {
+            "경매": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
@@ -241,7 +269,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         {
           userAddressId: userAddress.id,
           stepId: 14, // 4-1단계: 등기부등본 발급 오류 해결시 수정
-          details: {},
+          details: {
+            "경매": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
@@ -299,7 +341,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         {
           userAddressId: userAddress.id,
           stepId: 19, // 5-2단계: 등기부등본 발급 오류 해결시 수정
-          details: {},
+          details: {
+            "경매": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
@@ -348,7 +404,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         {
           userAddressId: userAddress.id,
           stepId: 24, // 6-3단계: 등기부등본 발급 오류 해결시 수정
-          details: {},
+          details: {
+            "경매": "unchecked",
+            "미납": "unchecked",
+            "부도": "unchecked",
+            "신탁": "unchecked",
+            "압류": "unchecked",
+            "체납": "unchecked",
+            "취소": "unchecked",
+            "파산": "unchecked",
+            "해지": "unchecked",
+            "가압류": "unchecked",
+            "임차권": "unchecked",
+            "강제집행": "unchecked",
+            "근저당권": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
