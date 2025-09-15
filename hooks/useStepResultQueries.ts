@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import stepResultQueryApi, { StepResultData } from '@libs/api_front/stepResultQueries.api';
+import stepResultQueryApi, {
+  StepResultData,
+} from '@libs/api_front/stepResultQueries.api';
 
 // API 응답 데이터 타입 정의
 interface StepResultResponseData {
@@ -19,8 +21,17 @@ interface GetStepResultParams {
   detail: string;
 }
 
-export const useGetStepResult = (params: GetStepResultParams) => {
-  const { data, isLoading, isError } = useQuery<StepResultData | StepResultData[] | StepResultResponseData>({
+interface GetStepResultOptions {
+  enabled?: boolean;
+}
+
+export const useGetStepResult = (
+  params: GetStepResultParams,
+  options?: GetStepResultOptions
+) => {
+  const { data, isLoading, isError } = useQuery<
+    StepResultData | StepResultData[] | StepResultResponseData
+  >({
     queryKey: [
       'stepResults',
       params.userAddressNickname,
@@ -28,10 +39,10 @@ export const useGetStepResult = (params: GetStepResultParams) => {
       params.detail,
     ],
     queryFn: () => stepResultQueryApi.getStepResult(params),
-    enabled: !!params.userAddressNickname,
+    enabled: (options?.enabled ?? true) && !!params.userAddressNickname,
     staleTime: 5 * 60 * 1000, // 5분
     gcTime: 10 * 60 * 1000, // 10분
   });
-  
+
   return { data, isLoading, isError };
 };

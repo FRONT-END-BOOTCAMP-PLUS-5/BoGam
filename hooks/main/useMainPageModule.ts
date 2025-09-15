@@ -35,6 +35,7 @@ export const useMainPageModule = () => {
   const {
     userAddresses: storeUserAddresses,
     selectAddress,
+    selectedAddress,
     addVolatileAddress,
     deleteVolatileAddress,
   } = useUserAddressStore();
@@ -48,6 +49,8 @@ export const useMainPageModule = () => {
     if (!isLoading) {
       clearTransactionData();
     }
+
+    console.log('새로운 주소 검색 시 실거래가 데이터 초기화', data);
 
     try {
       // 키워드 검색으로 좌표 가져오기
@@ -99,9 +102,22 @@ export const useMainPageModule = () => {
         mainPageState.setSavedLawdCode(data.bcode.substring(0, 5) || '');
         mainPageState.setShowPostcode(false);
 
+        console.log('mainPageState', mainPageState.roadAddress);
+        console.log('mainPageState', mainPageState.searchQuery);
+        console.log('mainPageState', mainPageState.savedLawdCode);
+        console.log('mainPageState', mainPageState.showPostcode);
+
         // 새 주소 추가 시 호 초기화
-        const { setHo } = useUserAddressStore.getState();
+        const { setHo, setDong } = useUserAddressStore.getState();
         setHo('');
+        setDong('');
+
+        // 새로운 주소 검색 상태로 설정
+        console.log(
+          '새로운 주소 검색 상태로 설정',
+          addressManagement.isNewAddressSearch
+        );
+        addressManagement.setIsNewAddressSearch(true);
       } else {
         showError('주소를 찾을 수 없습니다.');
       }
@@ -114,7 +130,7 @@ export const useMainPageModule = () => {
   const { execDaumPostcode, executePostcode, postcodeRef } = useDaumPostcode(
     handleDaumPostcodeComplete,
     mainPageState.setShowPostcode,
-    (errorMessage: string) => {
+    () => {
       showError('주소 검색 중 오류가 발생했습니다.');
     }
   );

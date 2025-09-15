@@ -34,26 +34,43 @@ interface StepResultResponseData {
 
 export default function MyPage() {
   const nickname = useUserStore((state) => state.nickname);
-  const { userAddresses, selectedAddress, selectAddress, deleteAddress, toggleFavorite } = useUserAddressStore();
-  const { data: stepResultsData, isLoading, isError } = useGetStepResult({
+  const {
+    userAddresses,
+    selectedAddress,
+    selectAddress,
+    deleteAddress,
+    toggleFavorite,
+  } = useUserAddressStore();
+  const {
+    data: stepResultsData,
+    isLoading,
+    isError,
+  } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
     stepNumber: '',
-    detail: ''
+    detail: '',
   });
 
   // guideSteps와 guideSummary 데이터 처리
   let guideSteps: StepResultData[] = [];
-  let guideSummary: GuideSummaryData = { totalMatch: 0, totalMismatch: 0, totalUnchecked: 0 };
+  let guideSummary: GuideSummaryData = {
+    totalMatch: 0,
+    totalMismatch: 0,
+    totalUnchecked: 0,
+  };
 
   if (stepResultsData) {
-    if ((stepResultsData as StepResultResponseData).results && (stepResultsData as StepResultResponseData).summary) {
+    if (
+      (stepResultsData as StepResultResponseData).results &&
+      (stepResultsData as StepResultResponseData).summary
+    ) {
       // {results: Array, summary: {...}} 구조
       const responseData = stepResultsData as StepResultResponseData;
       guideSteps = responseData.results;
       guideSummary = {
         totalMatch: responseData.summary.totalMatch || 0,
         totalMismatch: responseData.summary.totalMismatch || 0,
-        totalUnchecked: responseData.summary.totalUnchecked || 0
+        totalUnchecked: responseData.summary.totalUnchecked || 0,
       };
     }
   }
@@ -67,9 +84,9 @@ export default function MyPage() {
     return (
       <div className={styles.container}>
         <div className={styles.gradientBackground}></div>
-        <LoadingOverlay 
+        <LoadingOverlay
           isVisible={true}
-          title="데이터를 불러오는 중..."
+          title='데이터를 불러오는 중...'
           currentStep={1}
           totalSteps={1}
         />
@@ -86,9 +103,11 @@ export default function MyPage() {
           <div className={styles.errorContent}>
             <div className={styles.errorIcon}>⚠️</div>
             <h2 className={styles.errorTitle}>데이터 로드 실패</h2>
-            <p className={styles.errorMessage}>데이터를 불러오는데 실패했습니다.</p>
-            <button 
-              onClick={() => window.location.reload()} 
+            <p className={styles.errorMessage}>
+              데이터를 불러오는데 실패했습니다.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
               className={styles.errorButton}
             >
               다시 시도
@@ -103,11 +122,11 @@ export default function MyPage() {
     <div className={styles.container}>
       {/* 그라데이션 배경 */}
       <div className={styles.gradientBackground}></div>
-      
+
       {/* 프로필 헤더 */}
       <div className={styles.profileHeader}>
         <div className={styles.profileContent}>
-          <Profile size="md" />
+          <Profile size='md' />
           <div>
             <span className={styles.profileName}>{nickname}</span>
           </div>
@@ -122,7 +141,7 @@ export default function MyPage() {
           onDelete={deleteAddress}
           onToggleFavorite={toggleFavorite}
           onSelect={(id: number) => {
-            const address = userAddresses.find(addr => addr.id === id);
+            const address = userAddresses.find((addr) => addr.id === id);
             if (address) selectAddress(address);
           }}
         />
@@ -138,9 +157,7 @@ export default function MyPage() {
         />
 
         {/* 가이드 결과 보기 */}
-        <GuideResultView
-          guideSteps={guideSteps}
-        />
+        <GuideResultView guideSteps={guideSteps} />
 
         {/* 회원탈퇴 버튼 */}
         <WithdrawButton />

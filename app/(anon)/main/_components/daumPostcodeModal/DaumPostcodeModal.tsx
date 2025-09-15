@@ -23,7 +23,7 @@ export const DaumPostcodeModal = ({
       const timer = setTimeout(() => {
         onSearch();
       }, 10);
-      
+
       return () => clearTimeout(timer);
     }
   }, [showPostcode, onSearch]);
@@ -31,20 +31,20 @@ export const DaumPostcodeModal = ({
   return (
     <ConfirmModal
       isOpen={showPostcode}
-      title='주소 검색'
+      title='주소 추가'
       onCancel={onClose}
       icon='info'
       confirmText=''
       cancelText='닫기'
       onConfirm={undefined}
     >
-      <div 
-        ref={postcodeRef} 
+      <div
+        ref={postcodeRef}
         className='w-full min-h-80 h-80 max-h-80 overflow-auto'
-        style={{ 
+        style={{
           pointerEvents: 'auto',
           position: 'relative',
-          zIndex: 10000
+          zIndex: 10000,
         }}
       />
     </ConfirmModal>

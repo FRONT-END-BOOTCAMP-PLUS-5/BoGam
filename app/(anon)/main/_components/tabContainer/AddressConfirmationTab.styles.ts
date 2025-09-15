@@ -7,8 +7,8 @@ export const styles = {
 
   // 두 번째 줄: 주소 검색 결과
   addressContainer:
-    'flex justify-flex-start w-full h-12 py-3 bg-white rounded-lg',
-  addressValue: 'flex text-sm text-brand-black ',
+    'flex justify-between w-full h-8 py-3 bg-brand-light-blue rounded-lg',
+  addressValue: 'flex text-sm text-brand-black items-center px-3',
   addressPlaceholder: 'flex text-sm text-bsrand-dark-gray items-start mt-1',
   addressSearchRow: 'flex gap-1',
 
@@ -21,10 +21,10 @@ export const styles = {
   // 동/호 입력 필드
   dongField: 'w-10 !h-10',
   hoField: 'w-10 !h-10',
+  combinedField: 'w-32 !h-10',
 
   // 버튼 행
   confirmButton: '!mt-0 w-auto px-3 !py-2 !h-auto text-xs rounded shadow-sm',
-  saveButton: '!mt-0 w-full px-2 py-1',
 
   // 동/호 입력 컨테이너
   dongHoContainer: 'flex items-center gap-1',

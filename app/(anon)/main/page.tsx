@@ -1,72 +1,146 @@
 'use client';
 
-import React, { useState } from 'react';
-import { TopSection } from '@/(anon)/main/_components/topSection/TopSection';
-import { TabContainer } from '@/(anon)/main/_components/tabContainer/TabContainer';
-import FloatingButton from '@/(anon)/main/_components/floatingButton/FloatingButton';
+import { useUserStore } from '@libs/stores/userStore';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
+import DocumentCard from '../mypage/_components/DocumentCard';
+import WithdrawButton from '../mypage/_components/WithdrawButton';
+import { styles } from '../mypage/page.styles';
+import Profile from '@/(anon)/_components/common/profile/Profile';
+import { AddressConfirmationTab } from './_components/tabContainer/AddressConfirmationTab';
+import { Pin, X } from 'lucide-react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
-import { styles } from './main.styles';
-import { MapPinned, Pin, House, X } from 'lucide-react';
+import Button from '@/(anon)/_components/common/button/Button';
+import { DaumPostcodeModal } from './_components/daumPostcodeModal/DaumPostcodeModal';
+import { ConfirmModal } from '../_components/common/modal/ConfirmModal';
+import { useModalStore } from '@libs/stores/modalStore';
+import { GuideResultsContainer } from './_components/guideResults/GuideResultsContainer';
 
 export default function MainPage() {
-  // 탭 상태 관리
-  const [activeTab, setActiveTab] = useState(0);
+  const nickname = useUserStore((state) => state.nickname);
+  const {
+    userAddresses,
+    selectedAddress,
+    selectAddress,
+    deleteAddress,
+    toggleFavorite,
+  } = useUserAddressStore();
+  // useMainPageModule에서 GPS 관련 상태 및 검색 기능 가져오기
+  const {
+    gpsLoading,
+    gpsError,
+    onSearch,
+    executePostcode,
+    postcodeRef,
+    showPostcode,
+    setShowPostcode,
+    isNewAddressSearch,
+  } = useMainPageModule();
 
-  // useMainPageModule에서 모든 상태와 함수 가져오기 (React Query 포함)
-  const mainPageModule = useMainPageModule();
-  const { gpsLoading, gpsError, currentLocationType } = mainPageModule;
+  // 모달 스토어
+  const { isOpen, content, confirmModal, cancelModal } = useModalStore();
 
-  // 탭 변경 핸들러
-  const handleTabChange = (tabIndex: number) => {
-    setActiveTab(tabIndex);
-  };
+  console.log('isNewAddressSearch', isNewAddressSearch);
 
   return (
-    <div>
-      <div className={styles.container}>
-        {/* 상단 섹션 - 사용자 정보 및 선택된 주소 */}
-        <TopSection />
+    <div className={styles.container}>
+      {/* 그라데이션 배경 */}
+      <div className={styles.gradientBackground}></div>
 
-        {/* 하단 섹션 - 관심 지역 지도 및 탭 컨테이너 */}
-        <div className={styles.bottomSection}>
-          {/* 지도 헤더 - 첫 번째 탭에서만 표시 */}
+      {/* 프로필 헤더 */}
+      <div className={styles.profileHeader}>
+        <div className={styles.profileContent}>
+          <Profile size='md' />
+          <div>
+            <span className={styles.profileName}>{nickname}</span>
+          </div>
+        </div>
+      </div>
 
-          <div className={styles.mapHeader}>
-            <MapPinned className={styles.mapIcon} />
-            <span className={styles.mapTitle}>관심 지역 지도</span>
+      <div className={styles.content}>
+        {/* 주소 드롭다운 영역 */}
+        <AddressDropDown
+          addresses={userAddresses}
+          selectedAddress={selectedAddress}
+          onDelete={deleteAddress}
+          onToggleFavorite={toggleFavorite}
+          onSelect={(id: number) => {
+            const address = userAddresses.find((addr) => addr.id === id);
+            if (address) selectAddress(address);
+          }}
+        />
+
+        {/* 주소 추가 및 지도 영역 */}
+        <div className='bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full'>
+          <div className='mb-5'>
+            <div className='flex justify-between items-center'>
+              <h3 className='text-base font-semibold text-brand-black'>
+                선택된 주소 정보
+              </h3>
+              <Button
+                onClick={() => onSearch && onSearch()}
+                variant='primary'
+                className='!h-8 !w-20 !text-xs !mt-0'
+              >
+                주소 추가
+              </Button>
+            </div>
             {/* 위치 상태 표시 */}
-            <div className={styles.locationStatus}>
+            <div className='mt-2'>
               {gpsLoading ? (
-                <span className={styles.locationLoading}>
-                  <Pin /> 위치 확인 중...
-                </span>
-              ) : gpsError ? (
-                <span className={styles.locationError}>
-                  <X size={16} /> 위치 오류
-                </span>
-              ) : currentLocationType === 'gps' ? (
-                <span className={styles.locationGPS}>
-                  <Pin size={16} /> GPS 위치
+                <span className='text-gray-600 text-sm'>
+                  <Pin className='inline-block w-4 h-4 mr-1' />
+                  위치 확인 중...
                 </span>
               ) : (
-                <span className={styles.locationUser}>
-                  <House size={16} /> 사용자 주소
-                </span>
+                gpsError && (
+                  <span className='text-red-500 text-sm'>
+                    <X className='inline-block w-4 h-4 mr-1' />
+                    위치 오류
+                  </span>
+                )
               )}
             </div>
           </div>
 
-          <div className={styles.searchGuide}>
-            전세매물을 검색하여 전세보감의 가이드를 이용해 보세요!
-          </div>
-
-          {/* 탭 컨테이너 */}
-          <TabContainer activeTab={activeTab} onTabChange={handleTabChange} />
+          {/* 주소 확인 탭 컴포넌트 */}
+          <AddressConfirmationTab />
         </div>
-        <FloatingButton />
 
-        <div className={styles.buttonArea}></div>
+        {/* 문서 카드 */}
+        <DocumentCard />
+
+        {/* 가이드 결과 컨테이너 */}
+        {!isNewAddressSearch && (
+          <GuideResultsContainer
+            selectedAddress={selectedAddress}
+            isNewAddressSearch={isNewAddressSearch}
+          />
+        )}
+
+        {/* 회원탈퇴 버튼 */}
+        <WithdrawButton />
       </div>
+      {/* Daum 우편번호 검색 모달 */}
+      <DaumPostcodeModal
+        postcodeRef={postcodeRef}
+        showPostcode={showPostcode}
+        onClose={() => setShowPostcode(false)}
+        onSearch={executePostcode}
+      />
+
+      {/* 공통 모달 */}
+      <ConfirmModal
+        isOpen={isOpen}
+        title={content?.title || ''}
+        onConfirm={confirmModal}
+        onCancel={cancelModal}
+        confirmText={content?.confirmText}
+        cancelText={content?.cancelText}
+        icon={content?.icon || 'info'}
+      >
+        {content?.content}
+      </ConfirmModal>
     </div>
   );
 }

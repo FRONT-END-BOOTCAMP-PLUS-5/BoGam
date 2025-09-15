@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMainPageState } from './useMainPageState';
 import { useMapStore } from '@libs/stores/map/mapStore';
@@ -18,9 +18,6 @@ import { useToastStore } from '@libs/stores/toastStore';
 export const useAddressManagement = () => {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToastStore();
-
-  // 무한 루프 방지를 위한 ref
-  const lastProcessedAddressId = useRef<number | null>(null);
 
   // 새로운 주소 검색인지 추적하는 상태 추가
   const [isNewAddressSearch, setIsNewAddressSearch] = useState(false);
@@ -47,7 +44,7 @@ export const useAddressManagement = () => {
   } = useMainPageState();
 
   // UserAddressStore에서 동/호 상태 가져오기
-  const { dong, ho, setDong, setHo } = useUserAddressStore();
+  const { dong, ho, setDong } = useUserAddressStore();
 
   // 지도 관련 Store
   const { setMapCenter, setSearchLocationMarker, setAdjustBounds } =
@@ -66,15 +63,6 @@ export const useAddressManagement = () => {
       if (isSameAddress(currentAddress, newAddress)) {
         return;
       }
-
-      // 무한 루프 방지를 위한 추가 검증
-      const currentSelectedId = storeSelectedAddress.id;
-
-      if (lastProcessedAddressId.current === currentSelectedId) {
-        return;
-      }
-
-      lastProcessedAddressId.current = currentSelectedId;
 
       // 동 정보만 사용 (호는 저장 시에만 사용)
       const { dong: extractedDong } = extractDongHo(storeSelectedAddress);
@@ -104,8 +92,27 @@ export const useAddressManagement = () => {
         setMapCenter(location);
         setSearchLocationMarker(location);
       }
+
+      // 휘발성 주소(새로 추가된 주소)가 아닌 경우에만 새로운 주소 검색 상태 해제
+      if (!storeSelectedAddress.isVolatile) {
+        setIsNewAddressSearch(false);
+      }
     }
-  }, [storeSelectedAddress?.id, clearTransactionData, isLoading]);
+  }, [
+    storeSelectedAddress?.id,
+    clearTransactionData,
+    isLoading,
+    dong,
+    roadAddress,
+    setDong,
+    setMapCenter,
+    setRoadAddress,
+    setSavedLawdCode,
+    setSearchLocationMarker,
+    setSearchQuery,
+    storeSelectedAddress,
+    setIsNewAddressSearch,
+  ]);
 
   // 주소 선택 핸들러
   const handleAddressSelect = (address: UserAddress) => {
@@ -224,7 +231,7 @@ export const useAddressManagement = () => {
   // 지도 이동 전용 (실거래가 데이터 없이) - 호 데이터 사용하지 않음
   const handleMoveToAddressOnly = async (currentDong?: string) => {
     // 전달받은 동 값 사용 (없으면 store의 상태값 사용)
-    const dongValue = currentDong || dong || '';
+    const dongValue = currentDong || dong || storeSelectedAddress?.dong || '';
 
     if (!dongValue) {
       showError('동을 입력해주세요.');
@@ -232,51 +239,31 @@ export const useAddressManagement = () => {
       return;
     }
 
-    // 동이 변경되었는지 확인 (호는 고려하지 않음)
-    const isDongChanged =
-      storeSelectedAddress && storeSelectedAddress.dong !== dongValue;
-    const needsNewSearch = isNewAddressSearch || isDongChanged;
+    if (!roadAddress) {
+      showError('상세 주소를 입력해주세요.');
+      return;
+    }
 
-    // ✅ 새로운 주소 검색이거나 동이 변경된 경우 API 호출
-    if (needsNewSearch) {
-      // 새로운 주소 검색 - API 호출 필요
-      if (!roadAddress) {
-        showError('상세 주소를 입력해주세요.');
-        return;
-      }
+    setAdjustBounds(false); // 자동 조정 비활성화
 
-      setAdjustBounds(false); // 자동 조정 비활성화
+    try {
+      // API 호출로 좌표 가져오기 (호는 사용하지 않음)
+      const completeAddress = `${roadAddress} ${dongValue}동`;
+      const searchData = await placesApi.searchByKeyword(completeAddress);
 
-      try {
-        // API 호출로 좌표 가져오기 (호는 사용하지 않음)
-        const completeAddress = `${roadAddress} ${dongValue}동`;
-        console.log('completeAddress', completeAddress);
-        const searchData = await placesApi.searchByKeyword(completeAddress);
-
-        if (searchData && searchData.length > 0) {
-          const location = {
-            lat: parseFloat(searchData[0].latitude),
-            lng: parseFloat(searchData[0].longitude),
-          };
-          setMapCenter(location);
-          setSearchLocationMarker(location);
-        } else {
-          showError('해당 주소를 찾을 수 없습니다.');
-        }
-      } catch (error) {
-        console.error('키워드 검색 실패 (지도 이동 전용):', error);
-        showError('키워드 검색 중 오류가 발생했습니다.');
-      }
-    } else {
-      // ✅ 기존 저장된 주소 사용 - API 호출 불필요
-      if (storeSelectedAddress) {
+      if (searchData && searchData.length > 0) {
         const location = {
-          lat: storeSelectedAddress.y,
-          lng: storeSelectedAddress.x,
+          lat: parseFloat(searchData[0].latitude),
+          lng: parseFloat(searchData[0].longitude),
         };
         setMapCenter(location);
         setSearchLocationMarker(location);
+      } else {
+        showError('해당 주소를 찾을 수 없습니다.');
       }
+    } catch (error) {
+      console.error('키워드 검색 실패 (지도 이동 전용):', error);
+      showError('키워드 검색 중 오류가 발생했습니다.');
     }
   };
 
@@ -311,5 +298,6 @@ export const useAddressManagement = () => {
     deleteAddress,
     addVolatileAddress,
     deleteVolatileAddress,
+    setIsNewAddressSearch,
   };
 };

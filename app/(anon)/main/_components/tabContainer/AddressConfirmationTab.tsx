@@ -1,44 +1,27 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useModalStore } from '@libs/stores/modalStore';
-import { DaumPostcodeModal } from '@/(anon)/main/_components/daumPostcodeModal/DaumPostcodeModal';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import Button from '@/(anon)/_components/common/button/Button';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
+import {
+  parseDongHoInputOnly,
+  formatDongHoDisplay,
+} from '@utils/addressInputUtils';
 
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
   const { selectedAddress, dong, ho, setDong, setHo } = useUserAddressStore();
 
-  // 강제 리렌더링을 위한 상태
-  const [, forceUpdate] = useState({});
-
-  // 모달 스토어
-  const { isOpen, content, closeModal, confirmModal, cancelModal } =
-    useModalStore();
+  // 입력값을 직접 제어하는 상태
+  const [inputValue, setInputValue] = useState('');
 
   // useMainPageModule에서 필요한 함수들만 가져오기
-  const {
-    onSearch,
-    executePostcode,
-    postcodeRef,
-    handleMoveToAddressOnly,
-    saveAddressToUser,
-    showPostcode,
-    setShowPostcode,
-  } = useMainPageModule();
-
-  // Daum Postcode 실행 함수
-  const handleAddressSearch = () => {
-    if (onSearch) {
-      onSearch();
-    }
-  };
+  const { handleMoveToAddressOnly, saveAddressToUser, isNewAddressSearch } =
+    useMainPageModule();
 
   // 주소 표시 로직
   const displaySearchQuery = selectedAddress?.completeAddress || '';
@@ -94,6 +77,18 @@ export const AddressConfirmationTab: React.FC = () => {
     setHo,
   ]);
 
+  // 동/호 값이 변경되면 inputValue 업데이트
+  useEffect(() => {
+    setInputValue(formatDongHoDisplay(dong || '', ho || ''));
+  }, [dong, ho]);
+
+  // 새로 주소가 추가되었을 때 동/호 input 비우기
+  useEffect(() => {
+    if (isNewAddressSearch) {
+      setInputValue('');
+    }
+  }, [isNewAddressSearch]);
+
   return (
     <div className={styles.container}>
       {/* 두 번째 줄: 주소 검색 결과 */}
@@ -112,55 +107,36 @@ export const AddressConfirmationTab: React.FC = () => {
           </span>
         </div>
         <Button
-          onClick={handleAddressSearch}
-          variant='primary'
-          className={styles.searchButton}
-        >
-          검색하기
-        </Button>
-      </div>
-
-      {/* 세 번째 줄: 동/호 입력 필드 */}
-      <div className={styles.dongHoInputs}>
-        <div className={styles.dongHoContainer}>
-          <TextInput
-            placeholder='동'
-            value={dong || ''}
-            onChange={(e) => {
-              const value = e.target.value.replace(/[^0-9]/g, '');
-              setDong(value);
-            }}
-            inputMode='numeric'
-            className={styles.dongField}
-          />
-          <span className={styles.dongHoLabel}>동</span>
-        </div>
-        <div className={styles.dongHoContainer}>
-          <TextInput
-            placeholder='호'
-            value={ho || ''}
-            onChange={(e) => {
-              const value = e.target.value.replace(/[^0-9]/g, '');
-              setHo(value);
-            }}
-            inputMode='numeric'
-            className={styles.hoField}
-          />
-          <span className={styles.dongHoLabel}>호</span>
-        </div>
-      </div>
-
-      <div className={styles.buttonRow}>
-        <Button
           onClick={() => {
             saveAddressToUser(dong, ho);
           }}
           disabled={!dong.trim() || !ho.trim()}
           variant='primary'
-          className={styles.saveButton}
+          className={'!mt-0 !w-24 !h-8 !text-xs !px-0 !py-0'}
         >
-          주소 저장하기
+          주소 저장
         </Button>
+      </div>
+
+      {/* 세 번째 줄: 동-호 입력 필드 */}
+      <div className={styles.dongHoInputs}>
+        <div className={styles.dongHoContainer}>
+          <TextInput
+            placeholder='101-1102, 동-호 형태로'
+            value={inputValue}
+            onChange={(e) => {
+              const newValue = e.target.value;
+              setInputValue(newValue);
+
+              const result = parseDongHoInputOnly(newValue);
+              setDong(result.dong);
+              setHo(result.ho);
+            }}
+            inputMode='text'
+            type='text'
+            className={styles.combinedField}
+          />
+        </div>
       </div>
 
       {/* 네 번째 줄: 카카오맵 */}
@@ -181,27 +157,6 @@ export const AddressConfirmationTab: React.FC = () => {
           <KakaoMapModule showTransactionMarkers={true} />
         </div>
       </div>
-
-      {/* Daum 우편번호 검색 모달 */}
-      <DaumPostcodeModal
-        postcodeRef={postcodeRef}
-        showPostcode={showPostcode}
-        onClose={() => setShowPostcode(false)}
-        onSearch={executePostcode}
-      />
-
-      {/* 공통 모달 */}
-      <ConfirmModal
-        isOpen={isOpen}
-        title={content?.title || ''}
-        onConfirm={confirmModal}
-        onCancel={cancelModal}
-        confirmText={content?.confirmText}
-        cancelText={content?.cancelText}
-        icon={content?.icon || 'info'}
-      >
-        {content?.content}
-      </ConfirmModal>
     </div>
   );
 };
