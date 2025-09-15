@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { styles } from './Table.styles';
 import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
+import { formatDate } from '@utils/dateUtils';
 
 interface RegionData {
   region: string;
@@ -27,16 +28,6 @@ const Table = ({
 
   // option 필드가 있는 데이터만 필터링
   const dataWithOptions = data.filter((item) => item.option);
-
-  // 날짜 포맷팅 함수
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-  };
 
   // 날짜 옵션 생성 (최신 날짜부터 정렬)
   const dateOptions = [
