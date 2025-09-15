@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { styles } from '@/(anon)/_components/onboarding/AuthLanding.styles';
 import Button from '@/(anon)/_components/common/button/Button';
+import { signIn } from 'next-auth/react';
 
 export default function AuthLanding() {
   return (
@@ -33,6 +34,7 @@ export default function AuthLanding() {
           <button
             className={`${styles.socialBtn} ${styles.kakao}`}
             aria-label='카카오로 시작'
+            onClick={() => signIn('kakao', { callbackUrl: '/' })}
           >
             <Image
               src='/images/KakaoLogo.png'
