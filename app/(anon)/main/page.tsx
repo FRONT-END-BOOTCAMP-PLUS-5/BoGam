@@ -9,6 +9,7 @@ import { styles } from '../mypage/page.styles';
 import Profile from '@/(anon)/_components/common/profile/Profile';
 import { AddressConfirmationTab } from './_components/tabContainer/AddressConfirmationTab';
 import { Pin, X } from 'lucide-react';
+import React from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import Button from '@/(anon)/_components/common/button/Button';
 import { DaumPostcodeModal } from './_components/daumPostcodeModal/DaumPostcodeModal';

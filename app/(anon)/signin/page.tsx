@@ -25,6 +25,11 @@ export default function SignIn() {
     } catch {}
   }, [clearUser, clearUserAddresses]);
 
+  // 페이지 타이틀 설정
+  useEffect(() => {
+    document.title = 'Bogam';
+  }, []);
+
   const handleBack = () => {
     setStep('auth');
     sessionStorage.setItem('step', 'auth');

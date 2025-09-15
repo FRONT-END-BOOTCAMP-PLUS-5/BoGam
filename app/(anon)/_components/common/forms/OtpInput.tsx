@@ -4,7 +4,7 @@
 
 import '@/globals.css';
 import { useRef, useCallback, useState } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
 
 export default function OtpInput({
@@ -59,16 +59,25 @@ export default function OtpInput({
           aria-label={`인증번호 ${i + 1}자리`}
         />
       ))}
-      <button
-        type='button'
-        className={styles.otpEyeBtn}
-        onMouseDown={() => setShow(true)}
-        onMouseUp={() => setShow(false)}
-        onMouseLeave={() => setShow(false)}
-        aria-label='인증번호 보기'
-      >
-        <Eye width={18} height={18} />
-      </button>
+      {show ? (
+        <button
+          type='button'
+          className={styles.otpEyeBtn}
+          onClick={() => setShow(false)}
+          aria-label='인증번호 가리기'
+        >
+          <EyeOff width={18} height={18} />
+        </button>
+      ) : (
+        <button
+          type='button'
+          className={styles.otpEyeBtn}
+          onClick={() => setShow(true)}
+          aria-label='인증번호 보기'
+        >
+          <Eye width={18} height={18} />
+        </button>
+      )}
     </div>
   );
 }

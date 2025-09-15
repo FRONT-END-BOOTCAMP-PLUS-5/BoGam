@@ -1,10 +1,19 @@
 import { cookies } from 'next/headers';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { styles } from './page.styles';
-import ProgressBarChart from '@/(anon)/_components/common/stateIcon/ProgressBarChart';
+import ProgressBarChart from '@/(anon)/_components/common/progress/ProgressBarChart';
 import FlipBookSection from '@/(anon)/steps/[step-number]/_components/FlipBookSection';
 import FlipPages, { PageData } from '@/(anon)/steps/[step-number]/_components/FlipPages';
 import { getStepSpecificMetadata, getStepSpecificJsonLd } from '@metadata/stepMetadata';
+
+// step-number 유효성 검사 함수
+function validateStepNumber(stepNumber: string): void {
+  const stepNum = parseInt(stepNumber);
+  if (isNaN(stepNum) || stepNum < 1 || stepNum > 7) {
+    notFound();
+  }
+}
 
 // API 응답 타입 정의
 interface StepResultSummary {
@@ -43,6 +52,9 @@ export async function generateMetadata({
   params: Promise<{ 'step-number': string }> 
 }): Promise<Metadata> {
   const { 'step-number': stepNumber } = await params;
+  
+  // step-number 유효성 검사
+  validateStepNumber(stepNumber);
   
   // 환경별 API URL 설정
   const isProduction = process.env.NODE_ENV === 'production';
@@ -122,6 +134,9 @@ export default async function MiddleStepPage({
   params: Promise<{ 'step-number': string }> 
 }) {
   const { 'step-number': stepNumber } = await params;
+  
+  // step-number 유효성 검사
+  validateStepNumber(stepNumber);
   
   // 환경별 API URL 설정
   const isProduction = process.env.NODE_ENV === 'production';
@@ -214,18 +229,16 @@ export default async function MiddleStepPage({
       <main className={styles.mainContainer} role="main">
         <header className={styles.stateIconArea} role="banner">
           <h1 className={styles.srOnly}>{stepNumber}단계: 전세 안전 가이드</h1>
-          <section aria-label="진행 상황">
-            <div className={styles.progressContainer}>
-              <ProgressBarChart 
-                stepNumber={stepNumber}
-                userAddressNickname={selectedAddressNickname || ''}
-                initialData={{
-                  match: stepData?.summary?.totalMatch || 0,
-                  unchecked: stepData?.summary?.totalUnchecked || 0,
-                  mismatch: stepData?.summary?.totalMismatch || 0,
-                }}
-              />
-            </div>
+          <section aria-label="진행 상황" className={styles.progressContainer}>
+            <ProgressBarChart 
+              stepNumber={stepNumber}
+              userAddressNickname={selectedAddressNickname || ''}
+              initialData={{
+                match: stepData?.summary?.totalMatch || 0,
+                unchecked: stepData?.summary?.totalUnchecked || 0,
+                mismatch: stepData?.summary?.totalMismatch || 0,
+              }}
+            />
           </section>
         </header>
         

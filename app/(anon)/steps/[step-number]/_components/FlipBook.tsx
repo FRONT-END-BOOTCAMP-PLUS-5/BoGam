@@ -98,6 +98,14 @@ export default function FlipBook({
     setIsLoading(false);
   };
 
+  // currentPage가 변경될 때 FlipBook 페이지 변경
+  useEffect(() => {
+    if (flipBookInstance && !isLoading) {
+      setIsManualFlip(true);
+      flipBookInstance.object.turnToPage(currentPage * 2);
+    }
+  }, [currentPage, flipBookInstance, isLoading]);
+
 
   return (
     <div className={styles.flipBookContainer}>
