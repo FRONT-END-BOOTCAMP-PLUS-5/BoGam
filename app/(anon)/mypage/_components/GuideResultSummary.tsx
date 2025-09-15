@@ -78,7 +78,6 @@ export default function GuideResultSummary({
             data.push(adjustedUncheckedPercentage);
           }
           
-          console.log('data :', data);
           return data;
         })(),
         backgroundColor: (() => {
