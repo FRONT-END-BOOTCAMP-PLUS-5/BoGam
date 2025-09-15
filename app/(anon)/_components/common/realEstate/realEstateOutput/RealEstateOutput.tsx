@@ -5,7 +5,7 @@ import { RealEstateOutputProps } from '@/(anon)/_components/common/realEstate/ty
 import { PdfViewer } from '@/(anon)/_components/common/pdfViewer/PdfViewer';
 import { styles } from './RealEstateOutput.styles';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
-import { RiskAssessmentDisplay } from '@/(anon)/_components/common/realEstate/riskAssessmentDisplay/RiskAssessmentDisplay';
+import { RiskAssessmentDisplay } from '@/(anon)/_components/common/riskAssessmentDisplay/RiskAssessmentDisplay';
 import { useRealEstateOutput } from '@/hooks/useRealEstateOutput';
 import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';

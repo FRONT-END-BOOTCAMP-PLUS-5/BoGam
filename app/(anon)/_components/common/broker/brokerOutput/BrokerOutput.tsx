@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGetBrokerCopy } from '@/hooks/useBroker';
 import { useBrokerRiskAssessment } from '@/hooks/useBrokerRiskAssessment';
-import { RiskAssessmentDisplay } from '@/(anon)/_components/common/realEstate/riskAssessmentDisplay/RiskAssessmentDisplay';
+import { RiskAssessmentDisplay } from '@/(anon)/_components/common/riskAssessmentDisplay/RiskAssessmentDisplay';
 import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
