@@ -6,6 +6,7 @@ import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
+import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
 
 interface RegionData {
   region: string;
@@ -41,28 +42,45 @@ const Table = ({
   const hasInitialized = useRef(false);
 
   // useStepResultMutations 훅 사용
-  const { upsertStepResult } = useStepResultMutations();
+  const { upsertStepResult, removeQueries } = useStepResultMutations();
 
-  // useGetStepResult 훅 사용 (기본값 저장용)
-  const { data: stepData } = useGetStepResult({
+  // useGetStepResult 훅 사용
+  const {
+    data: stepData,
+    isLoading,
+    isError,
+  } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
     stepNumber: stepInfo?.stepNumber?.toString() || '',
     detail: stepInfo?.detail?.toString() || '',
   });
 
-  // 기본값으로 초기화
+  // stepData가 배열인지 단일 객체인지 확인하고 jsonDetails 추출
+  const stepResultData = Array.isArray(stepData) ? stepData[0] : stepData;
+  const jsonDetails =
+    stepResultData && 'jsonDetails' in stepResultData
+      ? stepResultData.jsonDetails
+      : undefined;
+
+  // DB에서 가져온 값에서 열람 상태를 match로 업데이트
   useEffect(() => {
-    if (data.length === 0 || hasInitialized.current) {
+    if (data.length === 0 || hasInitialized.current || !jsonDetails) {
       return;
     }
 
+    // DB에서 가져온 값이 있고, 아직 초기화되지 않았을 때
+    const shouldInitialize = !hasInitialized.current && jsonDetails;
+
     if (
+      shouldInitialize &&
       selectedAddress?.id &&
       stepInfo?.stepNumber &&
       stepInfo?.detail
     ) {
-      const defaultDetails: Record<string, 'match'> = {
-        열람: 'match', // Table은 기본적으로 열람 완료 상태
+      // 기존 jsonDetails에서 열람 상태만 match로 변경
+      const updatedDetails = {
+        ...jsonDetails,
+        열람: 'match' as const,
       };
 
       // DB 저장
@@ -70,18 +88,29 @@ const Table = ({
         userAddressNickname: selectedAddress.nickname,
         stepNumber: stepInfo.stepNumber,
         detail: stepInfo.detail,
-        jsonDetails: defaultDetails,
+        jsonDetails: updatedDetails,
       });
+
+      // 쿼리 완전 중단
+      removeQueries(
+        selectedAddress.nickname,
+        stepInfo.stepNumber,
+        stepInfo.detail
+      );
 
       hasInitialized.current = true;
     }
   }, [
+    stepData,
+    isError,
     data,
+    jsonDetails,
     selectedAddress?.id,
     selectedAddress?.nickname,
     stepInfo?.stepNumber,
     stepInfo?.detail,
     upsertStepResult,
+    removeQueries,
   ]);
 
   // option 필드가 있는 데이터만 필터링
@@ -120,6 +149,44 @@ const Table = ({
 
   // option이 있는 데이터가 없으면 드롭다운을 표시하지 않음
   const shouldShowDropdown = dataWithOptions.length > 0;
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingContainer}>
+          <div>로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태 (400 에러 시 데이터를 찾을 수 없다고 표시)
+  if (isError && !hasInitialized.current) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.errorContainer}>데이터를 찾을 수 없습니다.</div>
+      </div>
+    );
+  }
+
+  // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
+  const renderStepData = () => (
+    <div className={styles.stepDataSection}>
+      <div className={styles.badgeContainer}>
+        {Object.entries(jsonDetails || {})
+          .filter(([key]) => key === '열람')
+          .map(([key, value]) => (
+            <CircularIconBadge
+              key={key}
+              type={value as 'match' | 'mismatch' | 'unchecked'}
+              size='sm'
+            />
+          ))}
+        <span className={styles.stepDataTitle}>읽음</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className={styles.container}>
@@ -245,6 +312,9 @@ const Table = ({
           </tbody>
         </table>
       </div>
+
+      {/* 읽음 표시 */}
+      {renderStepData()}
     </div>
   );
 };

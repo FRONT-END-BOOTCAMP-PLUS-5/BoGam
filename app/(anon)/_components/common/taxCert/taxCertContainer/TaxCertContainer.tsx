@@ -87,7 +87,7 @@ export const TaxCertContainer = forwardRef<
 
   return (
     <DataContainer
-      title='납세증명서 관리'
+      title='납세증명서 조회'
       inputComponent={inputComponent}
       outputComponent={outputComponent}
       checkExistsQuery={checkExistsQuery}

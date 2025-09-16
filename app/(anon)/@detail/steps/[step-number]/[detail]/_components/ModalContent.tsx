@@ -20,6 +20,8 @@ import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContai
 import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
 import TaxCertWrapper, { TaxCertWrapperRef } from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
+import { PageIndicator } from './PageIndicator';
+import CombinedContent from './contents/CombinedContent';
 
 // RegionData 타입 정의 (기존 호환성을 위해 유지)
 interface RegionData {
@@ -54,60 +56,24 @@ export default function ModalContent({
   const stepNumber = stepUrlData?.stepNumber?.toString() || '1';
   const detail = stepUrlData?.detail?.toString() || '1';
 
-  // 특별한 컴포넌트를 사용할 단계들 정의
-  const specialSteps = useMemo(
-    () => ({
-      broker: stepNumber === '3' && detail === '1',
-      realEstate: [
-        { step: '1', detail: '4' },
-        { step: '2', detail: '3' },
-        { step: '5', detail: '2' },
-        { step: '4', detail: '1' },
-      ].some((route) => route.step === stepNumber && route.detail === detail),
-      transactionSearch: stepNumber === '1' && detail === '2',
-    }),
-    [stepNumber, detail]
-  );
+  // 특별한 컴포넌트는 JSON 파일로 처리
 
-  // JSON 파일에서 콘텐츠 데이터 가져오기 (특별한 컴포넌트가 아닌 경우에만)
+  // JSON 파일에서 콘텐츠 데이터 가져오기
   useEffect(() => {
-    const shouldLoadJsonData =
-      !specialSteps.broker &&
-      !specialSteps.realEstate &&
-      !specialSteps.transactionSearch;
-    if (shouldLoadJsonData) {
-      const loadContentData = async () => {
-        try {
-          const contentModule = await import(
-            `./contents/data/step-${stepNumber}-${detail}-contents.json`
-          );
-          setStepContentData(contentModule.default);
-          setDataType(contentModule.default.dataType || 'default');
-        } catch (error) {
-          setDataType('default');
-        }
-      };
+    const loadContentData = async () => {
+      try {
+        const contentModule = await import(
+          `./contents/data/step-${stepNumber}-${detail}-contents.json`
+        );
+        setStepContentData(contentModule.default);
+        setDataType(contentModule.default.dataType || 'default');
+      } catch (error) {
+        setDataType('default');
+      }
+    };
 
-      loadContentData();
-    }
-  }, [stepNumber, detail, specialSteps]);
-
-  // 특별한 컴포넌트 렌더링 함수
-  const renderSpecialComponent = () => {
-    if (specialSteps.broker) {
-      return <BrokerContainer />;
-    }
-
-    if (specialSteps.realEstate) {
-      return <RealEstateContainer />;
-    }
-
-    if (specialSteps.transactionSearch) {
-      return <TransactionSearchComponent />;
-    }
-
-    return null;
-  };
+    loadContentData();
+  }, [stepNumber, detail]);
 
   // Swiper 콘텐츠 렌더링 함수
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
@@ -132,6 +98,12 @@ export default function ModalContent({
         return <CheckListGroup data={pageData} />;
       case 'RadioGroup':
         return <RadioGroup data={pageData} />;
+      case 'RealEstateContainer':
+        return <RealEstateContainer />;
+      case 'BrokerContainer':
+        return <BrokerContainer />;
+      case 'TransactionSearchComponent':
+        return <TransactionSearchComponent />;
       default:
         return null;
     }
@@ -170,20 +142,6 @@ export default function ModalContent({
     </div>
   );
 
-  // 특별한 컴포넌트가 있는 경우 렌더링
-  const specialComponent = renderSpecialComponent();
-  if (specialComponent) {
-    return (
-      <>
-        <StepHeader />
-        <div className={styles.scrollableContent}>
-          <div className={styles.mainContent} style={{ paddingBottom: '80px' }}>
-            {specialComponent}
-          </div>
-        </div>
-      </>
-    );
-  }
 
   // CombinedContent 타입인 경우 sections를 사용하여 type별로 스와이퍼 분리
   if (
@@ -201,159 +159,55 @@ export default function ModalContent({
     return (
       <>
         <StepHeader />
-
-        <div className={styles.scrollableContent}>
-          <Swiper
-            spaceBetween={50}
-            slidesPerView={1}
-            className={styles.swiperContainer}
-            onSlideChange={(swiper) => {
-              setCurrentPage(swiper.activeIndex);
-              scrollToTop();
-            }}
-            onSwiper={(swiper) => {
-              swiperRef.current = swiper;
-            }}
-          >
-            {stepContentData.sections.map((section, sectionIndex) => (
-              <SwiperSlide key={sectionIndex}>
-                <div
-                  className={styles.mainContent}
-                  style={{ paddingBottom: '80px' }}
-                >
-                  {/* step-5-3 특별 처리 */}
-                  {stepNumber === '5' && detail === '3' ? (
-                    <Step5Detail3Renderer
-                      sectionIndex={sectionIndex}
-                      section={section}
-                      allSections={stepContentData.sections}
-                    />
-                  ) : (
-                    <>
-                      {/* 기존 로직 - 다른 단계들 */}
-                      {(section.title || section.subtitle) && (
-                        <div className={styles.sectionHeader}>
-                          {section.title && (
-                            <h3 className={styles.sectionTitle}>
-                              {section.title}
-                            </h3>
-                          )}
-                          {section.subtitle && (
-                            <p className={styles.sectionSubtitle}>
-                              {section.subtitle}
-                            </p>
-                          )}
-                        </div>
-                      )}
-
-                      {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
-                      {section.type === 'TextOnly' && (
-                        <TextOnly data={section.data} />
-                      )}
-                      {section.type === 'RadioGroup' && (
-                        <RadioGroup data={section.data} />
-                      )}
-                      {section.type === 'Table' && (
-                        <Table
-                          title={
-                            section.title || '소액보증금 최우선변제 기준 변천사'
-                          }
-                          columnTitles={
-                            section.columnTitles || [
-                              '지역',
-                              '소액보증금의 범위',
-                              '최우선변제금액',
-                            ]
-                          }
-                          data={section.data || []}
-                        />
-                      )}
-                      {section.type === 'List' && (
-                        <List
-                          title={section.title}
-                          data={
-                            section.data as Array<{
-                              title: string;
-                              content: string;
-                            }>
-                          }
-                        />
-                      )}
-                      {section.type === 'DataGrid' && (
-                        <DataGrid
-                          data={
-                            section.data as unknown as {
-                              left: string;
-                              right?: string;
-                            }[]
-                          }
-                        />
-                      )}
-                      {section.type === 'CheckListGroup' && (
-                        <CheckListGroup data={section.data} />
-                      )}
-                      {(section.type === 'TaxCertIntro' ||
-                        section.type === 'TaxCertContainer') && (
-                        <TaxCertWrapper
-                          sectionIndex={sectionIndex}
-                          section={section}
-                          onShowSimpleAuthModal={onShowSimpleAuthModal}
-                          onSimpleAuthApprove={onSimpleAuthApprove}
-                          onSimpleAuthCancel={onSimpleAuthCancel}
-                          ref={taxCertContainerRef}
-                        />
-                      )}
-                      {section.type === 'RealEstateContainer' && (
-                        <RealEstateContainer />
-                      )}
-                    </>
-                  )}
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
-
-        {/* 페이지 인디케이터 */}
-        {stepContentData.sections.length > 1 && (
-          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.sections.map(
-              (section: ContentSection, index: number) => (
-                <button
-                  key={index}
-                  className={`${styles.pageDot} ${
-                    index === currentPage
-                      ? styles.pageDotActive
-                      : styles.pageDotInactive
-                  }`}
-                  aria-label={`페이지 ${index + 1}${
-                    index === currentPage ? ' (현재)' : ''
-                  }`}
-                  onClick={() => handlePageChange(index)}
-                />
-              )
-            )}
-          </div>
-        )}
+        <CombinedContent
+          sections={stepContentData.sections}
+          stepNumber={stepNumber}
+          detail={detail}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          onShowSimpleAuthModal={onShowSimpleAuthModal}
+          onSimpleAuthApprove={onSimpleAuthApprove}
+          onSimpleAuthCancel={onSimpleAuthCancel}
+          taxCertContainerRef={taxCertContainerRef}
+          swiperRef={swiperRef}
+        />
       </>
     );
   }
 
-  // JSON 데이터가 있는 경우 Swiper로 렌더링
-  if (stepContentData && stepContentData.dataType && stepContentData.data) {
+  // JSON 데이터가 있는 경우 렌더링
+  if (stepContentData && stepContentData.dataType) {
     // Table 타입인 경우 Swiper 없이 직접 렌더링
     if (stepContentData.dataType === 'Table') {
       return (
         <>
           <StepHeader />
           <div className={styles.scrollableContent}>
-            <div className={styles.mainContent}>
-              <Table
-                title={stepContentData.title || '테이블 제목'}
-                columnTitles={stepContentData.columnTitles || ['1', '2', '3']}
-                description={stepContentData.description}
-                data={stepContentData.data as unknown as RegionData[]}
-              />
+            <div className={styles.swiperContainer}>
+              <div className={styles.mainContent}>
+                <Table
+                  title={stepContentData.title || '테이블 제목'}
+                  columnTitles={stepContentData.columnTitles || ['1', '2', '3']}
+                  description={stepContentData.description}
+                  data={stepContentData.data as unknown as RegionData[]}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // data가 없는 경우 (특별한 컴포넌트들)
+    if (!stepContentData.data) {
+      return (
+        <>
+          <StepHeader />
+          <div className={styles.scrollableContent}>
+            <div className={styles.swiperContainer}>
+              <div className={styles.mainContent}>
+                {renderSwiperContent([])}
+              </div>
             </div>
           </div>
         </>
@@ -393,24 +247,11 @@ export default function ModalContent({
         </div>
 
         {/* 페이지 인디케이터 */}
-        {stepContentData.data.length > 1 && (
-          <div className={styles.pageIndicator} aria-label='페이지 인디케이터'>
-            {stepContentData.data.map((_: unknown, index: number) => (
-              <button
-                key={index}
-                className={`${styles.pageDot} ${
-                  index === currentPage
-                    ? styles.pageDotActive
-                    : styles.pageDotInactive
-                }`}
-                aria-label={`페이지 ${index + 1}${
-                  index === currentPage ? ' (현재)' : ''
-                }`}
-                onClick={() => handlePageChange(index)}
-              />
-            ))}
-          </div>
-        )}
+        <PageIndicator
+          totalPages={stepContentData.data.length}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </>
     );
   }

@@ -1,92 +1,183 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import type { Swiper as SwiperType } from 'swiper';
+import { styles } from './CombinedContent.styles';
+import { ContentSection } from './types';
+import DataGrid from './DataGrid';
 import TextOnly from './TextOnly';
-import RadioGroup from './RadioGroup';
 import Table from './Table';
 import List from './List';
-import DataGrid from './DataGrid';
-import { ContentSection, CombinedContentProps } from './types';
-import { styles } from './CombinedContent.styles';
+import CheckListGroup from './CheckListGroup';
+import RadioGroup from './RadioGroup';
+import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
+import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
+import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
+import Step5Detail3Renderer from './Step5Detail3Renderer';
+import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
+import { PageIndicator } from '../PageIndicator';
 
-const CombinedContent = ({
+interface CombinedContentProps {
+  sections: ContentSection[];
+  stepNumber: string;
+  detail: string;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  onShowSimpleAuthModal: () => void;
+  onSimpleAuthApprove: () => void;
+  onSimpleAuthCancel: () => void;
+  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
+  swiperRef: React.RefObject<SwiperType | null>;
+}
+
+export default function CombinedContent({
   sections,
-  spacing = 'md',
-  showDividers = true,
-}: CombinedContentProps) => {
-  // sections가 없으면 빈 배열 반환
-  if (!sections || sections.length === 0) {
-    return <div>콘텐츠가 없습니다.</div>;
-  }
+  stepNumber,
+  detail,
+  currentPage,
+  onPageChange,
+  onShowSimpleAuthModal,
+  onSimpleAuthApprove,
+  onSimpleAuthCancel,
+  taxCertContainerRef,
+  swiperRef,
+}: CombinedContentProps) {
 
-  // 각 섹션을 렌더링하는 함수
-  const renderSection = (section: ContentSection, index: number) => {
-    const isLast = index === sections.length - 1;
-
-    let content;
-    switch (section.type) {
-      case 'TextOnly':
-        content = <TextOnly data={section.data} />;
-        break;
-      case 'RadioGroup':
-        content = (
-          <RadioGroup
-            title={section.title}
-            subtitle={section.subtitle}
-            data={section.data}
-          />
-        );
-        break;
-      case 'Table':
-        content = (
-          <Table data={section.data} columnTitles={section.columnTitles} />
-        );
-        break;
-      case 'List':
-        // ListSection의 data를 올바르게 처리
-        const listData = section.data as Array<{
-          title: string;
-          content: string;
-        }>;
-        content = <List title={section.title} data={listData} />;
-        break;
-      case 'DataGrid':
-        content = <DataGrid data={section.data} />;
-        break;
-      default:
-        console.warn(`Unknown section type: ${section.type}`);
-        return null;
+  // 스크롤을 맨 위로 올리는 함수
+  const scrollToTop = () => {
+    const scrollableContainer = document.querySelector(
+      '[class*="max-h-[calc(100vh-200px)]"]'
+    ) as HTMLElement;
+    if (scrollableContainer) {
+      scrollableContainer.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
     }
-
-    return (
-      <div key={index} className={styles.sectionContainer}>
-        {/* 섹션 제목이 있는 경우 (RadioGroup 제외) */}
-        {(section.title || section.subtitle) &&
-          section.type !== 'RadioGroup' && (
-            <div className={styles.sectionHeader}>
-              {section.title && (
-                <h3 className={styles.sectionTitle}>{section.title}</h3>
-              )}
-              {section.subtitle && (
-                <p className={styles.sectionSubtitle}>{section.subtitle}</p>
-              )}
-            </div>
-          )}
-
-        {/* 컴포넌트 렌더링 */}
-        {content}
-
-        {/* 구분선 (마지막 섹션이 아니고 구분선을 표시하는 경우) */}
-        {!isLast && showDividers && <div className={styles.divider} />}
-      </div>
-    );
   };
 
   return (
-    <div className={styles.spacing[spacing]}>
-      {sections.map((section, index) => renderSection(section, index))}
-    </div>
-  );
-};
+    <>
+      <div className={styles.scrollableContent}>
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={1}
+          className={styles.swiperContainer}
+          onSlideChange={(swiper) => {
+            onPageChange(swiper.activeIndex);
+            scrollToTop();
+          }}
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+        >
+          {sections.map((section, sectionIndex) => (
+            <SwiperSlide key={sectionIndex}>
+              <div
+                className={styles.mainContent}
+                style={{ paddingBottom: '80px' }}
+              >
+                {/* step-5-3 특별 처리 */}
+                {stepNumber === '5' && detail === '3' ? (
+                  <Step5Detail3Renderer
+                    sectionIndex={sectionIndex}
+                    section={section}
+                    allSections={sections}
+                  />
+                ) : (
+                  <>
+                    {/* 기존 로직 - 다른 단계들 */}
+                    {(section.title || section.subtitle) && (
+                      <div className={styles.sectionHeader}>
+                        {section.title && (
+                          <h3 className={styles.sectionTitle}>
+                            {section.title}
+                          </h3>
+                        )}
+                        {section.subtitle && (
+                          <p className={styles.sectionSubtitle}>
+                            {section.subtitle}
+                          </p>
+                        )}
+                      </div>
+                    )}
 
-export default CombinedContent;
+                    {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
+                    {section.type === 'TextOnly' && (
+                      <TextOnly data={section.data} />
+                    )}
+                    {section.type === 'RadioGroup' && (
+                      <RadioGroup data={section.data} />
+                    )}
+                    {section.type === 'Table' && (
+                      <Table
+                        title={
+                          section.title || '소액보증금 최우선변제 기준 변천사'
+                        }
+                        columnTitles={
+                          section.columnTitles || [
+                            '지역',
+                            '소액보증금의 범위',
+                            '최우선변제금액',
+                          ]
+                        }
+                        data={section.data || []}
+                      />
+                    )}
+                    {section.type === 'List' && (
+                      <List
+                        title={section.title}
+                        data={
+                          section.data as Array<{
+                            title: string;
+                            content: string;
+                          }>
+                        }
+                      />
+                    )}
+                    {section.type === 'DataGrid' && (
+                      <DataGrid
+                        data={
+                          section.data as unknown as {
+                            left: string;
+                            right?: string;
+                          }[]
+                        }
+                      />
+                    )}
+                    {section.type === 'CheckListGroup' && (
+                      <CheckListGroup data={section.data} />
+                    )}
+                    {(section.type === 'TaxCertIntro' ||
+                      section.type === 'TaxCertContainer') && (
+                      <TaxCertWrapper
+                        sectionIndex={sectionIndex}
+                        section={section}
+                        onShowSimpleAuthModal={onShowSimpleAuthModal}
+                        onSimpleAuthApprove={onSimpleAuthApprove}
+                        onSimpleAuthCancel={onSimpleAuthCancel}
+                        ref={taxCertContainerRef}
+                      />
+                    )}
+                    {section.type === 'RealEstateContainer' && (
+                      <RealEstateContainer />
+                    )}
+                  </>
+                )}
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* 페이지 인디케이터 */}
+      <PageIndicator
+        totalPages={sections.length}
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+      />
+    </>
+  );
+}

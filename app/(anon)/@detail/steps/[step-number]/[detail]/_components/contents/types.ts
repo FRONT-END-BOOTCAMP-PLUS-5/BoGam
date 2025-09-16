@@ -156,6 +156,9 @@ export interface StepContentData {
     | 'List'
     | 'DataGrid'
     | 'CheckListGroup'
+    | 'RealEstateContainer'
+    | 'BrokerContainer'
+    | 'TransactionSearchComponent'
     | 'CombinedContent';
   title?: string;
   columnTitles?: string[];

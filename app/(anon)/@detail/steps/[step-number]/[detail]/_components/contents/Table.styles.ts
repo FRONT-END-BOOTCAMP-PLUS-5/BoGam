@@ -30,4 +30,7 @@ export const styles = {
   noteText: 'text-sm text-brand-dark-gray mb-2 last:mb-0',
   loadingContainer: 'flex justify-center items-center h-32',
   errorContainer: 'text-center text-brand-dark-gray py-8',
+  stepDataSection: 'mt-8 flex justify-end',
+  badgeContainer: 'flex items-center',
+  stepDataTitle: 'text-sm text-brand-dark-gray ml-2',
 };
