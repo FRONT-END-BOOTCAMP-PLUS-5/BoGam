@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import { RiskAssessmentJsonData } from '@utils/riskAssessmentUtils';
-import { useRiskAssessmentStore } from '@libs/stores/riskAssessmentStore';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import styles from './TaxCertIntro.styles';
 
 interface ChecklistItem {
   id: string;
@@ -38,9 +37,9 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
   const [checklistState, setChecklistState] = useState<
     Record<string, 'match' | 'mismatch'>
   >({});
+  const [isSaving, setIsSaving] = useState(false);
 
   const { selectedAddress } = useUserAddressStore();
-  const { addJsonData, getJsonData } = useRiskAssessmentStore();
 
   // URL에서 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
@@ -63,13 +62,7 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
 
   // 초기 체크리스트 상태 설정 (DB 데이터와 매핑) - 한 번만 실행
   useEffect(() => {
-    console.log('checklistState', checklistState);
-    console.log('stepResultData', stepResultData);
-    if (
-      data.checklistItems &&
-      stepResultData &&
-      Object.keys(checklistState).length === 0
-    ) {
+    if (data.checklistItems && stepResultData && Object.keys(checklistState).length === 0) {
       const initialState: Record<string, 'match' | 'mismatch'> = {};
 
       // DB에서 가져온 데이터가 있으면 사용, 없으면 기본값 사용
@@ -81,9 +74,7 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
         ? stepResultData.jsonDetails
         : {};
 
-      console.log('🔍 TaxCertIntro: stepResultData 원본:', stepResultData);
-      console.log('🔍 TaxCertIntro: DB에서 가져온 데이터:', savedData);
-      console.log('🔍 TaxCertIntro: savedData 키들:', Object.keys(savedData));
+      //console.log('🔍 TaxCertIntro: DB에서 가져온 데이터:', savedData);
 
       data.checklistItems.forEach((item) => {
         // JSON 파일의 한글 키를 item.id의 영어 키로 매핑
@@ -99,22 +90,14 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
             jsonKey = item.id; // 기본값은 원래 id 사용
         }
 
-        console.log(`🔍 TaxCertIntro: ${item.id} -> JSON 키: ${jsonKey}`);
-
         // DB에 저장된 값이 있으면 사용, 없으면 기본값 사용
         if (savedData[jsonKey] !== undefined) {
           const savedValue = savedData[jsonKey];
           initialState[item.id] =
             savedValue === 'unchecked' ? 'mismatch' : savedValue;
-          console.log(
-            `✅ ${item.id}: DB 값 "${savedValue}" 적용 (${jsonKey}에서 가져옴)`
-          );
         } else {
           // 없으면 기본값 사용
           initialState[item.id] = item.defaultValue;
-          console.log(
-            `⚠️ ${item.id}: 기본값 "${item.defaultValue}" 사용 (${jsonKey}에 데이터 없음)`
-          );
         }
       });
 
@@ -131,6 +114,12 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
     itemId: string,
     newValue: 'match' | 'mismatch'
   ) => {
+    // 저장 중이면 무시
+    if (isSaving) {
+      console.log('⏳ 저장 중이므로 무시:', itemId);
+      return;
+    }
+
     const newState = {
       ...checklistState,
       [itemId]: newValue,
@@ -139,12 +128,24 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
     console.log('✅ 1번째 페이지 체크리스트 상태:', checklistState);
     console.log('✅ 1번째 페이지 체크리스트 상태 변경:', newState);
 
-    // store에 체크리스트 데이터 추가 (영어 id를 한글 키로 변환)
-    const checklistData: RiskAssessmentJsonData = {};
-    Object.keys(newState).forEach((itemId) => {
+    // 저장 시작
+    setIsSaving(true);
+
+    try {
+      // 현재 DB 데이터 가져오기
+      const currentDbData = Array.isArray(stepResultData)
+        ? stepResultData[0] && 'jsonDetails' in stepResultData[0]
+          ? stepResultData[0].jsonDetails
+          : {}
+        : stepResultData && 'jsonDetails' in stepResultData
+        ? stepResultData.jsonDetails
+        : {};
+
+      // 변경된 항목만 업데이트
+      const updatedDbData = { ...currentDbData };
       const item = data.checklistItems.find((item) => item.id === itemId);
       if (item) {
-        // 영어 item.id를 한글 JSON 키로 변환
+        // 영어 id를 한글 키로 변환
         let jsonKey: string;
         switch (itemId) {
           case 'nameMatch':
@@ -154,57 +155,43 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
             jsonKey = '미납 내역 없음';
             break;
           default:
-            jsonKey = itemId; // 기본값은 원래 id 사용
+            jsonKey = itemId;
         }
-
-        checklistData[jsonKey] = newState[itemId];
-        console.log(
-          `🔍 TaxCertIntro: ${itemId} -> ${jsonKey}: ${newState[itemId]}`
-        );
+        
+        updatedDbData[jsonKey] = newValue;
+        console.log(`🔍 TaxCertIntro: ${itemId} -> ${jsonKey}: ${newValue}`);
       }
-    });
 
-    // 1. store에 데이터 추가
-    addJsonData(checklistData);
-    console.log(
-      '✅ 1번째 페이지 체크리스트 상태를 store에 추가:',
-      checklistData
-    );
-
-    // 2. store의 전체 데이터를 가져와서 DB에 저장
-    try {
-      const currentStoreData = getJsonData();
-      console.log(
-        '🔍 TaxCertIntro: store의 전체 데이터를 DB에 저장:',
-        currentStoreData
-      );
-
+      // DB에 직접 저장
       if (selectedAddress?.nickname) {
         await saveRiskAssessmentMutation.mutateAsync({
           stepNumber,
           detail,
-          jsonData: currentStoreData,
+          jsonData: updatedDbData,
           domain: 'taxCert',
           userAddressNickname: selectedAddress.nickname,
         });
-        console.log('✅ TaxCertIntro: store의 전체 데이터 DB 저장 완료');
+        console.log('✅ TaxCertIntro: DB 저장 완료');
       }
     } catch (error) {
       console.error('❌ TaxCertIntro: DB 저장 실패:', error);
+    } finally {
+      // 저장 완료 후 상태 해제
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className='space-y-6'>
+    <div className={styles.container}>
       {/* 내용 섹션들 */}
       {data.contentSections.map((section, index) => (
-        <div key={index} className='space-y-3'>
-          <h3 className='text-lg font-semibold text-gray-800'>
+        <div key={index} className={styles.contentSection}>
+          <h3 className={styles.contentSectionTitle}>
             {section.subtitle}
           </h3>
-          <div className='space-y-2'>
+          <div className={styles.contentSectionContent}>
             {section.contents.map((content, contentIndex) => (
-              <p key={contentIndex} className='text-gray-600 leading-relaxed'>
+              <p key={contentIndex} className={styles.contentText}>
                 {content}
               </p>
             ))}
@@ -213,46 +200,49 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
       ))}
 
       {/* 예시 이미지 */}
-      <div className='flex justify-center'>
-        <div className='border border-gray-200 rounded-lg overflow-hidden shadow-sm'>
+      <div className={styles.imageContainer}>
+        <div className={styles.imageWrapper}>
           <img
             src={data.image.src}
             alt={data.image.alt}
             width={data.image.width}
             height={data.image.height}
-            className='max-w-full h-auto'
+            className={styles.image}
           />
         </div>
       </div>
 
       {/* 체크리스트 */}
-      <div className='mt-6'>
-        <h4 className='font-semibold text-brand-black mb-3'>
+      <div className={styles.checklistContainer}>
+        <h4 className={styles.checklistTitle}>
           체크리스트 확인사항
         </h4>
-        <div className='grid grid-cols-1 gap-3'>
+        <div className={styles.checklistGrid}>
           {data.checklistItems.map((item) => (
             <div
               key={item.id}
-              className={`p-3 rounded-lg border transition-colors duration-200 cursor-pointer ${
+              className={`${styles.checklistItem} ${
                 checklistState[item.id] === 'match'
-                  ? 'bg-brand-green/20'
-                  : 'bg-brand-error/20'
-              }`}
+                  ? styles.checklistItemMatch
+                  : styles.checklistItemMismatch
+              } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               onClick={() => {
+                if (isSaving) return;
                 // 현재 상태와 반대로 변경
                 const newValue =
                   checklistState[item.id] === 'match' ? 'mismatch' : 'match';
                 handleChecklistChange(item.id, newValue);
               }}
             >
-              <div className='flex flex-col gap-2 mb-2'>
-                <div className='flex items-center gap-4'>
-                  <label className='flex items-center gap-2 cursor-pointer'>
+              <div className={styles.checklistItemContent}>
+                <div className={styles.checklistItemControls}>
+                  <label className={styles.checkboxLabel}>
                     <input
                       type='checkbox'
                       checked={checklistState[item.id] === 'match'}
+                      disabled={isSaving}
                       onChange={() => {
+                        if (isSaving) return;
                         const newValue =
                           checklistState[item.id] === 'match'
                             ? 'mismatch'
@@ -262,16 +252,16 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
                       onClick={(e) => {
                         e.stopPropagation();
                       }}
-                      className='w-4 h-4 text-brand-blue border-brand-black focus:ring-brand-blue appearance-none rounded border-2 checked:bg-brand-blue checked:border-brand-blue'
+                      className={styles.checkboxInput}
                     />
-                    <span className='text-sm text-brand-black'>
+                    <span className={styles.checkboxText}>
                       {checklistState[item.id] === 'match'
                         ? '✅ 통과'
                         : '❌ 실패'}
                     </span>
                   </label>
                 </div>
-                <span className='font-medium text-brand-black text-sm'>
+                <span className={styles.checklistItemLabel}>
                   {item.label}
                 </span>
               </div>

@@ -48,8 +48,8 @@ export const useRiskAssessmentSave = (
           queryKey: [
             'stepResults',
             variables.userAddressNickname,
-            variables.stepNumber,
-            variables.detail,
+            variables.stepNumber.toString(),
+            variables.detail.toString(),
           ],
         });
 

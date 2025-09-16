@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useGetBrokerCopy } from '@/hooks/useBroker';
 import { useBrokerRiskAssessment } from '@/hooks/useBrokerRiskAssessment';
 import { RiskAssessmentDisplay } from '@/(anon)/_components/common/riskAssessmentDisplay/RiskAssessmentDisplay';
-import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './BrokerOutput.styles';
 import { BrokerApiResponse } from '@be/domain/entities/Broker';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface BrokerData {
   brkrNm: string;
@@ -30,24 +31,52 @@ export const BrokerOutput = ({
   selectedBroker,
 }: BrokerOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
-  const brokerCopyQuery = useGetBrokerCopy(userAddressNickname || null);
 
-  // URL에서 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
-  const stepUrlData = pathname.match(/\/steps\/(\d+)\/(\d+)/);
-  const stepNumber = stepUrlData ? parseInt(stepUrlData[1]) : 3;
-  const detail = stepUrlData ? parseInt(stepUrlData[2]) : 1;
+  const stepUrlData = parseStepUrl(pathname);
+  const stepNumber = stepUrlData?.stepNumber || 3;
+  const detail = stepUrlData?.detail || 1;
 
-  // 저장된 위험도 검사 결과 로드
-  const {
-    data: savedRiskData,
+  // 전체 step-result 데이터 요청 (BrokerIntro 데이터 포함)
+  const { 
+    data: stepResultData, 
     isLoading: loadLoading,
-    invalidateCache: invalidateRiskDataCache,
-  } = useRiskAssessmentLoad({
-    stepNumber,
-    detail,
+    refetch: invalidateRiskDataCache 
+  } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepNumber.toString(),
+    detail: detail.toString(),
   });
+
+  // stepResultData에서 jsonDetails 추출
+  const getJsonDetails = () => {
+    if (!stepResultData) return null;
+    
+    let stepResult = stepResultData;
+    if (Array.isArray(stepResult)) {
+      stepResult = stepResult[0];
+    }
+    
+    if (stepResult && 'jsonDetails' in stepResult) {
+      return stepResult.jsonDetails;
+    }
+    
+    return null;
+  };
+
+  const jsonDetails = getJsonDetails();
+
+  // DB에서 broker 데이터 조회 (selectedBroker가 없을 때만)
+  const brokerCopyQuery = useGetBrokerCopy(selectedBroker ? null : userAddressNickname || null);
+
+  // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
+  useEffect(() => {
+    if (selectedBroker && selectedAddress?.nickname) {
+      console.log('🔄 초기 렌더링 시 캐시 무효화 실행');
+      brokerCopyQuery.refetch(); // brokerCopy 캐시 무효화
+      invalidateRiskDataCache(); // stepResult 캐시 무효화
+    }
+  }, [selectedBroker, selectedAddress?.nickname, brokerCopyQuery.refetch, invalidateRiskDataCache]);
 
   // 위험도 검사 저장 훅
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
@@ -56,8 +85,6 @@ export const BrokerOutput = ({
       invalidateRiskDataCache();
     }
   });
-
-  console.log('savedRiskData', savedRiskData);
 
   // 위험도 검사 실행 상태 관리
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
@@ -83,6 +110,9 @@ export const BrokerOutput = ({
   console.log('brokerData', brokerData);
   const brokerRiskAssessment = useBrokerRiskAssessment(brokerData);
   console.log('brokerRiskAssessment', brokerRiskAssessment);
+
+  // mappedRiskAssessment를 state로 관리
+  const [mappedRiskAssessment, setMappedRiskAssessment] = useState<ReturnType<typeof useBrokerRiskAssessment> | null>(null);
 
   // BrokerRiskAssessmentResult를 RiskAssessmentResult로 변환하는 함수
   const convertToRiskAssessmentResult = (
@@ -113,28 +143,59 @@ export const BrokerOutput = ({
     {}
   );
 
-  // 초기 체크리스트 상태 설정
+  // hookRiskAssessment가 있고 mappedRiskAssessment가 없을 때 초기 설정
   useEffect(() => {
-    const initialState: Record<string, boolean> = {};
-    brokerRiskAssessment.checklistItems.forEach((item) => {
-      initialState[item.id] = item.checked;
-    });
-    setChecklistState(initialState);
-  }, [brokerRiskAssessment.checklistItems]);
+    console.log('mappedRiskAssessment', mappedRiskAssessment);
+    console.log('jsonDetails', jsonDetails);
+    console.log('brokerRiskAssessment', brokerRiskAssessment);
+    if (brokerRiskAssessment && !mappedRiskAssessment) {
+      let initialMappedRiskAssessment = brokerRiskAssessment;
+      
+      // selectedBroker가 null이 아니면 (새로운 데이터) brokerRiskAssessment를 그대로 사용
+      // selectedBroker가 null이면 (기존 데이터) DB에서 저장된 값이 있으면 체크 상태를 매핑
+      if (!selectedBroker && jsonDetails) {
+        initialMappedRiskAssessment = {
+          ...brokerRiskAssessment,
+          checklistItems: brokerRiskAssessment.checklistItems.map((item) => {
+            const savedValue = jsonDetails[item.id];
+            const checked = savedValue === "match" ? true : savedValue === "mismatch" ? false : item.checked;
+            return {
+              ...item,
+              checked
+            };
+          })
+        };
+      }
+      console.log('initialMappedRiskAssessment', initialMappedRiskAssessment);
+      setMappedRiskAssessment(initialMappedRiskAssessment);
+    }
+  }, [brokerRiskAssessment, jsonDetails, mappedRiskAssessment, selectedBroker]);
 
   // 체크리스트 항목 변경 핸들러
   const handleChecklistItemChange = (itemId: string, checked: boolean) => {
-    setChecklistState((prev) => ({
-      ...prev,
-      [itemId]: checked,
-    }));
-  };
+    // 체크리스트 상태 업데이트
+    console.log('itemId', itemId);
+    console.log('checked', checked);
+    setChecklistState((prev) => {
+      const newState = {
+        ...prev,
+        [itemId]: checked,
+      };
+      return newState;
+    });
 
-  // 업데이트된 체크리스트 항목들
-  const checklistItems = brokerRiskAssessment.checklistItems.map((item) => ({
-    ...item,
-    checked: checklistState[item.id] ?? item.checked,
-  }));
+    // mappedRiskAssessment의 checklistItems 업데이트
+    setMappedRiskAssessment((prev) => {
+      if (!prev) return prev;
+      
+      return {
+        ...prev,
+        checklistItems: prev.checklistItems.map((item) =>
+          item.id === itemId ? { ...item, checked } : item
+        )
+      };
+    });
+  };
 
   // 새로운 데이터가 로드되었을 때 기존 위험도 검사 데이터 무효화
   useEffect(() => {
@@ -160,30 +221,57 @@ export const BrokerOutput = ({
   // 위험도 검사 결과가 없을 때 자동으로 위험도 검사 실행
   useEffect(() => {
     const performRiskAssessment = async () => {
-      // step-result 데이터가 있으면 위험도 검사 실행하지 않음
-      if (savedRiskData?.jsonData) {
-        return;
-      }
-
-      // step-result 데이터가 없고, 원문 데이터가 있을 때만 위험도 검사 실행
+      // 중개업자 데이터가 있고, 위험도 검사가 실행되지 않았을 때만 실행
       if (
         !loadLoading &&
-        !savedRiskData?.jsonData &&
         !isPerformingRiskAssessment &&
         !hasPerformedRiskAssessment.current &&
-        brokerData && // brokerData가 있으면 (selectedBroker 또는 저장된 broker 데이터)
-        selectedAddress?.nickname
+        brokerData &&
+        selectedAddress?.nickname &&
+        brokerRiskAssessment
       ) {
         try {
           hasPerformedRiskAssessment.current = true;
           setIsPerformingRiskAssessment(true);
 
-          // hook에서 계산된 위험도 검사 결과 사용
-          setCalculatedRiskAssessment(riskAssessment);
+          console.log('🔄 새로운 중개업자 데이터로 위험도 검사 시작');
 
-          // 데이터 변경 플래그 리셋
+          // hook에서 계산된 위험도 검사 결과를 기반으로 mappedRiskAssessment 설정
+          let initialMappedRiskAssessment = brokerRiskAssessment;
+          
+          // selectedBroker가 null이 아니면 (새로운 데이터) brokerRiskAssessment를 그대로 사용
+          // selectedBroker가 null이면 (기존 데이터) DB에서 저장된 값이 있으면 체크 상태를 매핑
+          if (!selectedBroker && jsonDetails && brokerRiskAssessment) {
+            initialMappedRiskAssessment = {
+              ...brokerRiskAssessment,
+              checklistItems: brokerRiskAssessment.checklistItems.map((item) => {
+                const savedValue = jsonDetails[item.id];
+                const checked = savedValue === "match" ? true : savedValue === "mismatch" ? false : item.checked;
+                return {
+                  ...item,
+                  checked
+                };
+              })
+            };
+          }
+          
+          setMappedRiskAssessment(initialMappedRiskAssessment);
+          setCalculatedRiskAssessment(
+            convertToRiskAssessmentResult(initialMappedRiskAssessment)
+          );
+
+          // 초기 체크리스트 상태 설정
+          if (initialMappedRiskAssessment?.checklistItems) {
+            const initialChecklistState: Record<string, boolean> = {};
+            initialMappedRiskAssessment.checklistItems.forEach((item) => {
+              initialChecklistState[item.id] = item.checked;
+            });
+            setChecklistState(initialChecklistState);
+          }
+
           setDataChanged(false);
         } catch (error) {
+          console.error('위험도 검사 실행 중 오류:', error);
           // 위험도 검사 실행 중 오류 발생 시 상태 리셋
           hasPerformedRiskAssessment.current = false;
           setIsPerformingRiskAssessment(false);
@@ -196,7 +284,7 @@ export const BrokerOutput = ({
     performRiskAssessment();
   }, [
     loadLoading,
-    savedRiskData,
+    jsonDetails,
     dataChanged,
     isPerformingRiskAssessment,
     brokerData,
@@ -205,7 +293,8 @@ export const BrokerOutput = ({
     detail,
     saveRiskAssessmentMutation,
     invalidateRiskDataCache,
-    riskAssessment,
+    brokerRiskAssessment,
+    selectedBroker,
   ]);
 
   // 로딩 중일 때 (새로운 데이터 로딩 또는 위험도 검사 실행 중)
@@ -229,8 +318,8 @@ export const BrokerOutput = ({
     );
   }
 
-  // step-result 데이터와 원문 데이터가 모두 없을 때
-  if (!savedRiskData?.jsonData && !selectedBroker && !brokerData) {
+  // 원문 데이터가 모두 없을 때
+  if (!selectedBroker && !brokerData) {
     return (
       <div className={styles.outputSection}>
         <h2 className={styles.outputTitle}>응답 결과</h2>
@@ -245,19 +334,31 @@ export const BrokerOutput = ({
     );
   }
 
+  // 변환된 위험도 검사 결과
+  const convertedRiskAssessment = mappedRiskAssessment
+    ? convertToRiskAssessmentResult(mappedRiskAssessment)
+    : calculatedRiskAssessment
+    ? calculatedRiskAssessment
+    : riskAssessment;
+
+  // 전체 step-result 데이터에서 jsonDetails 추출 (BrokerIntro 데이터 포함)
+  const getInitialJsonData = () => {
+    return jsonDetails || {};
+  };
+
   return (
     <div>
       {/* 위험도 측정 결과 표시 */}
       <RiskAssessmentDisplay
-        riskAssessment={calculatedRiskAssessment || riskAssessment}
+        riskAssessment={convertedRiskAssessment}
         displayResponse={null}
-        checklistItems={checklistItems}
+        checklistItems={mappedRiskAssessment?.checklistItems || brokerRiskAssessment?.checklistItems}
         onChecklistItemChange={handleChecklistItemChange}
         stepNumber={stepNumber}
         detail={detail}
         userAddressNickname={selectedAddress?.nickname}
         domain='broker'
-        initialJsonData={savedRiskData?.jsonData}
+        initialJsonData={getInitialJsonData()}
         showSaveButton={true} // 결과 탭에서도 저장 버튼 활성화
       />
     </div>

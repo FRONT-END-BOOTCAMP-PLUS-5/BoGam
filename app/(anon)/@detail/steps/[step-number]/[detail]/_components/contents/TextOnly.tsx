@@ -83,10 +83,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       return;
     }
 
-    // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
-    const shouldInitialize =
-      (isError && !hasInitialized.current) ||
-      (jsonDetails && Object.keys(jsonDetails).length === 0);
+    // 아직 초기화되지 않았을 때 POST 요청
+    const shouldInitialize = !hasInitialized.current;
 
     if (
       shouldInitialize &&
@@ -98,9 +96,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
         열람: 'match', // TextOnly는 기본적으로 열람 완료 상태
       };
 
-      const logMessage = isError
-        ? '400 에러 시 기본값 초기화 진행'
-        : '빈 jsonDetails 시 기본값 초기화 진행';
+      const logMessage = 'TextOnly 기본값 초기화 진행';
 
       // DB 저장
       upsertStepResult.mutate({

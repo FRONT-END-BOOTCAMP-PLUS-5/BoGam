@@ -20,7 +20,7 @@ interface GetStepResultParams {
 }
 
 export const useGetStepResult = (params: GetStepResultParams) => {
-  const { data, isLoading, isError } = useQuery<StepResultData | StepResultData[] | StepResultResponseData>({
+  const { data, isLoading, isError, refetch } = useQuery<StepResultData | StepResultData[] | StepResultResponseData>({
     queryKey: [
       'stepResults',
       params.userAddressNickname,
@@ -29,9 +29,9 @@ export const useGetStepResult = (params: GetStepResultParams) => {
     ],
     queryFn: () => stepResultQueryApi.getStepResult(params),
     enabled: !!params.userAddressNickname,
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 0, // 캐시 즉시 무효화
     gcTime: 10 * 60 * 1000, // 10분
   });
   
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refetch };
 };

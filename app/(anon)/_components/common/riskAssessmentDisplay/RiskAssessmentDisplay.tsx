@@ -12,7 +12,7 @@ import {
   isRiskAssessmentModified,
 } from '@utils/riskAssessmentUtils';
 import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
-import { useRiskAssessmentStore } from '@libs/stores/riskAssessmentStore';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
@@ -47,24 +47,25 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   // onJsonDataChange, // 제거
 }) => {
   const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
-    // 저장 성공 시 원본 데이터 업데이트
-    if (data.success && currentJsonData) {
-      setOriginalJsonData(currentJsonData);
+    // 저장 성공 시 수정 상태 초기화 및 초기화 플래그 리셋
+    if (data.success) {
       setIsModified(false);
+      isInitialized.current = false; // 다음 렌더링에서 DB 데이터를 다시 가져올 수 있도록
     }
   });
 
-  console.log('displayResponse', displayResponse);
-  console.log('riskAssessmentDisplay', riskAssessment);
-  console.log('initialJsonData', initialJsonData);
+  // console.log('displayResponse', displayResponse);
+  // console.log('riskAssessmentDisplay', riskAssessment);
+  // console.log('initialJsonData', initialJsonData);
 
-  const { addJsonData, getJsonData } = useRiskAssessmentStore();
-
-  const [currentJsonData, setCurrentJsonData] =
-    useState<RiskAssessmentJsonData | null>(null);
-  const [originalJsonData, setOriginalJsonData] =
-    useState<RiskAssessmentJsonData | null>(null);
   const [isModified, setIsModified] = useState(false);
+
+  // DB에서 저장된 데이터 가져오기
+  const { data: stepResultData } = useGetStepResult({
+    userAddressNickname: userAddressNickname || '',
+    stepNumber: stepNumber?.toString() || '1',
+    detail: detail?.toString() || '1',
+  });
 
   // 키워드 상태 관리를 위한 state
   const [keywordStates, setKeywordStates] = useState<
@@ -73,6 +74,20 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
   // 초기화 완료 여부를 추적하는 ref
   const isInitialized = React.useRef(false);
+  // 체크리스트 상태 복원 완료 여부를 추적하는 ref
+  const checklistRestored = React.useRef(false);
+
+  // DB 데이터를 가져오는 헬퍼 함수
+  const getCurrentDbData = (): RiskAssessmentJsonData => {
+    const savedData = Array.isArray(stepResultData)
+      ? stepResultData[0] && 'jsonDetails' in stepResultData[0]
+        ? stepResultData[0].jsonDetails
+        : {}
+      : stepResultData && 'jsonDetails' in stepResultData
+      ? stepResultData.jsonDetails
+      : {};
+    return savedData;
+  };
 
   // 키워드 상태 초기화 (한 번만 실행)
   useEffect(() => {
@@ -115,14 +130,13 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
     isInitialized.current = true;
   }, [initialJsonData, riskAssessment.keywordChecks]);
 
-  // JSON 데이터 초기화 (checklistItems와 독립적으로 실행)
+  // JSON 데이터 초기화 (한 번만 실행)
   useEffect(() => {
+    if (isInitialized.current) return;
+    
     if (initialJsonData) {
-      // 기존 currentJsonData가 있으면 유지, 없으면 initialJsonData로 시작
-      const baseData = currentJsonData || initialJsonData;
-
       // 저장된 데이터에서 체크리스트 항목의 'unchecked'를 'mismatch'로 변환
-      const processedJsonData = { ...baseData };
+      const processedJsonData = { ...initialJsonData };
 
       if (checklistItems) {
         checklistItems.forEach((item) => {
@@ -146,17 +160,12 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         }
       });
 
-      setCurrentJsonData(processedJsonData);
-      setOriginalJsonData(processedJsonData);
-
-      // 새로고침 후 DB에서 불러온 데이터를 store에 저장
       console.log(
-        '🔄 RiskAssessmentDisplay: DB에서 불러온 데이터를 store에 저장:',
+        `🔄 RiskAssessmentDisplay: ${domain} 도메인에 DB에서 불러온 데이터 처리 완료:`,
         processedJsonData
       );
-      addJsonData(processedJsonData);
     } else {
-      // currentJsonData를 riskAssessment 데이터로 초기화
+      // DB에 기존 데이터가 없으면 새로 생성
       const newJsonData: RiskAssessmentJsonData = {};
 
       // 키워드 데이터 추가 (모든 키워드 포함)
@@ -166,21 +175,20 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
 
       // 체크리스트 데이터 추가 (모든 체크리스트 항목 포함)
       checklistItems?.forEach((item) => {
-        if (currentJsonData && currentJsonData[item.label] !== undefined) {
-          // 기존 데이터가 있으면 유지
-          newJsonData[item.label] = currentJsonData[item.label];
-        } else {
-          // 기존 데이터가 없으면 새로 생성 (기본값: mismatch)
-          newJsonData[item.label] = item.checked ? 'match' : 'mismatch';
-        }
+        newJsonData[item.label] = item.checked ? 'match' : 'mismatch';
       });
-      setCurrentJsonData(newJsonData);
-      setOriginalJsonData(newJsonData);
+      
+      console.log(
+        `🔄 RiskAssessmentDisplay: ${domain} 도메인에 새 데이터 생성:`,
+        newJsonData
+      );
     }
-  }, [initialJsonData, riskAssessment.keywordChecks, addJsonData]);
+  }, [initialJsonData, riskAssessment.keywordChecks, domain, checklistItems]);
 
-  // 체크리스트 상태 복원 (별도 useEffect로 무한 루프 방지)
+  // 체크리스트 상태 복원 (한 번만 실행)
   useEffect(() => {
+    if (isInitialized.current) return;
+    
     if (initialJsonData && onChecklistItemChange && checklistItems) {
       const hasRestoredData = Object.keys(initialJsonData).some((key) =>
         checklistItems.some((item) => item.label === key)
@@ -203,18 +211,32 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         });
       }
     }
-  }, [initialJsonData, onChecklistItemChange, checklistItems]); // 의존성 배열 수정
+  }, [initialJsonData, onChecklistItemChange, checklistItems]);
 
-  // 수정 여부 확인
+  // 수정 여부 확인 (사용자 수정 중일 때만)
   useEffect(() => {
-    if (currentJsonData && originalJsonData) {
+    if (initialJsonData) {
+      // 현재 키워드 상태와 체크리스트 상태를 기반으로 현재 데이터 생성
+      const currentData: RiskAssessmentJsonData = {};
+      
+      // 키워드 상태 추가
+      riskAssessment.keywordChecks.forEach((check) => {
+        const userStatus = keywordStates[check.keyword];
+        currentData[check.keyword] = userStatus || check.status;
+      });
+      
+      // 체크리스트 상태 추가
+      checklistItems?.forEach((item) => {
+        currentData[item.label] = item.checked ? 'match' : 'mismatch';
+      });
+      
       const modified = isRiskAssessmentModified(
-        originalJsonData,
-        currentJsonData
+        initialJsonData,
+        currentData
       );
       setIsModified(modified);
     }
-  }, [currentJsonData, originalJsonData]);
+  }, [initialJsonData, keywordStates, checklistItems, riskAssessment.keywordChecks]);
 
   // 키워드 상태 변경 핸들러
   const handleKeywordStateChange = (
@@ -225,15 +247,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       ...prev,
       [keyword]: newStatus,
     }));
-
-    // JSON 데이터도 함께 업데이트 (저장을 위해)
-    if (currentJsonData) {
-      const updatedJsonData: RiskAssessmentJsonData = {
-        ...currentJsonData,
-        [keyword]: newStatus,
-      };
-      setCurrentJsonData(updatedJsonData);
-    }
   };
 
   // 저장 핸들러
@@ -242,12 +255,11 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       throw new Error('저장에 필요한 데이터가 누락되었습니다.');
     }
 
-    // 기존 데이터를 기반으로 최신 JSON 데이터 생성
-    const latestJsonData: RiskAssessmentJsonData = {
-      ...(currentJsonData || {}), // 기존 데이터 유지
-    };
+    // 현재 DB 데이터를 기반으로 최신 데이터 생성
+    const currentDbData = getCurrentDbData();
 
     // 키워드 상태 추가/업데이트
+    const latestJsonData: RiskAssessmentJsonData = { ...currentDbData };
     riskAssessment.keywordChecks.forEach((check) => {
       const userStatus = keywordStates[check.keyword];
       latestJsonData[check.keyword] = userStatus || check.status;
@@ -258,29 +270,26 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
       latestJsonData[item.label] = item.checked ? 'match' : 'mismatch';
     });
 
-    // 1. store에 데이터 추가
-    addJsonData(latestJsonData);
-    console.log('🔍 2번째 페이지에서 store에 데이터 추가:', latestJsonData);
+    console.log(`🔍 RiskAssessmentDisplay: ${domain} 도메인에 최신 데이터 생성:`, latestJsonData);
 
-    // 2. 현재 단계의 데이터만 DB에 저장 (기존 데이터 덮어쓰기)
+    // DB에 저장
     try {
-      const currentJsonData = getJsonData();
       console.log(
-        '🔍 RiskAssessmentDisplay: 현재 단계 데이터만 DB에 저장:',
+        `🔍 RiskAssessmentDisplay: ${domain} 도메인 데이터를 DB에 저장:`,
         latestJsonData
       );
 
       await saveRiskAssessmentMutation.mutateAsync({
         stepNumber,
         detail,
-        jsonData: currentJsonData, // store의 전체 데이터가 아닌 현재 단계 데이터만
+        jsonData: latestJsonData,
         domain,
         userAddressNickname,
       });
 
-      console.log('✅ RiskAssessmentDisplay: 현재 단계 데이터 DB 저장 완료');
+      console.log(`✅ RiskAssessmentDisplay: ${domain} 도메인 DB 저장 완료`);
     } catch (error) {
-      console.error('❌ RiskAssessmentDisplay: DB 저장 실패:', error);
+      console.error(`❌ RiskAssessmentDisplay: ${domain} 도메인 DB 저장 실패:`, error);
     }
   };
 
@@ -288,37 +297,6 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   const handleChecklistItemChange = (itemId: string, checked: boolean) => {
     if (onChecklistItemChange) {
       onChecklistItemChange(itemId, checked);
-    }
-
-    // JSON 데이터도 함께 업데이트
-    if (currentJsonData) {
-      const checklistItem = checklistItems?.find(
-        (item) => item.id === itemId
-      ) || {
-        label: '',
-        id: '',
-        checked: false,
-        description: '',
-      };
-      if (checklistItem) {
-        const newStatus = checked ? 'match' : 'mismatch';
-
-        const updatedJsonData: RiskAssessmentJsonData = {
-          ...currentJsonData,
-          [checklistItem.label]: newStatus,
-        };
-
-        setCurrentJsonData(updatedJsonData);
-      } else {
-        const newStatus = checked ? 'match' : 'mismatch';
-
-        const updatedJsonData: RiskAssessmentJsonData = {
-          ...currentJsonData,
-          [itemId]: newStatus,
-        };
-
-        setCurrentJsonData(updatedJsonData);
-      }
     }
   };
   return (

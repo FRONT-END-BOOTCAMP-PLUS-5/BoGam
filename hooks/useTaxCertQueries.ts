@@ -28,6 +28,8 @@ export const useGetTaxCertCopy = (nickname: string | null) => {
       return response.data;
     },
     enabled: !!nickname,
+    staleTime: 0, // 캐시 즉시 무효화
+    gcTime: 5 * 60 * 1000, // 5분
   });
 };
 

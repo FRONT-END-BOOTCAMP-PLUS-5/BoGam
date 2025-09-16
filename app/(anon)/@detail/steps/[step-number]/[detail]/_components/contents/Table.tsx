@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { styles } from './Table.styles';
 import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import { formatDate } from '@utils/dateUtils';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { useStepResultMutations } from '@/hooks/useStepResultMutations';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { parseStepUrl } from '@utils/stepUrlParser';
 
 interface RegionData {
   region: string;
@@ -25,6 +29,60 @@ const Table = ({
 }: TableProps) => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [currentData, setCurrentData] = useState<RegionData[]>([]);
+
+  // 전역 store에서 선택된 주소 가져오기
+  const selectedAddress = useUserAddressStore((state) => state.selectedAddress);
+
+  // URL에서 stepNumber와 detail 가져오기
+  const pathname = window.location.pathname;
+  const stepInfo = parseStepUrl(pathname);
+
+  // 초기화 여부를 추적하는 ref
+  const hasInitialized = useRef(false);
+
+  // useStepResultMutations 훅 사용
+  const { upsertStepResult } = useStepResultMutations();
+
+  // useGetStepResult 훅 사용 (기본값 저장용)
+  const { data: stepData } = useGetStepResult({
+    userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepInfo?.stepNumber?.toString() || '',
+    detail: stepInfo?.detail?.toString() || '',
+  });
+
+  // 기본값으로 초기화
+  useEffect(() => {
+    if (data.length === 0 || hasInitialized.current) {
+      return;
+    }
+
+    if (
+      selectedAddress?.id &&
+      stepInfo?.stepNumber &&
+      stepInfo?.detail
+    ) {
+      const defaultDetails: Record<string, 'match'> = {
+        열람: 'match', // Table은 기본적으로 열람 완료 상태
+      };
+
+      // DB 저장
+      upsertStepResult.mutate({
+        userAddressNickname: selectedAddress.nickname,
+        stepNumber: stepInfo.stepNumber,
+        detail: stepInfo.detail,
+        jsonDetails: defaultDetails,
+      });
+
+      hasInitialized.current = true;
+    }
+  }, [
+    data,
+    selectedAddress?.id,
+    selectedAddress?.nickname,
+    stepInfo?.stepNumber,
+    stepInfo?.detail,
+    upsertStepResult,
+  ]);
 
   // option 필드가 있는 데이터만 필터링
   const dataWithOptions = data.filter((item) => item.option);

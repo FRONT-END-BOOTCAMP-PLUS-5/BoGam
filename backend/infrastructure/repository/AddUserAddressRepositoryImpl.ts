@@ -120,21 +120,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
       data: [
         {
           userAddressId: userAddress.id,
-          stepId: 1,
+          stepId: 1, // 1-1단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 2,
+          stepId: 2, // 1-2단계
           details: {
             "깡통주택": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 3,
+          stepId: 3, // 1-3단계
           details: {
             "열람": "unchecked"
           },
@@ -160,28 +160,20 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 5,
+          stepId: 5, // 1-5 납세확인서 
           details: {
-            "경매": "unchecked",
-            "미납": "unchecked",
-            "부도": "unchecked",
-            "신탁": "unchecked",
-            "압류": "unchecked",
-            "체납": "unchecked",
-            "취소": "unchecked",
-            "파산": "unchecked",
-            "해지": "unchecked",
-            "가압류": "unchecked",
-            "임차권": "unchecked",
-            "강제집행": "unchecked",
-            "근저당권": "unchecked",
             "미납 내역 없음": "unchecked",
+            "체납 내역 확인": "unchecked",
+            "납세상태 해당없음": "unchecked",
+            "발급일자 최신성 확인": "unchecked",
+            "유효기간 만료일 확인": "unchecked",
+            "납세자명과 임대인 명 일치 여부": "unchecked",
             "서류와 임대인의 이름 일치 여부": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 6,
+          stepId: 6, // 1-6단계
           details: {
             "보증신청인(1)": "unchecked",
             "보증신청인(2)": "unchecked",
@@ -204,7 +196,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 7,
+          stepId: 7, // 2-1단계
           details: {
             "owner_id_check": "unchecked",
             "registry_check": "unchecked",
@@ -217,7 +209,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 8,
+          stepId: 8, // 2-2단계
           details: {
             "registry_check": "unchecked",
             "trust_register_check": "unchecked"
@@ -244,24 +236,33 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 10,
+          stepId: 10, // 2-4단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 11, // 3-1단계: 이슈 해결시 수정
-          details: {},
+          stepId: 11, // 3-1단계
+          details: {
+            "대표": "unchecked",
+            "등록번호": "unchecked",
+            "공인중개사": "unchecked",
+            "사업자 상호": "unchecked",
+            "자격증 번호": "unchecked",
+            "중개업자 등록": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
           stepId: 12, // 3-2단계: 이슈 해결시 수정
-          details: {},
+          details: {
+            "열람": "unchecked"
+          },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 13,
+          stepId: 13, // 3-3단계
           details: {
             "열람": "unchecked"
           },
@@ -287,48 +288,29 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 15,
+          stepId: 15, // 4-2단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 16,
+          stepId: 16, // 4-3단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 17,
+          stepId: 17, // 4-4단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 18,
+          stepId: 18, // 5-1 납세확인서
           details: {
-            "경매": "unchecked",
-            "대표": "unchecked",
-            "미납": "unchecked",
-            "부도": "unchecked",
-            "신탁": "unchecked",
-            "압류": "unchecked",
-            "체납": "unchecked",
-            "취소": "unchecked",
-            "파산": "unchecked",
-            "해지": "unchecked",
-            "가압류": "unchecked",
-            "임차권": "unchecked",
-            "강제집행": "unchecked",
-            "근저당권": "unchecked",
-            "등록번호": "unchecked",
-            "공인중개사": "unchecked",
-            "사업자 상호": "unchecked",
-            "자격증 번호": "unchecked",
-            "중개업자 등록": "unchecked",
             "미납 내역 없음": "unchecked",
             "체납 내역 확인": "unchecked",
             "납세상태 해당없음": "unchecked",
@@ -359,7 +341,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 20,
+          stepId: 20, // 5-3단계
           details: {
             "보증신청인(1)": "unchecked",
             "보증신청인(2)": "unchecked",
@@ -382,21 +364,21 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 21,
+          stepId: 21, // 5-4단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 22,
+          stepId: 22, // 6-1단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 23,
+          stepId: 23, // 6-2단계
           details: {
             "열람": "unchecked"
           },
@@ -422,14 +404,14 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 25,
+          stepId: 25, // 7-1단계
           details: {
             "열람": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 26,
+          stepId: 26, // 7-2단계
           details: {
             "이면계약 작성하지 않기": "unchecked",
             "신분증, 인감 빌려주지 않기": "unchecked",

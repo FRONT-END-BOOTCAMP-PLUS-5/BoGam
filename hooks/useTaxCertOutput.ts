@@ -15,11 +15,11 @@ export const useTaxCertOutput = ({
   const { selectedAddress } = useUserAddressStore();
 
   // DB에서 데이터 조회 (response prop이 없을 때만)
-  const { data: dbResponse, isLoading: dbLoading } = useGetTaxCertCopy(
+  const { data: dbResponse, isLoading: dbLoading, refetch: refetchTaxCertCopy } = useGetTaxCertCopy(
     response ? null : selectedAddress?.nickname || null
   );
 
-  console.log('dbResponse', dbResponse);
+  //console.log('dbResponse', dbResponse);
 
   // response prop이 있으면 그것을 사용, 없으면 dbResponse 사용
   const displayResponse = useMemo(() => {
@@ -36,7 +36,7 @@ export const useTaxCertOutput = ({
         message: '성공',
         userAddressNickname: selectedAddress?.nickname || '',
         data: {
-          taxCertJson: (
+          data: (
             dbResponse as unknown as { data: { taxCertJson: string } }
           ).data.taxCertJson,
         },
@@ -74,5 +74,6 @@ export const useTaxCertOutput = ({
     riskAssessment,
     loading: totalLoading,
     hasData,
+    refetchTaxCertCopy,
   };
 };

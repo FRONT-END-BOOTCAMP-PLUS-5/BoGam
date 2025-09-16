@@ -139,12 +139,12 @@ export const useTaxCertRiskAssessment = (
       userInputName.trim() === taxCertData.resUserNm.trim();
 
     const nameMatchChecked =
-      checklistState?.['서류와 임대인의 이름 일치 여부'] !== undefined
-        ? checklistState['서류와 임대인의 이름 일치 여부']
+      checklistState?.['납세자명과 임대인 명 일치 여부'] !== undefined
+        ? checklistState['납세자명과 임대인 명 일치 여부']
         : nameMatch || false;
 
     checklistItems.push({
-      id: '서류와 임대인의 이름 일치 여부',
+      id: '납세자명과 임대인 명 일치 여부',
       label: '납세자명과 임대인 명 일치 여부',
       checked: nameMatchChecked,
       description: '납세증명서의 납세자명과 실제 임대인 명이 일치하는지 확인',
@@ -155,12 +155,12 @@ export const useTaxCertRiskAssessment = (
     const hasArrearsList =
       taxCertData.resArrearsList && taxCertData.resArrearsList.length > 0;
     const arrearsChecked =
-      checklistState?.['미납 내역 없음'] !== undefined
-        ? checklistState['미납 내역 없음']
+      checklistState?.['체납 내역 확인'] !== undefined
+        ? checklistState['체납 내역 확인']
         : !hasArrearsList || false;
 
     checklistItems.push({
-      id: '미납 내역 없음',
+      id: '체납 내역 확인',
       label: '체납 내역 확인',
       checked: arrearsChecked,
       description: '체납 내역이 없는지 확인 (체납 내역이 있으면 위험)',
