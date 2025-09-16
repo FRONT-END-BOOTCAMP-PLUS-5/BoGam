@@ -28,7 +28,7 @@ export const BrokerContainer = () => {
     refetch,
   } = useCheckBrokerCopyExists(selectedAddress?.nickname || null);
 
-  console.log('existsQuery', existsQuery);
+  // console.log('existsQuery', existsQuery);
 
   // 존재 여부 쿼리 객체 생성
   const checkExistsQuery = {
@@ -62,7 +62,7 @@ export const BrokerContainer = () => {
   // 결과 컴포넌트
   const outputComponent = (
     <BrokerOutput
-      userAddressNickname={selectedAddress?.nickname || ''}
+      userAddressNickname={selectedAddress?.nickname || null}
       selectedBroker={selectedBroker}
     />
   );

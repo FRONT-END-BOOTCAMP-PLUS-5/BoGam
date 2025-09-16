@@ -2,17 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { RealEstateOutputProps } from '@/(anon)/_components/common/realEstate/types';
-import { PdfViewer } from '@/(anon)/_components/common/pdfViewer/PdfViewer';
 import { styles } from './RealEstateOutput.styles';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { RiskAssessmentDisplay } from '@/(anon)/_components/common/riskAssessmentDisplay/RiskAssessmentDisplay';
 import { useRealEstateOutput } from '@/hooks/useRealEstateOutput';
-import { useRiskAssessmentLoad } from '@/hooks/useRiskAssessmentLoad';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
 import { useRiskAssessment } from '@/hooks/useRiskAssessment';
 import { RealEstateEntity } from '@be/domain/entities/RealEstate';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
+import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { parseStepUrl } from '@utils/stepUrlParser';
 
 export const RealEstateOutput = ({
   response,
@@ -27,29 +26,40 @@ export const RealEstateOutput = ({
     hasData,
   } = useRealEstateOutput({ response, loading, existsData });
 
-  // URL에서 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
-  const stepUrlData = pathname.match(/\/steps\/(\d+)\/(\d+)/);
-  const stepNumber = stepUrlData ? parseInt(stepUrlData[1]) : 1;
-  const detail = stepUrlData ? parseInt(stepUrlData[2]) : 1;
+  const stepUrlData = parseStepUrl(pathname);
+  const stepNumber = stepUrlData?.stepNumber || 1;
+  const detail = stepUrlData?.detail || 1;
 
-  // 저장된 위험도 검사 결과 로드
-  const {
-    data: savedRiskData,
+  // 전체 step-result 데이터 요청 (RealEstateIntro 데이터 포함)
+  const { 
+    data: stepResultData, 
     isLoading: loadLoading,
-    invalidateCache: invalidateRiskDataCache,
-  } = useRiskAssessmentLoad({
-    stepNumber,
-    detail,
+    refetch: invalidateRiskDataCache 
+  } = useGetStepResult({
     userAddressNickname: selectedAddress?.nickname || '',
+    stepNumber: stepNumber.toString(),
+    detail: detail.toString(),
   });
 
-  // 위험도 검사 저장 훅
-  const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
-    if (data.success) {
-      invalidateRiskDataCache();
+  // stepResultData에서 jsonDetails 추출
+  const getJsonDetails = () => {
+    if (!stepResultData) return null;
+    
+    let stepResult = stepResultData;
+    if (Array.isArray(stepResult)) {
+      stepResult = stepResult[0];
     }
-  });
+    
+    if (stepResult && 'jsonDetails' in stepResult) {
+      return stepResult.jsonDetails;
+    }
+    
+    return null;
+  };
+
+  const jsonDetails = getJsonDetails();
+
 
   // 위험도 검사 실행 상태 관리
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
@@ -105,25 +115,22 @@ export const RealEstateOutput = ({
   // 위험도 검사 결과가 없을 때 자동으로 위험도 검사 실행
   useEffect(() => {
     const performRiskAssessment = async () => {
-      // step-result 데이터가 있으면 위험도 검사 실행하지 않음
-      if (savedRiskData?.jsonData) {
-        return;
-      }
-
-      // step-result 데이터가 없고, 원문 데이터가 있을 때만 위험도 검사 실행
+      // 등기부등본 데이터가 있고, 위험도 검사가 실행되지 않았을 때만 실행
       if (
         !loadLoading &&
-        !savedRiskData?.jsonData &&
         !isPerformingRiskAssessment &&
         !hasPerformedRiskAssessment.current &&
         hasData &&
         (displayResponse?.data?.data ||
           displayResponse?.data?.realEstateJson?.data) &&
-        selectedAddress?.nickname
+        selectedAddress?.nickname &&
+        hookRiskAssessment
       ) {
         try {
           hasPerformedRiskAssessment.current = true;
           setIsPerformingRiskAssessment(true);
+
+          console.log('🔄 새로운 등기부등본 데이터로 위험도 검사 시작');
 
           // hook에서 계산된 위험도 검사 결과 사용
           setCalculatedRiskAssessment(hookRiskAssessment);
@@ -131,6 +138,7 @@ export const RealEstateOutput = ({
           // 데이터 변경 플래그 리셋
           setDataChanged(false);
         } catch (error) {
+          console.error('위험도 검사 실행 중 오류:', error);
           // 위험도 검사 실행 중 오류 발생 시 상태 리셋
           hasPerformedRiskAssessment.current = false;
           setIsPerformingRiskAssessment(false);
@@ -143,7 +151,7 @@ export const RealEstateOutput = ({
     performRiskAssessment();
   }, [
     loadLoading,
-    savedRiskData,
+    jsonDetails,
     dataChanged,
     isPerformingRiskAssessment,
     hasData,
@@ -152,7 +160,6 @@ export const RealEstateOutput = ({
     selectedAddress,
     stepNumber,
     detail,
-    saveRiskAssessmentMutation,
     invalidateRiskDataCache,
     hookRiskAssessment,
   ]);
@@ -178,8 +185,8 @@ export const RealEstateOutput = ({
     );
   }
 
-  // step-result 데이터와 원문 데이터가 모두 없을 때
-  if (!savedRiskData?.jsonData && !hasData) {
+  // 원문 데이터가 모두 없을 때
+  if (!hasData) {
     return (
       <div className={styles.container}>
         <h2 className={styles.title}>응답 결과</h2>
@@ -208,7 +215,7 @@ export const RealEstateOutput = ({
         detail={detail}
         userAddressNickname={selectedAddress?.nickname}
         domain='realEstate'
-        initialJsonData={savedRiskData?.jsonData}
+        initialJsonData={jsonDetails || {}}
         showSaveButton={true} // 결과 탭에서도 저장 버튼 활성화
       />
 

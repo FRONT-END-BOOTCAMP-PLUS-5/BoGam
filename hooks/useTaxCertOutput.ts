@@ -19,7 +19,7 @@ export const useTaxCertOutput = ({
     response ? null : selectedAddress?.nickname || null
   );
 
-  //console.log('dbResponse', dbResponse);
+  console.log('dbResponse', dbResponse);
 
   // response prop이 있으면 그것을 사용, 없으면 dbResponse 사용
   const displayResponse = useMemo(() => {
@@ -27,20 +27,26 @@ export const useTaxCertOutput = ({
       return response;
     }
 
-    if (
-      (dbResponse as unknown as { success: boolean })?.success &&
-      (dbResponse as unknown as { data: { taxCertJson: string } })?.data
-    ) {
-      return {
-        success: true,
-        message: '성공',
-        userAddressNickname: selectedAddress?.nickname || '',
-        data: {
-          data: (
-            dbResponse as unknown as { data: { taxCertJson: string } }
-          ).data.taxCertJson,
-        },
-      } as TaxCertApiResponse;
+    if (dbResponse) {
+      const response = dbResponse as unknown as { success: boolean; data?: { taxCertJson: string }; message?: string };
+      if (response.success && response.data) {
+        return {
+          success: true,
+          message: '성공',
+          userAddressNickname: selectedAddress?.nickname || '',
+          data: {
+            data: response.data.taxCertJson,
+          },
+        } as TaxCertApiResponse;
+      } else {
+        // success: false인 경우도 처리
+        return {
+          success: false,
+          message: response.message || '데이터를 찾을 수 없습니다.',
+          userAddressNickname: selectedAddress?.nickname || '',
+          data: undefined,
+        } as TaxCertApiResponse;
+      }
     }
 
     return null;

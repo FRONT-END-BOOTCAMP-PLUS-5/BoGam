@@ -16,10 +16,10 @@ export class StepResultUsecase {
     detail?: number
   ): Promise<StepResultResponseDto> {
     try {
-      console.log('🔍 getStepResults 호출:', { userAddressNickname, stepNumber, detail });
+      // console.log('🔍 getStepResults 호출:', { userAddressNickname, stepNumber, detail });
       
       const userAddressId = await getUserAddressId(userAddressNickname);
-      console.log('🔍 userAddressId 조회 결과:', userAddressId);
+      // console.log('🔍 userAddressId 조회 결과:', userAddressId);
       
       if (!userAddressId) {
         console.log('❌ userAddressId를 찾을 수 없음');

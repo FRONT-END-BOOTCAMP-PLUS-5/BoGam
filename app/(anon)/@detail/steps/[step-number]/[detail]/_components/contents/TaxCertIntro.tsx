@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import styles from './TaxCertIntro.styles';
@@ -54,11 +54,7 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
     detail: detail.toString(),
   });
 
-  const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
-    if (data.success) {
-      console.log('✅ TaxCertIntro 체크리스트 데이터 저장 완료');
-    }
-  });
+  const { upsertStepResult } = useStepResultMutations();
 
   // 초기 체크리스트 상태 설정 (DB 데이터와 매핑) - 한 번만 실행
   useEffect(() => {
@@ -102,10 +98,10 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
       });
 
       setChecklistState(initialState);
-      console.log(
-        '🔍 TaxCertIntro: DB 데이터와 매핑된 최종 초기 상태:',
-        initialState
-      );
+      // console.log(
+      //   '🔍 TaxCertIntro: DB 데이터와 매핑된 최종 초기 상태:',
+      //   initialState
+      // );
     }
   }, [data.checklistItems, stepResultData]); // checklistState 의존성 제거
 
@@ -164,12 +160,11 @@ export default function TaxCertIntro({ data }: TaxCertIntroProps) {
 
       // DB에 직접 저장
       if (selectedAddress?.nickname) {
-        await saveRiskAssessmentMutation.mutateAsync({
+        await upsertStepResult.mutateAsync({
+          userAddressNickname: selectedAddress.nickname,
           stepNumber,
           detail,
-          jsonData: updatedDbData,
-          domain: 'taxCert',
-          userAddressNickname: selectedAddress.nickname,
+          jsonDetails: updatedDbData,
         });
         console.log('✅ TaxCertIntro: DB 저장 완료');
       }

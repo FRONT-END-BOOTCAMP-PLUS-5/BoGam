@@ -61,7 +61,6 @@ export default function ModalContent({
       realEstate: [
         { step: '1', detail: '4' },
         { step: '2', detail: '3' },
-        { step: '6', detail: '3' },
         { step: '5', detail: '2' },
         { step: '4', detail: '1' },
       ].some((route) => route.step === stepNumber && route.detail === detail),
@@ -303,6 +302,9 @@ export default function ModalContent({
                           onSimpleAuthCancel={onSimpleAuthCancel}
                           ref={taxCertContainerRef}
                         />
+                      )}
+                      {section.type === 'RealEstateContainer' && (
+                        <RealEstateContainer />
                       )}
                     </>
                   )}

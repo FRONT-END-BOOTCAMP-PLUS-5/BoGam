@@ -29,7 +29,7 @@ export class ApiBrokerRepository implements BrokerRepository {
         
         // EDBrokers와 field 존재 여부 및 빈 배열 체크
         if (!jsonData?.EDBrokers?.field || jsonData.EDBrokers.field.length === 0) {
-          throw new Error('검색 조건에 맞는 중개사가 없습니다.');
+          return [];
         }
         
         const data = jsonData.EDBrokers.field[0];
@@ -62,7 +62,7 @@ export class ApiBrokerRepository implements BrokerRepository {
         
         // EDBrokers와 field 존재 여부 및 빈 배열 체크
         if (!jsonData?.EDBrokers?.field || jsonData.EDBrokers.field.length === 0) {
-          throw new Error('검색 조건에 맞는 중개사가 없습니다.');
+          return [];
         }
         
         return jsonData.EDBrokers.field.map(data => new Broker(

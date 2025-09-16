@@ -11,8 +11,9 @@ import {
   RiskAssessmentJsonData,
   isRiskAssessmentModified,
 } from '@utils/riskAssessmentUtils';
-import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
+import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
+import { StepResultRequest } from '@libs/api_front/stepResultQueries.api';
 
 interface RiskAssessmentDisplayProps {
   riskAssessment: RiskAssessmentResult;
@@ -46,13 +47,23 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   showSaveButton = true,
   // onJsonDataChange, // 제거
 }) => {
-  const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
-    // 저장 성공 시 수정 상태 초기화 및 초기화 플래그 리셋
-    if (data.success) {
-      setIsModified(false);
-      isInitialized.current = false; // 다음 렌더링에서 DB 데이터를 다시 가져올 수 있도록
+  const { upsertStepResult } = useStepResultMutations();
+
+  // upsertStepResult에 onSuccess 콜백 추가
+  const upsertStepResultWithCallback = {
+    ...upsertStepResult,
+    mutateAsync: async (data: StepResultRequest) => {
+      try {
+        const result = await upsertStepResult.mutateAsync(data);
+        // 성공 시 상태 초기화
+        setIsModified(false);
+        isInitialized.current = false;
+        return result;
+      } catch (error) {
+        throw error;
+      }
     }
-  });
+  };
 
   // console.log('displayResponse', displayResponse);
   // console.log('riskAssessmentDisplay', riskAssessment);
@@ -279,12 +290,11 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
         latestJsonData
       );
 
-      await saveRiskAssessmentMutation.mutateAsync({
+      await upsertStepResultWithCallback.mutateAsync({
+        userAddressNickname,
         stepNumber,
         detail,
-        jsonData: latestJsonData,
-        domain,
-        userAddressNickname,
+        jsonDetails: latestJsonData,
       });
 
       console.log(`✅ RiskAssessmentDisplay: ${domain} 도메인 DB 저장 완료`);
@@ -319,7 +329,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
                   (checklistItems ? checklistItems.length > 0 : false))
               }
               onSave={handleSave}
-              disabled={saveRiskAssessmentMutation.isPending}
+              disabled={upsertStepResultWithCallback.isPending}
             />
           )}
         </div>

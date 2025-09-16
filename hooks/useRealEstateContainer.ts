@@ -107,11 +107,11 @@ export const useRealEstateContainer = () => {
   }, [existsData, isDataLoading]);
 
   // exists 데이터가 없으면 Output 탭으로 이동하지 못하도록 방지
-  useEffect(() => {
-    if (activeTab === 'output' && existsData?.success && !existsData.exists) {
-      setActiveTab('input');
-    }
-  }, [activeTab, existsData]);
+  // useEffect(() => {
+  //   if (activeTab === 'output' && existsData?.success && !existsData.exists) {
+  //     setActiveTab('input');
+  //   }
+  // }, [activeTab, existsData]);
 
   const handleAddressSelect = async (address: AddressListItem) => {
     setTwoWaySelectedAddress(address);

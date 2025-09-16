@@ -35,11 +35,7 @@ export async function GET(request: NextRequest) {
       userAddressId: userAddressId,
     });
 
-    if (result.success) {
-      return NextResponse.json(result, { status: 200 });
-    } else {
-      return NextResponse.json(result, { status: 400 });
-    }
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error('BrokerCopy GET API 오류:', error);
     return NextResponse.json(

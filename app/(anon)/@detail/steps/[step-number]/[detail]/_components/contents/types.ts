@@ -123,6 +123,11 @@ export interface TaxCertContainerSection extends BaseContentSection {
   type: 'TaxCertContainer';
 }
 
+// RealEstateContainer 전용 인터페이스
+export interface RealEstateContainerSection extends BaseContentSection {
+  type: 'RealEstateContainer';
+}
+
 // 모든 섹션 타입을 유니온으로 정의
 export type ContentSection =
   | TextOnlySection
@@ -132,7 +137,8 @@ export type ContentSection =
   | DataGridSection
   | CheckListGroupSection
   | TaxCertIntroSection
-  | TaxCertContainerSection;
+  | TaxCertContainerSection
+  | RealEstateContainerSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {

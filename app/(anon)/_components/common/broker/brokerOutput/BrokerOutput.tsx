@@ -5,7 +5,6 @@ import { useGetBrokerCopy } from '@/hooks/useBroker';
 import { useBrokerRiskAssessment } from '@/hooks/useBrokerRiskAssessment';
 import { RiskAssessmentDisplay } from '@/(anon)/_components/common/riskAssessmentDisplay/RiskAssessmentDisplay';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useRiskAssessmentSave } from '@/hooks/useRiskAssessmentSave';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './BrokerOutput.styles';
@@ -22,7 +21,7 @@ interface BrokerData {
 }
 
 interface BrokerOutputProps {
-  userAddressNickname: string;
+  userAddressNickname: string | null;
   selectedBroker?: BrokerData;
 }
 
@@ -68,23 +67,14 @@ export const BrokerOutput = ({
 
   // DB에서 broker 데이터 조회 (selectedBroker가 없을 때만)
   const brokerCopyQuery = useGetBrokerCopy(selectedBroker ? null : userAddressNickname || null);
-
   // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
   useEffect(() => {
-    if (selectedBroker && selectedAddress?.nickname) {
+    if (selectedAddress?.nickname) {
       console.log('🔄 초기 렌더링 시 캐시 무효화 실행');
-      brokerCopyQuery.refetch(); // brokerCopy 캐시 무효화
       invalidateRiskDataCache(); // stepResult 캐시 무효화
     }
-  }, [selectedBroker, selectedAddress?.nickname, brokerCopyQuery.refetch, invalidateRiskDataCache]);
+  }, [selectedBroker, selectedAddress?.nickname, invalidateRiskDataCache]);
 
-  // 위험도 검사 저장 훅
-  const saveRiskAssessmentMutation = useRiskAssessmentSave((data) => {
-    console.log('data', data);
-    if (data.success) {
-      invalidateRiskDataCache();
-    }
-  });
 
   // 위험도 검사 실행 상태 관리
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
@@ -107,8 +97,8 @@ export const BrokerOutput = ({
     (brokerCopyQuery.data?.data as { brokerData?: BrokerData })?.brokerData ||
     null;
 
-  console.log('brokerData', brokerData);
   const brokerRiskAssessment = useBrokerRiskAssessment(brokerData);
+  console.log('brokerData', brokerData);
   console.log('brokerRiskAssessment', brokerRiskAssessment);
 
   // mappedRiskAssessment를 state로 관리
@@ -291,7 +281,6 @@ export const BrokerOutput = ({
     selectedAddress,
     stepNumber,
     detail,
-    saveRiskAssessmentMutation,
     invalidateRiskDataCache,
     brokerRiskAssessment,
     selectedBroker,
@@ -341,11 +330,6 @@ export const BrokerOutput = ({
     ? calculatedRiskAssessment
     : riskAssessment;
 
-  // 전체 step-result 데이터에서 jsonDetails 추출 (BrokerIntro 데이터 포함)
-  const getInitialJsonData = () => {
-    return jsonDetails || {};
-  };
-
   return (
     <div>
       {/* 위험도 측정 결과 표시 */}
@@ -358,7 +342,7 @@ export const BrokerOutput = ({
         detail={detail}
         userAddressNickname={selectedAddress?.nickname}
         domain='broker'
-        initialJsonData={getInitialJsonData()}
+        initialJsonData={jsonDetails || {}}
         showSaveButton={true} // 결과 탭에서도 저장 버튼 활성화
       />
     </div>
