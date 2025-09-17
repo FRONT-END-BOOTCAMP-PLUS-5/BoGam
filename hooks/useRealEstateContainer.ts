@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import {
   RealEstateFormData,
   ApiResponse,
   AddressListItem,
 } from '@/(anon)/_components/common/realEstate/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useRealEstateStore } from '@libs/stores/realEstateStore';
 import {
   useCheckRealEstateExists,
   useCreateRealEstate,
@@ -12,53 +13,23 @@ import {
 } from '@/hooks/useRealEstate';
 
 export const useRealEstateContainer = () => {
-  const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
-  const [formData] = useState<RealEstateFormData>({
-    userAddressNickname: '',
-    password: '1234',
-    address: '',
-    realtyType: '1',
-    recordStatus: '0',
-    startPageNo: '1',
-    pageCount: '5',
-    applicationType: '1',
-    organization: '0002',
-    phoneNo: '',
-    inquiryType: '1', // 간편검색으로 고정
-    issueType: '1',
-    jointMortgageJeonseYN: '0',
-    tradingYN: '0',
-    electronicClosedYN: '0',
-    originDataYN: '1', // 원문 데이터 항상 포함
-    warningSkipYN: '0',
-    registerSummaryYN: '0',
-    selectAddress: '0',
-    isIdentityViewYn: '0',
-    // 누락된 필드들 초기값
-    uniqueNo: '',
-    addr_sido: '',
-    addr_dong: '',
-    addr_lotNumber: '',
-    inputSelect: '',
-    buildingName: '',
-    dong: '101',
-    ho: '101',
-    addr_sigungu: '',
-    addr_roadName: '',
-    addr_buildingNumber: '',
-    listNumber: '',
-    ePrepayNo: '',
-    ePrepayPass: '',
-    originData: '',
-    reqIdentity: '',
-    identityList: [{ reqIdentity: '' }],
-  });
-
-  const [response, setResponse] = useState<ApiResponse | null>(null);
-  const [twoWaySelectedAddress, setTwoWaySelectedAddress] =
-    useState<AddressListItem | null>(null);
-  const [showTwoWayModal, setShowTwoWayModal] = useState(false);
-  const [isDataLoading, setIsDataLoading] = useState(false);
+  // 전역 store 사용
+  const {
+    activeTab,
+    formData,
+    response,
+    twoWaySelectedAddress,
+    showTwoWayModal,
+    isDataLoading,
+    setActiveTab,
+    setFormData,
+    setResponse,
+    setTwoWaySelectedAddress,
+    setShowTwoWayModal,
+    setIsDataLoading,
+    setHandleAddressSelect,
+    setHandleCloseTwoWayModal,
+  } = useRealEstateStore();
 
   // selectedAddress 변경 시 데이터 존재 여부 확인
   const { selectedAddress } = useUserAddressStore();
@@ -104,7 +75,7 @@ export const useRealEstateContainer = () => {
       setActiveTab('input');
       setIsDataLoading(false);
     }
-  }, [existsData, isDataLoading]);
+  }, [existsData, isDataLoading, setActiveTab, setIsDataLoading]);
 
   // exists 데이터가 없으면 Output 탭으로 이동하지 못하도록 방지
   // useEffect(() => {
@@ -113,15 +84,13 @@ export const useRealEstateContainer = () => {
   //   }
   // }, [activeTab, existsData]);
 
-  const handleAddressSelect = async (address: AddressListItem) => {
+  const handleAddressSelect = useCallback(async (address: AddressListItem) => {
     setTwoWaySelectedAddress(address);
-
-    // 모달 즉시 닫기
     setShowTwoWayModal(false);
 
     // 주소 선택 즉시 2-way 인증 요청 실행
     await handleTwoWayAuthWithAddress(address);
-  };
+  }, [setTwoWaySelectedAddress, setShowTwoWayModal, response, selectedAddress, formData, twoWayAuthMutation]);
 
   const handleTwoWayAuthWithAddress = async (address: AddressListItem) => {
     if (!response?.twoWayInfo) {
@@ -160,10 +129,16 @@ export const useRealEstateContainer = () => {
     twoWayAuthMutation.mutate(twoWayRequest);
   };
 
-  const handleCloseTwoWayModal = () => {
+  const handleCloseTwoWayModal = useCallback(() => {
     setShowTwoWayModal(false);
     setTwoWaySelectedAddress(null);
-  };
+  }, [setShowTwoWayModal, setTwoWaySelectedAddress]);
+
+  // 핸들러 함수들을 store에 등록 (한 번만)
+  useEffect(() => {
+    setHandleAddressSelect(handleAddressSelect);
+    setHandleCloseTwoWayModal(handleCloseTwoWayModal);
+  }, []);
 
   const handleSubmit = async (data: RealEstateFormData) => {
     if (!selectedAddress) {
@@ -186,6 +161,7 @@ export const useRealEstateContainer = () => {
 
       if (responseData.requiresTwoWayAuth && responseData.resAddrList) {
         setShowTwoWayModal(true);
+        setResponse(responseData);
       }
     } catch (error) {
       setResponse({

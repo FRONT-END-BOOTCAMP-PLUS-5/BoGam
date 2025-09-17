@@ -7,7 +7,6 @@ import Field from '@/(anon)/_components/common/forms/Field';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { TaxCertInputProps } from '../types';
 import { styles } from './TaxCertInput.styles';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import Image from 'next/image';
 import { TAX_CERT_AUTH_METHODS } from '@libs/constants/taxCertConstants';
 

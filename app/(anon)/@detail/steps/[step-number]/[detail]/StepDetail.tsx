@@ -8,6 +8,8 @@ import ModalContent from './_components/ModalContent';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { useModalStore } from '@libs/stores/modalStore';
 import { TaxCertWrapperRef } from './_components/contents/TaxCertWrapper';
+import { RealEstateTwoWayContent } from '@/(anon)/_components/common/realEstate/realEstateTwoWayContent/RealEstateTwoWayContent';
+import { useRealEstateStore } from '@libs/stores/realEstateStore';
 
 interface StepDetailProps {
   isOpen: boolean;
@@ -17,6 +19,21 @@ interface StepDetailProps {
 export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
   const taxCertWrapperRef = useRef<TaxCertWrapperRef | null>(null);
+
+  // 전역 store 사용
+  const {
+    showTwoWayModal,
+    twoWaySelectedAddress,
+    response,
+    handleAddressSelect,
+    handleCloseTwoWayModal,
+    setShowTwoWayModal,
+    setTwoWaySelectedAddress,
+    setResponse,
+    setHandleAddressSelect,
+    setHandleCloseTwoWayModal,
+    reset,
+  } = useRealEstateStore();
 
   const {
     dragState,
@@ -72,6 +89,14 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     }
   }, [isOpen]);
 
+  // StepDetail이 닫힐 때 모달 상태만 초기화
+  useEffect(() => {
+    if (!isOpen) {
+      setShowTwoWayModal(false);
+      setTwoWaySelectedAddress(null);
+    }
+  }, [isOpen, setShowTwoWayModal, setTwoWaySelectedAddress]);
+
   if (!isOpen) {
     return null;
   }
@@ -109,7 +134,7 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
           isOpen={isModalOpen}
           title={content.title}
           icon={content.icon}
-          onConfirm={confirmModal}
+          onConfirm={content.onConfirm ? confirmModal : undefined}
           onCancel={cancelModal}
           confirmText={content.confirmText}
           cancelText={content.cancelText}
@@ -136,6 +161,23 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
             * 4분 30초 내에 승인/취소를 완료해주세요.
           </p>
         </div>
+      </ConfirmModal>
+
+      {/* 2-way 인증 모달 */}
+      <ConfirmModal
+        isOpen={showTwoWayModal}
+        title='부동산 목록에서 선택하세요'
+        onCancel={handleCloseTwoWayModal || (() => {})}
+        cancelText='취소'
+        icon='info'
+        isLoading={false}
+        onConfirm={undefined}
+      >
+        <RealEstateTwoWayContent
+          resAddrList={response?.resAddrList || []}
+          selectedAddress={twoWaySelectedAddress}
+          onAddressSelect={handleAddressSelect || (() => {})}
+        />
       </ConfirmModal>
     </div>
   );
