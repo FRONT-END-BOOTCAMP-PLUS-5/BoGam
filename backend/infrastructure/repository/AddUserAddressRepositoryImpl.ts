@@ -343,6 +343,7 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
           userAddressId: userAddress.id,
           stepId: 20, // 5-3단계
           details: {
+            "열람": "unchecked",
             "보증신청인(1)": "unchecked",
             "보증신청인(2)": "unchecked",
             "보증신청인(3)": "unchecked",
