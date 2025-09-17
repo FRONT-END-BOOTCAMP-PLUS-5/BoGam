@@ -12,13 +12,11 @@ import RadioGroup from './contents/RadioGroup';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import {
   LegacyContentSection,
-  StepContentData,
-  ContentSection,
+  StepContentData
 } from './contents/types';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
-import Step5Detail3Renderer from './contents/Step5Detail3Renderer';
-import TaxCertWrapper, { TaxCertWrapperRef } from './contents/TaxCertWrapper';
+import { TaxCertWrapperRef } from './contents/TaxCertWrapper';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 import { PageIndicator } from './PageIndicator';
 import CombinedContent from './contents/CombinedContent';

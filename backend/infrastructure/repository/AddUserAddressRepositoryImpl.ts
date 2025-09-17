@@ -408,9 +408,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
           stepId: 25, // 7-1단계
           details: {
             "열람": "unchecked",
-            "신분증이나 인감을 빌려주신 적이 있나요?": "unchecked",
-            "대출을 대신 받아주겠다는 제안을 받은 적이 있나요?": "unchecked",
-            "실제 계약 내용과 다른 계약서를 작성한 적이 있나요?": "unchecked"
+            "이면계약 작성하지 않기": "unchecked",
+            "타인 명의 대출 거절하기": "unchecked",
+            "신분증, 인감 빌려주지 않기": "unchecked"
           },
         },
         {

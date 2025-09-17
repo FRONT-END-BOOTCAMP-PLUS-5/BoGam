@@ -273,8 +273,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
           </div>
         ))}
 
-        {/* Step5Detail3Component에서는 스텝 데이터를 표시하지 않음 */}
-        {!window.location.pathname.includes('/5/3') && renderStepData()}
+        {/* 스텝 데이터 표시 */}
+        {renderStepData()}
       </div>
     );
   }
@@ -284,8 +284,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     <div className={styles.container}>
       <div className={styles.noDataContainer}>데이터가 없습니다.</div>
 
-      {/* Step5Detail3Component에서는 스텝 데이터를 표시하지 않음 */}
-      {!window.location.pathname.includes('/5/3') && renderStepData()}
+      {/* 스텝 데이터 표시 */}
+      {renderStepData()}
     </div>
   );
 };

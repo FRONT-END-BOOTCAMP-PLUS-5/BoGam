@@ -15,7 +15,7 @@ import RadioGroup from './RadioGroup';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
-import Step5Detail3Renderer from './Step5Detail3Renderer';
+import JeonseGuaranteeContainer from './JeonseGuaranteeContainer';
 import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
 import { PageIndicator } from '../PageIndicator';
 
@@ -79,92 +79,88 @@ export default function CombinedContent({
                 className={styles.mainContent}
                 style={{ paddingBottom: '80px' }}
               >
-                {/* step-5-3 특별 처리 */}
-                {stepNumber === '5' && detail === '3' ? (
-                  <Step5Detail3Renderer
+                {/* 모든 섹션을 통일된 방식으로 처리 */}
+                {(section.title || section.subtitle) && (
+                  <div className={styles.sectionHeader}>
+                    {section.title && (
+                      <h3 className={styles.sectionTitle}>
+                        {section.title}
+                      </h3>
+                    )}
+                    {section.subtitle && (
+                      <p className={styles.sectionSubtitle}>
+                        {section.subtitle}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
+                {section.type === 'TextOnly' && (
+                  <TextOnly data={section.data} />
+                )}
+                {section.type === 'RadioGroup' && (
+                  <RadioGroup data={section.data} />
+                )}
+                {section.type === 'Table' && (
+                  <Table
+                    title={
+                      section.title || '소액보증금 최우선변제 기준 변천사'
+                    }
+                    columnTitles={
+                      section.columnTitles || [
+                        '지역',
+                        '소액보증금의 범위',
+                        '최우선변제금액',
+                      ]
+                    }
+                    data={section.data || []}
+                  />
+                )}
+                {section.type === 'List' && (
+                  <List
+                    title={section.title}
+                    data={
+                      section.data as Array<{
+                        title: string;
+                        content: string;
+                      }>
+                    }
+                  />
+                )}
+                {section.type === 'DataGrid' && (
+                  <DataGrid
+                    data={
+                      section.data as unknown as {
+                        left: string;
+                        right?: string;
+                      }[]
+                    }
+                  />
+                )}
+                {section.type === 'CheckListGroup' && (
+                  <CheckListGroup data={section.data} />
+                )}
+                {(section.type === 'TaxCertIntro' ||
+                  section.type === 'TaxCertContainer') && (
+                  <TaxCertWrapper
                     sectionIndex={sectionIndex}
                     section={section}
-                    allSections={sections}
+                    onShowSimpleAuthModal={onShowSimpleAuthModal}
+                    onSimpleAuthApprove={onSimpleAuthApprove}
+                    onSimpleAuthCancel={onSimpleAuthCancel}
+                    ref={taxCertContainerRef}
                   />
-                ) : (
-                  <>
-                    {/* 기존 로직 - 다른 단계들 */}
-                    {(section.title || section.subtitle) && (
-                      <div className={styles.sectionHeader}>
-                        {section.title && (
-                          <h3 className={styles.sectionTitle}>
-                            {section.title}
-                          </h3>
-                        )}
-                        {section.subtitle && (
-                          <p className={styles.sectionSubtitle}>
-                            {section.subtitle}
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
-                    {section.type === 'TextOnly' && (
-                      <TextOnly data={section.data} />
-                    )}
-                    {section.type === 'RadioGroup' && (
-                      <RadioGroup data={section.data} />
-                    )}
-                    {section.type === 'Table' && (
-                      <Table
-                        title={
-                          section.title || '소액보증금 최우선변제 기준 변천사'
-                        }
-                        columnTitles={
-                          section.columnTitles || [
-                            '지역',
-                            '소액보증금의 범위',
-                            '최우선변제금액',
-                          ]
-                        }
-                        data={section.data || []}
-                      />
-                    )}
-                    {section.type === 'List' && (
-                      <List
-                        title={section.title}
-                        data={
-                          section.data as Array<{
-                            title: string;
-                            content: string;
-                          }>
-                        }
-                      />
-                    )}
-                    {section.type === 'DataGrid' && (
-                      <DataGrid
-                        data={
-                          section.data as unknown as {
-                            left: string;
-                            right?: string;
-                          }[]
-                        }
-                      />
-                    )}
-                    {section.type === 'CheckListGroup' && (
-                      <CheckListGroup data={section.data} />
-                    )}
-                    {(section.type === 'TaxCertIntro' ||
-                      section.type === 'TaxCertContainer') && (
-                      <TaxCertWrapper
-                        sectionIndex={sectionIndex}
-                        section={section}
-                        onShowSimpleAuthModal={onShowSimpleAuthModal}
-                        onSimpleAuthApprove={onSimpleAuthApprove}
-                        onSimpleAuthCancel={onSimpleAuthCancel}
-                        ref={taxCertContainerRef}
-                      />
-                    )}
-                    {section.type === 'RealEstateContainer' && (
-                      <RealEstateContainer />
-                    )}
-                  </>
+                )}
+                {section.type === 'RealEstateContainer' && (
+                  <RealEstateContainer />
+                )}
+                {section.type === 'JeonseGuarantee' && (
+                  <JeonseGuaranteeContainer
+                    stepJsonData={{}}
+                    updateStepJsonData={() => {}}
+                    isSavingStepResult={false}
+                  />
                 )}
               </div>
             </SwiperSlide>
