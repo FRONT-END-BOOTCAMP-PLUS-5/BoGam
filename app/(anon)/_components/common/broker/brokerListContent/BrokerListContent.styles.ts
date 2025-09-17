@@ -1,7 +1,7 @@
 export const styles = {
   container: 'space-y-4',
   description: 'text-brand-dark-gray mb-4',
-  brokerList: 'space-y-3 max-h-80 overflow-y-auto',
+  brokerList: 'space-y-3 max-h-80 overflow-y-auto custom-scrollbar',
   brokerItem:
     'flex items-center justify-between p-4 border border-brand-light-gray rounded-lg hover:border-brand-blue hover:shadow-md transition-all cursor-pointer',
   brokerInfo: 'flex-1',
