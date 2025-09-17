@@ -1,4 +1,11 @@
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
+import { placesApi } from '@libs/api_front/places.api';
+
+// 타입 정의
+export interface MapLocation {
+  lat: number;
+  lng: number;
+}
 
 /**
  * 주소에서 기본 주소 부분을 추출합니다.
@@ -23,6 +30,31 @@ export const extractBaseAddress = (address: UserAddress): string => {
 export const extractDongHo = (
   address: UserAddress
 ): { dong: string; ho: string } => {
+  // 1. 먼저 저장된 dong/ho 필드 확인
+  if (address.dong || address.ho) {
+    return {
+      dong: address.dong || '',
+      ho: address.ho || '',
+    };
+  }
+
+  // 2. completeAddress에서 동/호 정보 파싱
+  if (address.completeAddress) {
+    // "동" 패턴 찾기 (예: "101동", "202동", "10동" 등)
+    const dongMatch = address.completeAddress.match(/(\d+)동/);
+    const dong = dongMatch ? dongMatch[1] : '';
+
+    // "호" 패턴 찾기 (예: "101호", "202호", "10호" 등)
+    const hoMatch = address.completeAddress.match(/(\d+)호/);
+    const ho = hoMatch ? hoMatch[1] : '';
+
+    return {
+      dong,
+      ho,
+    };
+  }
+
+  // 3. fallback
   return {
     dong: address.dong || '',
     ho: address.ho || '',
@@ -132,4 +164,101 @@ export const parseAddressString = (
     addrSigungu: parts[1] || '',
     addrDong: parts[2] || '',
   };
+};
+
+// ===== 주소 관리 유틸리티 함수들 =====
+
+/**
+ * 주소 검색을 수행하고 위치 정보를 반환합니다.
+ */
+export const searchAddress = async (
+  searchQuery: string
+): Promise<MapLocation | null> => {
+  try {
+    const searchData = await placesApi.searchByKeyword(searchQuery);
+    if (searchData && searchData.length > 0) {
+      return {
+        lat: parseFloat(searchData[0].latitude),
+        lng: parseFloat(searchData[0].longitude),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('주소 검색 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * 동/호 정보를 기반으로 완전한 주소를 생성합니다.
+ */
+export const buildCompleteAddress = (
+  roadAddress: string,
+  dong: string,
+  ho?: string
+): string => {
+  const hoPart = ho ? ` ${ho}호` : '';
+  return `${roadAddress} ${dong}동${hoPart}`;
+};
+
+/**
+ * 중복 주소 체크를 수행합니다.
+ */
+export const checkDuplicateAddress = (
+  addresses: UserAddress[],
+  targetAddress: UserAddress,
+  completeAddress: string
+): boolean => {
+  return addresses.some(
+    (address) =>
+      address.id !== targetAddress.id &&
+      address.completeAddress === completeAddress
+  );
+};
+
+/**
+ * DB 주소로 지도 이동을 시도합니다.
+ */
+export const moveToDBAddress = async (
+  address: UserAddress,
+  dongValue: string
+): Promise<MapLocation | null> => {
+  // 1차 시도: roadAddress + 동
+  if (address.roadAddress) {
+    const searchQuery = `${address.roadAddress} ${dongValue}동`;
+    const location = await searchAddress(searchQuery);
+    if (location) return location;
+  }
+
+  // 2차 시도: lotAddress + 동
+  if (address.lotAddress) {
+    const searchQuery = `${address.lotAddress} ${dongValue}동`;
+    const location = await searchAddress(searchQuery);
+    if (location) return location;
+  }
+
+  return null;
+};
+
+/**
+ * 새 주소로 지도 이동을 시도합니다.
+ */
+export const moveToNewAddress = async (
+  roadAddress: string,
+  dongValue: string,
+  lotAddress?: string
+): Promise<MapLocation | null> => {
+  // 1차 시도: roadAddress + 동
+  const searchQuery = `${roadAddress} ${dongValue}동`;
+  let location = await searchAddress(searchQuery);
+  if (location) return location;
+
+  // 2차 시도: lotAddress + 동
+  if (lotAddress) {
+    const jibunSearchQuery = `${lotAddress} ${dongValue}동`;
+    location = await searchAddress(jibunSearchQuery);
+    if (location) return location;
+  }
+
+  return null;
 };

@@ -31,7 +31,7 @@ export const DaumPostcodeModal = ({
   return (
     <ConfirmModal
       isOpen={showPostcode}
-      title='주소 추가'
+      title='주소 검색'
       onCancel={onClose}
       icon='info'
       confirmText=''

@@ -34,8 +34,6 @@ export const useMainPageModule = () => {
   // Store에서 데이터 가져오기
   const {
     userAddresses: storeUserAddresses,
-    selectAddress,
-    selectedAddress,
     addVolatileAddress,
     deleteVolatileAddress,
   } = useUserAddressStore();
@@ -49,8 +47,6 @@ export const useMainPageModule = () => {
     if (!isLoading) {
       clearTransactionData();
     }
-
-    console.log('새로운 주소 검색 시 실거래가 데이터 초기화', data);
 
     try {
       // 키워드 검색으로 좌표 가져오기
@@ -91,10 +87,12 @@ export const useMainPageModule = () => {
           id: tempId,
           isSelected: true, // 새로 추가된 주소를 선택된 주소로 설정
         };
-        addVolatileAddress(newAddressWithId);
 
-        // 새로 저장된 주소를 자동으로 선택
-        selectAddress(newAddressWithId);
+        // 리팩토링된 addVolatileAddress 호출 (자동으로 isNewAddressSearch 설정됨)
+        await addVolatileAddress(newAddressWithId);
+
+        // 새로운 주소 추가 시 페이지 이동 방지
+        sessionStorage.setItem('allow-navigation', 'false');
 
         // 메인 상태 업데이트 (호는 초기화)
         mainPageState.setRoadAddress(data.roadAddress || '');
@@ -102,22 +100,10 @@ export const useMainPageModule = () => {
         mainPageState.setSavedLawdCode(data.bcode.substring(0, 5) || '');
         mainPageState.setShowPostcode(false);
 
-        console.log('mainPageState', mainPageState.roadAddress);
-        console.log('mainPageState', mainPageState.searchQuery);
-        console.log('mainPageState', mainPageState.savedLawdCode);
-        console.log('mainPageState', mainPageState.showPostcode);
-
         // 새 주소 추가 시 호 초기화
         const { setHo, setDong } = useUserAddressStore.getState();
         setHo('');
         setDong('');
-
-        // 새로운 주소 검색 상태로 설정
-        console.log(
-          '새로운 주소 검색 상태로 설정',
-          addressManagement.isNewAddressSearch
-        );
-        addressManagement.setIsNewAddressSearch(true);
       } else {
         showError('주소를 찾을 수 없습니다.');
       }
@@ -139,14 +125,18 @@ export const useMainPageModule = () => {
     // 상태
     userAddresses: addressManagement.userAddresses,
     selectedAddress: addressManagement.selectedAddress,
-    searchQuery: addressManagement.searchQuery,
-    roadAddress: addressManagement.roadAddress,
-    savedLawdCode: addressManagement.savedLawdCode,
+    searchQuery: mainPageState.searchQuery,
+    roadAddress: mainPageState.roadAddress,
+    savedLawdCode: mainPageState.savedLawdCode,
     buildingType: mainPageState.buildingType,
     selectedYear: mainPageState.selectedYear,
     selectedMonth: mainPageState.selectedMonth,
     showPostcode: mainPageState.showPostcode,
     isNewAddressSearch: addressManagement.isNewAddressSearch,
+
+    // 새로운 주소 검색 시 사용할 dong, ho 상태
+    dong: mainPageState.dong,
+    ho: mainPageState.ho,
 
     // 위치 관리 상태
     gpsLocation: locationManager.gpsLocation,
@@ -158,13 +148,13 @@ export const useMainPageModule = () => {
     setSearchQuery: mainPageState.setSearchQuery,
     setBuildingType: mainPageState.setBuildingType,
     setSelectedYear: mainPageState.selectedYear,
-    setSelectedMonth: mainPageState.setSelectedMonth,
+    setSelectedMonth: mainPageState.selectedMonth,
     setShowPostcode: mainPageState.setShowPostcode,
 
-    // 액션 함수
-    handleAddressChangeWithTransaction:
-      addressManagement.handleAddressChangeWithTransaction,
-    handleMoveToAddress: transactionManagement.handleMoveToAddress,
+    // 새로운 주소 검색 시 사용할 dong, ho 설정 함수
+    setDong: mainPageState.setDong,
+    setHo: mainPageState.setHo,
+
     handleMoveToAddressOnly: addressManagement.handleMoveToAddressOnly,
     onSearch: execDaumPostcode,
     executePostcode,
@@ -179,7 +169,6 @@ export const useMainPageModule = () => {
     // 실거래가 조회 모달 관련
     showTransactionSearchModal,
     setShowTransactionSearchModal,
-    handleBuildingSelect: transactionManagement.handleBuildingSelect,
 
     // 탭 관리
     activeTab: tabManagement.activeTab,
@@ -202,7 +191,11 @@ export const useMainPageModule = () => {
 
     // 실거래가 관리
     transactionData: transactionManagement.transactionData,
+    transactionLoading: transactionManagement.isLoading,
     handleTransactionSearch: transactionManagement.handleTransactionSearch,
+    handleMoveToAddressWithTransaction:
+      transactionManagement.handleMoveToAddress,
+    handleBuildingSelect: transactionManagement.handleBuildingSelect,
     handleClearTransactionData:
       transactionManagement.handleClearTransactionData,
 

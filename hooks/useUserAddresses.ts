@@ -68,6 +68,19 @@ export const useUserAddresses = () => {
   // 쿼리 데이터가 변경될 때마다 store 업데이트
   useEffect(() => {
     if (userAddressesQuery.data && userAddressesQuery.data.length > 0) {
+      // 현재 상태에서 휘발성 주소가 있는지 확인
+      const currentState = useUserAddressStore.getState();
+      const hasVolatileAddress = currentState.userAddresses.some(
+        (addr) => addr.isVolatile
+      );
+
+      // 휘발성 주소가 있거나 선택된 상태라면 initializeFromQuery 호출하지 않음
+      // 이는 리팩토링된 userAddressStore의 로직과 일치함
+      if (hasVolatileAddress || currentState.selectedAddress?.isVolatile) {
+        return;
+      }
+
+      // 리팩토링된 initializeFromQuery 호출
       initializeFromQuery(userAddressesQuery.data);
     }
   }, [userAddressesQuery.data, initializeFromQuery]);
@@ -89,7 +102,6 @@ export const useUserAddresses = () => {
           // 이전 사용자의 데이터인지 확인 (nickname이 다르면 정리)
           if (parsedData.state?.userAddresses?.length > 0) {
             sessionStorage.removeItem('user-address-store');
-            console.log('🧹 이전 사용자의 주소 데이터 정리됨');
           }
         }
       } catch (error) {

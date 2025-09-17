@@ -43,7 +43,7 @@ export const useDaumPostcode = (
   }, [setShowPostcode, onError]);
 
   // Postcode 실제 실행 함수 (모달이 열린 후 호출됨)
-  const executePostcode = useCallback(() => {
+  const executePostcode = () => {
     if (!window.daum || !postcodeRef.current) {
       return;
     }
@@ -60,7 +60,7 @@ export const useDaumPostcode = (
       width: '100%',
       height: '100%',
     }).embed(postcodeRef.current);
-  }, [onComplete]);
+  };
 
   return {
     postcodeRef,

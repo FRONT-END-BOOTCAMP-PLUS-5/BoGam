@@ -18,10 +18,11 @@ export const styles = {
   // 주소 검색 행
   searchButton: '!mt-0 w-[40%] px-0 py-0',
 
-  // 동/호 입력 필드
+  // 동/호 입력 필드 - TextInput 스타일과 동일하게 적용
   dongField: 'w-10 !h-10',
   hoField: 'w-10 !h-10',
-  combinedField: 'w-32 !h-10',
+  combinedField:
+    'w-full rounded-xl border px-3 py-3 h-8 text-[15px] bg-brand-white border-brand-light-gray placeholder:text-brand-light-gray focus:shadow-[0_0_0_3px_var(--brand-shadow)] focus:border-brand',
 
   // 버튼 행
   confirmButton: '!mt-0 w-auto px-3 !py-2 !h-auto text-xs rounded shadow-sm',

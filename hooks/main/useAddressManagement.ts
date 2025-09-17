@@ -1,26 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMainPageState } from './useMainPageState';
 import { useMapStore } from '@libs/stores/map/mapStore';
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
-import { placesApi } from '@libs/api_front/places.api';
 import {
   extractBaseAddress,
   extractDongHo,
   isSameAddress,
   createUserAddressFromSearch,
+  MapLocation,
+  buildCompleteAddress,
+  checkDuplicateAddress,
+  moveToDBAddress,
+  moveToNewAddress,
 } from '@utils/main/addressUtils';
 import { createLocationFromCoordinates } from '@utils/main/mapUtils';
 import { useToastStore } from '@libs/stores/toastStore';
+import {
+  STORAGE_KEYS,
+  ERROR_MESSAGES,
+  SUCCESS_MESSAGES,
+  AddressSearchData,
+} from '@libs/constants/addressConstants';
 
 export const useAddressManagement = () => {
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useToastStore();
-
-  // 새로운 주소 검색인지 추적하는 상태 추가
-  const [isNewAddressSearch, setIsNewAddressSearch] = useState(false);
 
   // Store에서 데이터 가져오기
   const {
@@ -31,9 +37,11 @@ export const useAddressManagement = () => {
     deleteAddress,
     addVolatileAddress,
     deleteVolatileAddress,
+    isNewAddressSearch,
+    setIsNewAddressSearch,
   } = useUserAddressStore();
 
-  // 메인 페이지 상태
+  // 메인 페이지 상태 (새로 검색한 주소 정보)
   const {
     roadAddress,
     searchQuery,
@@ -50,236 +58,325 @@ export const useAddressManagement = () => {
   const { setMapCenter, setSearchLocationMarker, setAdjustBounds } =
     useMapStore();
 
-  // 실거래가 데이터 Store
-  const { clearTransactionData, isLoading } = useTransactionDataStore();
+  /**
+   * 선택된 주소의 상태를 업데이트합니다.
+   */
+  const updateAddressState = useCallback(
+    (address: UserAddress) => {
+      // 동 정보 추출
+      const { dong: extractedDong } = extractDongHo(address);
 
-  // storeSelectedAddress가 변경될 때마다 상태 업데이트 (드롭다운 선택 시)
-  useEffect(() => {
-    if (storeSelectedAddress) {
-      // 이미 같은 주소가 선택되어 있다면 상태 업데이트하지 않음
-      const currentAddress = `${roadAddress} ${dong}동`.trim();
-      const newAddress = storeSelectedAddress.completeAddress;
+      // 기본 주소 추출
+      const baseAddress = extractBaseAddress(address);
 
-      if (isSameAddress(currentAddress, newAddress)) {
-        return;
-      }
-
-      // 동 정보만 사용 (호는 저장 시에만 사용)
-      const { dong: extractedDong } = extractDongHo(storeSelectedAddress);
-
-      // 도로명 주소가 있으면 도로명 주소 사용, 없으면 지번 주소 사용
-      const baseAddress = extractBaseAddress(storeSelectedAddress);
-
-      // 드롭다운 주소로 메인 상태 업데이트
+      // 상태 업데이트
       setRoadAddress(baseAddress);
-      // 동만 업데이트 (호는 AddressConfirmationTab에서 관리)
       setDong(extractedDong || '');
-      // setHo('') 제거 - AddressConfirmationTab에서 호를 관리하도록 함
-      setSearchQuery(storeSelectedAddress.completeAddress);
-      setSavedLawdCode(storeSelectedAddress.legalDistrictCode || '');
-
-      // 주소 변경 시 실거래가 데이터 초기화
-      if (!isLoading) {
-        clearTransactionData();
-      }
+      setSearchQuery(address.completeAddress);
+      setSavedLawdCode(address.legalDistrictCode || '');
 
       // 선택된 주소의 좌표로 지도 이동
-      if (storeSelectedAddress.x && storeSelectedAddress.y) {
-        const location = createLocationFromCoordinates(
-          storeSelectedAddress.x,
-          storeSelectedAddress.y
-        );
+      if (address.x && address.y) {
+        const location = createLocationFromCoordinates(address.x, address.y);
         setMapCenter(location);
         setSearchLocationMarker(location);
       }
+    },
+    [
+      setDong,
+      setMapCenter,
+      setRoadAddress,
+      setSavedLawdCode,
+      setSearchLocationMarker,
+      setSearchQuery,
+    ]
+  );
 
-      // 휘발성 주소(새로 추가된 주소)가 아닌 경우에만 새로운 주소 검색 상태 해제
-      if (!storeSelectedAddress.isVolatile) {
-        setIsNewAddressSearch(false);
+  // 선택된 주소가 변경될 때마다 상태 업데이트
+  useEffect(() => {
+    if (!storeSelectedAddress) return;
+
+    // 이미 같은 주소가 선택되어 있다면 상태 업데이트하지 않음
+    const currentAddress = `${roadAddress} ${dong}동`.trim();
+    const newAddress = storeSelectedAddress.completeAddress;
+
+    if (isSameAddress(currentAddress, newAddress)) {
+      return;
+    }
+
+    updateAddressState(storeSelectedAddress);
+  }, [storeSelectedAddress, updateAddressState, roadAddress, dong]);
+
+  // ===== 주소 선택 및 검색 관련 함수들 =====
+
+  /**
+   * 주소 선택 핸들러
+   */
+  const handleAddressSelect = useCallback(
+    (address: UserAddress) => {
+      selectAddress(address);
+    },
+    [selectAddress]
+  );
+
+  /**
+   * 주소 검색 핸들러
+   */
+  const handleAddressSearch = useCallback(
+    (searchData: AddressSearchData) => {
+      // 새로운 주소를 휘발성 주소로 추가
+      const newAddress = createUserAddressFromSearch(searchData);
+      addVolatileAddress(newAddress);
+    },
+    [addVolatileAddress]
+  );
+
+  /**
+   * 주소 저장 핸들러 (기본)
+   */
+  const handleAddressSave = useCallback(
+    async (addressData: Omit<UserAddress, 'id'>) => {
+      try {
+        await addAddress(addressData);
+      } catch (error) {
+        console.error('주소 저장 실패:', error);
+        showError(ERROR_MESSAGES.SAVE_FAILED);
       }
-    }
-  }, [
-    storeSelectedAddress?.id,
-    clearTransactionData,
-    isLoading,
-    dong,
-    roadAddress,
-    setDong,
-    setMapCenter,
-    setRoadAddress,
-    setSavedLawdCode,
-    setSearchLocationMarker,
-    setSearchQuery,
-    storeSelectedAddress,
-    setIsNewAddressSearch,
-  ]);
+    },
+    [addAddress, showError]
+  );
 
-  // 주소 선택 핸들러
-  const handleAddressSelect = (address: UserAddress) => {
-    selectAddress(address);
-  };
+  // ===== 주소 저장 관련 함수들 =====
 
-  // 주소 검색 핸들러
-  const handleAddressSearch = (searchData: {
-    longitude: string;
-    latitude: string;
-    legalDistrictCode?: string;
-    lotAddress?: string;
-    roadAddress?: string;
-    address: string;
-  }) => {
-    // 새로운 주소 검색 시 실거래가 데이터 초기화
-    if (!isLoading) {
-      clearTransactionData();
-    }
-
-    // 새로운 주소를 휘발성 주소로 추가
-    const newAddress = createUserAddressFromSearch(searchData);
-    addVolatileAddress(newAddress);
-  };
-
-  // 주소 저장 핸들러
-  const handleAddressSave = async (addressData: Omit<UserAddress, 'id'>) => {
-    try {
-      await addAddress(addressData);
-    } catch (error) {
-      console.error('주소 저장 실패:', error);
-    }
-  };
-
-  // 주소 수동 저장 함수 (DB에 실제 저장) - 호 데이터 사용
-  const saveAddressToUser = async (dongValue?: string, hoValue?: string) => {
-    if (!storeSelectedAddress) {
-      showError('저장할 주소가 선택되지 않았습니다.');
-      return;
-    }
-
-    // 전달받은 값 우선 사용, 없으면 store의 상태값 사용
-    const currentDong = dongValue || dong || '';
-    const currentHo = hoValue || ho || '';
-
-    if (!currentDong) {
-      showError('동을 입력해주세요.');
-      return;
-    }
-
-    try {
-      // 호는 옵션으로 처리 (저장 시에만 사용)
-      const hoPart = currentHo ? ` ${currentHo}호` : '';
-
-      const completeAddress = `${storeSelectedAddress.roadAddress} ${currentDong}동${hoPart}`;
-
-      // 중복 주소 체크
-      const isDuplicate = storeUserAddresses.some(
-        (address) =>
-          address.id !== storeSelectedAddress.id &&
-          address.completeAddress === completeAddress
+  /**
+   * 휘발성 주소를 DB에 저장합니다.
+   */
+  const saveVolatileAddressToDB = useCallback(
+    async (address: UserAddress, dong: string, ho: string) => {
+      const completeAddress = buildCompleteAddress(
+        address.roadAddress,
+        dong,
+        ho
       );
 
-      if (isDuplicate) {
-        showError('이미 저장된 주소입니다.');
+      const addressData = {
+        nickname: `${address.nickname} ${dong}동${ho}호`,
+        x: address.x,
+        y: address.y,
+        isPrimary: false,
+        isSelected: true,
+        legalDistrictCode: address.legalDistrictCode || '',
+        dong,
+        ho,
+        lotAddress: address.lotAddress,
+        roadAddress: address.roadAddress,
+        completeAddress,
+      };
+
+      await addAddress(addressData);
+      deleteVolatileAddress(address.id);
+      setIsNewAddressSearch(false);
+
+      // 페이지 이동 허용
+      sessionStorage.setItem(STORAGE_KEYS.ALLOW_NAVIGATION, 'true');
+
+      // 쿼리 무효화
+      await queryClient.invalidateQueries({
+        queryKey: ['userAddresses'],
+      });
+
+      showSuccess(SUCCESS_MESSAGES.ADDRESS_SAVED);
+    },
+    [
+      addAddress,
+      deleteVolatileAddress,
+      setIsNewAddressSearch,
+      queryClient,
+      showSuccess,
+    ]
+  );
+
+  /**
+   * 기존 주소의 동/호 정보를 업데이트합니다.
+   */
+  const updateExistingAddress = useCallback(
+    (address: UserAddress, dong: string, ho: string) => {
+      const completeAddress = buildCompleteAddress(
+        address.roadAddress,
+        dong,
+        ho
+      );
+
+      const updatedAddress = {
+        ...address,
+        completeAddress,
+        dong,
+        ho,
+      };
+
+      selectAddress(updatedAddress);
+
+      // 페이지 이동 허용
+      sessionStorage.setItem(STORAGE_KEYS.ALLOW_NAVIGATION, 'true');
+
+      showSuccess(SUCCESS_MESSAGES.ADDRESS_SAVED);
+    },
+    [selectAddress, showSuccess]
+  );
+
+  /**
+   * 주소를 사용자 DB에 저장합니다.
+   */
+  const saveAddressToUser = useCallback(
+    async (dongValue?: string, hoValue?: string) => {
+      if (!storeSelectedAddress) {
+        showError(ERROR_MESSAGES.NO_ADDRESS_SELECTED);
         return;
       }
 
-      // 휘발성 주소인 경우 DB에 실제 저장
-      if (storeSelectedAddress.isVolatile) {
-        const addressData = {
-          nickname: `${storeSelectedAddress.nickname} ${currentDong}동${currentHo}호`,
-          x: storeSelectedAddress.x,
-          y: storeSelectedAddress.y,
-          isPrimary: false,
-          isSelected: true, // 새로 추가된 주소를 선택된 주소로 설정
-          legalDistrictCode: storeSelectedAddress.legalDistrictCode || '',
-          dong: currentDong,
-          ho: currentHo, // 호 데이터는 저장 시에만 사용
-          lotAddress: storeSelectedAddress.lotAddress,
-          roadAddress: storeSelectedAddress.roadAddress,
-          completeAddress,
-        };
+      // 전달받은 값 우선 사용, 없으면 store의 상태값 사용
+      const currentDong = dongValue || dong || '';
+      const currentHo = hoValue || ho || '';
 
-        // DB에 저장
-        await addAddress(addressData);
-
-        // 휘발성 주소 삭제
-        deleteVolatileAddress(storeSelectedAddress.id);
-
-        // 쿼리 무효화하여 최신 데이터 가져오기 (새로 등록된 주소가 선택된 주소로 상태 변경)
-        await queryClient.invalidateQueries({
-          queryKey: ['userAddresses'],
-        });
-
-        showSuccess('주소가 성공적으로 저장되었습니다!');
-      } else {
-        // 기존 주소의 동/호 정보만 업데이트하는 경우
-        // TODO: 기존 주소 업데이트 API 호출 필요
-        const updatedAddress = {
-          ...storeSelectedAddress,
-          completeAddress,
-          dong: currentDong,
-          ho: currentHo, // 호 데이터는 저장 시에만 사용
-        };
-
-        selectAddress(updatedAddress);
-        showSuccess('주소가 성공적으로 저장되었습니다!');
+      if (!currentDong) {
+        showError(ERROR_MESSAGES.DONG_REQUIRED);
+        return;
       }
-    } catch (error) {
-      console.error('주소 저장 실패:', error);
-      showError('주소 저장 중 오류가 발생했습니다.');
-    }
-  };
 
-  // 지도 이동 전용 (실거래가 데이터 없이) - 호 데이터 사용하지 않음
-  const handleMoveToAddressOnly = async (currentDong?: string) => {
-    // 전달받은 동 값 사용 (없으면 store의 상태값 사용)
-    const dongValue = currentDong || dong || storeSelectedAddress?.dong || '';
+      try {
+        const completeAddress = buildCompleteAddress(
+          storeSelectedAddress.roadAddress,
+          currentDong,
+          currentHo
+        );
 
-    if (!dongValue) {
-      showError('동을 입력해주세요.');
+        // 중복 주소 체크
+        if (
+          checkDuplicateAddress(
+            storeUserAddresses,
+            storeSelectedAddress,
+            completeAddress
+          )
+        ) {
+          showError(ERROR_MESSAGES.DUPLICATE_ADDRESS);
+          return;
+        }
 
-      return;
-    }
-
-    if (!roadAddress) {
-      showError('상세 주소를 입력해주세요.');
-      return;
-    }
-
-    setAdjustBounds(false); // 자동 조정 비활성화
-
-    try {
-      // API 호출로 좌표 가져오기 (호는 사용하지 않음)
-      const completeAddress = `${roadAddress} ${dongValue}동`;
-      const searchData = await placesApi.searchByKeyword(completeAddress);
-
-      if (searchData && searchData.length > 0) {
-        const location = {
-          lat: parseFloat(searchData[0].latitude),
-          lng: parseFloat(searchData[0].longitude),
-        };
-        setMapCenter(location);
-        setSearchLocationMarker(location);
-      } else {
-        showError('해당 주소를 찾을 수 없습니다.');
+        if (storeSelectedAddress.isVolatile) {
+          await saveVolatileAddressToDB(
+            storeSelectedAddress,
+            currentDong,
+            currentHo
+          );
+        } else {
+          updateExistingAddress(storeSelectedAddress, currentDong, currentHo);
+        }
+      } catch (error) {
+        console.error('주소 저장 실패:', error);
+        showError(ERROR_MESSAGES.SAVE_FAILED);
       }
-    } catch (error) {
-      console.error('키워드 검색 실패 (지도 이동 전용):', error);
-      showError('키워드 검색 중 오류가 발생했습니다.');
-    }
-  };
+    },
+    [
+      storeSelectedAddress,
+      dong,
+      ho,
+      showError,
+      storeUserAddresses,
+      saveVolatileAddressToDB,
+      updateExistingAddress,
+    ]
+  );
 
-  // 주소 변경 시 실거래가 데이터도 함께 가져오기
-  const handleAddressChangeWithTransaction = (address: UserAddress) => {
-    // 주소 선택 (상태 업데이트는 useEffect에서 처리)
-    selectAddress(address);
-  };
+  // ===== 지도 이동 관련 함수들 =====
 
+  /**
+   * 새 주소로 지도 이동을 시도합니다.
+   */
+  const moveToNewAddressWithValidation = useCallback(
+    async (dongValue: string): Promise<MapLocation | null> => {
+      if (!roadAddress) {
+        showError(ERROR_MESSAGES.ROAD_ADDRESS_REQUIRED);
+        return null;
+      }
+
+      return await moveToNewAddress(
+        roadAddress,
+        dongValue,
+        storeSelectedAddress?.lotAddress
+      );
+    },
+    [roadAddress, storeSelectedAddress, showError]
+  );
+
+  /**
+   * 지도 이동 전용 (실거래가 데이터 없이)
+   */
+  const handleMoveToAddressOnly = useCallback(
+    async (currentDong?: string) => {
+      const dongValue = currentDong || dong || storeSelectedAddress?.dong || '';
+
+      if (!dongValue) {
+        showError(ERROR_MESSAGES.DONG_REQUIRED);
+        return;
+      }
+
+      setAdjustBounds(false);
+
+      console.log('storeSelectedAddress', storeSelectedAddress);
+
+      try {
+        let location: MapLocation | null = null;
+
+        if (storeSelectedAddress && !storeSelectedAddress.isVolatile) {
+          // DB 주소인 경우
+          location = await moveToDBAddress(storeSelectedAddress, dongValue);
+        } else {
+          // 새 주소인 경우
+          location = await moveToNewAddressWithValidation(dongValue);
+        }
+
+        if (location) {
+          setMapCenter(location);
+          setSearchLocationMarker(location);
+        } else {
+          showError(ERROR_MESSAGES.ADDRESS_NOT_FOUND);
+        }
+      } catch (error) {
+        console.error('지도 이동 실패:', error);
+        showError(ERROR_MESSAGES.SEARCH_FAILED);
+      }
+    },
+    [
+      dong,
+      storeSelectedAddress,
+      showError,
+      setAdjustBounds,
+      setMapCenter,
+      setSearchLocationMarker,
+      moveToNewAddressWithValidation,
+    ]
+  );
+
+  // ===== 기타 함수들 =====
+
+  /**
+   * 주소 변경 핸들러
+   */
+  const handleAddressChange = useCallback(
+    (address: UserAddress) => {
+      selectAddress(address);
+    },
+    [selectAddress]
+  );
+
+  // ===== 반환 객체 =====
   return {
     // 상태
     selectedAddress: storeSelectedAddress,
     userAddresses: storeUserAddresses,
     roadAddress,
     dong,
-    ho, // 호는 저장 시에만 사용하지만 상태는 유지
+    ho,
     searchQuery,
     savedLawdCode,
     isNewAddressSearch,
@@ -290,9 +387,9 @@ export const useAddressManagement = () => {
     handleAddressSave,
     saveAddressToUser,
     handleMoveToAddressOnly,
-    handleAddressChangeWithTransaction,
+    handleAddressChange,
 
-    // 기타
+    // Store 액션들
     selectAddress,
     addAddress,
     deleteAddress,

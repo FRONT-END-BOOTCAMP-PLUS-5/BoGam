@@ -1,32 +1,29 @@
 export const styles = {
-  // 컨테이너
-  container: 'relative max-w-4xl mx-auto space-y-6 h-full flex flex-col p-4',
+  // 주소 추가 및 지도 영역
+  addressMapContainer:
+    'bg-brand-white rounded-lg border border-brand-light-gray shadow-md p-6 max-w-md mx-auto w-full',
 
-  // 하단 섹션
-  bottomSection:
-    'bg-brand-white rounded-lg shadow-lg p-6 flex-1 min-h-0',
+  // 주소 정보 헤더
+  addressInfoHeader: 'mb-5',
 
-  // 지도 헤더
-  mapHeader: 'flex items-center gap-2 mb-4',
-  mapIcon: 'text-brand',
-  mapTitle: 'text-lg font-semibold text-brand-black',
+  // 주소 정보 제목과 버튼 컨테이너
+  addressInfoTitleContainer: 'flex justify-between items-center',
 
-  // 위치 상태 표시
-  locationStatus: 'ml-auto text-xs',
-  locationLoading: 'text-brand-blue',
-  locationError: 'text-brand-error flex flex-row items-center gap-1',
-  locationGPS: 'text-brand-green flex flex-row items-center gap-1',
-  locationUser: 'text-brand-gold flex flex-row items-center gap-1',
+  // 주소 정보 제목
+  addressInfoTitle: 'text-base font-semibold text-brand-black',
 
-  // 검색 가이드
-  searchGuide:
-    'text-brand-dark-gray mb-3 text-sm',
+  // 주소 추가 버튼
+  addressAddButton: '!h-8 !w-20 !text-xs !mt-0',
 
-  // 지도 컨테이너
-  mapContainer:
-    'h-80 rounded-lg overflow-hidden border border-brand-light-gray',
-  
-  //  버튼 영역
-  buttonArea: 'h-12 -mt-6',
+  // 위치 상태 표시 영역
+  locationStatusContainer: 'mt-2',
+
+  // 위치 상태 텍스트 (로딩)
+  locationStatusLoading: 'text-brand-dark-gray text-sm',
+
+  // 위치 상태 텍스트 (에러)
+  locationStatusError: 'text-brand-error text-sm',
+
+  // 위치 상태 아이콘
+  locationStatusIcon: 'inline-block w-4 h-4 mr-1',
 } as const;
-

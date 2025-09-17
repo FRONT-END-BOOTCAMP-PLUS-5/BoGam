@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import Button from '@/(anon)/_components/common/button/Button';
-import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
 import {
@@ -14,14 +13,36 @@ import {
 
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
-  const { selectedAddress, dong, ho, setDong, setHo } = useUserAddressStore();
-
-  // 입력값을 직접 제어하는 상태
-  const [inputValue, setInputValue] = useState('');
+  const { selectedAddress } = useUserAddressStore();
 
   // useMainPageModule에서 필요한 함수들만 가져오기
-  const { handleMoveToAddressOnly, saveAddressToUser, isNewAddressSearch } =
-    useMainPageModule();
+  const {
+    handleMoveToAddressOnly,
+    saveAddressToUser,
+    isNewAddressSearch,
+    // 새로운 주소 검색 시에는 useMainPageState의 dong, ho 사용
+    dong: mainPageDong,
+    ho: mainPageHo,
+    setDong: setMainPageDong,
+    setHo: setMainPageHo,
+  } = useMainPageModule();
+
+  // input ref를 사용하여 직접 제어
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // 새로운 주소 검색 시에는 mainPageState의 dong, ho 사용, 아니면 store의 dong, ho 사용
+  const {
+    dong: storeDong,
+    ho: storeHo,
+    setDong: setStoreDong,
+    setHo: setStoreHo,
+  } = useUserAddressStore();
+
+  // 현재 사용할 dong, ho 결정
+  const currentDong = isNewAddressSearch ? mainPageDong : storeDong;
+  const currentHo = isNewAddressSearch ? mainPageHo : storeHo;
+  const setCurrentDong = isNewAddressSearch ? setMainPageDong : setStoreDong;
+  const setCurrentHo = isNewAddressSearch ? setMainPageHo : setStoreHo;
 
   // 주소 표시 로직
   const displaySearchQuery = selectedAddress?.completeAddress || '';
@@ -64,30 +85,37 @@ export const AddressConfirmationTab: React.FC = () => {
   // 동/호가 파싱되면 자동으로 입력 필드에 설정
   useEffect(() => {
     if (parsedAddress.dong) {
-      setDong(parsedAddress.dong);
+      setCurrentDong(parsedAddress.dong);
     }
     if (parsedAddress.ho) {
-      setHo(parsedAddress.ho);
+      setCurrentHo(parsedAddress.ho);
     }
   }, [
     displaySearchQuery,
     parsedAddress.dong,
     parsedAddress.ho,
-    setDong,
-    setHo,
+    setCurrentDong,
+    setCurrentHo,
   ]);
-
-  // 동/호 값이 변경되면 inputValue 업데이트
-  useEffect(() => {
-    setInputValue(formatDongHoDisplay(dong || '', ho || ''));
-  }, [dong, ho]);
 
   // 새로 주소가 추가되었을 때 동/호 input 비우기
   useEffect(() => {
-    if (isNewAddressSearch) {
-      setInputValue('');
+    if (isNewAddressSearch && inputRef.current) {
+      inputRef.current.value = '';
     }
   }, [isNewAddressSearch]);
+
+  // 주소 파싱 결과가 있을 때 input에 반영
+  useEffect(() => {
+    if (parsedAddress.dong || parsedAddress.ho) {
+      if (inputRef.current) {
+        inputRef.current.value = formatDongHoDisplay(
+          parsedAddress.dong,
+          parsedAddress.ho
+        );
+      }
+    }
+  }, [parsedAddress.dong, parsedAddress.ho]);
 
   return (
     <div className={styles.container}>
@@ -108,9 +136,9 @@ export const AddressConfirmationTab: React.FC = () => {
         </div>
         <Button
           onClick={() => {
-            saveAddressToUser(dong, ho);
+            saveAddressToUser(currentDong, currentHo);
           }}
-          disabled={!dong.trim() || !ho.trim()}
+          disabled={!currentDong.trim() || !currentHo.trim()}
           variant='primary'
           className={'!mt-0 !w-24 !h-8 !text-xs !px-0 !py-0'}
         >
@@ -121,16 +149,14 @@ export const AddressConfirmationTab: React.FC = () => {
       {/* 세 번째 줄: 동-호 입력 필드 */}
       <div className={styles.dongHoInputs}>
         <div className={styles.dongHoContainer}>
-          <TextInput
+          <input
+            ref={inputRef}
             placeholder='101-1102, 동-호 형태로'
-            value={inputValue}
             onChange={(e) => {
               const newValue = e.target.value;
-              setInputValue(newValue);
-
               const result = parseDongHoInputOnly(newValue);
-              setDong(result.dong);
-              setHo(result.ho);
+              setCurrentDong(result.dong);
+              setCurrentHo(result.ho);
             }}
             inputMode='text'
             type='text'
@@ -145,9 +171,9 @@ export const AddressConfirmationTab: React.FC = () => {
           <div className={styles.mapButtonContainer}>
             <Button
               onClick={() => {
-                handleMoveToAddressOnly(dong);
+                handleMoveToAddressOnly(currentDong);
               }}
-              disabled={!dong.trim()}
+              disabled={!currentDong.trim()}
               variant='primary'
               className={styles.confirmButton}
             >
