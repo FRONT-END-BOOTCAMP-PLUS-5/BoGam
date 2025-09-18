@@ -13,7 +13,7 @@ export const useCheckBrokerCopyExists = (
     queryKey: ['broker', 'exists', userAddressNickname],
     queryFn: () => brokerApi.checkExists(userAddressNickname!),
     enabled: !!userAddressNickname,
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 0,
   });
 };
 
@@ -23,7 +23,7 @@ export const useGetBrokerCopy = (userAddressNickname: string | null) => {
     queryKey: ['broker', 'copy', userAddressNickname],
     queryFn: () => brokerApi.getBrokerCopy(userAddressNickname!),
     enabled: !!userAddressNickname,
-    staleTime: 5 * 60 * 1000, // 5분
+    staleTime: 0,
   });
 };
 

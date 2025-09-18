@@ -122,7 +122,7 @@ export const useBrokerRiskAssessment = (
     // 2. 사업자 상호 체크리스트 항목
     const hasBusinessName = !!brokerData.bsnmCmpnm;
     checklistItems.push({
-      id: 'business-name',
+      id: '사업자 상호',
       label: '사업자 상호',
       checked: false, // 기본 상태는 mismatch
       description: '사업자 상호 정보가 등록되어 있는지 확인',
@@ -158,7 +158,7 @@ export const useBrokerRiskAssessment = (
     // 4. 자격증 번호 체크리스트 항목
     const hasLicenseNumber = !!brokerData.crqfcNo;
     checklistItems.push({
-      id: 'license-number',
+      id: '자격증 번호',
       label: '자격증 번호',
       checked: false, // 기본 상태는 mismatch
       description: '중개업자 자격증번호가 등록되어 있는지 확인',

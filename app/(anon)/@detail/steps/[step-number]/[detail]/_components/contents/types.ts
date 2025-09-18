@@ -123,6 +123,16 @@ export interface TaxCertContainerSection extends BaseContentSection {
   type: 'TaxCertContainer';
 }
 
+// RealEstateContainer 전용 인터페이스
+export interface RealEstateContainerSection extends BaseContentSection {
+  type: 'RealEstateContainer';
+}
+
+// JeonseGuarantee 전용 인터페이스
+export interface JeonseGuaranteeSection extends BaseContentSection {
+  type: 'JeonseGuarantee';
+}
+
 // 모든 섹션 타입을 유니온으로 정의
 export type ContentSection =
   | TextOnlySection
@@ -132,7 +142,9 @@ export type ContentSection =
   | DataGridSection
   | CheckListGroupSection
   | TaxCertIntroSection
-  | TaxCertContainerSection;
+  | TaxCertContainerSection
+  | RealEstateContainerSection
+  | JeonseGuaranteeSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {
@@ -150,6 +162,9 @@ export interface StepContentData {
     | 'List'
     | 'DataGrid'
     | 'CheckListGroup'
+    | 'RealEstateContainer'
+    | 'BrokerContainer'
+    | 'TransactionSearchComponent'
     | 'CombinedContent';
   title?: string;
   columnTitles?: string[];

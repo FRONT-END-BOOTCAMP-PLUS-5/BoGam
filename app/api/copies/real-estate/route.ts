@@ -35,10 +35,6 @@ export async function POST(request: NextRequest) {
 
     const response = await usecase.getRealEstateCopy({ userAddressId });
 
-    if (!response.success) {
-      return NextResponse.json(response, { status: 404 });
-    }
-
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error('❌ 등기부등본 조회 API 오류:', error);

@@ -103,7 +103,7 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
       ? stepResultData.jsonDetails
       : undefined;
 
-  // DB 저장 (useCallback으로 메모이제이션) - 전체 질문 저장
+  // DB 저장 (useCallback으로 메모이제이션) - 기존 데이터 보존하며 현재 질문만 업데이트
   const saveToDatabase = useCallback(
     async (answers: { [key: number]: string }) => {
       if (
@@ -116,39 +116,22 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
         return;
       }
 
-      //default는 unchecked, 예는 match, 아니오는 mismatch
-      const jsonDetails: Record<string, 'match' | 'mismatch' | 'unchecked'> =
-        {};
+      // 기존 jsonDetails를 기반으로 시작 (열람 등 다른 데이터 보존)
+      const updatedJsonDetails: Record<string, 'match' | 'mismatch' | 'unchecked'> = {
+        ...(jsonDetails || {})
+      };
 
-      // 전체 JSON 데이터의 모든 질문에 대해 상태 설정
-      contentData.data.forEach((pageData) => {
-        pageData.forEach((section) => {
-          if (section.title) {
-            // 현재 페이지의 답변인지 확인
-            const isCurrentPageQuestion = data.some(
-              (currentSection, currentIndex) =>
-                currentSection.title === section.title && answers[currentIndex]
-            );
-
-            if (isCurrentPageQuestion) {
-              // 현재 페이지의 답변 사용
-              const currentIndex = data.findIndex(
-                (s) => s.title === section.title
-              );
-              const answer = answers[currentIndex];
-              jsonDetails[section.title] =
-                answer === 'yes'
-                  ? 'match'
-                  : answer === 'no'
-                  ? 'mismatch'
-                  : 'unchecked';
-            } else {
-              // 기존 저장된 답변 유지 (없으면 unchecked)
-              const existingAnswer = jsonDetails?.[section.title];
-              jsonDetails[section.title] = existingAnswer || 'unchecked';
-            }
-          }
-        });
+      // 현재 페이지의 질문들만 업데이트
+      data.forEach((section, index) => {
+        if (section.title && answers[index]) {
+          const answer = answers[index];
+          updatedJsonDetails[section.title] =
+            answer === 'yes'
+              ? 'match'
+              : answer === 'no'
+              ? 'mismatch'
+              : 'unchecked';
+        }
       });
 
       try {
@@ -157,11 +140,11 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
           userAddressNickname: selectedAddress.nickname,
           stepNumber: stepNumber,
           detail: detail,
-          jsonDetails,
+          jsonDetails: updatedJsonDetails,
         });
 
         // 동적으로 전체 질문 수 계산하여 로그 출력
-        const totalQuestions = Object.keys(jsonDetails).length;
+        const totalQuestions = Object.keys(updatedJsonDetails).length;
       } catch (error) {
         console.error('❌ 저장 실패:', error);
       }
@@ -172,7 +155,7 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
       detail,
       data,
       contentData,
-      stepData,
+      jsonDetails,
       upsertStepResult,
     ]
   );
@@ -458,10 +441,6 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
               {hasMismatch ? (
                 <div className={styles.errorMessage}>
                   {contentData.errorMessage || ''}
-                </div>
-              ) : (
-                <div className={styles.successMessage}>
-                  {contentData.successMessage || ''}
                   {contentData.links && contentData.links.length > 0 && (
                     <div className={styles.linksContainer}>
                       {contentData.links.map((link, index: number) => (
@@ -478,6 +457,10 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
                       ))}
                     </div>
                   )}
+                </div>
+              ) : (
+                <div className={styles.successMessage}>
+                  {contentData.successMessage || ''}
                 </div>
               )}
             </div>

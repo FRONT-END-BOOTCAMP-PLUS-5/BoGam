@@ -33,16 +33,6 @@ export async function GET(request: NextRequest) {
 
     const result = await usecase.getTaxCertCopy({ userAddressId });
 
-    if (!result) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: '해당 사용자 주소의 납세증명서를 찾을 수 없습니다.',
-        },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error('❌ 납세증명서 조회 API 오류:', error);

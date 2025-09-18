@@ -15,7 +15,7 @@ export const useTaxCertOutput = ({
   const { selectedAddress } = useUserAddressStore();
 
   // DB에서 데이터 조회 (response prop이 없을 때만)
-  const { data: dbResponse, isLoading: dbLoading } = useGetTaxCertCopy(
+  const { data: dbResponse, isLoading: dbLoading, refetch: refetchTaxCertCopy } = useGetTaxCertCopy(
     response ? null : selectedAddress?.nickname || null
   );
 
@@ -27,20 +27,26 @@ export const useTaxCertOutput = ({
       return response;
     }
 
-    if (
-      (dbResponse as unknown as { success: boolean })?.success &&
-      (dbResponse as unknown as { data: { taxCertJson: string } })?.data
-    ) {
-      return {
-        success: true,
-        message: '성공',
-        userAddressNickname: selectedAddress?.nickname || '',
-        data: {
-          taxCertJson: (
-            dbResponse as unknown as { data: { taxCertJson: string } }
-          ).data.taxCertJson,
-        },
-      } as TaxCertApiResponse;
+    if (dbResponse) {
+      const response = dbResponse as unknown as { success: boolean; data?: { taxCertJson: string }; message?: string };
+      if (response.success && response.data) {
+        return {
+          success: true,
+          message: '성공',
+          userAddressNickname: selectedAddress?.nickname || '',
+          data: {
+            data: response.data.taxCertJson,
+          },
+        } as TaxCertApiResponse;
+      } else {
+        // success: false인 경우도 처리
+        return {
+          success: false,
+          message: response.message || '데이터를 찾을 수 없습니다.',
+          userAddressNickname: selectedAddress?.nickname || '',
+          data: undefined,
+        } as TaxCertApiResponse;
+      }
     }
 
     return null;
@@ -74,5 +80,6 @@ export const useTaxCertOutput = ({
     riskAssessment,
     loading: totalLoading,
     hasData,
+    refetchTaxCertCopy,
   };
 };
