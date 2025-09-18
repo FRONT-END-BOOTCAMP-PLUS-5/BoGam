@@ -2,8 +2,8 @@
 
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { StepResultData } from '@libs/api_front/stepResultQueries.api';
-import GuideResultSummary from '../../../mypage/_components/GuideResultSummary';
-import GuideResultView from '../../../mypage/_components/GuideResultView';
+import GuideResultSummary from '@/(anon)/main/_components/guideResults/guideResultSummary/GuideResultSummary';
+import GuideResultView from '@/(anon)/main/_components/guideResults/guideResultView/GuideResultView';
 import { UserAddress } from '@/(anon)/main/_components/types/mainPage.types';
 
 // 가이드 요약 데이터 타입 정의
@@ -30,10 +30,10 @@ interface GuideResultsContainerProps {
   isNewAddressSearch: boolean;
 }
 
-export const GuideResultsContainer: React.FC<GuideResultsContainerProps> = ({
+export const GuideResultsContainer = ({
   selectedAddress,
   isNewAddressSearch,
-}) => {
+}: GuideResultsContainerProps) => {
   // 새로 주소를 등록한 경우에는 step_result 데이터가 없기 때문에 fetch를 진행하지 않음
   const { data: stepResultsData } = useGetStepResult(
     {
