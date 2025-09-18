@@ -1,19 +1,16 @@
 export const styles = {
-  // 간격 클래스 매핑
-  spacing: {
-    sm: 'space-y-4',
-    md: 'space-y-6',
-    lg: 'space-y-8'
-  },
-  
-  // 구분선 스타일
-  divider: 'border-t border-brand-light-gray pt-6',
-  
-  // 섹션 컨테이너
-  sectionContainer: 'w-full',
-  
-  // 섹션 제목 영역
-  sectionHeader: 'mb-4',
-  sectionTitle: 'text-lg font-semibold mb-2',
-  sectionSubtitle: 'text-sm text-brand-dark-gray'
-};
+  // 메인 콘텐츠
+  mainContent: 'bg-brand-white p-6 h-full relative overflow-y-auto',
+
+  // 스크롤바 커스텀 스타일
+  scrollableContent:
+    'h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar relative',
+
+  // Swiper 컨테이너
+  swiperContainer: 'h-[calc(100%-12rem)] overflow-y-auto custom-scrollbar',
+
+  // 섹션 헤더 (CombinedContent용)
+  sectionHeader: 'p-5 mb-6',
+  sectionTitle: 'text-lg font-bold mb-2 text-brand-black',
+  sectionSubtitle: 'text-base font-medium mb-2 text-brand-dark-gray',
+} as const;

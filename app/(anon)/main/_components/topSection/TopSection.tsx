@@ -2,12 +2,13 @@ import React from 'react';
 import { styles } from './TopSection.styles';
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useUserStore } from '@libs/stores/userStore';
 import { UserRound } from 'lucide-react';
 
 export const TopSection = () => {
-  const { userAddresses, handleAddressChangeWithTransaction } =
-    useMainPageModule();
+  const { userAddresses } = useMainPageModule();
+  const { selectAddress } = useUserAddressStore();
   const { nickname } = useUserStore();
 
   // 주소 선택 핸들러
@@ -20,7 +21,7 @@ export const TopSection = () => {
 
     const selectedAddress = userAddresses.find((addr) => addr.id === id);
     if (selectedAddress) {
-      handleAddressChangeWithTransaction(selectedAddress);
+      selectAddress(selectedAddress);
     } else {
       console.error('📍 TopSection - 주소를 찾을 수 없음:', id, userAddresses);
     }

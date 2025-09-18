@@ -26,6 +26,12 @@ export const useLocationManager = () => {
   useEffect(() => {
     // 로그인되어 있고 사용자 주소가 있는 경우
     if (isAuthenticated && userAddresses.length > 0) {
+      // 현재 선택된 주소가 휘발성 주소라면 위치 설정 스킵
+      const currentState = useUserAddressStore.getState();
+      if (currentState.selectedAddress?.isVolatile) {
+        return;
+      }
+
       // DB에서 isSelected=true인 주소를 우선 선택, 없으면 대표 주소, 그것도 없으면 첫 번째 주소
       const targetAddress =
         userAddresses.find((addr) => addr.isSelected) ||
@@ -42,12 +48,7 @@ export const useLocationManager = () => {
         selectAddress(targetAddress);
       }
     }
-  }, [
-    isAuthenticated,
-    userAddresses.length,
-    userAddresses.find((addr) => addr.isSelected)?.id, // isSelected 주소 ID 변경 감지
-    userAddresses.find((addr) => addr.isPrimary)?.id, // 대표 주소 ID 변경 감지
-  ]);
+  }, [isAuthenticated, userAddresses, selectAddress]);
 
   return {
     // GPS 관련

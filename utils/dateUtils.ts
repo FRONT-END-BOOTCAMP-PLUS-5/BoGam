@@ -88,3 +88,17 @@ export function formatDealYearMonth(dealYmd: string): string {
   const month = parseInt(dealYmd.substring(4, 6));
   return `${year}년 ${month}월`;
 }
+
+/**
+ * 날짜 문자열을 한국어 형식으로 포맷팅
+ * @param dateString 날짜 문자열 (ISO 형식 또는 기타 날짜 형식)
+ * @returns 한국어 형식 날짜 (예: "2024.04.15")
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+}

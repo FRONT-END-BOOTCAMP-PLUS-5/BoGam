@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRootStep } from '@libs/stores/rootStepStore';
 import SignupForm from '@/(anon)/signup/_components/SignupForm';
@@ -9,6 +10,11 @@ import { ChevronLeft } from 'lucide-react';
 export default function Signup() {
   const router = useRouter();
   const setStep = useRootStep((state) => state.setStep);
+
+  // 페이지 타이틀 설정
+  useEffect(() => {
+    document.title = 'Bogam';
+  }, []);
 
   const handleBack = () => {
     setStep('auth');

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import styles from './List.styles';
 
 interface AccordionItem {
@@ -64,6 +65,17 @@ const List = ({ title, data }: ListProps) => {
   // 옵션 데이터가 있는지 확인
   const hasOptions = typeof data === 'object' && !Array.isArray(data) && Object.keys(data as Record<string, AccordionItem[]>).length > 0;
 
+  // 드롭다운 옵션 생성
+  const dropdownOptions = hasOptions 
+    ? [
+        { value: '전체', label: '전체' },
+        ...Object.keys(data as Record<string, AccordionItem[]>).map((option) => ({
+          value: option,
+          label: option,
+        }))
+      ]
+    : [];
+
   return (
     <div className={styles.container}>
       {title && (
@@ -75,23 +87,17 @@ const List = ({ title, data }: ListProps) => {
       {/* 옵션 선택 드롭다운 */}
       {hasOptions && (
         <div className={styles.optionSelector}>
-          <label className={styles.optionLabel}>서류 종류 선택:</label>
-          <select
+          <DropDown
+            options={dropdownOptions}
             value={selectedOption}
-            onChange={(e) => setSelectedOption(e.target.value)}
-            className={styles.optionSelect}
-          >
-            <option value="전체">전체</option>
-            {Object.keys(data as Record<string, AccordionItem[]>).map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedOption}
+            label="서류 종류 선택:"
+            className="w-full"
+          />
         </div>
       )}
 
-      <div className='max-w-2xl mx-auto'>
+      <div className={styles.maxWidthContainer}>
         <div className={styles.content}>
           {currentData.map((item, index) => {
             // 구분 영역인지 확인 (content가 비어있는 경우)
@@ -100,32 +106,32 @@ const List = ({ title, data }: ListProps) => {
             if (isSectionHeader) {
               // 구분 영역 렌더링 (구분선 형태)
               return (
-                <div key={index} className='mb-4 mt-6'>
+                <div key={index} className={styles.sectionHeader}>
                   <div className={styles.sectionDivider}>
                     <span className={styles.sectionDividerText}>
                       {item.title}
                     </span>
-                    <div className='flex-1 border-t border-brand-light-gray'></div>
+                    <div className={styles.sectionDividerLine}></div>
                   </div>
                 </div>
               );
             } else {
               // 일반 아코디언 항목 렌더링
               return (
-                <div key={index} className='mb-1'>
+                <div key={index} className={styles.accordionItem}>
                   <div className={styles.accordionContainer}>
                     {/* 아코디언 헤더 */}
                     <button
                       onClick={() => toggleItem(index)}
                       className={`${styles.accordionButton} ${
-                        openItems.includes(index) ? 'bg-brand-light-gray' : ''
+                        openItems.includes(index) ? styles.accordionButtonActive : ''
                       }`}
                     >
                       <span className={styles.accordionText}>{item.title}</span>
                       <ChevronDown
                         size={16}
                         className={`${styles.accordionArrow} ${
-                          openItems.includes(index) ? 'rotate-180' : ''
+                          openItems.includes(index) ? styles.accordionArrowRotated : ''
                         }`}
                       />
                     </button>

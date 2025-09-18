@@ -3,8 +3,6 @@
 import React from 'react';
 import { RealEstateInput } from '@/(anon)/_components/common/realEstate/realEstateInput/RealEstateInput';
 import { RealEstateOutput } from '@/(anon)/_components/common/realEstate/realEstateOutput/RealEstateOutput';
-import { RealEstateTwoWayContent } from '@/(anon)/_components/common/realEstate/realEstateTwoWayContent/RealEstateTwoWayContent';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useRealEstateContainer } from '@/hooks/useRealEstateContainer';
 
@@ -59,32 +57,13 @@ export const RealEstateContainer = () => {
   };
 
   return (
-    <>
-      <DataContainer
-        title='부동산등기부등본 조회'
-        inputComponent={inputComponent}
-        outputComponent={outputComponent}
-        checkExistsQuery={checkExistsQuery}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
-
-      {/* 2-way 인증 모달 */}
-      <ConfirmModal
-        isOpen={showTwoWayModal}
-        title='부동산 목록에서 선택하세요'
-        onCancel={handleCloseTwoWayModal}
-        cancelText='취소'
-        icon='info'
-        isLoading={false}
-        onConfirm={undefined}
-      >
-        <RealEstateTwoWayContent
-          resAddrList={response?.resAddrList || []}
-          selectedAddress={twoWaySelectedAddress}
-          onAddressSelect={handleAddressSelect}
-        />
-      </ConfirmModal>
-    </>
+    <DataContainer
+      title='부동산등기부등본 조회'
+      inputComponent={inputComponent}
+      outputComponent={outputComponent}
+      checkExistsQuery={checkExistsQuery}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    />
   );
 };

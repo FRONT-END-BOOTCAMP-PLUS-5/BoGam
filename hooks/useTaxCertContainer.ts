@@ -82,16 +82,16 @@ export const useTaxCertContainer = ({
     }
   }, [existsData, isDataLoading]);
 
-  useEffect(() => {
-    const existsDataTyped = existsData as { success: boolean; exists: boolean };
-    if (
-      activeTab === 'output' &&
-      existsDataTyped?.success &&
-      !existsDataTyped.exists
-    ) {
-      setActiveTab('input');
-    }
-  }, [activeTab, existsData]);
+  // useEffect(() => {
+  //   const existsDataTyped = existsData as { success: boolean; exists: boolean };
+  //   if (
+  //     activeTab === 'output' &&
+  //     existsDataTyped?.success &&
+  //     !existsDataTyped.exists
+  //   ) {
+  //     setActiveTab('input');
+  //   }
+  // }, [activeTab, existsData]);
 
   const handleFirstRequestComplete = (responseData: TaxCertApiResponse) => {
     const actualData = extractActualData(

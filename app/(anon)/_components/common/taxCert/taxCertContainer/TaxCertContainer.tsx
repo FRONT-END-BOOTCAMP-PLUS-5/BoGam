@@ -1,7 +1,7 @@
 'use client';
 
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { TaxCertInput } from '@/(anon)/_components/common/taxCert/TaxCertInput';
+import { TaxCertInput } from '@/(anon)/_components/common/taxCert/taxCertInput/TaxCertInput';
 import { TaxCertOutput } from '@/(anon)/_components/common/taxCert/taxCertOutput/TaxCertOutput';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useTaxCertContainer } from '@/hooks/useTaxCertContainer';
@@ -87,7 +87,7 @@ export const TaxCertContainer = forwardRef<
 
   return (
     <DataContainer
-      title='납세증명서 관리'
+      title='납세증명서 조회'
       inputComponent={inputComponent}
       outputComponent={outputComponent}
       checkExistsQuery={checkExistsQuery}
