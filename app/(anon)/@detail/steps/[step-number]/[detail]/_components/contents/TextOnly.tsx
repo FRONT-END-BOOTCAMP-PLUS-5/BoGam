@@ -77,16 +77,14 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       ? stepResultData.jsonDetails
       : undefined;
 
-  // json이 {}이거나 에러 시 기본값으로 초기화
+  // DB에서 가져온 값에서 열람 상태를 match로 업데이트
   useEffect(() => {
-    if (data.length === 0 || hasInitialized.current) {
+    if (data.length === 0 || hasInitialized.current || !jsonDetails) {
       return;
     }
 
-    // jsonDetails가 {}이거나 에러가 발생했을 때 POST 요청
-    const shouldInitialize =
-      (isError && !hasInitialized.current) ||
-      (jsonDetails && Object.keys(jsonDetails).length === 0);
+    // DB에서 가져온 값이 있고, 아직 초기화되지 않았을 때
+    const shouldInitialize = !hasInitialized.current && jsonDetails;
 
     if (
       shouldInitialize &&
@@ -94,20 +92,18 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       stepInfo?.stepNumber &&
       stepInfo?.detail
     ) {
-      const defaultDetails: Record<string, 'match'> = {
-        열람: 'match', // TextOnly는 기본적으로 열람 완료 상태
+      // 기존 jsonDetails에서 열람 상태만 match로 변경
+      const updatedDetails = {
+        ...jsonDetails,
+        열람: 'match' as const,
       };
-
-      const logMessage = isError
-        ? '400 에러 시 기본값 초기화 진행'
-        : '빈 jsonDetails 시 기본값 초기화 진행';
 
       // DB 저장
       upsertStepResult.mutate({
         userAddressNickname: selectedAddress.nickname,
         stepNumber: stepInfo.stepNumber,
         detail: stepInfo.detail,
-        jsonDetails: defaultDetails,
+        jsonDetails: updatedDetails,
       });
 
       // 쿼리 완전 중단
@@ -123,6 +119,7 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     stepData,
     isError,
     data,
+    jsonDetails,
     selectedAddress?.id,
     selectedAddress?.nickname,
     stepInfo?.stepNumber,
@@ -150,18 +147,20 @@ const TextOnly = ({ data }: TextOnlyProps) => {
       </div>
     );
   }
-
+  console.log('jsonDetails', jsonDetails);
   // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
   const renderStepData = () => (
     <div className={styles.stepDataSection}>
       <div className={styles.badgeContainer}>
-        {Object.entries(jsonDetails || {}).map(([key, value]) => (
-          <CircularIconBadge
-            key={key}
-            type={value as 'match' | 'mismatch' | 'unchecked'}
-            size='sm'
-          />
-        ))}
+        {Object.entries(jsonDetails || {})
+          .filter(([key]) => key === '열람')
+          .map(([key, value]) => (
+            <CircularIconBadge
+              key={key}
+              type={value as 'match' | 'mismatch' | 'unchecked'}
+              size='sm'
+            />
+          ))}
         <span className={styles.stepDataTitle}>읽음</span>
       </div>
     </div>
@@ -274,8 +273,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
           </div>
         ))}
 
-        {/* Step5Detail3Component에서는 스텝 데이터를 표시하지 않음 */}
-        {!window.location.pathname.includes('/5/3') && renderStepData()}
+        {/* 스텝 데이터 표시 */}
+        {renderStepData()}
       </div>
     );
   }
@@ -285,8 +284,8 @@ const TextOnly = ({ data }: TextOnlyProps) => {
     <div className={styles.container}>
       <div className={styles.noDataContainer}>데이터가 없습니다.</div>
 
-      {/* Step5Detail3Component에서는 스텝 데이터를 표시하지 않음 */}
-      {!window.location.pathname.includes('/5/3') && renderStepData()}
+      {/* 스텝 데이터 표시 */}
+      {renderStepData()}
     </div>
   );
 };

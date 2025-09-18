@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useSearchBrokers, useCreateBrokerCopy } from '@/hooks/useBroker';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { BrokerListContent } from '@/(anon)/_components/common/broker/brokerListContent/BrokerListContent';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import Field from '@/(anon)/_components/common/forms/Field';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import { styles } from '@/(anon)/_components/common/broker/brokerInput/BrokerInput.styles';
+import { useModalStore } from '@libs/stores/modalStore';
 
 interface BrokerData {
   brkrNm: string;
@@ -32,11 +32,12 @@ export const BrokerInput = ({
 }: BrokerInputProps) => {
   const [brkrNm, setBrkrNm] = useState<string>('');
   const [bsnmCmpnm, setBsnmCmpnm] = useState<string>('');
-  const [showBrokerList, setShowBrokerList] = useState(false);
   const [brokerList, setBrokerList] = useState<BrokerData[]>([]);
+  const [hasEmptyResult, setHasEmptyResult] = useState(false);
 
   const searchBrokersMutation = useSearchBrokers();
   const createBrokerCopyMutation = useCreateBrokerCopy();
+  const { openModal, closeModal } = useModalStore();
 
   // 중개사 외부 API 데이터 조회 (API에서)
   const handleGetBrokerCopy = (e: React.FormEvent) => {
@@ -54,22 +55,45 @@ export const BrokerInput = ({
 
     searchBrokersMutation.mutate(params, {
       onSuccess: (data) => {
+        let brokers: BrokerData[] = [];
+        
         if (data.success && data.data) {
           // 중개업자 데이터 추출
           try {
             const brokerData =
               typeof data.data === 'string' ? JSON.parse(data.data) : data.data;
-            const brokers = Array.isArray(brokerData)
-              ? brokerData
-              : [brokerData];
-            setBrokerList(brokers);
-            setShowBrokerList(true);
+            brokers = Array.isArray(brokerData) ? brokerData : [brokerData];
           } catch (error) {
             console.error('중개업자 데이터 파싱 오류:', error);
+            brokers = [];
           }
         }
+        
+        setBrokerList(brokers);
+        setHasEmptyResult(brokers.length === 0);
+        
+        // modalStore를 사용하여 모달 열기
+        openModal({
+          title: brokers.length === 0 ? '조회 결과' : '중개업자 선택',
+          content: (
+            <BrokerListContent
+              brokerData={brokers}
+              onSelectBroker={handleSelectBroker}
+            />
+          ),
+          onConfirm: brokers.length === 0 ? handleEmptyStateConfirm : undefined,
+          onCancel: brokers.length === 0 ? undefined : () => closeModal(),
+          confirmText: brokers.length === 0 ? '확인' : undefined,
+          cancelText: brokers.length === 0 ? undefined : '닫기',
+          icon: 'info',
+        });
       },
     });
+  };
+
+  // 빈 상태 확인 버튼 처리
+  const handleEmptyStateConfirm = () => {
+    setHasEmptyResult(false);
   };
 
   // 중개업자 선택 처리
@@ -82,13 +106,12 @@ export const BrokerInput = ({
     createBrokerCopyMutation.mutate(params, {
       onSuccess: (data) => {
         if (data.success) {
-          onSuccess();
+          closeModal(); // 모달 닫기
+          onBrokerSelected(broker);
+          onSuccess(); // 출력 탭으로 이동
         }
       },
     });
-    onBrokerSelected(broker);
-    setShowBrokerList(false);
-    onSuccess(); // 출력 탭으로 이동
   };
 
   const isLoading =
@@ -144,20 +167,6 @@ export const BrokerInput = ({
         )}
       </FormContainer>
 
-      {/* 중개업자 목록 선택 모달 */}
-      <ConfirmModal
-        isOpen={showBrokerList}
-        title='중개업자 선택'
-        onCancel={() => setShowBrokerList(false)}
-        cancelText='닫기'
-        icon='info'
-        onConfirm={undefined}
-      >
-        <BrokerListContent
-          brokerData={brokerList}
-          onSelectBroker={handleSelectBroker}
-        />
-      </ConfirmModal>
     </>
   );
 };

@@ -15,19 +15,17 @@ export const useGetTaxCertCopy = (nickname: string | null) => {
   return useQuery({
     queryKey: ['taxCertCopy', nickname],
     queryFn: async () => {
-      if (!nickname) {
-        return null;
-      }
       const response = await frontendAxiosInstance
         .getAxiosInstance()
         .get(
           `/api/copies/tax-cert?userAddressNickname=${encodeURIComponent(
-            nickname
+            nickname!
           )}`
         );
       return response.data;
     },
     enabled: !!nickname,
+    staleTime: 0,
   });
 };
 

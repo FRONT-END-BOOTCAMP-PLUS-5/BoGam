@@ -12,28 +12,6 @@ import JeonseGuaranteeInput from './JeonseGuaranteeInput';
 import JeonseGuaranteeOutput from './JeonseGuaranteeOutput';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
-// 5-3 단계 전체 JSON 상태 타입
-interface Step5Detail3JsonData {
-  jeonseGuarantee?: {
-    items: unknown[];
-    totalCount: number;
-    header: unknown;
-    timestamp: string;
-    userAddressNickname: string;
-  };
-  // 보증 금액 데이터 (API 응답의 변수명을 그대로 사용)
-  grntLmtAmt?: string; // 보증한도금액
-  loanLmtAmt?: string; // 대출한도금액
-  grntDvcd?: string; // 보증구분코드
-  rcmdProrRnk?: number; // 추천순위
-  [key: string]: unknown;
-}
-
-interface JeonseGuaranteeFormProps {
-  stepJsonData: Step5Detail3JsonData;
-  updateStepJsonData: (key: string, data: unknown) => void;
-  isSavingStepResult: boolean;
-}
 
 // 초기 상태 상수
 const INITIAL_FORM_DATA: GetJeonseGuaranteeRequestDto = {
@@ -57,11 +35,7 @@ const INITIAL_INPUT_MODES = {
   mmrtAmt: 'none' as 'none' | 'direct',
 };
 
-export default function JeonseGuaranteeContainer({
-  stepJsonData,
-  updateStepJsonData,
-  isSavingStepResult,
-}: JeonseGuaranteeFormProps) {
+export default function JeonseGuaranteeContainer() {
   // 상태 관리
   const [formData, setFormData] =
     useState<GetJeonseGuaranteeRequestDto>(INITIAL_FORM_DATA);
@@ -254,7 +228,7 @@ export default function JeonseGuaranteeContainer({
                   } as GetJeonseGuaranteeResponseDto)
                 : undefined)
             }
-            isPending={isPending || isSavingStepResult}
+            isPending={isPending}
           />
         )}
       </div>

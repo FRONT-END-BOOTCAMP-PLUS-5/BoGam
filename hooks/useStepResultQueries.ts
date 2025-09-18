@@ -39,8 +39,8 @@ export const useGetStepResult = (
       params.detail,
     ],
     queryFn: () => stepResultQueryApi.getStepResult(params),
-    enabled: (options?.enabled ?? true) && !!params.userAddressNickname,
-    staleTime: 5 * 60 * 1000, // 5분
+    enabled: !!params.userAddressNickname,
+    staleTime: 0, // 캐시 즉시 무효화
     gcTime: 10 * 60 * 1000, // 10분
   });
 

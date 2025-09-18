@@ -14,7 +14,7 @@ export const styles = {
   // Complex input
   complexInputGroup: 'complex-input-group flex items-center space-x-3',
   complexDisplay: 'complex-display flex-1 p-3 bg-brand-light-gray rounded-md text-brand-dark-gray',
-  fetchButton: 'fetch-button px-4 py-2',
+  fetchButton: 'fetch-button px-4 py-2 !mt-0',
   
   // Search button
   searchButtonContainer: 'search-button-container text-center',

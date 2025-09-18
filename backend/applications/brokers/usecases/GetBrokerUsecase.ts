@@ -10,9 +10,6 @@ export class GetBrokerUsecase {
     async execute(query: GetBrokerQueryDto): Promise<Broker | Broker[]> {
         try {
             const broker = await this.brokerRepository.find(query);
-            if (!broker) {
-                throw new Error('중개사 정보를 찾을 수 없습니다.');
-            }
             return broker;
         } catch (error) {
             if (error instanceof Error) {
