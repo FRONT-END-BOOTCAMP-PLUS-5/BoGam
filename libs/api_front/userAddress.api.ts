@@ -104,12 +104,15 @@ class UserAddressApi {
       x?: number;
       y?: number;
       isPrimary?: boolean;
+      dong?: string;
+      ho?: string;
+      completeAddress?: string;
     }
   ): Promise<UserAddress> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
     const response = await axiosInstance.put<UserAddress>(
-      `/api/user-address/${id}`,
+      `/api/user-address?userAddressId=${id}`,
       addressData
     );
 
