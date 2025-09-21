@@ -112,9 +112,7 @@ class GuaranteeLimitCopyApi {
     try {
       const response = await frontendAxiosInstance
         .getAxiosInstance()
-        .get('/api/guarantee-limit/exists', {
-          params: { userAddressNickname },
-        });
+        .get(`/api/guarantee-limit/exists?userAddressNickname=${encodeURIComponent(userAddressNickname)}`);
       return response.data as GuaranteeLimitCopyExistsResponse;
     } catch (error) {
       console.error('보증한도 복사본 존재 여부 확인 오류:', error);

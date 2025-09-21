@@ -8,7 +8,6 @@ import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { styles } from './BrokerOutput.styles';
-import { BrokerApiResponse } from '@be/domain/entities/Broker';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
 import { parseStepUrl } from '@utils/stepUrlParser';
 
@@ -21,12 +20,10 @@ interface BrokerData {
 }
 
 interface BrokerOutputProps {
-  userAddressNickname: string | null;
   selectedBroker?: BrokerData;
 }
 
 export const BrokerOutput = ({
-  userAddressNickname,
   selectedBroker,
 }: BrokerOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
@@ -66,7 +63,7 @@ export const BrokerOutput = ({
   const jsonDetails = getJsonDetails();
 
   // DB에서 broker 데이터 조회 (selectedBroker가 없을 때만)
-  const brokerCopyQuery = useGetBrokerCopy(selectedBroker ? null : userAddressNickname || null);
+  const brokerCopyQuery = useGetBrokerCopy(selectedBroker ? null : selectedAddress?.nickname || null);
   // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
   useEffect(() => {
     if (selectedAddress?.nickname) {
@@ -129,7 +126,7 @@ export const BrokerOutput = ({
   const riskAssessment = convertToRiskAssessmentResult(brokerRiskAssessment);
 
   // 체크리스트 항목들 추출 및 상태 관리
-  const [checklistState, setChecklistState] = useState<Record<string, boolean>>(
+  const [, setChecklistState] = useState<Record<string, boolean>>(
     {}
   );
 

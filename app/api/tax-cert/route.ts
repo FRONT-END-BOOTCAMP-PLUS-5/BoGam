@@ -5,7 +5,6 @@ import { CreateTaxCertCopyUsecase } from '@be/applications/taxCertCopies/usecase
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 import { encryptPassword } from '@libs/codef/codefEncrypter';
 import { getUserAddressId } from '@utils/userAddress';
-import { TaxCertResponseData } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 export async function POST(request: NextRequest) {
   const requestId = `tax-cert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

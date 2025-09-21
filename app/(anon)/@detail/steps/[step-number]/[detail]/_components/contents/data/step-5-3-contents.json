@@ -51,9 +51,7 @@
       ]
     },
     {
-      "type": "GuaranteeLimit",
-      "title": "전세자금보증 금액 조회",
-      "subtitle": "전세자금보증 금액을 조회해보세요."
+      "type": "GuaranteeLimit"
     },
     {
       "type": "RadioGroup",

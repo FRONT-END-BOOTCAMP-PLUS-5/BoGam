@@ -122,7 +122,7 @@ export class GetTaxCertUsecase {
         duration,
       };
     } finally {
-      const totalDuration = Date.now() - startTime;
+      // const totalDuration = Date.now() - startTime;
       // console.log(`🏁 [${requestId}] GetTaxCertUsecase 종료 (총 소요시간: ${totalDuration}ms)`);
     }
   }

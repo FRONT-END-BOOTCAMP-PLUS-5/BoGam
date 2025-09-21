@@ -68,9 +68,7 @@ export const TaxCertContainer = forwardRef<
       onSubmit={handleSubmit}
       loading={submitTaxCertMutation.isPending}
       onSuccess={onSuccess}
-      onAuthMethodSelect={() => {}}
       isAuthMethodModalOpen={false}
-      setIsAuthMethodModalOpen={() => {}}
     />
   );
 
@@ -92,10 +90,8 @@ export const TaxCertContainer = forwardRef<
     data: existsData
       ? {
           success: true,
-          data: {
-            exists:
-              (existsData as unknown as { exists: boolean })?.exists || false,
-          },
+          exists:
+            (existsData as unknown as { exists: boolean })?.exists || false,
         }
       : undefined,
     isLoading: false,

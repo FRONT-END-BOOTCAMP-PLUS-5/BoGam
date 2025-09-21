@@ -35,9 +35,7 @@ export const BrokerContainer = () => {
     data: existsQuery?.success
       ? {
           success: true,
-          data: {
-            exists: (existsQuery.data as { exists?: boolean })?.exists || false,
-          },
+          exists: (existsQuery.data as { exists?: boolean })?.exists || false,
         }
       : undefined,
     isLoading: isLoading,
@@ -62,7 +60,6 @@ export const BrokerContainer = () => {
   // 결과 컴포넌트
   const outputComponent = (
     <BrokerOutput
-      userAddressNickname={selectedAddress?.nickname || null}
       selectedBroker={selectedBroker}
     />
   );

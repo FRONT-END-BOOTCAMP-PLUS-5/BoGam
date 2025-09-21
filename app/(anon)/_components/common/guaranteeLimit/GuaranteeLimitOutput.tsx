@@ -1,17 +1,22 @@
 'use client';
 
 import { GetGuaranteeLimitResponseDto } from '@libs/api_front/guaranteeLimit.api';
+import { useGetGuaranteeLimitCopy } from '@/hooks/useGuaranteeLimit';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { styles } from './GuaranteeLimitOutput.styles';
 
-interface GuaranteeLimitOutputProps {
-  data: GetGuaranteeLimitResponseDto | undefined;
-  isPending: boolean;
-}
+export default function GuaranteeLimitOutput() {
+  const { selectedAddress } = useUserAddressStore();
+  
+  // DB에서 저장된 데이터 조회
+  const { data: savedData, isLoading: isSavedDataLoading } = useGetGuaranteeLimitCopy(
+    selectedAddress?.nickname || null
+  );
 
-export default function GuaranteeLimitOutput({
-  data,
-  isPending,
-}: GuaranteeLimitOutputProps) {
+  // 저장된 데이터를 표시
+  const displayData = savedData?.data?.guaranteeLimitJson as unknown as GetGuaranteeLimitResponseDto;
+  const isLoading = isSavedDataLoading;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -21,20 +26,20 @@ export default function GuaranteeLimitOutput({
         </p>
       </div>
 
-      {isPending ? (
+      {isLoading ? (
         <div className={styles.loadingContainer}>
           <div className={styles.loadingSpinner}></div>
           <p className={styles.loadingText}>
             전세자금보증상품을 조회하고 있습니다...
           </p>
           <p className={styles.loadingStatus}>
-            로딩 상태: {isPending ? '진행 중' : '완료'}
+            로딩 상태: {isLoading ? '진행 중' : '완료'}
           </p>
         </div>
-      ) : data && data.items && data.items.length > 0 ? (
+      ) : displayData && displayData.items && displayData.items.length > 0 ? (
         <div>
           <div className={styles.dataContainer}>
-            {data.items.map(
+            {displayData.items.map(
               (
                 item: GetGuaranteeLimitResponseDto['items'][0],
                 index: number

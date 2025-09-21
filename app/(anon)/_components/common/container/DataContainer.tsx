@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, ReactNode } from 'react';
-import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/TabNavigation';
 import { styles } from '@/(anon)/_components/common/container/DataContainer.styles';
 
@@ -10,7 +9,10 @@ interface DataContainerProps {
   inputComponent: ReactNode | ((props: { onSuccess: () => void }) => ReactNode);
   outputComponent: ReactNode;
   checkExistsQuery?: {
-    data?: { success: boolean; data?: { exists: boolean } };
+    data?: { 
+      success: boolean,
+      exists: boolean 
+    };
     isLoading: boolean;
     refetch: () => void;
   };
@@ -28,7 +30,6 @@ export const DataContainer = ({
   activeTab: externalActiveTab,
   onTabChange: externalOnTabChange,
 }: DataContainerProps) => {
-  const { selectedAddress } = useUserAddressStore();
   const [internalActiveTab, setInternalActiveTab] = useState<
     'input' | 'output'
   >('input');
@@ -40,14 +41,15 @@ export const DataContainer = ({
   // 존재 여부 쿼리 결과에 따른 탭 전환 (초기 로드 시에만)
   useEffect(() => {
     if (checkExistsQuery?.data?.success && !checkExistsQuery?.isLoading) {
-      const existsData = checkExistsQuery.data.data as { exists: boolean };
-      if (existsData?.exists) {
+      const existsData = checkExistsQuery.data.exists;
+      console.log('씨발왜안돼existsData', existsData);
+      if (existsData) {
         setActiveTab('output');
       } else {
         setActiveTab('input');
       }
     }
-  }, [checkExistsQuery?.data?.success, checkExistsQuery?.isLoading]); // success가 변경되고 로딩이 아닐 때만 실행
+  }, [checkExistsQuery?.data?.success, checkExistsQuery?.isLoading, setActiveTab, checkExistsQuery?.data?.exists]); // success가 변경되고 로딩이 아닐 때만 실행
 
   // 성공 시 콜백
   const handleSuccess = () => {

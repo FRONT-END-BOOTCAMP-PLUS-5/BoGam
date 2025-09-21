@@ -3,17 +3,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
   GetGuaranteeLimitRequestDto,
-  GetGuaranteeLimitResponseDto,
-  // GuaranteeLimitApiResponse,
 } from '@libs/api_front/guaranteeLimit.api';
-import { useGetGuaranteeLimit } from '@/hooks/useGuaranteeLimit';
+import { useGetGuaranteeLimit, useCheckGuaranteeLimitCopyExists } from '@/hooks/useGuaranteeLimit';
 import { FIELD_ERROR_MESSAGES } from '@utils/constants/guaranteeLimit';
-import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/TabNavigation';
 import GuaranteeLimitInput from './GuaranteeLimitInput';
 import GuaranteeLimitOutput from './GuaranteeLimitOutput';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useModalStore } from '@libs/stores/modalStore';
-import styles from './GuaranteeLimitContainer.styles';
+import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 
 
 // 초기 상태 상수
@@ -30,9 +27,6 @@ const INITIAL_FORM_DATA: GetGuaranteeLimitRequestDto = {
   pageNo: 1,
 };
 
-type TabType = 'input' | 'output';
-
-
 export default function GuaranteeLimitContainer() {
   // 상태 관리
   const [formData, setFormData] =
@@ -40,7 +34,6 @@ export default function GuaranteeLimitContainer() {
   const [errors, setErrors] = useState<
     Record<keyof GetGuaranteeLimitRequestDto, string | undefined>
   >({} as Record<keyof GetGuaranteeLimitRequestDto, string | undefined>);
-  const [activeTab, setActiveTab] = useState<TabType>('input');
 
   const { selectedAddress } = useUserAddressStore();
   const { openModal } = useModalStore();
@@ -48,17 +41,26 @@ export default function GuaranteeLimitContainer() {
   // API 훅
   const {
     mutate: getGuaranteeLimit,
-    isPending,
-    data,
   } = useGetGuaranteeLimit();
 
-  // 보증 금액 데이터 로컬 상태
-  const [guaranteeData, setGuaranteeData] = useState<{
-    grntLmtAmt?: string;
-    loanLmtAmt?: string;
-    grntDvcd?: string;
-    rcmdProrRnk?: number;
-  }>({});
+  // 존재 여부 확인 쿼리
+  const {
+    data: existsQuery,
+    isLoading,
+    refetch,
+  } = useCheckGuaranteeLimitCopyExists(selectedAddress?.nickname || null);
+
+  // 존재 여부 쿼리 객체 생성
+  const checkExistsQuery = {
+    data: existsQuery?.success
+      ? {
+          success: true,
+          exists: (existsQuery.exists as  boolean) || false,
+        }
+      : undefined,
+    isLoading: isLoading,
+    refetch: refetch,
+  };
 
   // selectedAddress 변경 시 formData에 userAddressNickname 추가
   useEffect(() => {
@@ -70,39 +72,23 @@ export default function GuaranteeLimitContainer() {
     }
   }, [selectedAddress]);
 
-  // 데이터 응답 시 자동으로 결과 탭으로 이동 및 로컬 상태 업데이트
-  useEffect(() => {
-    if (data?.data?.items && data.data.items.length > 0) {
-      setActiveTab('output');
+  // API 호출 성공 시 콜백 (DataContainer에서 처리)
+  const handleApiSuccess = useCallback(() => {
+    // 성공 시 아무것도 하지 않음 (DataContainer에서 자동으로 결과 탭으로 이동)
+  }, []);
 
-      const firstItem = data.data.items[0];
-
-      // 보증 금액 데이터를 로컬 상태에 저장
-      if (firstItem) {
-        setGuaranteeData({
-          grntLmtAmt: firstItem.grntLmtAmt,
-          loanLmtAmt: firstItem.loanLmtAmt,
-          grntDvcd: firstItem.grntDvcd,
-          rcmdProrRnk: firstItem.rcmdProrRnk,
-        });
-      }
-    }
-  }, [data]);
-
-  // data.success가 false일 때 에러 모달 표시
-  useEffect(() => {
-    if (data && data.success === false) {
-      openModal({
-        title: '오류',
-        content: data.message || '전세자금보증상품 조회 중 오류가 발생했습니다.',
-        icon: 'error',
-        confirmText: '확인',
-        onConfirm: async () => {
-          // 확인 버튼 클릭 시 아무것도 하지 않음 (모달만 닫힘)
-        },
-      });
-    }
-  }, [data, openModal]);
+  // API 호출 실패 시 에러 모달 표시
+  const handleApiError = useCallback((message: string) => {
+    openModal({
+      title: '오류',
+      content: message,
+      icon: 'error',
+      confirmText: '확인',
+      onConfirm: async () => {
+        // 확인 버튼 클릭 시 아무것도 하지 않음 (모달만 닫힘)
+      },
+    });
+  }, [openModal]);
 
   // 폼 검증 함수
   const validateForm = useCallback((): boolean => {
@@ -174,56 +160,44 @@ export default function GuaranteeLimitContainer() {
           myTotDebtAmt: formData.myTotDebtAmt || 0,
           mmrtAmt: formData.mmrtAmt || 0,
         };
-        getGuaranteeLimit(submitData);
+        
+        getGuaranteeLimit(submitData, {
+          onSuccess: (data) => {
+            if (data.success) {
+              handleApiSuccess();
+            } else {
+              handleApiError(data.message || '전세자금보증상품 조회 중 오류가 발생했습니다.');
+            }
+          },
+          onError: () => {
+            handleApiError('API 호출 중 오류가 발생했습니다.');
+          }
+        });
       }
     },
-    [formData, getGuaranteeLimit, validateForm]
+    [formData, getGuaranteeLimit, validateForm, handleApiSuccess, handleApiError]
   );
 
-  // 탭 변경 핸들러
-  const handleTabChange = useCallback((tab: TabType) => {
-    setActiveTab(tab);
-  }, []);
+  // 입력 컴포넌트
+  const inputComponent = (
+    <GuaranteeLimitInput
+      formData={formData}
+      errors={errors}
+      onInputChange={handleInputChange}
+      onSubmit={handleSubmit}
+    />
+  );
+
+  // 결과 컴포넌트
+  const outputComponent = <GuaranteeLimitOutput />;
 
   return (
-    <div className={styles.container}>
-      {/* 탭 네비게이션 */}
-      <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
-
-      {/* 탭 컨텐츠 */}
-      <div className={styles.tabContent}>
-        {activeTab === 'input' ? (
-          <GuaranteeLimitInput
-            formData={formData}
-            errors={errors}
-            onInputChange={handleInputChange}
-            onSubmit={handleSubmit}
-          />
-        ) : (
-          <GuaranteeLimitOutput
-            data={
-              data?.data ||
-              (guaranteeData.grntLmtAmt
-                ? ({
-                    items: [
-                      {
-                        grntLmtAmt: guaranteeData.grntLmtAmt,
-                        loanLmtAmt: guaranteeData.loanLmtAmt || '',
-                        grntDvcd: guaranteeData.grntDvcd || '',
-                        rcmdProrRnk: guaranteeData.rcmdProrRnk || 0,
-                      },
-                    ],
-                    totalCount: 1,
-                    numOfRows: 10,
-                    pageNo: 1,
-                    header: { resultCode: '00', resultMsg: '저장된 데이터' },
-                  } as GetGuaranteeLimitResponseDto)
-                : undefined)
-            }
-            isPending={isPending}
-          />
-        )}
-      </div>
-    </div>
+    <DataContainer
+      title='전세자금보증한도 조회'
+      inputComponent={inputComponent}
+      outputComponent={outputComponent}
+      // onSuccess={handleApiSuccess}
+      checkExistsQuery={checkExistsQuery}
+    />
   );
 }

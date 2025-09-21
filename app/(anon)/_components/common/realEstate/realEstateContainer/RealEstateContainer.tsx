@@ -66,7 +66,7 @@ export const RealEstateContainer = () => {
   // 존재 여부 쿼리 객체 생성
   const checkExistsQuery = {
     data: existsData
-      ? { success: true, data: { exists: existsData.exists } }
+      ? { success: true, exists: existsData.exists }
       : undefined,
     isLoading: false, // useCheckRealEstateExists에서 로딩 상태를 제공하지 않으므로 false로 설정
     refetch: () => {
