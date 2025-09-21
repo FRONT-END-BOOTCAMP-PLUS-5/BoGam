@@ -1,7 +1,7 @@
 import { frontendAxiosInstance } from './axiosInstance';
 
 // 요청 DTO 타입
-export interface GetJeonseGuaranteeRequestDto {
+export interface GetGuaranteeLimitRequestDto {
   rentGrntAmt: number; // 전세보증금
   trgtLwdgCd: string; // 대상지역코드
   age: number; // 나이
@@ -15,7 +15,7 @@ export interface GetJeonseGuaranteeRequestDto {
 }
 
 // 응답 DTO 타입
-export interface GetJeonseGuaranteeResponseDto {
+export interface GetGuaranteeLimitResponseDto {
   header: {
     resultCode: string;
     resultMsg: string;
@@ -32,12 +32,12 @@ export interface GetJeonseGuaranteeResponseDto {
 }
 
 // API 함수
-export const getJeonseGuarantee = async (
-  data: GetJeonseGuaranteeRequestDto
-): Promise<GetJeonseGuaranteeResponseDto> => {
+export const getGuaranteeLimit = async (
+  data: GetGuaranteeLimitRequestDto
+): Promise<GetGuaranteeLimitResponseDto> => {
   console.log('data', data);
   const response = await frontendAxiosInstance
     .getAxiosInstance()
-    .post('/api/jeonse-guarantee', data);
-  return response.data as GetJeonseGuaranteeResponseDto;
+    .post('/api/guarantee-limit', data);
+  return response.data as GetGuaranteeLimitResponseDto;
 };

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useCallback } from 'react';
-import { GetJeonseGuaranteeRequestDto } from '@libs/api_front/jeonseGuarantee.api';
+import { GetGuaranteeLimitRequestDto } from '@libs/api_front/guaranteeLimit.api';
 import {
   // REGION_OPTIONS,
   MARRIAGE_OPTIONS,
@@ -8,7 +8,7 @@ import {
   FIELD_ERROR_MESSAGES,
   FIELD_PLACEHOLDERS,
   FIELD_LABELS,
-} from '@utils/constants/jeonseGuarantee';
+} from '@utils/constants/guaranteeLimit';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import Field from '@/(anon)/_components/common/forms/Field';
@@ -19,11 +19,11 @@ const MONTHLY_RENT_OPTIONS = [
   { value: 'none', label: '없음' },
   { value: 'direct', label: '직접 입력' },
 ];
-import styles from './JeonseGuaranteeInput.styles';
+import styles from './GuaranteeLimitInput.styles';
 
-interface JeonseGuaranteeInputProps {
-  formData: GetJeonseGuaranteeRequestDto;
-  errors: Record<keyof GetJeonseGuaranteeRequestDto, string | undefined>;
+interface GuaranteeLimitInputProps {
+  formData: GetGuaranteeLimitRequestDto;
+  errors: Record<keyof GetGuaranteeLimitRequestDto, string | undefined>;
   inputModes: {
     myIncmAmt: 'none' | 'direct';
     myTotDebtAmt: 'none' | 'direct';
@@ -32,7 +32,7 @@ interface JeonseGuaranteeInputProps {
   // isPending: boolean;
   error: string | null;
   onInputChange: (
-    field: keyof GetJeonseGuaranteeRequestDto,
+    field: keyof GetGuaranteeLimitRequestDto,
     value: string | number
   ) => void;
   onInputModeChange: (
@@ -42,7 +42,7 @@ interface JeonseGuaranteeInputProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-export default function JeonseGuaranteeInput({
+export default function GuaranteeLimitInput({
   formData,
   errors,
   inputModes,
@@ -50,7 +50,7 @@ export default function JeonseGuaranteeInput({
   onInputChange,
   onInputModeChange,
   onSubmit,
-}: JeonseGuaranteeInputProps) {
+}: GuaranteeLimitInputProps) {
   const { selectedAddress } = useUserAddressStore();
 
   // selectedAddress가 변경될 때 지역 코드 자동 설정

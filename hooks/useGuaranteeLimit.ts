@@ -1,13 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import {
-  getJeonseGuarantee,
-  GetJeonseGuaranteeRequestDto,
-} from '@libs/api_front/jeonseGuarantee.api';
+  getGuaranteeLimit,
+  GetGuaranteeLimitRequestDto,
+} from '@libs/api_front/guaranteeLimit.api';
 
 // React Query Hook
-export const useGetJeonseGuarantee = () => {
+export const useGetGuaranteeLimit = () => {
   return useMutation({
-    mutationFn: getJeonseGuarantee,
+    mutationFn: getGuaranteeLimit,
     onSuccess: (data) => {
       console.log('전세자금보증상품 조회 성공:', data);
     },

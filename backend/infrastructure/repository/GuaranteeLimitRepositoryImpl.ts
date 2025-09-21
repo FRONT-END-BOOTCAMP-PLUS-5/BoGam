@@ -1,17 +1,17 @@
-import { JeonseGuaranteeRepository } from '@be/domain/repository/JeonseGuaranteeRepository';
-import { JeonseGuaranteeEntity } from '@be/domain/entities/JeonseGuarantee';
-import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/dtos/GetJeonseGuaranteeRequestDto';
+import { GuaranteeLimitRepository } from '@be/domain/repository/GuaranteeLimitRepository';
+import { GuaranteeLimitEntity } from '@be/domain/entities/GuaranteeLimit';
+import { GetGuaranteeLimitRequestDto } from '@be/applications/guaranteeLimits/dtos/GetGuaranteeLimitRequestDto';
 import { API_ENDPOINTS } from '@libs/api-endpoints';
 import axios from 'axios';
 
-export class JeonseGuaranteeRepositoryImpl
-  implements JeonseGuaranteeRepository
+export class GuaranteeLimitRepositoryImpl
+  implements GuaranteeLimitRepository
 {
-  private readonly baseUrl = API_ENDPOINTS.JEONSE_GUARANTEE;
+  private readonly baseUrl = API_ENDPOINTS.GUARANTEE_LIMIT;
 
-  async getJeonseGuarantee(
-    params: GetJeonseGuaranteeRequestDto
-  ): Promise<JeonseGuaranteeEntity> {
+  async getGuaranteeLimit(
+    params: GetGuaranteeLimitRequestDto
+  ): Promise<GuaranteeLimitEntity> {
     try {
       // 서비스키는 환경변수에서 가져옴
       const serviceKey = process.env.RTMSDATA_TRANSACTION_PRICE_KEY_DECODING;
@@ -48,7 +48,7 @@ export class JeonseGuaranteeRepositoryImpl
         throw new Error(`API 요청 실패: ${response.status}`);
       }
       // API 응답 데이터 타입 정의
-      interface JeonseGuaranteeApiResponse {
+      interface GuaranteeLimitApiResponse {
         header: {
           resultCode: string;
           resultMsg: string;
@@ -66,7 +66,7 @@ export class JeonseGuaranteeRepositoryImpl
         };
       }
 
-      const data = response.data as JeonseGuaranteeApiResponse;
+      const data = response.data as GuaranteeLimitApiResponse;
 
       console.log(
         '전세자금보증상품 API 응답 데이터:',
@@ -74,7 +74,7 @@ export class JeonseGuaranteeRepositoryImpl
       );
 
       // 원본 데이터를 직접 Entity로 변환
-      return new JeonseGuaranteeEntity(
+      return new GuaranteeLimitEntity(
         data.header?.resultCode || '',
         data.header?.resultMsg || '',
         data.body?.pageNo || 1,

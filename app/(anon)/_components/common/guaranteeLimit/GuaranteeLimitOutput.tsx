@@ -1,17 +1,17 @@
 'use client';
 
-import { GetJeonseGuaranteeResponseDto } from '@libs/api_front/jeonseGuarantee.api';
-import { styles } from './JeonseGuaranteeOutput.styles';
+import { GetGuaranteeLimitResponseDto } from '@libs/api_front/guaranteeLimit.api';
+import { styles } from './GuaranteeLimitOutput.styles';
 
-interface JeonseGuaranteeOutputProps {
-  data: GetJeonseGuaranteeResponseDto | undefined;
+interface GuaranteeLimitOutputProps {
+  data: GetGuaranteeLimitResponseDto | undefined;
   isPending: boolean;
 }
 
-export default function JeonseGuaranteeOutput({
+export default function GuaranteeLimitOutput({
   data,
   isPending,
-}: JeonseGuaranteeOutputProps) {
+}: GuaranteeLimitOutputProps) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -36,7 +36,7 @@ export default function JeonseGuaranteeOutput({
           <div className={styles.dataContainer}>
             {data.items.map(
               (
-                item: GetJeonseGuaranteeResponseDto['items'][0],
+                item: GetGuaranteeLimitResponseDto['items'][0],
                 index: number
               ) => (
                 <div key={index} className={styles.card}>

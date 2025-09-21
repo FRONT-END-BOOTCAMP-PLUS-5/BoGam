@@ -2,19 +2,19 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  GetJeonseGuaranteeRequestDto,
-  GetJeonseGuaranteeResponseDto,
-} from '@libs/api_front/jeonseGuarantee.api';
-import { useGetJeonseGuarantee } from '@/hooks/useJeonseGuarantee';
-import { FIELD_ERROR_MESSAGES } from '@utils/constants/jeonseGuarantee';
+  GetGuaranteeLimitRequestDto,
+  GetGuaranteeLimitResponseDto,
+} from '@libs/api_front/guaranteeLimit.api';
+import { useGetGuaranteeLimit } from '@/hooks/useGuaranteeLimit';
+import { FIELD_ERROR_MESSAGES } from '@utils/constants/guaranteeLimit';
 import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/TabNavigation';
-import JeonseGuaranteeInput from './JeonseGuaranteeInput';
-import JeonseGuaranteeOutput from './JeonseGuaranteeOutput';
+import GuaranteeLimitInput from './GuaranteeLimitInput';
+import GuaranteeLimitOutput from './GuaranteeLimitOutput';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
 
 // 초기 상태 상수
-const INITIAL_FORM_DATA: GetJeonseGuaranteeRequestDto = {
+const INITIAL_FORM_DATA: GetGuaranteeLimitRequestDto = {
   rentGrntAmt: 0,
   trgtLwdgCd: '',
   age: 0,
@@ -35,13 +35,13 @@ const INITIAL_INPUT_MODES = {
   mmrtAmt: 'none' as 'none' | 'direct',
 };
 
-export default function JeonseGuaranteeContainer() {
+export default function GuaranteeLimitContainer() {
   // 상태 관리
   const [formData, setFormData] =
-    useState<GetJeonseGuaranteeRequestDto>(INITIAL_FORM_DATA);
+    useState<GetGuaranteeLimitRequestDto>(INITIAL_FORM_DATA);
   const [errors, setErrors] = useState<
-    Record<keyof GetJeonseGuaranteeRequestDto, string | undefined>
-  >({} as Record<keyof GetJeonseGuaranteeRequestDto, string | undefined>);
+    Record<keyof GetGuaranteeLimitRequestDto, string | undefined>
+  >({} as Record<keyof GetGuaranteeLimitRequestDto, string | undefined>);
   const [inputModes, setInputModes] = useState(INITIAL_INPUT_MODES);
   const [activeTab, setActiveTab] = useState<TabType>('input');
 
@@ -49,11 +49,11 @@ export default function JeonseGuaranteeContainer() {
 
   // API 훅
   const {
-    mutate: getJeonseGuarantee,
+    mutate: getGuaranteeLimit,
     isPending,
     data,
     error,
-  } = useGetJeonseGuarantee();
+  } = useGetGuaranteeLimit();
 
   // 보증 금액 데이터 로컬 상태
   const [guaranteeData, setGuaranteeData] = useState<{
@@ -85,9 +85,9 @@ export default function JeonseGuaranteeContainer() {
   // 폼 검증 함수
   const validateForm = useCallback((): boolean => {
     const newErrors: Record<
-      keyof GetJeonseGuaranteeRequestDto,
+      keyof GetGuaranteeLimitRequestDto,
       string | undefined
-    > = {} as Record<keyof GetJeonseGuaranteeRequestDto, string | undefined>;
+    > = {} as Record<keyof GetGuaranteeLimitRequestDto, string | undefined>;
 
     // 필수 필드 검증
     if (!formData.rentGrntAmt || formData.rentGrntAmt <= 0) {
@@ -129,7 +129,7 @@ export default function JeonseGuaranteeContainer() {
 
   // 입력 변경 핸들러
   const handleInputChange = useCallback(
-    (field: keyof GetJeonseGuaranteeRequestDto, value: string | number) => {
+    (field: keyof GetGuaranteeLimitRequestDto, value: string | number) => {
       setFormData((prev) => ({
         ...prev,
         [field]: value,
@@ -178,10 +178,10 @@ export default function JeonseGuaranteeContainer() {
     (e: React.FormEvent) => {
       e.preventDefault();
       if (validateForm()) {
-        getJeonseGuarantee(formData);
+        getGuaranteeLimit(formData);
       }
     },
-    [formData, getJeonseGuarantee, validateForm]
+    [formData, getGuaranteeLimit, validateForm]
   );
 
   // 탭 변경 핸들러
@@ -197,7 +197,7 @@ export default function JeonseGuaranteeContainer() {
       {/* 탭 컨텐츠 */}
       <div className='border-t'>
         {activeTab === 'input' ? (
-          <JeonseGuaranteeInput
+          <GuaranteeLimitInput
             formData={formData}
             errors={errors}
             inputModes={inputModes}
@@ -208,7 +208,7 @@ export default function JeonseGuaranteeContainer() {
             onSubmit={handleSubmit}
           />
         ) : (
-          <JeonseGuaranteeOutput
+          <GuaranteeLimitOutput
             data={
               data ||
               (guaranteeData.grntLmtAmt
@@ -225,7 +225,7 @@ export default function JeonseGuaranteeContainer() {
                     numOfRows: 10,
                     pageNo: 1,
                     header: { resultCode: '00', resultMsg: '저장된 데이터' },
-                  } as GetJeonseGuaranteeResponseDto)
+                  } as GetGuaranteeLimitResponseDto)
                 : undefined)
             }
             isPending={isPending}

@@ -15,7 +15,7 @@ import RadioGroup from './RadioGroup';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
-import JeonseGuaranteeContainer from '@/(anon)/_components/common/jeonseGuarantee/JeonseGuaranteeContainer';
+import GuaranteeLimitContainer from '@/(anon)/_components/common/guaranteeLimit/GuaranteeLimitContainer';
 import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
 import { PageIndicator } from '../PageIndicator';
 
@@ -155,8 +155,8 @@ export default function CombinedContent({
                 {section.type === 'RealEstateContainer' && (
                   <RealEstateContainer />
                 )}
-                {section.type === 'JeonseGuarantee' && (
-                  <JeonseGuaranteeContainer />
+                {section.type === 'GuaranteeLimit' && (
+                  <GuaranteeLimitContainer />
                 )}
               </div>
             </SwiperSlide>

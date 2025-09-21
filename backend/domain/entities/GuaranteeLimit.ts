@@ -4,7 +4,7 @@
  */
 
 // 전세자금보증상품 통합 응답 Entity
-export class JeonseGuaranteeEntity {
+export class GuaranteeLimitEntity {
   constructor(
     // 헤더 정보
     public resultCode: string, // 결과코드 (예: "00")
@@ -22,5 +22,3 @@ export class JeonseGuaranteeEntity {
     }> // 전세자금보증상품 목록
   ) {}
 }
-
-

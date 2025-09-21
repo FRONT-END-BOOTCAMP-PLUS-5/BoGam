@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetJeonseGuaranteeUsecase } from '@be/applications/jeonseGuarantees/usecases/GetJeonseGuaranteeUsecase';
-import { JeonseGuaranteeRepositoryImpl } from '@be/infrastructure/repository/JeonseGuaranteeRepositoryImpl';
-import { GetJeonseGuaranteeRequestDto } from '@be/applications/jeonseGuarantees/dtos/GetJeonseGuaranteeRequestDto';
+import { GetGuaranteeLimitUsecase } from '@be/applications/guaranteeLimits/usecases/GetGuaranteeLimitUsecase';
+import { GuaranteeLimitRepositoryImpl } from '@be/infrastructure/repository/GuaranteeLimitRepositoryImpl';
+import { GetGuaranteeLimitRequestDto } from '@be/applications/guaranteeLimits/dtos/GetGuaranteeLimitRequestDto';
 
 export async function POST(request: NextRequest) {
-  const requestId = `jeonse-guarantee-api-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const requestId = `guarantee-limit-api-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   
   console.log(`🚀 [${requestId}] 전세자금보증상품 조회 API 요청 시작`);
   
   try {
-    const body: GetJeonseGuaranteeRequestDto = await request.json();
+    const body: GetGuaranteeLimitRequestDto = await request.json();
     console.log(`📝 [${requestId}] 요청 데이터:`, JSON.stringify(body, null, 2));
 
     // 필수 파라미터 검증
     const requiredFields = ['rentGrntAmt', 'trgtLwdgCd', 'age', 'weddStcd', 'myIncmAmt', 'myTotDebtAmt', 'ownHsCnt'];
-    const missingFields = requiredFields.filter(field => !body[field as keyof GetJeonseGuaranteeRequestDto]);
+    const missingFields = requiredFields.filter(field => !body[field as keyof GetGuaranteeLimitRequestDto]);
     
     // mmrtAmt는 0이 허용되는 값이므로 별도 검증
     if (body.mmrtAmt === undefined || body.mmrtAmt === null) {
@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
 
     // UseCase 실행
     console.log(`🔍 [${requestId}] UseCase 실행 시작`);
-    const repository = new JeonseGuaranteeRepositoryImpl();
-    const usecase = new GetJeonseGuaranteeUsecase(repository);
+    const repository = new GuaranteeLimitRepositoryImpl();
+    const usecase = new GetGuaranteeLimitUsecase(repository);
     const result = await usecase.execute(body);
     
     console.log(`🎯 [${requestId}] API 응답 성공:`, {
