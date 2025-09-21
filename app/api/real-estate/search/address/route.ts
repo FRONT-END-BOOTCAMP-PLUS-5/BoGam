@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         {
-          success: false,
+          success: true,
           message: '추가인증이 필요합니다.',
           requiresTwoWayAuth: true,
           twoWayInfo: twoWayInfo,
@@ -275,7 +275,7 @@ export async function POST(request: NextRequest) {
           data: response,
           resultCode: codefResultCode,
         },
-        { status: 400 }
+        { status: 200 }
       );
     }
   } catch (error) {

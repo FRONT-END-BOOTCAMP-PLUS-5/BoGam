@@ -29,10 +29,6 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     handleCloseTwoWayModal,
     setShowTwoWayModal,
     setTwoWaySelectedAddress,
-    setResponse,
-    setHandleAddressSelect,
-    setHandleCloseTwoWayModal,
-    reset,
   } = useRealEstateStore();
 
   const {

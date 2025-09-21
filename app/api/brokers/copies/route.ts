@@ -36,8 +36,8 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(result, { status: 200 });
-  } catch (error) {
-    console.error('BrokerCopy GET API 오류:', error);
+  } catch {
+    console.error('BrokerCopy GET API 오류:');
     return NextResponse.json(
       { success: false, error: '서버 오류가 발생했습니다.' },
       { status: 500 }
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     // JSON 유효성 검증
     try {
       JSON.parse(brokerJson);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { success: false, error: '유효하지 않은 JSON 형식입니다.' },
         { status: 400 }
@@ -98,8 +98,8 @@ export async function POST(request: NextRequest) {
     } else {
       return NextResponse.json(result, { status: 400 });
     }
-  } catch (error) {
-    console.error('BrokerCopy POST API 오류:', error);
+  } catch {
+    console.error('BrokerCopy POST API 오류:');
     return NextResponse.json(
       { success: false, error: '서버 오류가 발생했습니다.' },
       { status: 500 }

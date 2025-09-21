@@ -1,11 +1,10 @@
 'use client';
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { GetGuaranteeLimitRequestDto } from '@libs/api_front/guaranteeLimit.api';
 import {
   // REGION_OPTIONS,
   MARRIAGE_OPTIONS,
   HOUSE_COUNT_OPTIONS,
-  FIELD_ERROR_MESSAGES,
   FIELD_PLACEHOLDERS,
   FIELD_LABELS,
 } from '@utils/constants/guaranteeLimit';
@@ -15,29 +14,15 @@ import Field from '@/(anon)/_components/common/forms/Field';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { formatToKoreanUnit } from '@utils/formatUtils';
 import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
-const MONTHLY_RENT_OPTIONS = [
-  { value: 'none', label: '없음' },
-  { value: 'direct', label: '직접 입력' },
-];
 import styles from './GuaranteeLimitInput.styles';
 
 interface GuaranteeLimitInputProps {
   formData: GetGuaranteeLimitRequestDto;
   errors: Record<keyof GetGuaranteeLimitRequestDto, string | undefined>;
-  inputModes: {
-    myIncmAmt: 'none' | 'direct';
-    myTotDebtAmt: 'none' | 'direct';
-    mmrtAmt: 'none' | 'direct';
-  };
   // isPending: boolean;
-  error: string | null;
   onInputChange: (
     field: keyof GetGuaranteeLimitRequestDto,
     value: string | number
-  ) => void;
-  onInputModeChange: (
-    field: 'myIncmAmt' | 'myTotDebtAmt' | 'mmrtAmt',
-    mode: 'none' | 'direct'
   ) => void;
   onSubmit: (e: React.FormEvent) => void;
 }
@@ -45,10 +30,7 @@ interface GuaranteeLimitInputProps {
 export default function GuaranteeLimitInput({
   formData,
   errors,
-  inputModes,
-  error,
   onInputChange,
-  onInputModeChange,
   onSubmit,
 }: GuaranteeLimitInputProps) {
   const { selectedAddress } = useUserAddressStore();
@@ -156,7 +138,7 @@ export default function GuaranteeLimitInput({
           <Field
             id='myTotDebtAmt'
             label={FIELD_LABELS.myTotDebtAmt}
-            required
+            required={false}
             error={errors.myTotDebtAmt}
           >
             <div className={styles.inputWrapper}>
@@ -198,51 +180,22 @@ export default function GuaranteeLimitInput({
           <Field
             id='mmrtAmt'
             label={FIELD_LABELS.mmrtAmt}
-            required
+            required={false}
             error={errors.mmrtAmt}
           >
-            <div className={styles.monthlyRentContainer}>
-              <DropDown
-                options={MONTHLY_RENT_OPTIONS}
-                value={inputModes.mmrtAmt}
-                onChange={(value) =>
-                  onInputModeChange('mmrtAmt', value as 'none' | 'direct')
-                }
-                placeholder='월세 선택'
-                className={styles.monthlyRentSelect}
-              />
-              {inputModes.mmrtAmt === 'direct' && (
-                <div className={styles.monthlyRentInputWrapper}>
-                  <TextInput
-                    type='text'
-                    placeholder={FIELD_PLACEHOLDERS.mmrtAmt}
-                    value={formData.mmrtAmt > 0 ? formData.mmrtAmt : ''}
-                    onChange={(e) =>
-                      onInputChange('mmrtAmt', formatNumber(e.target.value))
-                    }
-                    error={!!errors.mmrtAmt}
-                    className={styles.inputWithUnit}
-                  />
-                  {formData.mmrtAmt > 0 && (
-                    <div className={styles.unitDisplay}>
-                      {formatToKoreanUnit(formData.mmrtAmt)}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            <TextInput
+              type='text'
+              placeholder={FIELD_PLACEHOLDERS.mmrtAmt}
+              value={formData.mmrtAmt > 0 ? formData.mmrtAmt : ''}
+              onChange={(e) =>
+                onInputChange('mmrtAmt', formatNumber(e.target.value))
+              }
+              error={!!errors.mmrtAmt}
+              className={styles.inputWithUnit}
+            />
           </Field>
         </div>
       </FormContainer>
-
-      {/* 에러 메시지 */}
-      {error && (
-        <div className={styles.errorContainer}>
-          <p className={styles.errorText}>
-            조회 중 오류가 발생했습니다. 다시 시도해주세요.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

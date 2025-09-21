@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   GetGuaranteeLimitRequestDto,
   GetGuaranteeLimitResponseDto,
+  // GuaranteeLimitApiResponse,
 } from '@libs/api_front/guaranteeLimit.api';
 import { useGetGuaranteeLimit } from '@/hooks/useGuaranteeLimit';
 import { FIELD_ERROR_MESSAGES } from '@utils/constants/guaranteeLimit';
@@ -11,6 +12,8 @@ import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/
 import GuaranteeLimitInput from './GuaranteeLimitInput';
 import GuaranteeLimitOutput from './GuaranteeLimitOutput';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useModalStore } from '@libs/stores/modalStore';
+import styles from './GuaranteeLimitContainer.styles';
 
 
 // 초기 상태 상수
@@ -29,11 +32,6 @@ const INITIAL_FORM_DATA: GetGuaranteeLimitRequestDto = {
 
 type TabType = 'input' | 'output';
 
-const INITIAL_INPUT_MODES = {
-  myIncmAmt: 'none' as 'none' | 'direct',
-  myTotDebtAmt: 'none' as 'none' | 'direct',
-  mmrtAmt: 'none' as 'none' | 'direct',
-};
 
 export default function GuaranteeLimitContainer() {
   // 상태 관리
@@ -42,17 +40,16 @@ export default function GuaranteeLimitContainer() {
   const [errors, setErrors] = useState<
     Record<keyof GetGuaranteeLimitRequestDto, string | undefined>
   >({} as Record<keyof GetGuaranteeLimitRequestDto, string | undefined>);
-  const [inputModes, setInputModes] = useState(INITIAL_INPUT_MODES);
   const [activeTab, setActiveTab] = useState<TabType>('input');
 
-  // const { selectedAddress } = useUserAddressStore();
+  const { selectedAddress } = useUserAddressStore();
+  const { openModal } = useModalStore();
 
   // API 훅
   const {
     mutate: getGuaranteeLimit,
     isPending,
     data,
-    error,
   } = useGetGuaranteeLimit();
 
   // 보증 금액 데이터 로컬 상태
@@ -63,12 +60,22 @@ export default function GuaranteeLimitContainer() {
     rcmdProrRnk?: number;
   }>({});
 
+  // selectedAddress 변경 시 formData에 userAddressNickname 추가
+  useEffect(() => {
+    if (selectedAddress?.nickname) {
+      setFormData((prev) => ({
+        ...prev,
+        userAddressNickname: selectedAddress.nickname,
+      }));
+    }
+  }, [selectedAddress]);
+
   // 데이터 응답 시 자동으로 결과 탭으로 이동 및 로컬 상태 업데이트
   useEffect(() => {
-    if (data?.items && data.items.length > 0) {
+    if (data?.data?.items && data.data.items.length > 0) {
       setActiveTab('output');
 
-      const firstItem = data.items[0];
+      const firstItem = data.data.items[0];
 
       // 보증 금액 데이터를 로컬 상태에 저장
       if (firstItem) {
@@ -81,6 +88,21 @@ export default function GuaranteeLimitContainer() {
       }
     }
   }, [data]);
+
+  // data.success가 false일 때 에러 모달 표시
+  useEffect(() => {
+    if (data && data.success === false) {
+      openModal({
+        title: '오류',
+        content: data.message || '전세자금보증상품 조회 중 오류가 발생했습니다.',
+        icon: 'error',
+        confirmText: '확인',
+        onConfirm: async () => {
+          // 확인 버튼 클릭 시 아무것도 하지 않음 (모달만 닫힘)
+        },
+      });
+    }
+  }, [data, openModal]);
 
   // 폼 검증 함수
   const validateForm = useCallback((): boolean => {
@@ -110,22 +132,16 @@ export default function GuaranteeLimitContainer() {
       newErrors.ownHsCnt = FIELD_ERROR_MESSAGES.ownHsCnt;
     }
 
-    // 조건부 필수 필드 검증 (직접 입력 모드일 때만)
-    const conditionalFields = [
-      { field: 'myIncmAmt', mode: inputModes.myIncmAmt },
-      { field: 'myTotDebtAmt', mode: inputModes.myTotDebtAmt },
-      { field: 'mmrtAmt', mode: inputModes.mmrtAmt },
-    ] as const;
+    // 소득금액은 필수 필드로 검증
+    if (!formData.myIncmAmt || formData.myIncmAmt <= 0) {
+      newErrors.myIncmAmt = FIELD_ERROR_MESSAGES.myIncmAmt;
+    }
 
-    conditionalFields.forEach(({ field, mode }) => {
-      if (mode === 'direct' && (!formData[field] || formData[field] <= 0)) {
-        newErrors[field] = FIELD_ERROR_MESSAGES[field];
-      }
-    });
+    // 총부채금액과 월세금액은 0원도 가능하므로 검증하지 않음
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData, inputModes]);
+  }, [formData]);
 
   // 입력 변경 핸들러
   const handleInputChange = useCallback(
@@ -146,39 +162,19 @@ export default function GuaranteeLimitContainer() {
     [errors]
   );
 
-  // 입력 모드 변경 핸들러
-  const handleInputModeChange = useCallback(
-    (field: keyof typeof inputModes, mode: 'none' | 'direct') => {
-      setInputModes((prev) => ({
-        ...prev,
-        [field]: mode,
-      }));
-
-      // 모드가 'none'이면 해당 필드를 0으로 설정
-      if (mode === 'none') {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: 0,
-        }));
-      }
-
-      // 에러 초기화
-      if (errors[field]) {
-        setErrors((prev) => ({
-          ...prev,
-          [field]: undefined,
-        }));
-      }
-    },
-    [errors]
-  );
 
   // 폼 제출 핸들러
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
       if (validateForm()) {
-        getGuaranteeLimit(formData);
+        // 총부채금액과 월세금액이 빈 값이면 0으로 처리
+        const submitData = {
+          ...formData,
+          myTotDebtAmt: formData.myTotDebtAmt || 0,
+          mmrtAmt: formData.mmrtAmt || 0,
+        };
+        getGuaranteeLimit(submitData);
       }
     },
     [formData, getGuaranteeLimit, validateForm]
@@ -190,27 +186,23 @@ export default function GuaranteeLimitContainer() {
   }, []);
 
   return (
-    <div className='bg-white rounded-lg shadow-sm'>
+    <div className={styles.container}>
       {/* 탭 네비게이션 */}
       <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* 탭 컨텐츠 */}
-      <div className='border-t'>
+      <div className={styles.tabContent}>
         {activeTab === 'input' ? (
           <GuaranteeLimitInput
             formData={formData}
             errors={errors}
-            inputModes={inputModes}
-            // isPending={isPending}
-            error={error?.message || null}
             onInputChange={handleInputChange}
-            onInputModeChange={handleInputModeChange}
             onSubmit={handleSubmit}
           />
         ) : (
           <GuaranteeLimitOutput
             data={
-              data ||
+              data?.data ||
               (guaranteeData.grntLmtAmt
                 ? ({
                     items: [

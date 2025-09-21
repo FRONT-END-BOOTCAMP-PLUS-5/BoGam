@@ -1,6 +1,6 @@
 import { GuaranteeLimitCopyRepository } from '@be/domain/repository/GuaranteeLimitCopyRepository';
 import { decryptJson } from '@utils/encryption';
-import { GuaranteeLimitCopyJson } from '@be/domain/entities/GuaranteeLimitCopy';
+import { GuaranteeLimitCopyJson } from '../dtos/GuaranteeLimitCopyJson';
 import { GetGuaranteeLimitCopyRequestDto } from '../dtos/GetGuaranteeLimitCopyRequestDto';
 import { GetGuaranteeLimitCopyResponseDto } from '../dtos/GetGuaranteeLimitCopyResponseDto';
 

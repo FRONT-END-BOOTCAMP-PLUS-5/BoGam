@@ -1,4 +1,4 @@
-import { GuaranteeLimitCopyJson } from '@be/domain/entities/GuaranteeLimitCopy';
+import { GuaranteeLimitCopyJson } from './GuaranteeLimitCopyJson';
 
 export interface CreateGuaranteeLimitCopyRequestDto {
   userAddressId: number;

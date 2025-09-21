@@ -46,7 +46,7 @@ interface StepDetailContentProps {
   onClose?: () => void;
 }
 
-export default function StepDetailContent({ guideSteps, onActionClick, currentStep = 1, onClose }: StepDetailContentProps) {
+export default function StepDetailContent({ guideSteps, currentStep = 1, onClose }: StepDetailContentProps) {
   // currentStep에 해당하는 스텝들만 필터링
   const currentStepData = guideSteps.filter(step => step.stepNumber === currentStep);
   

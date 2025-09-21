@@ -4,7 +4,7 @@ import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { createCodefAuth, CodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
 import axios from 'axios';
-import { GetTaxCertResponseDto } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
+import { GetTaxCertResponseDto, CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 export class TaxCertRepositoryImpl implements TaxCertRepository {
   private readonly baseUrl = CODEF_API_CONFIG.BASE_URL;
@@ -18,7 +18,7 @@ export class TaxCertRepositoryImpl implements TaxCertRepository {
 
   private async callCodefApi(
     requestBody: GetTaxCertRequestDto
-  ): Promise<GetTaxCertResponseDto> {
+  ): Promise<CodefResponse> {
     const url = `${this.baseUrl}${this.endpoint}`;
 
     // OAuth 인증 헤더 가져오기
@@ -34,11 +34,11 @@ export class TaxCertRepositoryImpl implements TaxCertRepository {
         headers,
         // responseType을 제거하여 axios가 자동으로 Content-Type에 따라 처리하도록 함
       });
-
       // 응답 데이터 처리 (URL 디코딩 + JSON 파싱)
-      const data: GetTaxCertResponseDto =
-        processResponse<GetTaxCertResponseDto>(response.data);
+      const data: CodefResponse =
+        processResponse<CodefResponse>(response.data);
 
+      console.log("Impl data", data);
       return data;
     } catch (error: unknown) {
       if (error && typeof error === 'object' && 'response' in error) {
@@ -67,13 +67,13 @@ export class TaxCertRepositoryImpl implements TaxCertRepository {
 
   async requestTaxCert(
     request: GetTaxCertRequestDto
-  ): Promise<GetTaxCertResponseDto> {
+  ): Promise<CodefResponse> {
     return this.callCodefApi(request);
   }
 
   async requestTaxCertTwoWay(
     request: GetTaxCertRequestDto
-  ): Promise<GetTaxCertResponseDto> {
+  ): Promise<CodefResponse> {
     // 2-way 요청인지 확인하고 타입 가드 사용
     if ('is2Way' in request && request.is2Way) {
       const twoWayRequest = request;

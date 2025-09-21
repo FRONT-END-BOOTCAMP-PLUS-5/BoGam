@@ -65,9 +65,9 @@ export const FIELD_PLACEHOLDERS = {
   age: '나이를 입력하세요',
   weddStcd: '결혼상태를 선택하세요',
   myIncmAmt: '연간 소득금액을 입력하세요',
-  myTotDebtAmt: '총부채금액을 입력하세요 (0원 가능)',
+  myTotDebtAmt: '총부채금액을 입력하세요',
   ownHsCnt: '보유주택수를 선택하세요',
-  mmrtAmt: '월세금액을 입력하세요 (0원 가능)',
+  mmrtAmt: '월세금액을 입력하세요',
 } as const;
 
 // 필드별 라벨
@@ -77,7 +77,7 @@ export const FIELD_LABELS = {
   age: '나이',
   weddStcd: '결혼상태',
   myIncmAmt: '소득금액',
-  myTotDebtAmt: '총부채금액',
+  myTotDebtAmt: '총부채금액 (미입력 시 0원으로 처리)',
   ownHsCnt: '보유주택수',
-  mmrtAmt: '월세금액',
+  mmrtAmt: '월세금액 (미입력 시 0원으로 처리)',
 } as const;

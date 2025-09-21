@@ -4,7 +4,7 @@ import {
   TaxCertApiResponse,
 } from '@/(anon)/_components/common/taxCert/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useGetTaxCertCopy } from '@/hooks/useTaxCertQueries';
+import { useGetTaxCertCopy } from '@/hooks/useTaxCert';
 import { useTaxCertRiskAssessment } from '@/hooks/useTaxCertRiskAssessment';
 
 export const useTaxCertOutput = ({

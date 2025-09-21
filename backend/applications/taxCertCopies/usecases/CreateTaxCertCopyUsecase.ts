@@ -15,9 +15,7 @@ export class CreateTaxCertCopyUsecase {
   ): Promise<CreateTaxCertCopyResponseDto> {
     try {
       // JSON을 암호화된 문자열로 변환
-      const encryptedData = encryptJson(
-        request.taxCertJson as unknown as Record<string, unknown>
-      );
+      const encryptedData = encryptJson(request.taxCertJson);
 
       // Prisma upsert 사용
       const result = await this.taxCertCopyRepository.upsertByUserAddressId(

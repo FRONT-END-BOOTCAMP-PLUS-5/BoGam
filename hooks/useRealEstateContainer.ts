@@ -11,6 +11,7 @@ import {
   useCreateRealEstate,
   useTwoWayAuth,
 } from '@/hooks/useRealEstate';
+import { RealEstateSearchResponse } from '@libs/api_front/realEstate.api';
 
 export const useRealEstateContainer = () => {
   // 전역 store 사용
@@ -43,14 +44,14 @@ export const useRealEstateContainer = () => {
   const createRealEstateMutation = useCreateRealEstate(async (data) => {
     setIsDataLoading(true);
     // 일반 API 요청 성공 후 탭 전환 (2-way 인증이 필요 없는 경우)
-    if (!data.requiresTwoWayAuth) {
+    if (!(data as any).requiresTwoWayAuth) {
       // existsData 업데이트를 기다림 (useEffect에서 처리)
     }
   });
 
   const twoWayAuthMutation = useTwoWayAuth(
     async (data) => {
-      setResponse(data);
+      setResponse(data as ApiResponse);
       setIsDataLoading(true);
     },
     (error) => {
@@ -157,11 +158,11 @@ export const useRealEstateContainer = () => {
         requestData
       );
 
-      setResponse(responseData);
+      setResponse(responseData as ApiResponse);
 
       if (responseData.requiresTwoWayAuth && responseData.resAddrList) {
         setShowTwoWayModal(true);
-        setResponse(responseData);
+        setResponse(responseData as ApiResponse);
       }
     } catch (error) {
       setResponse({

@@ -23,6 +23,24 @@ export const RealEstateContainer = () => {
     handleSubmit,
   } = useRealEstateContainer();
 
+  // 모달 스토어에서 openModal 함수 가져오기
+  const { openModal } = useModalStore();
+
+  // response 변경을 감지하여 에러 모달 표시
+  useEffect(() => {
+    if (response && !response.success) {
+      openModal({
+        title: '오류',
+        content: response.message || '부동산등기부등본 조회 중 오류가 발생했습니다.',
+        icon: 'error',
+        confirmText: '확인',
+        onConfirm: async () => {
+          // 확인 버튼 클릭 시 아무것도 하지 않음 (모달만 닫힘)
+        },
+      });
+    }
+  }, [response, openModal]);
+
   // 입력 컴포넌트
   const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
     <RealEstateInput
