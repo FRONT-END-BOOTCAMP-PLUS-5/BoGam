@@ -1,18 +1,20 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTransactionManagement } from '@/hooks/main/useTransactionManagement';
 import { useMainPageState } from '@/hooks/main/useMainPageState';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { parseAddressString } from '@utils/main/addressUtils';
 import { parseStepUrl } from '@utils/stepUrlParser';
+import { formatToKoreanUnit } from '@utils/formatUtils';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
 import Button from '@/(anon)/_components/common/button/Button';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
+import Field from '@/(anon)/_components/common/forms/Field';
 import { TabNavigation } from '@/(anon)/_components/common/broker/tabNavigation/TabNavigation';
 import { styles } from './TransactionSearchComponent.styles';
 
@@ -50,7 +52,7 @@ export const TransactionSearchComponent: React.FC<
   const [showDanjiModal, setShowDanjiModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
   const [targetArea, setTargetArea] = useState(''); // 거래하려는 집 전용면적
-  const [targetPrice, setTargetPrice] = useState(''); // 전세 거래금액
+  const [targetPrice, setTargetPrice] = useState(0); // 전세 거래금액
 
   // URL에서 stepNumber와 detail 가져오기 (parseStepUrl 사용)
   const pathname = window.location.pathname;
@@ -63,6 +65,11 @@ export const TransactionSearchComponent: React.FC<
   const { transactionData, isLoading, handleMoveToAddress } =
     useTransactionManagement();
   const { selectedYear, setSelectedYear } = useMainPageState();
+
+  // 숫자 포맷팅 함수
+  const formatNumber = (value: string): number => {
+    return parseInt(value.replace(/[^\d]/g, '')) || 0;
+  };
 
   // 실거래가 결과 저장 훅 (기존 useStepResultMutations 사용)
   const { upsertStepResult, isLoading: isSaving } = useStepResultMutations();
@@ -78,7 +85,12 @@ export const TransactionSearchComponent: React.FC<
   }, [selectedAddress]);
 
   // 매매 거래금액 문자열을 숫자로 변환하는 함수 (보증금 제외)
-  const parsePrice = (price: string): number => {
+  const parsePrice = (price: string | number): number => {
+    // 숫자인 경우 그대로 반환 (억 단위로 변환)
+    if (typeof price === 'number') {
+      return price / 100000000; // 원 단위를 억 단위로 변환
+    }
+
     // 보증금이 포함된 데이터는 제외 (전월세 거래)
     if (price.includes('보증금')) {
       return 0;
@@ -107,15 +119,6 @@ export const TransactionSearchComponent: React.FC<
 
     return 0;
   };
-
-  // 트랜잭션 데이터가 완료되면 결과 탭으로 이동하고 분석 결과 저장
-  useEffect(() => {
-    if (transactionData.length > 0) {
-      setActiveTab('output');
-      // 검색 완료 후 한 번만 분석 결과 저장
-      saveAnalysisResult();
-    }
-  }, [transactionData]);
 
   // 전용면적별 평균가 계산 (매매 거래만)
   const averagePricesByArea: AveragePriceByArea[] = useMemo(() => {
@@ -174,10 +177,10 @@ export const TransactionSearchComponent: React.FC<
   }, [transactionData]);
 
   // 분석 결과 자동 저장 함수
-  const saveAnalysisResult = () => {
+  const saveAnalysisResult = useCallback(() => {
     if (
       targetArea &&
-      targetPrice &&
+      targetPrice > 0 &&
       averagePricesByArea.length > 0 &&
       selectedAddress?.nickname &&
       !isSaving
@@ -211,7 +214,16 @@ export const TransactionSearchComponent: React.FC<
         jsonDetails,
       });
     }
-  };
+  }, [targetArea, targetPrice, averagePricesByArea, selectedAddress?.nickname, isSaving, upsertStepResult, stepNumber, detail]);
+
+  // 트랜잭션 데이터가 완료되면 결과 탭으로 이동하고 분석 결과 저장
+  useEffect(() => {
+    if (transactionData.length > 0) {
+      setActiveTab('output');
+      // 검색 완료 후 한 번만 분석 결과 저장
+      saveAnalysisResult();
+    }
+  }, [transactionData, saveAnalysisResult]);
 
   // 주소 표시 로직
   const displayAddress =
@@ -246,7 +258,7 @@ export const TransactionSearchComponent: React.FC<
 
   // 분석 카드 렌더링 함수
   const renderAnalysisCard = () => {
-    if (!targetArea || !targetPrice || averagePricesByArea.length === 0) {
+    if (!targetArea || targetPrice <= 0 || averagePricesByArea.length === 0) {
       return null;
     }
 
@@ -282,7 +294,9 @@ export const TransactionSearchComponent: React.FC<
           </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>입력한 전세 거래가:</span>
-            <span className={styles.analysisValue}>{targetPrice}</span>
+            <span className={styles.analysisValue}>
+              {targetPrice > 0 ? formatToKoreanUnit(targetPrice) : ''}
+            </span>
           </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>유사한 전용면적:</span>
@@ -353,8 +367,11 @@ export const TransactionSearchComponent: React.FC<
             )}
 
             {/* 조회 년도 */}
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>조회 년도:</label>
+            <Field
+              id='selectedYear'
+              label='조회 년도'
+              required
+            >
               <DropDown
                 value={selectedYear}
                 onChange={(value) => setSelectedYear(value)}
@@ -367,11 +384,14 @@ export const TransactionSearchComponent: React.FC<
                   { value: '2020', label: '2020' },
                 ]}
               />
-            </div>
+            </Field>
 
             {/* 건물 타입 */}
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>건물 타입:</label>
+            <Field
+              id='selectedType'
+              label='건물 타입'
+              required
+            >
               <DropDown
                 value={selectedType}
                 onChange={(value) => setSelectedType(value)}
@@ -381,11 +401,14 @@ export const TransactionSearchComponent: React.FC<
                   { value: '2', label: '오피스텔' },
                 ]}
               />
-            </div>
+            </Field>
 
             {/* 단지명 */}
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>단지명:</label>
+            <Field
+              id='danjiName'
+              label='단지명'
+              required
+            >
               <div className={styles.complexInputGroup}>
                 <div className={styles.complexDisplay}>
                   {danjiName || '세밀한 검색을 위한 단지명 검색'}
@@ -404,13 +427,14 @@ export const TransactionSearchComponent: React.FC<
                   필요합니다
                 </p>
               )}
-            </div>
+            </Field>
 
             {/* 거래하려는 집 정보 */}
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                거래하려는 집 전용면적 (㎡):
-              </label>
+            <Field
+              id='targetArea'
+              label='거래하려는 집 전용면적 (㎡)'
+              required
+            >
               <TextInput
                 type='number'
                 step='0.1'
@@ -419,21 +443,28 @@ export const TransactionSearchComponent: React.FC<
                 onChange={(e) => setTargetArea(e.target.value)}
                 placeholder='예: 84.5'
               />
-            </div>
+            </Field>
 
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>전세 거래금액:</label>
-              <TextInput
-                type='text'
-                value={targetPrice}
-                onChange={(e) => setTargetPrice(e.target.value)}
-                placeholder='예: 5억5천만'
-              />
-              <p className={styles.priceHint}>
-                * &ldquo;억&rdquo;, &ldquo;천만&rdquo; 단위로 입력해주세요 (예:
-                5억5천만, 3억)
-              </p>
-            </div>
+            <Field
+              id='targetPrice'
+              label='전세 거래금액'
+              required
+            >
+              <div className={styles.inputWrapper}>
+                <TextInput
+                  type='text'
+                  value={targetPrice > 0 ? targetPrice.toLocaleString() : ''}
+                  onChange={(e) => setTargetPrice(formatNumber(e.target.value))}
+                  placeholder='예: 550000000'
+                  className={styles.inputWithUnit}
+                />
+                {targetPrice > 0 && (
+                  <div className={styles.unitDisplay}>
+                    {formatToKoreanUnit(targetPrice)}
+                  </div>
+                )}
+              </div>
+            </Field>
 
             {/* 실거래가 조회 버튼 */}
             <div className={styles.searchButtonContainer}>

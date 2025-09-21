@@ -7,6 +7,11 @@ export const styles = {
   formGroup: 'form-group space-y-2',
   formLabel: 'form-label block text-sm font-medium text-brand-dark-gray',
   
+  // Input wrapper for unit display
+  inputWrapper: 'relative',
+  inputWithUnit: 'pr-20',
+  unitDisplay: 'absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-brand-dark-gray font-medium',
+  
   // Address display
   addressDisplay: 'address-display p-4 bg-brand-light-gray rounded-lg',
   addressValue: 'address-value text-lg font-medium text-brand-black',
@@ -62,7 +67,6 @@ export const styles = {
   
   // Form hints and errors
   danjiHint: 'text-sm text-orange-600 mt-1',
-  priceHint: 'text-sm text-gray-500 mt-1',
   complexError: 'text-sm text-red-600 mt-2 text-center',
   
   // Average prices
