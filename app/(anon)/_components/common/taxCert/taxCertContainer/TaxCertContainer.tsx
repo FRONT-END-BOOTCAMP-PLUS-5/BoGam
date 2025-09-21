@@ -69,6 +69,8 @@ export const TaxCertContainer = forwardRef<
       loading={submitTaxCertMutation.isPending}
       onSuccess={onSuccess}
       isAuthMethodModalOpen={false}
+      onAuthMethodSelect={() => {}}
+      setIsAuthMethodModalOpen={() => {}}
     />
   );
 

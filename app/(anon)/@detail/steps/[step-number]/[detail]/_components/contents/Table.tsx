@@ -276,7 +276,7 @@ const Table = ({
                   (a, b) => new Date(b).getTime() - new Date(a).getTime()
                 );
 
-                return sortedDates.flatMap((date, dateIndex) => [
+                return sortedDates.flatMap((date) => [
                   // 날짜 헤더 행
                   <tr key={`date-${date}`} className={styles.dateHeaderRow}>
                     <td colSpan={3} className={styles.dateHeaderCell}>

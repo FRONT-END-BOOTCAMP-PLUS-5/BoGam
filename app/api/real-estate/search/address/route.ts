@@ -159,11 +159,7 @@ export async function POST(request: NextRequest) {
     const codefResultCode = response?.result?.code;
     const isCodefSuccess = codefResultCode === 'CF-00000';
 
-    console.log('🔍 CODEF API 응답:', {
-      codefResultCode,
-      isCodefSuccess,
-      responseKeys: Object.keys(response || {}),
-    });
+    console.log('🔍 CODEF API 응답:', response);
 
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장

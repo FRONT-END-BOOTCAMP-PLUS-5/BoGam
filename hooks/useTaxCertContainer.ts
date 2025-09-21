@@ -17,7 +17,6 @@ interface UseTaxCertContainerProps {
 
 export const useTaxCertContainer = ({
   onShowSimpleAuthModal,
-  onSimpleAuthApprove,
   onSimpleAuthCancel,
 }: UseTaxCertContainerProps) => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');

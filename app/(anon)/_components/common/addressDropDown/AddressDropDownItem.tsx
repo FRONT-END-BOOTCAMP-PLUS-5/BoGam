@@ -29,8 +29,7 @@ export function AddressDropDownItem({
   onSelect,
   showFavoriteToggle = true,
   showDeleteButton = true,
-  animationDelay = 0,
-  isUpdating = false,
+  animationDelay = 0
 }: AddressDropDownItemProps) {
   const [isLoading, setIsLoading] = useState(false);
 

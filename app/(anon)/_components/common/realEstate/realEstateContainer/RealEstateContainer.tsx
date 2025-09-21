@@ -1,25 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RealEstateInput } from '@/(anon)/_components/common/realEstate/realEstateInput/RealEstateInput';
 import { RealEstateOutput } from '@/(anon)/_components/common/realEstate/realEstateOutput/RealEstateOutput';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useRealEstateContainer } from '@/hooks/useRealEstateContainer';
+import { useModalStore } from '@libs/stores/modalStore';
 
 export const RealEstateContainer = () => {
   const {
     formData,
     response,
-    twoWaySelectedAddress,
-    showTwoWayModal,
     existsData,
     createRealEstateMutation,
     twoWayAuthMutation,
     isDataLoading,
     activeTab,
     setActiveTab,
-    handleAddressSelect,
-    handleCloseTwoWayModal,
     handleSubmit,
   } = useRealEstateContainer();
 
@@ -31,7 +28,7 @@ export const RealEstateContainer = () => {
     if (response && !response.success) {
       openModal({
         title: '오류',
-        content: response.message || '부동산등기부등본 조회 중 오류가 발생했습니다.',
+        content: response.message.split('+').join(' ') || '부동산등기부등본 조회 중 오류가 발생했습니다.',
         icon: 'error',
         confirmText: '확인',
         onConfirm: async () => {
@@ -42,7 +39,7 @@ export const RealEstateContainer = () => {
   }, [response, openModal]);
 
   // 입력 컴포넌트
-  const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
+  const inputComponent = () => (
     <RealEstateInput
       formData={formData}
       onSubmit={handleSubmit}

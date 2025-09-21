@@ -42,7 +42,6 @@ export const DataContainer = ({
   useEffect(() => {
     if (checkExistsQuery?.data?.success && !checkExistsQuery?.isLoading) {
       const existsData = checkExistsQuery.data.exists;
-      console.log('씨발왜안돼existsData', existsData);
       if (existsData) {
         setActiveTab('output');
       } else {

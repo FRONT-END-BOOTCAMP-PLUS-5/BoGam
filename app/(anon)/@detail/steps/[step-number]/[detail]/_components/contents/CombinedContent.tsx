@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import type { Swiper as SwiperType } from 'swiper';
@@ -13,8 +13,6 @@ import List from './List';
 import CheckListGroup from './CheckListGroup';
 import RadioGroup from './RadioGroup';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
-import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
-import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
 import GuaranteeLimitContainer from '@/(anon)/_components/common/guaranteeLimit/GuaranteeLimitContainer';
 import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
 import { PageIndicator } from '../PageIndicator';
@@ -34,8 +32,6 @@ interface CombinedContentProps {
 
 export default function CombinedContent({
   sections,
-  stepNumber,
-  detail,
   currentPage,
   onPageChange,
   onShowSimpleAuthModal,

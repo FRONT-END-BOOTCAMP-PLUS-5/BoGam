@@ -11,7 +11,6 @@ import {
   useCreateRealEstate,
   useTwoWayAuth,
 } from '@/hooks/useRealEstate';
-import { RealEstateSearchResponse } from '@libs/api_front/realEstate.api';
 
 export const useRealEstateContainer = () => {
   // 전역 store 사용
@@ -23,7 +22,6 @@ export const useRealEstateContainer = () => {
     showTwoWayModal,
     isDataLoading,
     setActiveTab,
-    setFormData,
     setResponse,
     setTwoWaySelectedAddress,
     setShowTwoWayModal,
@@ -44,7 +42,7 @@ export const useRealEstateContainer = () => {
   const createRealEstateMutation = useCreateRealEstate(async (data) => {
     setIsDataLoading(true);
     // 일반 API 요청 성공 후 탭 전환 (2-way 인증이 필요 없는 경우)
-    if (!(data as any).requiresTwoWayAuth) {
+    if (!data.requiresTwoWayAuth) {
       // existsData 업데이트를 기다림 (useEffect에서 처리)
     }
   });
@@ -88,12 +86,13 @@ export const useRealEstateContainer = () => {
   const handleAddressSelect = useCallback(async (address: AddressListItem) => {
     setTwoWaySelectedAddress(address);
     setShowTwoWayModal(false);
-
+    console.log('selected address', response, address);
     // 주소 선택 즉시 2-way 인증 요청 실행
     await handleTwoWayAuthWithAddress(address);
   }, [setTwoWaySelectedAddress, setShowTwoWayModal, response, selectedAddress, formData, twoWayAuthMutation]);
 
   const handleTwoWayAuthWithAddress = async (address: AddressListItem) => {
+    console.log('response/2-way', response);
     if (!response?.twoWayInfo) {
       alert('2-way 인증 정보가 없습니다.');
       return;
@@ -159,10 +158,11 @@ export const useRealEstateContainer = () => {
       );
 
       setResponse(responseData as ApiResponse);
-
+      console.log('responseData/', responseData);
       if (responseData.requiresTwoWayAuth && responseData.resAddrList) {
         setShowTwoWayModal(true);
         setResponse(responseData as ApiResponse);
+        console.log('set responseData', responseData);
       }
     } catch (error) {
       setResponse({

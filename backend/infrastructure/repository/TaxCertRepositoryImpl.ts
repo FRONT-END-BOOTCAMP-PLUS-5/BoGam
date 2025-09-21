@@ -4,7 +4,7 @@ import { CODEF_API_CONFIG } from '@libs/api-endpoints';
 import { createCodefAuth, CodefAuth } from '@libs/codef/codefAuth';
 import { processResponse } from '@libs/responseUtils';
 import axios from 'axios';
-import { GetTaxCertResponseDto, CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
+import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 export class TaxCertRepositoryImpl implements TaxCertRepository {
   private readonly baseUrl = CODEF_API_CONFIG.BASE_URL;
