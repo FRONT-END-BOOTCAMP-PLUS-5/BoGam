@@ -80,6 +80,7 @@ class FrontendAxiosInstance {
   private setupInterceptors(): void {
     // 요청 인터셉터 - next-auth 세션을 사용한 인증
     this.axiosInstance.interceptors.request.use(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (config: any) => {
         console.log(
           `[Frontend API Request] ${config.method?.toUpperCase()} ${config.url}`
@@ -136,6 +137,7 @@ class FrontendAxiosInstance {
   /**
    * 인증 헤더 추가 (비동기 처리)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async addAuthHeaders(config: any): Promise<any> {
     try {
       // next-auth 세션에서 사용자 정보 확인

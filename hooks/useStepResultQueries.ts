@@ -29,7 +29,7 @@ export const useGetStepResult = (
   params: GetStepResultParams,
   options?: GetStepResultOptions
 ) => {
-  const { data, isLoading, isError } = useQuery<
+  const { data, isLoading, isError, refetch } = useQuery<
     StepResultData | StepResultData[] | StepResultResponseData
   >({
     queryKey: [
@@ -44,5 +44,5 @@ export const useGetStepResult = (
     gcTime: 10 * 60 * 1000, // 10분
   });
 
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, refetch };
 };

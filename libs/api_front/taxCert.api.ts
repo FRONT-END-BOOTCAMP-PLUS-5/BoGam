@@ -70,6 +70,32 @@ export interface TaxCertExistsResponse {
   error?: string;
 }
 
+// 납세증명서 복사본 조회 요청 파라미터 타입 정의
+export interface TaxCertCopyRequestParams {
+  userAddressNickname: string;
+}
+
+// 납세증명서 JSON 데이터 타입 정의
+export interface TaxCertJsonData {
+  [key: string]: string | number | boolean | null | undefined;
+}
+
+// 납세증명서 복사본 데이터 타입 정의
+export interface TaxCertCopyData {
+  id: number;
+  userAddressId: number;
+  taxCertJson: TaxCertJsonData; // 납세증명서 JSON 데이터
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 납세증명서 복사본 API 응답 타입 정의
+export interface TaxCertCopyApiResponse {
+  success: boolean;
+  message: string;
+  data?: TaxCertCopyData;
+}
+
 /**
  * 납세증명서 API 클래스
  */
@@ -93,27 +119,43 @@ class TaxCertApi {
   ): Promise<TaxCertApiResponse> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
-    const response = await axiosInstance.post<TaxCertApiResponse>(
+    const response = await axiosInstance.post(
       '/api/tax-cert',
       issueData
     );
 
-    return response.data;
+    return response.data as TaxCertApiResponse;
   }
 
   /**
    * 납세증명서 존재 여부 확인
    */
   public async checkTaxCertExists(
-    nickname: string
+    userAddressNickname: string
   ): Promise<TaxCertExistsResponse> {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
-    const response = await axiosInstance.get<TaxCertExistsResponse>(
-      `/api/tax-cert/exists?nickname=${encodeURIComponent(nickname)}`
+    const response = await axiosInstance.get(
+      `/api/tax-cert/exists?userAddressNickname=${encodeURIComponent(userAddressNickname)}`
     );
 
-    return response.data;
+    return response.data as TaxCertExistsResponse;
+  }
+
+
+  /**
+   * 납세증명서 복사본 조회
+   */
+  public async getTaxCertCopy(
+    params: TaxCertCopyRequestParams
+  ): Promise<TaxCertCopyApiResponse> {
+    const axiosInstance = frontendAxiosInstance.getAxiosInstance();
+    
+    const response = await axiosInstance.get(
+      `/api/tax-cert/copies?userAddressNickname=${encodeURIComponent(params.userAddressNickname)}`
+    );
+
+    return response.data as TaxCertCopyApiResponse;
   }
 }
 

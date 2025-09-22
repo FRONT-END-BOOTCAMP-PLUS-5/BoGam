@@ -33,7 +33,7 @@ export default function WithdrawButton() {
         setErrorMessage(response.message || '회원탈퇴 처리 중 오류가 발생했습니다.');
         setShowErrorModal(true);
       }
-    } catch (error) {
+    } catch {
       setErrorMessage('회원탈퇴 처리 중 오류가 발생했습니다.');
       setShowErrorModal(true);
     } finally {
@@ -65,7 +65,7 @@ export default function WithdrawButton() {
 
       // 5. 홈페이지로 강제 리디렉트 (브라우저 새로고침)
       window.location.href = '/';
-    } catch (error) {
+    } catch {
       // 오류가 발생해도 홈페이지로 이동
       window.location.href = '/';
     }

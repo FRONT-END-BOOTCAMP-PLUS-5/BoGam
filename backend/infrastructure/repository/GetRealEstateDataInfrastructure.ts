@@ -61,12 +61,7 @@ export class GetRealEstateDataInfrastructure {
       const data: GetRealEstatesResponseDto =
         processResponse<GetRealEstatesResponseDto>(response.data);
 
-      console.log('✅ 부동산등기부등본 조회 성공:', {
-        status: response.status,
-        resultCode: data?.result?.code,
-        resultMessage: data?.result?.message,
-        hasData: !!data?.data,
-      });
+      console.log('✅ 부동산등기부등본 조회 성공:', data);
 
       return data;
     } catch (error: unknown) {
@@ -109,12 +104,7 @@ export class GetRealEstateDataInfrastructure {
       const data: GetRealEstatesResponseDto =
         processResponse<GetRealEstatesResponseDto>(response.data);
 
-      console.log('✅ 2-way 인증 처리 성공:', {
-        status: response.status,
-        resultCode: data?.result?.code,
-        resultMessage: data?.result?.message,
-        hasData: !!data?.data,
-      });
+      console.log('✅ 2-way 인증 처리 성공:', data);
 
       return data;
     } catch (error: unknown) {

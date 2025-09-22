@@ -14,8 +14,6 @@ export const TaxCertInput = ({
   formData,
   onSubmit,
   onSuccess,
-  onAuthMethodSelect,
-  isAuthMethodModalOpen,
   setIsAuthMethodModalOpen,
 }: TaxCertInputProps & {
   onAuthMethodSelect: (methodId: string) => void;
@@ -95,7 +93,7 @@ export const TaxCertInput = ({
         userAddressNickname: selectedAddress.nickname,
       });
       onSuccess?.();
-    } catch (error) {
+    } catch {
       setError('제출 중 오류가 발생했습니다.');
     }
   };

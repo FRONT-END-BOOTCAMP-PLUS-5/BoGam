@@ -21,6 +21,19 @@ type AddressActions = {
   // 주소 관리
   addAddress: (address: AddressWithoutId) => Promise<void>;
   addVolatileAddress: (address: UserAddress) => Promise<void>;
+  updateAddress: (
+    id: number,
+    addressData: {
+      address?: string;
+      nickname?: string;
+      x?: number;
+      y?: number;
+      isPrimary?: boolean;
+      dong?: string;
+      ho?: string;
+      completeAddress?: string;
+    }
+  ) => Promise<void>;
   deleteAddress: (id: number) => Promise<void>;
   deleteVolatileAddress: (id: number) => void;
   selectAddress: (address: UserAddress) => void;
@@ -184,6 +197,53 @@ export const useUserAddressStore = create<UserAddressStore>()(
             }),
             false,
             'rollbackAddAddress'
+          );
+          throw error;
+        }
+      },
+
+      updateAddress: async (
+        id: number,
+        addressData: {
+          address?: string;
+          nickname?: string;
+          x?: number;
+          y?: number;
+          isPrimary?: boolean;
+          dong?: string;
+          ho?: string;
+          completeAddress?: string;
+        }
+      ) => {
+        const foundAddress = get().userAddresses.find((addr) => addr.id === id);
+
+        if (!foundAddress) {
+          throw new Error('주소를 찾을 수 없습니다.');
+        }
+
+        const updatedAddress = { ...foundAddress, ...addressData };
+
+        set(
+          (state) => ({
+            userAddresses: state.userAddresses.map((addr) =>
+              addr.id === id ? updatedAddress : addr
+            ),
+          }),
+          false,
+          'updateAddressOptimistic'
+        );
+
+        try {
+          await userAddressApi.updateAddress(id, addressData);
+        } catch (error) {
+          set(
+            (state) => ({
+              userAddresses: state.userAddresses.map((addr) =>
+                addr.id === id ? foundAddress : addr
+              ),
+            }),
+            false,
+            'rollbackUpdateAddress'
           );
           throw error;
         }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import { styles } from './RiskAssessmentDisplay.styles';
 import { OriginalDocumentButton } from '@/(anon)/_components/common/realEstate/originalDocumentButton/OriginalDocumentButton';
@@ -86,7 +86,7 @@ export const RiskAssessmentDisplay: React.FC<RiskAssessmentDisplayProps> = ({
   // 초기화 완료 여부를 추적하는 ref
   const isInitialized = React.useRef(false);
   // 체크리스트 상태 복원 완료 여부를 추적하는 ref
-  const checklistRestored = React.useRef(false);
+  //const checklistRestored = React.useRef(false);
 
   // DB 데이터를 가져오는 헬퍼 함수
   const getCurrentDbData = (): RiskAssessmentJsonData => {

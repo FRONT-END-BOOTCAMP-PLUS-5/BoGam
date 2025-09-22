@@ -21,14 +21,14 @@ export class GetTaxCertUsecase {
     const requestId = `usecase-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     console.log(`🚀 [${requestId}] GetTaxCertUsecase 시작`);
-    console.log(request);
-    console.log(`📝 [${requestId}] 요청 데이터 분석:`, request);
+    //console.log(request);
+    //console.log(`📝 [${requestId}] 요청 데이터 분석:`, request);
 
     try {
       let response: {
         success: boolean;
         message: string;
-        data: any; // 기존 타입과의 호환성을 위해 any 유지
+        data: CodefResponse;
       };
 
       // 2-way 인증 요청인지 확인
@@ -52,10 +52,11 @@ export class GetTaxCertUsecase {
         const codefResponse = await this.taxCertRepository.requestTaxCertTwoWay(
           twoWayRequest
         );
+        console.log("codefResponse", codefResponse);
         response = { 
           success: true, 
           message: '2-way 인증 요청 완료', 
-          data: codefResponse 
+          data: codefResponse as CodefResponse 
         };
         console.log(`✅ [${requestId}] 2-way 인증 요청 완료`);
       } else {
@@ -64,32 +65,19 @@ export class GetTaxCertUsecase {
         const baseRequest = request as BaseTaxCertRequest;
         
         const codefResponse = await this.taxCertRepository.requestTaxCert(baseRequest);
+        console.log("codefResponse", codefResponse);
         response = { 
           success: true, 
           message: '기본 요청 완료', 
-          data: codefResponse 
+          data: codefResponse as CodefResponse
         };
-        console.log(`✅ [${requestId}] 기본 요청 완료`, codefResponse);
-        
-        // response 객체 구조 상세 분석
-        console.log(`🔍 [${requestId}] response 객체 구조 분석:`, {
-          responseType: typeof response,
-          responseKeys: response ? Object.keys(response) : [],
-          hasData: !!response?.data,
-          dataType: typeof response?.data,
-          dataKeys: response?.data ? Object.keys(response.data) : [],
-          hasResult: !!response?.data?.result,
-          hasDataData: !!response?.data?.data,
-          resultCode: response?.data?.result?.code,
-          continue2Way: (response?.data?.data as Record<string, unknown>)?.continue2Way,
-          method: (response?.data?.data as Record<string, unknown>)?.method
-        });
+        //console.log(`✅ [${requestId}] 기본 요청 완료`, codefResponse);
       }
 
       const duration = Date.now() - startTime;
       
       // 응답 데이터 분석
-      console.log(`📊 [${requestId}] 응답 데이터 분석:`, response.data);
+      //console.log(`📊 [${requestId}] 응답 데이터 분석:`, response.data);
 
       // 2-way 인증 필요 여부 확인
       const requiresTwoWay = this.requiresTwoWayAuth(response);
@@ -101,12 +89,16 @@ export class GetTaxCertUsecase {
         }
       }
 
-      console.log(`✅ [${requestId}] GetTaxCertUsecase 성공 완료 (${duration}ms)`);
-      console.log("response@@@@@", response);
+      if (response.data?.result?.message) {
+        response.data.result.message = response.data.result.message.split('+').join(' ');
+      }
+
+      // console.log(`✅ [${requestId}] GetTaxCertUsecase 성공 완료 (${duration}ms)`);
+      console.log("response", response);
       return {
         success: true,
         message: '납세증명서 조회 요청이 완료되었습니다.',
-        data: response.data,
+        data: response.data as CodefResponse,
         duration,
       };
     } catch (error) {
@@ -130,15 +122,15 @@ export class GetTaxCertUsecase {
         duration,
       };
     } finally {
-      const totalDuration = Date.now() - startTime;
-      console.log(`🏁 [${requestId}] GetTaxCertUsecase 종료 (총 소요시간: ${totalDuration}ms)`);
+      // const totalDuration = Date.now() - startTime;
+      // console.log(`🏁 [${requestId}] GetTaxCertUsecase 종료 (총 소요시간: ${totalDuration}ms)`);
     }
   }
 
   /**
    * 2-way 인증 필요 여부 확인
    */
-  requiresTwoWayAuth(response: { data?: { result?: { code?: string }; data?: Record<string, unknown> } }): boolean {
+  requiresTwoWayAuth(response: GetTaxCertResponseDto): boolean {
     const hasErrorCode = response.data?.result?.code === 'CF-03002';
     const hasContinue2Way =
       response.data?.data &&
@@ -151,7 +143,7 @@ export class GetTaxCertUsecase {
   /**
    * 2-way 인증 정보 추출
    */
-  extractTwoWayInfo(response: { data?: { data?: Record<string, unknown> } }): {
+  extractTwoWayInfo(response: GetTaxCertResponseDto): {
     jobIndex: number;
     threadIndex: number;
     jti: string;
