@@ -1,85 +1,54 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 
-// 타입 정의
-interface TransactionDataState {
+interface TransactionDataStore {
+  // 상태
   transactionData: TransactionData[];
   isLoading: boolean;
   error: string | null;
-}
 
-interface TransactionDataActions {
-  fetchTransactionData: (params: any) => Promise<void>;
+  // 액션
+  setTransactionData: (data: TransactionData[]) => void;
   clearTransactionData: () => void;
+  setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
-// 통합 인터페이스
-interface TransactionDataStore
-  extends TransactionDataState,
-    TransactionDataActions {}
-
-// 초기 상태
-const initialState: TransactionDataState = {
+export const useTransactionDataStore = create<TransactionDataStore>((set) => ({
+  // 초기 상태
   transactionData: [],
   isLoading: false,
   error: null,
-};
 
-export const useTransactionDataStore = create<TransactionDataStore>()(
-  devtools(
-    (set, get) => ({
-      // 초기 상태
-      ...initialState,
+  // 액션
+  setTransactionData: (data) => {
+    console.log('🔍 setTransactionData 호출됨:', {
+      dataLength: data.length,
+      data: data,
+    });
 
-      // 실거래가 데이터 조회
-      fetchTransactionData: async (params: any) => {
-        set(
-          { isLoading: true, error: null },
-          false,
-          'fetchTransactionData/start'
-        );
+    // 상태 업데이트를 안정적으로 처리
+    set((state) => {
+      console.log('🔍 이전 상태:', state.transactionData.length);
+      console.log('🔍 새 데이터:', data.length);
 
-        try {
-          // TODO: 실제 API 호출 구현
-          // const response = await transactionApi.fetchTransactionData(params);
-          // set({ transactionData: response.data, isLoading: false }, false, 'fetchTransactionData/success');
+      return {
+        ...state,
+        transactionData: data,
+        error: null,
+      };
+    });
+  },
 
-          // 임시 데이터 (실제 구현 시 제거)
-          const mockData: TransactionData[] = [];
-          set(
-            { transactionData: mockData, isLoading: false },
-            false,
-            'fetchTransactionData/success'
-          );
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error
-              ? error.message
-              : '실거래가 조회에 실패했습니다.';
-          set(
-            { error: errorMessage, isLoading: false },
-            false,
-            'fetchTransactionData/error'
-          );
-        }
-      },
+  clearTransactionData: () => {
+    set({ transactionData: [] });
+  },
 
-      // 실거래가 데이터 초기화
-      clearTransactionData: () => {
-        set(
-          { transactionData: [], error: null },
-          false,
-          'clearTransactionData'
-        );
-      },
+  setLoading: (loading) => {
+    set({ isLoading: loading });
+  },
 
-      // 에러 설정
-      setError: (error: string | null) => {
-        set({ error }, false, 'setError');
-      },
-    }),
-    { name: 'transaction-data-store' }
-  )
-);
+  setError: (error) => {
+    set({ error });
+  },
+}));
