@@ -1,9 +1,7 @@
 export interface CheckBrokerCopyExistsResponseDto {
   success: boolean;
+  exists: boolean;
   message?: string;
   error?: string;
-  data?: {
-    exists: boolean;
-    updatedAt?: Date;
-  };
+  updatedAt?: Date;
 }

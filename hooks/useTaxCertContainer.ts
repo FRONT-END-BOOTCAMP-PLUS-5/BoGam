@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useCheckTaxCertExists } from '@/hooks/useTaxCertQueries';
+import { useCheckTaxCertExists } from '@/hooks/useTaxCert';
 import { useSubmitTaxCert, useSubmitTwoWayAuth } from '@/hooks/useTaxCert';
 import {
   TaxCertFormData,
@@ -17,7 +17,6 @@ interface UseTaxCertContainerProps {
 
 export const useTaxCertContainer = ({
   onShowSimpleAuthModal,
-  onSimpleAuthApprove,
   onSimpleAuthCancel,
 }: UseTaxCertContainerProps) => {
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');

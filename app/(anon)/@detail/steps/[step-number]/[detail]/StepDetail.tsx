@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useDragToClose } from './_components/useDragToClose';
 import { styles } from './StepDetail.styles';
 import ModalDragHandle from './_components/ModalDragHandle';
@@ -29,11 +29,27 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     handleCloseTwoWayModal,
     setShowTwoWayModal,
     setTwoWaySelectedAddress,
-    setResponse,
-    setHandleAddressSelect,
-    setHandleCloseTwoWayModal,
-    reset,
   } = useRealEstateStore();
+
+  const {
+    isOpen: isModalOpen,
+    content,
+    confirmModal,
+    cancelModal,
+    closeModal,
+  } = useModalStore();
+
+  // onClose 함수를 확장하여 모달 초기화 포함
+  const handleClose = useCallback(() => {
+    // 모든 모달 상태 초기화
+    setShowTwoWayModal(false);
+    setTwoWaySelectedAddress(null);
+    closeModal();
+    setShowSimpleAuthModal(false);
+    
+    // 원래 onClose 호출
+    onClose();
+  }, [setShowTwoWayModal, setTwoWaySelectedAddress, closeModal, onClose]);
 
   const {
     dragState,
@@ -42,14 +58,7 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     handleTouchMove,
     handleTouchEnd,
     handleMouseDown,
-  } = useDragToClose(isOpen, onClose);
-
-  const {
-    isOpen: isModalOpen,
-    content,
-    confirmModal,
-    cancelModal,
-  } = useModalStore();
+  } = useDragToClose(isOpen, handleClose);
 
   // 간편인증 모달 관련 핸들러들
   const handleShowSimpleAuthModal = () => {
@@ -89,20 +98,13 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
     }
   }, [isOpen]);
 
-  // StepDetail이 닫힐 때 모달 상태만 초기화
-  useEffect(() => {
-    if (!isOpen) {
-      setShowTwoWayModal(false);
-      setTwoWaySelectedAddress(null);
-    }
-  }, [isOpen, setShowTwoWayModal, setTwoWaySelectedAddress]);
 
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleClose}>
       <div
         ref={modalRef}
         className={styles.modalContent}
@@ -117,7 +119,7 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onMouseDown={handleMouseDown}
-          onClose={onClose}
+          onClose={handleClose}
         />
 
         <ModalContent

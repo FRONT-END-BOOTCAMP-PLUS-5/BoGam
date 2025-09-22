@@ -59,24 +59,6 @@ export async function generateMetadata({
   // 환경별 API URL 설정
   const isProduction = process.env.NODE_ENV === 'production';
   const baseUrl = isProduction ? 'https://lion5-bogam.site' : 'http://localhost:3000';
-  
-  // 페이지 데이터 가져오기
-  let pages: PageData[] = [];
-  try {
-    const pagesData = await import(`./stepData/${stepNumber}.json`);
-    if (Array.isArray(pagesData.default)) {
-      pages = pagesData.default[0]?.pages || [];
-    } else if (pagesData.default?.pages) {
-      pages = pagesData.default.pages;
-    } else if (Array.isArray(pagesData)) {
-      pages = pagesData[0]?.pages || [];
-    } else if (pagesData.pages) {
-      pages = pagesData.pages;
-    }
-  } catch (error) {
-    console.error('JSON 파일 로드 실패:', error);
-    pages = [];
-  }
 
   const stepMetadata = getStepSpecificMetadata(stepNumber);
 

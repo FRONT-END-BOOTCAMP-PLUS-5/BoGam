@@ -28,7 +28,7 @@ export const TaxCertOutput = ({
     riskAssessment,
     loading: totalLoading,
     hasData,
-    refetchTaxCertCopy,
+    //refetchTaxCertCopy,
   } = useTaxCertOutput({ response, loading, existsData });
   
   console.log('response', response);
@@ -258,7 +258,7 @@ export const TaxCertOutput = ({
           // console.log('hookRiskAssessment', hookRiskAssessment);
 
           // setDataChanged(false);
-        } catch (error) {
+        } catch {
           // 위험도 검사 실행 중 오류 발생 시 상태 리셋
           hasPerformedRiskAssessment.current = false;
           setIsPerformingRiskAssessment(false);

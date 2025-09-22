@@ -32,7 +32,7 @@ export default function ProgressBarChart({ stepNumber, userAddressNickname, init
   }, []);
 
   // stepResults 데이터 가져오기
-  const { data: stepData, isLoading } = useGetStepResult({
+  const { data: stepData } = useGetStepResult({
     userAddressNickname,
     stepNumber,
     detail: '',

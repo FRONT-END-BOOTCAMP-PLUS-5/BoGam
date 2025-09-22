@@ -25,7 +25,7 @@ export const useRealEstateOutput = ({
   );
 
   // response prop이 있으면 그것을 사용, 없으면 dbResponse 사용
-  const displayResponse: ApiResponse | null = response || dbResponse || null;
+  const displayResponse: ApiResponse | null = response || (dbResponse as ApiResponse) || null;
 
   // 현재 라우팅에서 step number 추출
   useEffect(() => {

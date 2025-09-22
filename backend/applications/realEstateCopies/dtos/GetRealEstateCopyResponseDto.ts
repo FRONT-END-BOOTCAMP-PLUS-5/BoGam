@@ -1,4 +1,4 @@
-import { RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopyJson } from './RealEstateCopyJson';
 
 /**
  * 등기부등본 복사본 조회 응답 DTO

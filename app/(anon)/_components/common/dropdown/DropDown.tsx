@@ -37,7 +37,6 @@ export function DropDown({
   onChange,
   placeholder = '선택하세요',
   disabled = false,
-  className = '',
   label,
   required = false,
   hint,

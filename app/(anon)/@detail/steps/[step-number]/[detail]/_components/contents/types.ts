@@ -128,9 +128,9 @@ export interface RealEstateContainerSection extends BaseContentSection {
   type: 'RealEstateContainer';
 }
 
-// JeonseGuarantee 전용 인터페이스
-export interface JeonseGuaranteeSection extends BaseContentSection {
-  type: 'JeonseGuarantee';
+// GuaranteeLimit 전용 인터페이스
+export interface GuaranteeLimitSection extends BaseContentSection {
+  type: 'GuaranteeLimit';
 }
 
 // 모든 섹션 타입을 유니온으로 정의
@@ -144,7 +144,7 @@ export type ContentSection =
   | TaxCertIntroSection
   | TaxCertContainerSection
   | RealEstateContainerSection
-  | JeonseGuaranteeSection;
+  | GuaranteeLimitSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {

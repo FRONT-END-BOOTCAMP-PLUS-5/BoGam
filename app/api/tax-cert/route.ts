@@ -5,7 +5,6 @@ import { CreateTaxCertCopyUsecase } from '@be/applications/taxCertCopies/usecase
 import { TaxCertCopyRepositoryImpl } from '@be/infrastructure/repository/TaxCertCopyRepositoryImpl';
 import { encryptPassword } from '@libs/codef/codefEncrypter';
 import { getUserAddressId } from '@utils/userAddress';
-import { TaxCertResponseData } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
 export async function POST(request: NextRequest) {
   const requestId = `tax-cert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -136,20 +135,20 @@ export async function POST(request: NextRequest) {
   
     
          // 추가인증 관련 데이터 상세 분석
-     if (result.data) {
-       console.log(`🔍 [${requestId}] 추가인증 데이터 분석:`, {
-         hasData: !!result.data,
-         dataType: typeof result.data,
-         dataKeys: result.data ? Object.keys(result.data) : [],
-         continue2Way: (result.data as TaxCertResponseData)?.continue2Way,
-         method: (result.data as TaxCertResponseData)?.method,
-         hasContinue2Way: 'continue2Way' in (result.data || {}),
-         hasMethod: 'method' in (result.data || {}),
-         fullData: JSON.stringify(result.data, null, 2)
-       });
-     } else {
-       console.log(`⚠️ [${requestId}] result.data가 없습니다`);
-     }
+    //  if (result.data) {
+    //    console.log(`🔍 [${requestId}] 추가인증 데이터 분석:`, {
+    //      hasData: !!result.data,
+    //      dataType: typeof result.data,
+    //      dataKeys: result.data ? Object.keys(result.data) : [],
+    //      continue2Way: (result.data as TaxCertResponseData)?.continue2Way,
+    //      method: (result.data as TaxCertResponseData)?.method,
+    //      hasContinue2Way: 'continue2Way' in (result.data || {}),
+    //      hasMethod: 'method' in (result.data || {}),
+    //      fullData: JSON.stringify(result.data, null, 2)
+    //    });
+    //  } else {
+    //    console.log(`⚠️ [${requestId}] result.data가 없습니다`);
+    //  }
 
     if (!result.success) {
       // CODEF API 비즈니스 로직 실패 시 400 반환
@@ -243,7 +242,7 @@ export async function POST(request: NextRequest) {
       console.log(`⏳ [${requestId}] 추가인증 필요 상태 반환`);
       return NextResponse.json(
         {
-          success: false,
+          success: true,
           message: '추가인증이 필요합니다.',
           data: result.data,
         },
@@ -264,7 +263,7 @@ export async function POST(request: NextRequest) {
           data: result.data,
           resultCode: codefResultCode,
         },
-        { status: 400 }
+        { status: 200 }
       );
     }
   } catch (error) {

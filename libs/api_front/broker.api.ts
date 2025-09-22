@@ -93,7 +93,7 @@ class BrokerApi {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
     const response = await axiosInstance.get<BrokerApiResponse>(
-      `/api/copies/broker?userAddressNickname=${encodeURIComponent(
+      `/api/brokers/copies?userAddressNickname=${encodeURIComponent(
         userAddressNickname
       )}`
     );
@@ -107,7 +107,7 @@ class BrokerApi {
     const axiosInstance = frontendAxiosInstance.getAxiosInstance();
 
     const response = await axiosInstance.post<BrokerApiResponse>(
-      '/api/copies/broker',
+      '/api/brokers/copies',
       params
     );
     return response.data;
