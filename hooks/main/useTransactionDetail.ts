@@ -19,7 +19,6 @@ export const useTransactionDetail = () => {
   // 아파트 계열 실거래가 상세조회
   const fetchTransactionDetailApartMutation = useMutation({
     onMutate: () => {
-      console.log('🔍 fetchTransactionDetailApart 시작');
       setLoading(true);
       setError(null);
     },
@@ -45,8 +44,6 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log('🔍 fetchTransactionDetailApart 성공 - 원본 데이터:', data);
-
       if (data.success && data.data) {
         // 매매 데이터와 전월세 데이터를 합쳐서 변환
         // API 응답에서 data가 중첩되어 있음: data.data.data.resSaleList
@@ -54,28 +51,6 @@ export const useTransactionDetail = () => {
           data.data.data?.resSaleList || data.data.resSaleList || [];
         const rentData =
           data.data.data?.resRentList || data.data.resRentList || [];
-
-        console.log('🔍 파싱된 데이터:', { saleData, rentData });
-
-        // 각 아이템의 resTranAmount 값 확인
-        console.log(
-          '🔍 매매 데이터 resTranAmount 값들:',
-          saleData.map((item) => ({
-            resTranAmount: item.resTranAmount,
-            type: typeof item.resTranAmount,
-            year: item.resYear,
-            month: item.resMonth,
-          }))
-        );
-        console.log(
-          '🔍 전월세 데이터 resTranAmount 값들:',
-          rentData.map((item) => ({
-            resTranAmount: item.resTranAmount,
-            type: typeof item.resTranAmount,
-            year: item.resYear,
-            month: item.resMonth,
-          }))
-        );
 
         // Rent 데이터를 우선으로 정렬
         const sortedData = sortTransactionDataByRent([
@@ -97,6 +72,8 @@ export const useTransactionDetail = () => {
             const isRentData = 'resDeposit' in item || 'resMonthlyRent' in item;
 
             let formattedAmount: string;
+            let originalAmount: string; // 원본 숫자값 저장
+            
             if (isRentData) {
               // 전월세 데이터인 경우 보증금만 표시
               const deposit = item.resDeposit || '0';
@@ -104,35 +81,24 @@ export const useTransactionDetail = () => {
 
               if (deposit === '0' && monthlyRent === '0') {
                 formattedAmount = '전월세';
+                originalAmount = '0';
               } else {
                 const depositFormatted = formatTransactionAmount(deposit);
                 formattedAmount = `보증금 ${depositFormatted}`;
+                originalAmount = deposit; // 원본 숫자값 저장
               }
             } else {
-              // 매매 데이터인 경우 기존 로직 사용
-              formattedAmount = formatTransactionAmount(
-                item.resTranAmount || '0'
-              );
+              // 매매 데이터인 경우 원본 숫자값 저장
+              originalAmount = item.resTranAmount || '0';
+              formattedAmount = formatTransactionAmount(originalAmount);
             }
 
-            console.log(`🔍 아이템 ${index} 포맷팅:`, {
-              original: item.resTranAmount,
-              formatted: formattedAmount,
-              year: item.resYear,
-              month: item.resMonth,
-              isRentData,
-              deposit: isRentData
-                ? (item as TransactionDetailApartRentItem).resDeposit
-                : 'N/A',
-              monthlyRent: isRentData
-                ? (item as TransactionDetailApartRentItem).resMonthlyRent
-                : 'N/A',
-            });
 
             return {
               id: `transaction-${index}`,
               아파트: formatDongData(item.resDong || ''),
               거래금액: formattedAmount,
+              거래금액원본: originalAmount, // 원본 숫자값 추가
               전용면적: item.resArea || '0',
               층: item.resFloor || '0',
               건축년도: '',
@@ -147,56 +113,40 @@ export const useTransactionDetail = () => {
                 보증금:
                   (item as TransactionDetailApartRentItem).resDeposit || '0',
                 월세:
-                  (item as TransactionDetailApartRentItem).resMonthlyRent ||
-                  '0',
-                계약구분:
-                  (item as TransactionDetailApartRentItem).resContractType ||
-                  '',
+                  (item as TransactionDetailApartRentItem).resMonthlyRent || '0',
+                계약구분: '갱신',
                 계약시작일: formatContractDate(
-                  (item as TransactionDetailApartRentItem).commStartDate
+                  `${item.resYear || ''}-${item.resMonth || ''}-${item.resDays || ''}`
                 ),
                 계약종료일: formatContractDate(
-                  (item as TransactionDetailApartRentItem).commEndDate
+                  `${item.resYear || ''}-${item.resMonth || ''}-${item.resDays || ''}`
                 ),
-                종전보증금:
-                  (item as TransactionDetailApartRentItem).resPrevDeposit || '',
-                종전월세:
-                  (item as TransactionDetailApartRentItem).resPrevMonthlyRent ||
-                  '',
+                종전보증금: '0',
+                종전월세: '0',
               }),
             };
           }
         );
 
-        console.log('🔍 변환된 데이터:', transformedData);
-
         // 상태 업데이트를 setTimeout으로 지연시켜 React의 상태 업데이트 순서 보장
         setTimeout(() => {
           setTransactionData(transformedData);
           setLoading(false);
-          console.log('🔍 setTransactionData 완료');
         }, 0);
-
-        // 성공 알림
       } else {
-        console.error('❌ 실거래가 데이터 파싱 실패:', data);
-        setError('실거래가 데이터를 가져올 수 없습니다.');
+        setError('데이터를 불러올 수 없습니다.');
         setLoading(false);
       }
     },
-    onError: (error) => {
-      console.error('실거래가 상세조회 실패:', error);
-      setError(
-        error instanceof Error ? error.message : '실거래가 상세조회 실패'
-      );
+    onError: () => {
+      setError('실거래가 조회 중 오류가 발생했습니다.');
       setLoading(false);
     },
   });
 
-  // 단독/다가구 실거래가 상세조회
+  // 단독/연립 실거래가 상세조회
   const fetchTransactionDetailSingleMutation = useMutation({
     onMutate: () => {
-      console.log('🔍 fetchTransactionDetailSingle 시작');
       setLoading(true);
       setError(null);
     },
@@ -217,10 +167,10 @@ export const useTransactionDetail = () => {
     }) => {
       const response = await transactionDetailApi.getTransactionDetailSingle({
         organization: '0010',
-        type,
         addrSido,
         addrSigungu,
         addrDong,
+        type,
         contractYear,
         contractType,
       });
@@ -228,56 +178,61 @@ export const useTransactionDetail = () => {
       return response;
     },
     onSuccess: (data) => {
-      console.log('🔍 fetchTransactionDetailSingle 성공 - 원본 데이터:', data);
-
       if (data.success && data.data) {
-        // 단독/다가구 데이터 변환 (아파트와 다른 구조일 수 있음)
-        const transformedData = Array.isArray(data.data)
-          ? data.data.map((item: Record<string, unknown>, index: number) => ({
+        // 단독/연립 데이터 처리
+        interface SingleDataItem {
+          resTranAmount?: string;
+          resDong?: string;
+          resArea?: string;
+          resFloor?: string;
+          resYear?: string;
+          resMonth?: string;
+          resDays?: string;
+        }
+        
+        const singleData = (data.data as { resSingleList?: SingleDataItem[] })?.resSingleList || [];
+
+        const transformedData = singleData.map(
+          (item: SingleDataItem, index: number) => {
+            const originalAmount = item.resTranAmount || '0';
+            const formattedAmount = formatTransactionAmount(originalAmount);
+
+            return {
               id: `transaction-${index}`,
-              아파트: '단독/다가구',
-              거래금액: String(item.resTranAmount || item.resDealAmount || '0'),
-              전용면적: String(item.resArea || item.resExclusiveArea || '0'),
-              층: String(item.resFloor || item.resFloorNum || '0'),
+              아파트: formatDongData(item.resDong || ''),
+              거래금액: formattedAmount,
+              거래금액원본: originalAmount,
+              전용면적: item.resArea || '0',
+              층: item.resFloor || '0',
               건축년도: '',
-              년: String(item.resYear || item.resContractYear || ''),
-              월: String(item.resMonth || item.resContractMonth || ''),
-              일: String(item.resDays || item.resContractDay || ''),
+              년: item.resYear || '',
+              월: item.resMonth || '',
+              일: item.resDays || '',
               법정동: '',
               지번: '',
-              location: null, // 좌표 정보 없음
-            }))
-          : [];
-
-        console.log('🔍 변환된 데이터:', transformedData);
+              location: null,
+            };
+          }
+        );
 
         // 상태 업데이트를 setTimeout으로 지연시켜 React의 상태 업데이트 순서 보장
         setTimeout(() => {
           setTransactionData(transformedData);
           setLoading(false);
-          console.log('🔍 setTransactionData 완료');
         }, 0);
       } else {
-        setError('실거래가 데이터를 가져올 수 없습니다.');
+        setError('데이터를 불러올 수 없습니다.');
         setLoading(false);
       }
     },
-    onError: (error) => {
-      setError(
-        error instanceof Error ? error.message : '실거래가 상세조회 실패'
-      );
+    onError: () => {
+      setError('실거래가 조회 중 오류가 발생했습니다.');
       setLoading(false);
     },
   });
 
   return {
-    fetchTransactionDetailApart: fetchTransactionDetailApartMutation.mutate,
-    fetchTransactionDetailSingle: fetchTransactionDetailSingleMutation.mutate,
-    isLoading:
-      fetchTransactionDetailApartMutation.isPending ||
-      fetchTransactionDetailSingleMutation.isPending,
-    error:
-      fetchTransactionDetailApartMutation.error ||
-      fetchTransactionDetailSingleMutation.error,
+    fetchTransactionDetailApartMutation,
+    fetchTransactionDetailSingleMutation,
   };
 };

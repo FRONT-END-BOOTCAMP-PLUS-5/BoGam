@@ -156,12 +156,13 @@ export const TransactionSearchOutput = ({
   };
 
   const transactionData = response?.data || [];
+  const displayCount = response?.filteredCount || transactionData.length;
 
   return (
     <div className={styles.container}>
       <div className={styles.resultsHeader}>
         <h3 className={styles.resultsTitle}>
-          검색 결과 ({transactionData.length}건)
+          검색 결과 ({displayCount}건)
         </h3>
         <Button
           onClick={onNewSearch}
@@ -179,7 +180,7 @@ export const TransactionSearchOutput = ({
       {transactionData.length === 0 && (
         <div className={styles.emptyState}>
           <div className={styles.emptyStateTitle}>
-            아직 검색 결과가 없습니다.
+            매매 거래 검색 결과가 없습니다.
           </div>
           <div className={styles.emptyStateSubtitle}>
             조회 탭에서 실거래가를 검색해보세요.

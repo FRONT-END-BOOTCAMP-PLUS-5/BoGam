@@ -14,6 +14,7 @@ export interface TransactionSearchApiResponse {
   data?: TransactionData[];
   error?: string;
   userAddressNickname: string;
+  filteredCount?: number; // 보증금 미포함 거래 건수
 }
 
 export interface TransactionSearchFormData {

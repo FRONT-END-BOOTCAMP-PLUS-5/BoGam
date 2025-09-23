@@ -55,6 +55,7 @@ export interface TransactionData {
   id: string;
   아파트: string;
   거래금액: string;
+  거래금액원본: string; // 원본 숫자값 (만원 단위)
   전용면적: string;
   층: string;
   건축년도: string;

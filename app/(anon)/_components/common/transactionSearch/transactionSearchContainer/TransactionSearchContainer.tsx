@@ -124,7 +124,8 @@ export const TransactionSearchContainer = forwardRef<
     return acc;
   }, []).map(group => {
     const totalPrice = group.transactions.reduce((sum: number, t: TransactionData) => {
-      const price = parsePrice(t.거래금액);
+      // 거래금액원본을 억 단위로 변환 (만원 -> 억)
+      const price = parseInt(t.거래금액원본) / 10000;
       return sum + price;
     }, 0);
     
@@ -171,12 +172,8 @@ export const TransactionSearchContainer = forwardRef<
 
   // 트랜잭션 데이터가 완료되면 분석 결과 저장 (탭 이동은 조회 버튼에서 처리)
   useEffect(() => {
-    console.log('TransactionSearchContainer - transactionData:', transactionData);
-    console.log('TransactionSearchContainer - isLoading:', isLoading);
-    
     // 데이터가 있으면 분석 결과만 저장 (탭 이동은 하지 않음)
     if (transactionData.length > 0) {
-      console.log('TransactionSearchContainer - saving analysis result');
       saveAnalysisResult();
     }
   }, [transactionData, saveAnalysisResult]);
@@ -216,12 +213,18 @@ export const TransactionSearchContainer = forwardRef<
     parsedAddress,
   };
 
+  // 보증금 미포함 거래만 필터링 (averagePricesByArea 계산과 동일한 조건)
+  const filteredTransactionData = transactionData.filter(transaction => 
+    !transaction.거래금액.includes('보증금')
+  );
+
   // API 응답 데이터 생성
   const response = transactionData.length > 0 ? {
     success: true,
     message: '조회 성공',
     data: transactionData,
     userAddressNickname: selectedAddress?.nickname || '',
+    filteredCount: filteredTransactionData.length, // 보증금 미포함 거래 건수
   } : null;
 
   // 입력 컴포넌트
