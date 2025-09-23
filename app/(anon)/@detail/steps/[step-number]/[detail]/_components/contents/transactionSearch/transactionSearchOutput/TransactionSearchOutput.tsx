@@ -5,6 +5,7 @@ import { TransactionSearchOutputProps } from '../types';
 import { styles } from './TransactionSearchOutput.styles';
 import Button from '@/(anon)/_components/common/button/Button';
 import { formatToKoreanUnit } from '@utils/formatUtils';
+import { formatPrice } from '@utils/main/transactionUtils';
 
 interface AveragePriceByArea {
   area: number;
@@ -39,46 +40,7 @@ export const TransactionSearchOutput = ({
     );
   }
 
-  // 매매 거래금액 문자열을 숫자로 변환하는 함수
-  const parsePrice = (price: string | number): number => {
-    if (typeof price === 'number') {
-      return price / 100000000;
-    }
 
-    if (price.includes('보증금')) {
-      return 0;
-    }
-
-    const match = price.match(/(\d+)억(\d+)천?만?/);
-    if (match) {
-      const billion = parseInt(match[1]);
-      const thousand = parseInt(match[2]) / 10;
-      return billion + thousand;
-    }
-
-    const billionOnly = price.match(/(\d+)억/);
-    if (billionOnly) {
-      return parseInt(billionOnly[1]);
-    }
-
-    const thousandOnly = price.match(/(\d+)천?만?/);
-    if (thousandOnly) {
-      const thousand = parseInt(thousandOnly[1]) / 10;
-      return thousand;
-    }
-
-    return 0;
-  };
-
-  const formatPrice = (price: number) => {
-    if (price >= 1) {
-      return `${price.toFixed(2)}억`;
-    } else if (price >= 0.1) {
-      return `${(price * 10).toFixed(1)}천만원`;
-    } else {
-      return `${(price * 10000).toFixed(0)}만원`;
-    }
-  };
 
   // 분석 카드 렌더링 함수
   const renderAnalysisCard = () => {
@@ -95,7 +57,7 @@ export const TransactionSearchOutput = ({
         : prev;
     });
 
-    const targetPriceNum = parsePrice(targetPrice);
+    const targetPriceNum = targetPrice / 100000000; // 억원 단위로 변환
     if (targetPriceNum === 0) return null;
 
     const ratio = targetPriceNum / mostSimilarArea.averagePrice;

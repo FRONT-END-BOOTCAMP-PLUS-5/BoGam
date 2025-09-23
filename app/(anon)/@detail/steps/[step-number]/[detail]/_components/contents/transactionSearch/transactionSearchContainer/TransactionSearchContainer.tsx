@@ -5,7 +5,7 @@ import { TransactionSearchInput } from '@/(anon)/@detail/steps/[step-number]/[de
 import { TransactionSearchOutput } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/transactionSearch/transactionSearchOutput/TransactionSearchOutput';
 import { TransactionSearchFormData } from '../types';
 import { DataContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/container/DataContainer';
-import { useTransactionManagement } from '@/hooks/main/useTransactionManagement';
+import { useTransactionManagement } from '@/hooks/useTransactionManagement';
 import { useMainPageState } from '@/hooks/main/useMainPageState';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useStepResultMutations } from '@/hooks/useStepResultMutations';
@@ -57,39 +57,8 @@ export const TransactionSearchContainer = forwardRef<
   }, [selectedAddress]);
 
 
-  // 매매 거래금액 문자열을 숫자로 변환하는 함수
-  const parsePrice = (price: string | number): number => {
-    if (typeof price === 'number') {
-      return price / 100000000;
-    }
 
-    if (price.includes('보증금')) {
-      return 0;
-    }
-
-    const match = price.match(/(\d+)억(\d+)천?만?/);
-    if (match) {
-      const billion = parseInt(match[1]);
-      const thousand = parseInt(match[2]) / 10;
-      return billion + thousand;
-    }
-
-    const billionOnly = price.match(/(\d+)억/);
-    if (billionOnly) {
-      return parseInt(billionOnly[1]);
-    }
-
-    const thousandOnly = price.match(/(\d+)천?만?/);
-    if (thousandOnly) {
-      const thousand = parseInt(thousandOnly[1]) / 10;
-      return thousand;
-    }
-
-    return 0;
-  };
-
-  // 전용면적별 평균가 계산 (사용되지 않음 - AreaGroup 사용)
-
+ 
   interface AreaGroup {
     area: number;
     transactions: TransactionData[];
@@ -154,7 +123,7 @@ export const TransactionSearchContainer = forwardRef<
           : prev;
       });
 
-      const targetPriceNum = parsePrice(targetPrice);
+      const targetPriceNum = targetPrice / 100000000; // 억원 단위로 변환
       if (targetPriceNum === 0) return;
 
       const ratio = targetPriceNum / mostSimilarArea.averagePrice;
