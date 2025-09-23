@@ -169,18 +169,22 @@ export const TransactionSearchContainer = forwardRef<
     }
   }, [targetArea, targetPrice, averagePricesByArea, selectedAddress?.nickname, isSaving, upsertStepResult, stepNumber, detail]);
 
-  // 트랜잭션 데이터가 완료되면 결과 탭으로 이동하고 분석 결과 저장
+  // 트랜잭션 데이터가 완료되면 분석 결과 저장 (탭 이동은 조회 버튼에서 처리)
   useEffect(() => {
     console.log('TransactionSearchContainer - transactionData:', transactionData);
+    console.log('TransactionSearchContainer - isLoading:', isLoading);
+    
+    // 데이터가 있으면 분석 결과만 저장 (탭 이동은 하지 않음)
     if (transactionData.length > 0) {
-      console.log('TransactionSearchContainer - switching to output tab');
-      setActiveTab('output');
+      console.log('TransactionSearchContainer - saving analysis result');
       saveAnalysisResult();
     }
   }, [transactionData, saveAnalysisResult]);
 
   const handleTransactionSearch = () => {
     if (selectedAddress) {
+      // 조회 버튼을 누르자마자 output 탭으로 이동
+      setActiveTab('output');
       handleMoveToAddress(selectedType, complexName);
     }
   };

@@ -21,11 +21,24 @@ interface TransactionSearchOutputExtendedProps extends TransactionSearchOutputPr
 
 export const TransactionSearchOutput = ({
   response,
+  loading,
   averagePricesByArea,
   targetArea,
   targetPrice,
   onNewSearch,
 }: TransactionSearchOutputExtendedProps) => {
+  // 로딩 중일 때 로딩 UI 표시
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingState}>
+          <div className={styles.loadingSpinner}></div>
+          <div className={styles.loadingText}>실거래가 데이터를 불러오고 있습니다</div>
+        </div>
+      </div>
+    );
+  }
+
   // 매매 거래금액 문자열을 숫자로 변환하는 함수
   const parsePrice = (price: string | number): number => {
     if (typeof price === 'number') {
