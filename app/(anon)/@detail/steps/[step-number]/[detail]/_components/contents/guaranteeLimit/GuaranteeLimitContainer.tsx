@@ -5,7 +5,7 @@ import {
   GetGuaranteeLimitRequestDto,
 } from '@libs/api_front/guaranteeLimit.api';
 import { useGetGuaranteeLimit, useCheckGuaranteeLimitCopyExists } from '@/hooks/useGuaranteeLimit';
-import { FIELD_ERROR_MESSAGES } from '@utils/constants/guaranteeLimit';
+import { FIELD_ERROR_MESSAGES } from '@libs/constants/guaranteeLimit';
 import GuaranteeLimitInput from './GuaranteeLimitInput';
 import GuaranteeLimitOutput from './GuaranteeLimitOutput';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';

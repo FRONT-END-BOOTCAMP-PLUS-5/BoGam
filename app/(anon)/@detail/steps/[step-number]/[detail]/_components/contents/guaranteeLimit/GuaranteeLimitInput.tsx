@@ -7,7 +7,7 @@ import {
   HOUSE_COUNT_OPTIONS,
   FIELD_PLACEHOLDERS,
   FIELD_LABELS,
-} from '@utils/constants/guaranteeLimit';
+} from '@libs/constants/guaranteeLimit';
 import { FormContainer } from '@/(anon)/_components/common/forms/FormContainer';
 import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import Field from '@/(anon)/_components/common/forms/Field';
