@@ -56,9 +56,6 @@ export const TransactionSearchContainer = forwardRef<
     }
   }, []);
 
-
-
- 
   interface AreaGroup {
     area: number;
     transactions: TransactionData[];
