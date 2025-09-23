@@ -1,6 +1,6 @@
 import { useTransactionDetail } from './useTransactionDetail';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useMainPageState } from './useMainPageState';
+import { useMainPageState } from './main/useMainPageState';
 import {
   createApartmentParams,
   createSingleParams,
