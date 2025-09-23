@@ -32,8 +32,8 @@ export const BrokerInput = ({
 }: BrokerInputProps) => {
   const [brkrNm, setBrkrNm] = useState<string>('');
   const [bsnmCmpnm, setBsnmCmpnm] = useState<string>('');
-  const [brokerList, setBrokerList] = useState<BrokerData[]>([]);
-  const [hasEmptyResult, setHasEmptyResult] = useState(false);
+  const [, setBrokerList] = useState<BrokerData[]>([]);
+  const [, setHasEmptyResult] = useState(false);
 
   const searchBrokersMutation = useSearchBrokers();
   const createBrokerCopyMutation = useCreateBrokerCopy();
@@ -113,9 +113,6 @@ export const BrokerInput = ({
       },
     });
   };
-
-  const isLoading =
-    searchBrokersMutation.isPending || createBrokerCopyMutation.isPending;
 
   // 주소가 선택되지 않은 경우
   if (!selectedAddress || !userAddressNickname) {

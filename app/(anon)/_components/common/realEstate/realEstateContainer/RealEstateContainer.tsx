@@ -1,30 +1,45 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RealEstateInput } from '@/(anon)/_components/common/realEstate/realEstateInput/RealEstateInput';
 import { RealEstateOutput } from '@/(anon)/_components/common/realEstate/realEstateOutput/RealEstateOutput';
 import { DataContainer } from '@/(anon)/_components/common/container/DataContainer';
 import { useRealEstateContainer } from '@/hooks/useRealEstateContainer';
+import { useModalStore } from '@libs/stores/modalStore';
 
 export const RealEstateContainer = () => {
   const {
     formData,
     response,
-    twoWaySelectedAddress,
-    showTwoWayModal,
     existsData,
     createRealEstateMutation,
     twoWayAuthMutation,
     isDataLoading,
     activeTab,
     setActiveTab,
-    handleAddressSelect,
-    handleCloseTwoWayModal,
     handleSubmit,
   } = useRealEstateContainer();
 
+  // 모달 스토어에서 openModal 함수 가져오기
+  const { openModal } = useModalStore();
+
+  // response 변경을 감지하여 에러 모달 표시
+  useEffect(() => {
+    if (response && !response.success) {
+      openModal({
+        title: '오류',
+        content: response.message.split('+').join(' ') || '부동산등기부등본 조회 중 오류가 발생했습니다.',
+        icon: 'error',
+        confirmText: '확인',
+        onConfirm: async () => {
+          // 확인 버튼 클릭 시 아무것도 하지 않음 (모달만 닫힘)
+        },
+      });
+    }
+  }, [response, openModal]);
+
   // 입력 컴포넌트
-  const inputComponent = ({ onSuccess }: { onSuccess: () => void }) => (
+  const inputComponent = () => (
     <RealEstateInput
       formData={formData}
       onSubmit={handleSubmit}
@@ -48,7 +63,7 @@ export const RealEstateContainer = () => {
   // 존재 여부 쿼리 객체 생성
   const checkExistsQuery = {
     data: existsData
-      ? { success: true, data: { exists: existsData.exists } }
+      ? { success: true, exists: existsData.exists }
       : undefined,
     isLoading: false, // useCheckRealEstateExists에서 로딩 상태를 제공하지 않으므로 false로 설정
     refetch: () => {

@@ -1,7 +1,7 @@
 import { styles } from './ModalContent.styles';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import DataGrid from './contents/DataGrid';
 import TextOnly from './contents/TextOnly';
@@ -65,7 +65,7 @@ export default function ModalContent({
         );
         setStepContentData(contentModule.default);
         setDataType(contentModule.default.dataType || 'default');
-      } catch (error) {
+      } catch {
         setDataType('default');
       }
     };

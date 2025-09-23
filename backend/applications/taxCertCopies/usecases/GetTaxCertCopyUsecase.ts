@@ -1,6 +1,6 @@
 import { TaxCertCopyRepository } from '@be/domain/repository/TaxCertCopyRepository';
 import { decryptJson } from '@utils/encryption';
-import { TaxCertEntity } from '@be/domain/entities/TaxCert';
+import { TaxCertCopyJson } from '../dtos/TaxCertCopyJson';
 import { GetTaxCertCopyRequestDto } from '../dtos/GetTaxCertCopyRequestDto';
 import { GetTaxCertCopyResponseDto } from '../dtos/GetTaxCertCopyResponseDto';
 
@@ -32,7 +32,7 @@ export class GetTaxCertCopyUsecase {
         userAddressId: taxCert.userAddressId,
         taxCertJson: decryptJson(
           taxCert.taxCertData
-        ) as unknown as TaxCertEntity,
+        ) as TaxCertCopyJson,
         updatedAt: taxCert.updatedAt!,
       };
 

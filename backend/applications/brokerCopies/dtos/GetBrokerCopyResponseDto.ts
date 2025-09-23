@@ -1,3 +1,5 @@
+import { BrokerCopyJson } from './BrokerCopyJson';
+
 export interface GetBrokerCopyResponseDto {
   success: boolean;
   message?: string;
@@ -5,7 +7,7 @@ export interface GetBrokerCopyResponseDto {
   data?: {
     id: number;
     userAddressId: number;
-    brokerData: Record<string, unknown>;
+    brokerData: BrokerCopyJson;
     updatedAt: Date;
   };
 }

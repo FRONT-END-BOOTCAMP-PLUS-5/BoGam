@@ -1,6 +1,6 @@
 import { RealEstateCopyRepository } from '@be/domain/repository/RealEstateCopyRepository';
 import { decryptJson } from '@utils/encryption';
-import { RealEstateCopyJson } from '@be/domain/entities/RealEstateCopy';
+import { RealEstateCopyJson } from '../dtos/RealEstateCopyJson';
 import { GetRealEstateCopyRequestDto } from '../dtos/GetRealEstateCopyRequestDto';
 import { GetRealEstateCopyResponseDto } from '../dtos/GetRealEstateCopyResponseDto';
 

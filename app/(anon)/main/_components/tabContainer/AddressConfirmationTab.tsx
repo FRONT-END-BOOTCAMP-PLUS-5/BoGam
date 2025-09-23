@@ -13,7 +13,7 @@ import {
 
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
-  const { selectedAddress } = useUserAddressStore();
+  const { selectedAddress, updateAddress } = useUserAddressStore();
 
   // useMainPageModule에서 필요한 함수들만 가져오기
   const {
@@ -43,6 +43,25 @@ export const AddressConfirmationTab: React.FC = () => {
   const currentHo = isNewAddressSearch ? mainPageHo : storeHo;
   const setCurrentDong = isNewAddressSearch ? setMainPageDong : setStoreDong;
   const setCurrentHo = isNewAddressSearch ? setMainPageHo : setStoreHo;
+
+  // 주소 수정 상태 감지
+  const isAddressModified = useMemo(() => {
+    // 새로운 주소 검색 상태가 아닌 경우 (즉, 기존 DB 주소가 선택된 상태)
+    if (isNewAddressSearch) {
+      return false;
+    }
+
+    // 선택된 주소가 있고, 해당 주소가 휘발성이 아닌 경우
+    if (selectedAddress && !selectedAddress.isVolatile) {
+      const originalDong = selectedAddress.dong || '';
+      const originalHo = selectedAddress.ho || '';
+
+      // 현재 입력된 동-호 값과 원본 값이 다른 경우
+      return currentDong !== originalDong || currentHo !== originalHo;
+    }
+
+    return false;
+  }, [isNewAddressSearch, selectedAddress, currentDong, currentHo]);
 
   // 주소 표시 로직
   const displaySearchQuery = selectedAddress?.completeAddress || '';
@@ -136,13 +155,27 @@ export const AddressConfirmationTab: React.FC = () => {
         </div>
         <Button
           onClick={() => {
-            saveAddressToUser(currentDong, currentHo);
+            if (isAddressModified) {
+              updateAddress(selectedAddress!.id, {
+                dong: currentDong,
+                ho: currentHo,
+                completeAddress: selectedAddress!.roadAddress
+                  ? `${
+                      selectedAddress!.roadAddress
+                    } ${currentDong}동${currentHo}호`
+                  : `${
+                      selectedAddress!.lotAddress
+                    } ${currentDong}동${currentHo}호`,
+              });
+            } else {
+              saveAddressToUser(currentDong, currentHo);
+            }
           }}
           disabled={!currentDong.trim() || !currentHo.trim()}
           variant='primary'
           className={'!mt-0 !w-24 !h-8 !text-xs !px-0 !py-0'}
         >
-          주소 저장
+          {isAddressModified ? '주소 수정' : '주소 저장'}
         </Button>
       </div>
 

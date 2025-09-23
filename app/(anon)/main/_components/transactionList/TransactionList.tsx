@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
-import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import { useMapStore } from '@libs/stores/map/mapStore';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

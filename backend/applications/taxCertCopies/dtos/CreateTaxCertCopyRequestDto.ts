@@ -1,9 +1,9 @@
-import { TaxCertEntity } from '@be/domain/entities/TaxCert';
+import { TaxCertCopyJson } from './TaxCertCopyJson';
 
 /**
  * 납세확인서 복사본 생성/수정 요청 DTO
  */
 export interface CreateTaxCertCopyRequestDto {
   userAddressId: number;
-  taxCertJson: TaxCertEntity;
+  taxCertJson: TaxCertCopyJson;
 }

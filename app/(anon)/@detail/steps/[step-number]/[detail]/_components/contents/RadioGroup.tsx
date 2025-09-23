@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import styles from './RadioGroup.styles';
 import { useGetStepResult } from '@/hooks/useStepResultQueries';
@@ -77,7 +76,7 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
           // 기존 RadioGroup 타입인 경우 그대로 사용
           setContentData(contentModule.default);
         }
-      } catch (error) {
+      } catch {
         // Content data not found
       }
     };
@@ -144,7 +143,7 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
         });
 
         // 동적으로 전체 질문 수 계산하여 로그 출력
-        const totalQuestions = Object.keys(updatedJsonDetails).length;
+        //const totalQuestions = Object.keys(updatedJsonDetails).length;
       } catch (error) {
         console.error('❌ 저장 실패:', error);
       }
@@ -221,9 +220,9 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
       setHasInitializedFromError(true);
       hasInitialized.current = true;
 
-      const logMessage = isError
-        ? '400 에러 시 초기화 진행'
-        : '빈 jsonDetails 시 초기화 진행';
+      // const logMessage = isError
+      //   ? '400 에러 시 초기화 진행'
+      //   : '빈 jsonDetails 시 초기화 진행';
 
       // POST 요청
       saveToDatabase(uncheckedAnswers);
@@ -261,7 +260,7 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
     }
 
     // 전체 질문 수 계산
-    let totalQuestions = 0;
+    //let totalQuestions = 0;
     let allQuestionTitles: string[] = [];
 
     if (contentData?.dataType === 'CombinedContent' && contentData.sections) {
@@ -275,14 +274,14 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
         )
           .filter((item: Record<string, unknown>) => item.title)
           .map((item: Record<string, unknown>) => item.title as string);
-        totalQuestions = allQuestionTitles.length;
+        //totalQuestions = allQuestionTitles.length;
       }
     } else {
       // 기존 방식: data 배열에서 질문 제목 추출
       const flatData = (dataSource as LegacyContentSection[][]).flat();
-      totalQuestions = flatData.filter(
-        (section: LegacyContentSection) => section.title
-      ).length;
+      // totalQuestions = flatData.filter(
+      //   (section: LegacyContentSection) => section.title
+      // ).length;
       allQuestionTitles = flatData
         .filter((section: LegacyContentSection) => section.title)
         .map((section) => section.title as string);
@@ -290,10 +289,10 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
 
     // 각 질문의 답변 상태 상세 확인
 
-    const questionStatuses = allQuestionTitles.map((title) => {
-      const status = title ? jsonDetails[title] : null;
-      return { title, status };
-    });
+    // const questionStatuses = allQuestionTitles.map((title) => {
+    //   const status = title ? jsonDetails[title] : null;
+    //   return { title, status };
+    // });
 
     // 모든 질문이 답변되었는지 확인 (unchecked가 아닌지)
     const allAnswered = allQuestionTitles.every((title) => {

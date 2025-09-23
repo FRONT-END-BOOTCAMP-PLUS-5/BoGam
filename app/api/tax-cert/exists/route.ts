@@ -6,17 +6,17 @@ import { getUserAddressId } from '@utils/userAddress';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const nickname = searchParams.get('nickname');
+    const userAddressNickname = searchParams.get('userAddressNickname');
 
-    if (!nickname) {
+    if (!userAddressNickname) {
       return NextResponse.json(
-        { success: false, error: 'nickname이 필요합니다.' },
+        { success: false, error: 'userAddressNickname이 필요합니다.' },
         { status: 400 }
       );
     }
 
     // 닉네임을 userAddressId로 변환
-    const userAddressId = await getUserAddressId(nickname);
+    const userAddressId = await getUserAddressId(userAddressNickname);
 
     if (!userAddressId) {
       return NextResponse.json(

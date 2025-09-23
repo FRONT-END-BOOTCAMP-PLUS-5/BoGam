@@ -159,11 +159,7 @@ export async function POST(request: NextRequest) {
     const codefResultCode = response?.result?.code;
     const isCodefSuccess = codefResultCode === 'CF-00000';
 
-    console.log('🔍 CODEF API 응답:', {
-      codefResultCode,
-      isCodefSuccess,
-      responseKeys: Object.keys(response || {}),
-    });
+    console.log('🔍 CODEF API 응답:', response);
 
     if (isCodefSuccess) {
       // CF-00000 (완전 성공) - DB에 저장
@@ -239,7 +235,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         {
-          success: false,
+          success: true,
           message: '추가인증이 필요합니다.',
           requiresTwoWayAuth: true,
           twoWayInfo: twoWayInfo,
@@ -275,7 +271,7 @@ export async function POST(request: NextRequest) {
           data: response,
           resultCode: codefResultCode,
         },
-        { status: 400 }
+        { status: 200 }
       );
     }
   } catch (error) {
