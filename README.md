@@ -360,56 +360,64 @@ feat: 랭킹 리스트 조회 기능 구현
 <div markdown='1'>
 
 ```
-app/
-├── api/                 # API 호출 및 관련 로직
-│   ├── app/api/        # Next.js API 라우트
-│   └── libs/api_front/ # 프론트엔드 API 클라이언트
+Bogam/
+├── app/                 # Next.js App Router 페이지들
+│   ├── (anon)/         # 인증되지 않은 사용자 페이지들
+│   │   ├── _components/ # 공통 컴포넌트들
+│   │   │   └── common/ # 자주 사용되는 컴포넌트들 (버튼, 폼, 모달 등)
+│   │   ├── @detail/    # 소단계계 페이지들
+│   │   ├── main/       # 메인 페이지
+│   │   ├── mypage/     # 마이페이지
+│   │   ├── real-estate-data/ # 부동산 데이터 페이지
+│   │   ├── signin/     # 로그인 페이지
+│   │   ├── signup/     # 회원가입 페이지
+│   │   ├── steps/      # 중단계 페이지
+│   │   └── tex-cert-data/ # 세금계산서 데이터 페이지
+│   └── api/            # API 라우트들
 │
-├── assets/              # 이미지 및 정적 파일
-│   └── public/         # 정적 파일들 (이미지, 아이콘, 모델 등)
-│
-├── constants/           # 상수 관련 파일
-│   ├── libs/constants/
-│   └── utils/constants/
-│
-├── hooks/               # 커스텀 훅
-│
-│
-├── models/              # 페이지별 타입 파일
-│   └── types/          # TypeScript 타입 정의
-│
-│
-├── pages/               # 페이지 컴포넌트
-│   └── app/(anon)/     # Next.js App Router 페이지들
-│
-├── routes/              # 라우트 설정
-│   └── (Next.js App Router 사용)
-│
-├── store/               # 상태 관련 파일
-│   └── libs/stores/    # 상태 관리 파일들
-│
-├── styles/              # 스타일 관련 파일
-│
-├── _components/          # UI 컴포넌트
-│   ├── common/          # 자주 사용되는 공통 컴포넌트들
-│   └── ...
-└── utils/               # 유틸리티 함수 및 모듈
+├── hooks/               # React Hooks
+│   ├── main/           # 메인 페이지 관련 hooks
+│   └── (기타 hooks)    # 공통 hooks
 
-backend/                 # 백엔드 (Clean Architecture)
-├── applications/
-├── domain/
-└── infrastructure/
+├── libs/                # 라이브러리 및 공통 모듈
+│   ├── stores/         # 상태 관리 파일들
+│   ├── api_front/      # 프론트엔드 API 클라이언트
+│   ├── constants/      # 상수 정의
+│   └── codef/          # 코드에프 관련 모듈
 
-libs/                    # 라이브러리 및 공통 모듈
-├── auth.ts
-├── codef/
-└── responseUtils.ts
+├── utils/               # 유틸리티 함수 및 모듈
+│   ├── constants/      # 상수 정의
+│   ├── main/           # 메인 페이지 관련 유틸리티
+│   ├── sise/           # 시세 관련 유틸리티
+│   └── verifyPassword/ # 비밀번호 검증 유틸리티
 
-prisma/                  # 데이터베이스
-└── schema.prisma
+├── hooks/               # React Hooks
+│   ├── main/           # 메인 페이지 관련 hooks
+│   └── (기타 hooks)    # 공통 hooks
 
-scripts/                 # 빌드 스크립트
-└── (유틸리티 스크립트들)
+├── types/               # TypeScript 타입 정의
+│   ├── kakao-maps.d.ts
+│   └── next-auth.d.ts
+
+├── metadata/            # 메타데이터 파일들
+│   ├── mainMetadata.ts
+│   └── stepMetadata.ts
+
+├── public/              # 정적 파일들 (이미지, 아이콘, 모델 등)
+│   ├── images/         # 이미지 파일들
+│   ├── models/         # 3D 모델 파일들
+│   └── icons/          # 아이콘 파일들
+
+├── backend/             # 백엔드 (Clean Architecture)
+│   ├── applications/
+│   ├── domain/
+│   └── infrastructure/
+
+├── prisma/              # 데이터베이스
+│   └── schema.prisma
+
+└── scripts/             # 빌드 스크립트
+    └── (유틸리티 스크립트들)
 ```
 
 </div>
