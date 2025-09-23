@@ -9,7 +9,7 @@ import { DropDown } from '@/(anon)/_components/common/dropdown/DropDown';
 import Button from '@/(anon)/_components/common/button/Button';
 import { TransactionSearchInputProps } from '../types';
 import { styles } from './TransactionSearchInput.styles';
-import { formatToKoreanUnit } from '@utils/formatUtils';
+import { formatToKoreanUnit, formatNumber } from '@utils/formatUtils';
 
 interface TransactionSearchInputExtendedProps extends TransactionSearchInputProps {
   onYearChange: (year: string) => void;
@@ -35,10 +35,6 @@ export const TransactionSearchInput = ({
   const { selectedAddress } = useUserAddressStore();
   const [error, setError] = useState<string | null>(null);
 
-  // 숫자 포맷팅 함수
-  const formatNumber = (value: string): number => {
-    return parseInt(value.replace(/[^\d]/g, '')) || 0;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

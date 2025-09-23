@@ -39,3 +39,12 @@ export const formatToKoreanUnit = (value: number): string => {
 
   return result + '원';
 };
+
+/**
+ * 문자열에서 숫자만 추출하여 숫자로 변환
+ * @param value 입력 문자열
+ * @returns 추출된 숫자 (숫자가 없으면 0)
+ */
+export const formatNumber = (value: string): number => {
+  return parseInt(value.replace(/[^\d]/g, '')) || 0;
+};
