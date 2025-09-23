@@ -30,9 +30,6 @@ export default async function MainPage() {
       <div className={styles.content}>
         {/* 주소 관련 영역 - 동적 */}
         <MainPageClient />
-
-        {/* 회원탈퇴 버튼 - 정적 */}
-        <WithdrawButton />
       </div>
 
       {/* 플로팅 버튼 - 정적 */}
