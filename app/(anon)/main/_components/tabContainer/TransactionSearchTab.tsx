@@ -41,8 +41,7 @@ export const TransactionSearchTab: React.FC<TransactionSearchTabProps> = ({
 
   // 새로운 Hook들 사용
   const { selectedAddress } = useUserAddressStore();
-  const { handleTransactionSearch: handleMoveToAddress } =
-    useTransactionManagement();
+  const { handleMoveToAddress } = useTransactionManagement();
 
   // useMainPageState에서 상태와 setter 함수들 가져오기
   const { selectedYear, setSelectedYear } = useMainPageState();

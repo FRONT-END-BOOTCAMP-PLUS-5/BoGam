@@ -65,7 +65,7 @@ export const BrokerOutput = ({
   // DB에서 broker 데이터 조회 (selectedBroker가 없을 때만)
 
   const brokerCopyQuery = useGetBrokerCopy(
-    selectedBroker ? null : userAddressNickname || null
+    selectedBroker ? null : selectedAddress?.nickname || null
   );
   // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
   useEffect(() => {

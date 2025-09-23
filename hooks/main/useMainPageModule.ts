@@ -192,12 +192,12 @@ export const useMainPageModule = () => {
     // 실거래가 관리
     transactionData: transactionManagement.transactionData,
     transactionLoading: transactionManagement.isLoading,
-    handleTransactionSearch: transactionManagement.handleTransactionSearch,
+    handleTransactionSearch: transactionManagement.handleMoveToAddress,
     handleMoveToAddressWithTransaction:
       transactionManagement.handleMoveToAddress,
-    handleBuildingSelect: transactionManagement.handleBuildingSelect,
+    handleBuildingSelect: transactionManagement.handleMoveToAddress,
     handleClearTransactionData:
-      transactionManagement.handleClearTransactionData,
+      transactionManagement.clearTransactionData,
 
     // 기타
     userAddressesLoading,
