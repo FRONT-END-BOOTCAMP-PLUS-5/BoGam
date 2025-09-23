@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { useAddressManagement } from './useAddressManagement';
-import { useTransactionManagement } from './useTransactionManagement';
 import { useMapManagement } from './useMapManagement';
 import { useTabManagement } from './useTabManagement';
 import { useMainPageState } from './useMainPageState';
@@ -13,13 +11,9 @@ import { DaumPostcodeData } from '@/(anon)/main/_components/types/mainPage.types
 import { useToastStore } from '@libs/stores/toastStore';
 
 export const useMainPageModule = () => {
-  // 실거래가 조회 모달 상태
-  const [showTransactionSearchModal, setShowTransactionSearchModal] =
-    useState(false);
 
   // 분리된 hooks 사용
   const addressManagement = useAddressManagement();
-  const transactionManagement = useTransactionManagement();
   const mapManagement = useMapManagement();
   const tabManagement = useTabManagement();
   const mainPageState = useMainPageState();
@@ -41,10 +35,6 @@ export const useMainPageModule = () => {
 
   // Daum Postcode 콜백 함수
   const handleDaumPostcodeComplete = async (data: DaumPostcodeData) => {
-    // 새로운 주소 검색 시 실거래가 데이터 초기화
-    if (!transactionManagement.isLoading) {
-      transactionManagement.clearTransactionData();
-    }
 
     try {
       // 키워드 검색으로 좌표 가져오기
@@ -164,10 +154,6 @@ export const useMainPageModule = () => {
     // 주소 저장 함수
     saveAddressToUser: addressManagement.saveAddressToUser,
 
-    // 실거래가 조회 모달 관련
-    showTransactionSearchModal,
-    setShowTransactionSearchModal,
-
     // 탭 관리
     activeTab: tabManagement.activeTab,
     handleTabChange: tabManagement.handleTabChange,
@@ -186,16 +172,6 @@ export const useMainPageModule = () => {
     handleAdjustBounds: mapManagement.handleAdjustBounds,
     handleMoveToGPSLocation: mapManagement.handleMoveToGPSLocation,
     handleMoveToAddressFromMap: mapManagement.handleMoveToAddress,
-
-    // 실거래가 관리
-    transactionData: transactionManagement.transactionData,
-    transactionLoading: transactionManagement.isLoading,
-    handleTransactionSearch: transactionManagement.handleMoveToAddress,
-    handleMoveToAddressWithTransaction:
-      transactionManagement.handleMoveToAddress,
-    handleBuildingSelect: transactionManagement.handleMoveToAddress,
-    handleClearTransactionData:
-      transactionManagement.clearTransactionData,
 
     // 기타
     userAddressesLoading,
