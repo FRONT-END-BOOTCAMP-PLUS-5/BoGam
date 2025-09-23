@@ -17,6 +17,7 @@ interface TransactionSearchOutputExtendedProps extends TransactionSearchOutputPr
   averagePricesByArea: AveragePriceByArea[];
   targetArea: string;
   targetPrice: number;
+  complexName: string;
   onNewSearch: () => void;
   onSaveResult: () => void;
 }
@@ -27,6 +28,7 @@ export const TransactionSearchOutput = ({
   averagePricesByArea,
   targetArea,
   targetPrice,
+  complexName,
   onNewSearch,
   onSaveResult,
 }: TransactionSearchOutputExtendedProps) => {
@@ -79,6 +81,10 @@ export const TransactionSearchOutput = ({
       <div className={styles.analysisCard}>
         <h4 className={styles.analysisTitle}>📊 거래 분석 결과</h4>
         <div className={styles.analysisContent}>
+          <div className={styles.analysisRow}>
+            <span className={styles.analysisLabel}>단지명:</span>
+            <span className={styles.analysisValue}>{complexName}</span>
+          </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>입력한 전용면적:</span>
             <span className={styles.analysisValue}>{targetArea}㎡</span>

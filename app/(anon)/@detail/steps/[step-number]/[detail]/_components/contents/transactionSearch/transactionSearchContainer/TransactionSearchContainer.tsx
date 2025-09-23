@@ -217,6 +217,7 @@ export const TransactionSearchContainer = forwardRef<
       averagePricesByArea={averagePricesByArea}
       targetArea={targetArea}
       targetPrice={targetPrice}
+      complexName={danjiName || complexName}
       onNewSearch={() => setActiveTab('input')}
       onSaveResult={saveAnalysisResult}
     />
