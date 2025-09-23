@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   RealEstateFormData,
-} from '@/(anon)/_components/common/realEstate/types';
+} from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/types';
 import { 
   realEstateApi,
   RealEstateSearchResponse,

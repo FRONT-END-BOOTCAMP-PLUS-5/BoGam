@@ -2,7 +2,7 @@
 
 import React, { forwardRef, useImperativeHandle } from 'react';
 import TaxCertIntro from './TaxCertIntro';
-import { TaxCertContainer, TaxCertContainerRef } from '@/(anon)/_components/common/taxCert/taxCertContainer/TaxCertContainer';
+import { TaxCertContainer, TaxCertContainerRef } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/taxCert/taxCertContainer/TaxCertContainer';
 
 interface ChecklistItem {
   id: string;

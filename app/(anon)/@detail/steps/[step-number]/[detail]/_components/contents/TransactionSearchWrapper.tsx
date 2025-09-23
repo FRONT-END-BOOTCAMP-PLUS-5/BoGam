@@ -1,7 +1,7 @@
 'use client';
 
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { TransactionSearchContainer, TransactionSearchContainerRef } from '@/(anon)/_components/common/transactionSearch/transactionSearchContainer/TransactionSearchContainer';
+import { TransactionSearchContainer, TransactionSearchContainerRef } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/transactionSearch/transactionSearchContainer/TransactionSearchContainer';
 
 interface TransactionSearchWrapperProps {
   sectionIndex: number;

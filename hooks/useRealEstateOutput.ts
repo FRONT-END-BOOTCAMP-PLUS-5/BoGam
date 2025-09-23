@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ApiResponse } from '@/(anon)/_components/common/realEstate/types';
+import { ApiResponse } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useGetRealEstateFromDB } from '@/hooks/useRealEstate';
 import { useRiskAssessment } from '@/hooks/useRiskAssessment';

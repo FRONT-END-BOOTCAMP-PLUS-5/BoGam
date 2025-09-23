@@ -14,11 +14,11 @@ import {
   LegacyContentSection,
   StepContentData
 } from './contents/types';
-import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
-import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
+import { RealEstateContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/realEstateContainer/RealEstateContainer';
+import { BrokerContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/broker/brokerContainer/BrokerContainer';
 import { TaxCertWrapperRef } from './contents/TaxCertWrapper';
 import { TransactionSearchWrapperRef } from './contents/TransactionSearchWrapper';
-import { TransactionSearchContainer } from '@/(anon)/_components/common/transactionSearch/transactionSearchContainer/TransactionSearchContainer';
+import { TransactionSearchContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/transactionSearch/transactionSearchContainer/TransactionSearchContainer';
 import { PageIndicator } from './PageIndicator';
 import CombinedContent from './contents/CombinedContent';
 

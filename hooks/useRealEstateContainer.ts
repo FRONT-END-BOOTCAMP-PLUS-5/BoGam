@@ -3,7 +3,7 @@ import {
   RealEstateFormData,
   ApiResponse,
   AddressListItem,
-} from '@/(anon)/_components/common/realEstate/types';
+} from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useRealEstateStore } from '@libs/stores/realEstateStore';
 import {
