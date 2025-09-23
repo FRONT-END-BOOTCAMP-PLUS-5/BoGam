@@ -64,7 +64,7 @@ export default function GuaranteeLimitInput({
               <TextInput
                 type='text'
                 placeholder={FIELD_PLACEHOLDERS.rentGrntAmt}
-                value={formData.rentGrntAmt ? formData.rentGrntAmt : ''}
+                value={formData.rentGrntAmt > 0 ? formData.rentGrntAmt.toLocaleString() : ''}
                 onChange={(e) =>
                   onInputChange('rentGrntAmt', formatNumber(e.target.value))
                 }
@@ -183,16 +183,23 @@ export default function GuaranteeLimitInput({
             required={false}
             error={errors.mmrtAmt}
           >
-            <TextInput
-              type='text'
-              placeholder={FIELD_PLACEHOLDERS.mmrtAmt}
-              value={formData.mmrtAmt > 0 ? formData.mmrtAmt : ''}
-              onChange={(e) =>
-                onInputChange('mmrtAmt', formatNumber(e.target.value))
-              }
-              error={!!errors.mmrtAmt}
-              className={styles.inputWithUnit}
-            />
+            <div className={styles.inputWrapper}>
+              <TextInput
+                type='text'
+                placeholder={FIELD_PLACEHOLDERS.mmrtAmt}
+                value={formData.mmrtAmt > 0 ? formData.mmrtAmt.toLocaleString() : ''}
+                onChange={(e) =>
+                  onInputChange('mmrtAmt', formatNumber(e.target.value))
+                }
+                error={!!errors.mmrtAmt}
+                className={styles.inputWithUnit}
+              />
+              {formData.mmrtAmt > 0 && (
+                <div className={styles.unitDisplay}>
+                  {formatToKoreanUnit(formData.mmrtAmt)}
+                </div>
+              )}
+            </div>
           </Field>
         </div>
       </FormContainer>

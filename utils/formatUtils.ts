@@ -12,12 +12,6 @@ export function formatPhone(raw: string): string {
 }
 
 // 숫자 포맷팅 유틸리티 함수들
-
-// 천 단위 콤마 추가
-export const formatNumberWithComma = (value: number): string => {
-  return value.toLocaleString();
-};
-
 // 숫자를 한글 단위로 변환하는 함수
 export const formatToKoreanUnit = (value: number): string => {
   if (value === 0) return '';
