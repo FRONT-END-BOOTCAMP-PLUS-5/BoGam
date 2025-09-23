@@ -15,6 +15,7 @@ import RadioGroup from './RadioGroup';
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import GuaranteeLimitContainer from '@/(anon)/_components/common/guaranteeLimit/GuaranteeLimitContainer';
 import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
+import TransactionSearchWrapper, { TransactionSearchWrapperRef } from './TransactionSearchWrapper';
 import { PageIndicator } from '../PageIndicator';
 
 interface CombinedContentProps {
@@ -27,6 +28,7 @@ interface CombinedContentProps {
   onSimpleAuthApprove: () => void;
   onSimpleAuthCancel: () => void;
   taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
+  transactionSearchContainerRef?: React.RefObject<TransactionSearchWrapperRef | null>;
   swiperRef: React.RefObject<SwiperType | null>;
 }
 
@@ -38,6 +40,7 @@ export default function CombinedContent({
   onSimpleAuthApprove,
   onSimpleAuthCancel,
   taxCertContainerRef,
+  transactionSearchContainerRef,
   swiperRef,
 }: CombinedContentProps) {
 
@@ -153,6 +156,13 @@ export default function CombinedContent({
                 )}
                 {section.type === 'GuaranteeLimit' && (
                   <GuaranteeLimitContainer />
+                )}
+                {section.type === 'TransactionSearchContainer' && (
+                  <TransactionSearchWrapper
+                    sectionIndex={sectionIndex}
+                    section={section}
+                    ref={transactionSearchContainerRef}
+                  />
                 )}
               </div>
             </SwiperSlide>

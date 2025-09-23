@@ -17,7 +17,8 @@ import {
 import { RealEstateContainer } from '@/(anon)/_components/common/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/_components/common/broker/brokerContainer/BrokerContainer';
 import { TaxCertWrapperRef } from './contents/TaxCertWrapper';
-import { TransactionSearchComponent } from '@/(anon)/_components/common/transactionSearch/TransactionSearchComponent';
+import { TransactionSearchWrapperRef } from './contents/TransactionSearchWrapper';
+import { TransactionSearchContainer } from '@/(anon)/_components/common/transactionSearch/transactionSearchContainer/TransactionSearchContainer';
 import { PageIndicator } from './PageIndicator';
 import CombinedContent from './contents/CombinedContent';
 
@@ -34,6 +35,7 @@ interface ModalContentProps {
   onSimpleAuthApprove: () => void;
   onSimpleAuthCancel: () => void;
   taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
+  transactionSearchContainerRef?: React.RefObject<TransactionSearchWrapperRef | null>;
 }
 
 export default function ModalContent({
@@ -41,6 +43,7 @@ export default function ModalContent({
   onSimpleAuthApprove,
   onSimpleAuthCancel,
   taxCertContainerRef,
+  transactionSearchContainerRef,
 }: ModalContentProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
@@ -100,8 +103,8 @@ export default function ModalContent({
         return <RealEstateContainer />;
       case 'BrokerContainer':
         return <BrokerContainer />;
-      case 'TransactionSearchComponent':
-        return <TransactionSearchComponent />;
+      case 'TransactionSearchContainer':
+        return <TransactionSearchContainer />;
       default:
         return null;
     }
@@ -167,6 +170,7 @@ export default function ModalContent({
           onSimpleAuthApprove={onSimpleAuthApprove}
           onSimpleAuthCancel={onSimpleAuthCancel}
           taxCertContainerRef={taxCertContainerRef}
+          transactionSearchContainerRef={transactionSearchContainerRef}
           swiperRef={swiperRef}
         />
       </>

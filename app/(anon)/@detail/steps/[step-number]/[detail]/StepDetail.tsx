@@ -8,6 +8,7 @@ import ModalContent from './_components/ModalContent';
 import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { useModalStore } from '@libs/stores/modalStore';
 import { TaxCertWrapperRef } from './_components/contents/TaxCertWrapper';
+import { TransactionSearchWrapperRef } from './_components/contents/TransactionSearchWrapper';
 import { RealEstateTwoWayContent } from '@/(anon)/_components/common/realEstate/realEstateTwoWayContent/RealEstateTwoWayContent';
 import { useRealEstateStore } from '@libs/stores/realEstateStore';
 
@@ -19,6 +20,7 @@ interface StepDetailProps {
 export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
   const [showSimpleAuthModal, setShowSimpleAuthModal] = useState(false);
   const taxCertWrapperRef = useRef<TaxCertWrapperRef | null>(null);
+  const transactionSearchWrapperRef = useRef<TransactionSearchWrapperRef | null>(null);
 
   // 전역 store 사용
   const {
@@ -127,6 +129,7 @@ export default function StepDetailPage({ isOpen, onClose }: StepDetailProps) {
           onSimpleAuthApprove={handleSimpleAuthApprove}
           onSimpleAuthCancel={handleSimpleAuthCancel}
           taxCertContainerRef={taxCertWrapperRef}
+          transactionSearchContainerRef={transactionSearchWrapperRef}
         />
       </div>
 
