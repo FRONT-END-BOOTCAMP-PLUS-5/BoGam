@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { TransactionSearchOutputProps } from '../types';
 import { styles } from './TransactionSearchOutput.styles';
 import Button from '@/(anon)/_components/common/button/Button';
@@ -18,6 +18,7 @@ interface TransactionSearchOutputExtendedProps extends TransactionSearchOutputPr
   targetArea: string;
   targetPrice: number;
   onNewSearch: () => void;
+  onSaveResult: () => void;
 }
 
 export const TransactionSearchOutput = ({
@@ -27,7 +28,17 @@ export const TransactionSearchOutput = ({
   targetArea,
   targetPrice,
   onNewSearch,
+  onSaveResult,
 }: TransactionSearchOutputExtendedProps) => {
+  const hasSaved = useRef(false);
+
+  // 결과가 완료되었을 때 한 번만 저장
+  useEffect(() => {
+    if (!loading && response?.data && response.data.length > 0 && !hasSaved.current) {
+      onSaveResult();
+      hasSaved.current = true;
+    }
+  }, [loading, response, onSaveResult]);
   // 로딩 중일 때 로딩 UI 표시
   if (loading) {
     return (

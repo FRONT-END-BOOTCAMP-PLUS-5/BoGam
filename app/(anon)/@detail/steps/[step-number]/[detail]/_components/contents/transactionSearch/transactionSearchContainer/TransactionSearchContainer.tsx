@@ -105,7 +105,7 @@ export const TransactionSearchContainer = forwardRef<
     };
   }).sort((a, b) => a.area - b.area);
 
-  // 분석 결과 자동 저장 함수
+  // 분석 결과 저장 함수
   const saveAnalysisResult = useCallback(() => {
     if (
       targetArea &&
@@ -139,13 +139,6 @@ export const TransactionSearchContainer = forwardRef<
     }
   }, [targetArea, targetPrice, averagePricesByArea, selectedAddress?.nickname, isSaving, upsertStepResult, stepNumber, detail]);
 
-  // 트랜잭션 데이터가 완료되면 분석 결과 저장 (탭 이동은 조회 버튼에서 처리)
-  useEffect(() => {
-    // 데이터가 있으면 분석 결과만 저장 (탭 이동은 하지 않음)
-    if (transactionData.length > 0) {
-      saveAnalysisResult();
-    }
-  }, [transactionData, saveAnalysisResult]);
 
   const handleTransactionSearch = () => {
     if (selectedAddress) {
@@ -225,6 +218,7 @@ export const TransactionSearchContainer = forwardRef<
       targetArea={targetArea}
       targetPrice={targetPrice}
       onNewSearch={() => setActiveTab('input')}
+      onSaveResult={saveAnalysisResult}
     />
   );
 
