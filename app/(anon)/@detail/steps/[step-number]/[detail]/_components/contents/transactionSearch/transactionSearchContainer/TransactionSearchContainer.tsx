@@ -47,14 +47,14 @@ export const TransactionSearchContainer = forwardRef<
   const { selectedYear, setSelectedYear } = useMainPageState();
   const { upsertStepResult, isLoading: isSaving } = useStepResultMutations();
 
-  // 선택된 주소가 변경될 때마다 주소 파싱
+  // 주소 파싱
   useEffect(() => {
     if (selectedAddress) {
       const address = selectedAddress.completeAddress || selectedAddress.roadAddress || '';
       const parsed = parseAddressString(address);
       setParsedAddress(parsed);
     }
-  }, [selectedAddress]);
+  }, []);
 
 
 
