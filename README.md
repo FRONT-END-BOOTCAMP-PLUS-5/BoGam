@@ -390,7 +390,9 @@ app/
 │
 ├── styles/              # 스타일 관련 파일
 │
-├── components/          # UI 컴포넌트│
+├── _components/          # UI 컴포넌트
+│   ├── common/          # 자주 사용되는 공통 컴포넌트들
+│   └── ...
 └── utils/               # 유틸리티 함수 및 모듈
 
 backend/                 # 백엔드 (Clean Architecture)
