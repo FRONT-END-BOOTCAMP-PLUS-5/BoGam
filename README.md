@@ -386,7 +386,6 @@ Bogam/
 │   └── codef/          # 코드에프 관련 모듈
 
 ├── utils/               # 유틸리티 함수 및 모듈
-│   ├── constants/      # 상수 정의
 │   ├── main/           # 메인 페이지 관련 유틸리티
 │   ├── sise/           # 시세 관련 유틸리티
 │   └── verifyPassword/ # 비밀번호 검증 유틸리티
