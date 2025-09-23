@@ -1,27 +1,24 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useCallback } from 'react';
 import { Location } from '@/(anon)/main/_components/types/map.types';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 import { placesApi } from '@libs/api_front/places.api';
 import { transactionsApi } from '@libs/api_front/transactions.api';
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 
-interface TransactionItem {
-  aptNm: string;
-  dealAmount: string;
-  excluUseAr: string;
-  floor: string;
-  buildYear: string;
-  dealYear: string;
-  dealMonth: string;
-  dealDay: string;
-  umdNm: string;
-  jibun: string;
-}
 
 export const useTransactionData = () => {
-  const { setTransactionData, setLoading, setError } =
-    useTransactionDataStore();
+  const [transactionData, setTransactionData] = useState<TransactionData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+
+  const setLoading = useCallback((loading: boolean) => {
+    setIsLoading(loading);
+  }, []);
+
+  const setErrorState = useCallback((errorMessage: string | null) => {
+    setError(errorMessage);
+  }, []);
 
   // 법정동 코드로 직접 실거래가 데이터 가져오기
   const fetchTransactionDataByCodeMutation = useMutation({
@@ -118,7 +115,7 @@ export const useTransactionData = () => {
     },
     onError: (error) => {
       console.error('실거래가 데이터 가져오기 실패:', error);
-      setError(
+      setErrorState(
         error instanceof Error ? error.message : '실거래가 데이터 가져오기 실패'
       );
       setLoading(false);
@@ -126,6 +123,9 @@ export const useTransactionData = () => {
   });
 
   return {
+    transactionData,
+    isLoading,
+    error,
     fetchTransactionDataByCode: fetchTransactionDataByCodeMutation.mutate,
   };
 };

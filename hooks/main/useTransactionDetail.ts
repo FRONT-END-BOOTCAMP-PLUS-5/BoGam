@@ -1,26 +1,41 @@
 import { useMutation } from '@tanstack/react-query';
+import { useState, useCallback } from 'react';
 import {
   transactionDetailApi,
   TransactionDetailApartSaleItem,
   TransactionDetailApartRentItem,
 } from '@libs/api_front/transactionDetail.api';
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import {
   formatTransactionAmount,
   formatDongData,
   sortTransactionDataByRent,
   formatContractDate,
 } from '@utils/main/transactionUtils';
+import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 
 export const useTransactionDetail = () => {
-  const { setTransactionData, setLoading, setError } =
-    useTransactionDataStore();
+  const [transactionData, setTransactionData] = useState<TransactionData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const clearTransactionData = useCallback(() => {
+    setTransactionData([]);
+    setError(null);
+  }, []);
+
+  const setLoading = useCallback((loading: boolean) => {
+    setIsLoading(loading);
+  }, []);
+
+  const setErrorState = useCallback((errorMessage: string | null) => {
+    setError(errorMessage);
+  }, []);
 
   // 아파트 계열 실거래가 상세조회
   const fetchTransactionDetailApartMutation = useMutation({
     onMutate: () => {
       setLoading(true);
-      setError(null);
+      setErrorState(null);
     },
     mutationFn: async ({
       buildingCode,
@@ -134,12 +149,12 @@ export const useTransactionDetail = () => {
           setLoading(false);
         }, 0);
       } else {
-        setError('데이터를 불러올 수 없습니다.');
+        setErrorState('데이터를 불러올 수 없습니다.');
         setLoading(false);
       }
     },
     onError: () => {
-      setError('실거래가 조회 중 오류가 발생했습니다.');
+      setErrorState('실거래가 조회 중 오류가 발생했습니다.');
       setLoading(false);
     },
   });
@@ -148,7 +163,7 @@ export const useTransactionDetail = () => {
   const fetchTransactionDetailSingleMutation = useMutation({
     onMutate: () => {
       setLoading(true);
-      setError(null);
+      setErrorState(null);
     },
     mutationFn: async ({
       addrSido,
@@ -221,17 +236,21 @@ export const useTransactionDetail = () => {
           setLoading(false);
         }, 0);
       } else {
-        setError('데이터를 불러올 수 없습니다.');
+        setErrorState('데이터를 불러올 수 없습니다.');
         setLoading(false);
       }
     },
     onError: () => {
-      setError('실거래가 조회 중 오류가 발생했습니다.');
+      setErrorState('실거래가 조회 중 오류가 발생했습니다.');
       setLoading(false);
     },
   });
 
   return {
+    transactionData,
+    isLoading,
+    error,
+    clearTransactionData,
     fetchTransactionDetailApartMutation,
     fetchTransactionDetailSingleMutation,
   };

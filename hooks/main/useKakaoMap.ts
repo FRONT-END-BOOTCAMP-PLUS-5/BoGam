@@ -4,15 +4,16 @@ import { useKakaoMarker } from './useKakaoMarker';
 import { useKakaoMapMarkers } from './useKakaoMapMarkers';
 import { useAddressInfo } from './useAddressInfo';
 import { useMapStore } from '@libs/stores/map/mapStore';
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 
 import {
   Location as MapLocation,
   KakaoMapOptions,
 } from '@/(anon)/main/_components/types/map.types';
+import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
 
 interface KakaoMapHookProps extends KakaoMapOptions {
   showTransactionMarkers?: boolean;
+  transactionData?: TransactionData[];
 }
 
 export const useKakaoMap = (props: KakaoMapHookProps) => {
@@ -23,6 +24,7 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
     showCurrentLocationMarker = true,
     showAddressInfo = true,
     markerOptions = {},
+    transactionData = [],
   } = props;
 
   const mapRef = useRef<HTMLDivElement>(null);
@@ -35,7 +37,6 @@ export const useKakaoMap = (props: KakaoMapHookProps) => {
 
   // Store에서 데이터 가져오기
   const { searchLocationMarker, adjustBounds } = useMapStore();
-  const { transactionData } = useTransactionDataStore();
 
   // 모든 마커가 보이도록 지도 영역 조정 함수
   const handleAdjustMapBounds = useCallback(

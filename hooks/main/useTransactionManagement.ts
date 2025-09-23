@@ -1,4 +1,3 @@
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { useTransactionDetail } from './useTransactionDetail';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useMainPageState } from './useMainPageState';
@@ -9,16 +8,14 @@ import {
 } from '@utils/main/transactionUtils';
 
 export const useTransactionManagement = () => {
-  // 실거래가 데이터 Store
-  const {
-    transactionData,
-    clearTransactionData,
-    isLoading,
-  } = useTransactionDataStore();
-
   // 실거래가 상세 데이터 관리
-  const { fetchTransactionDetailApartMutation, fetchTransactionDetailSingleMutation } =
-    useTransactionDetail();
+  const { 
+    transactionData,
+    isLoading,
+    clearTransactionData,
+    fetchTransactionDetailApartMutation, 
+    fetchTransactionDetailSingleMutation 
+  } = useTransactionDetail();
 
   // Store에서 선택된 주소 가져오기
   const { selectedAddress } = useUserAddressStore();

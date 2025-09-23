@@ -9,7 +9,6 @@ import { useDaumPostcode } from './useDaumPostcode';
 import { useUserAddresses } from '../useUserAddresses';
 import { placesApi } from '@libs/api_front/places.api';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
-import { useTransactionDataStore } from '@libs/stores/transactionData/transactionDataStore';
 import { DaumPostcodeData } from '@/(anon)/main/_components/types/mainPage.types';
 import { useToastStore } from '@libs/stores/toastStore';
 
@@ -38,14 +37,13 @@ export const useMainPageModule = () => {
     deleteVolatileAddress,
   } = useUserAddressStore();
 
-  // 실거래가 데이터 Store
-  const { clearTransactionData, isLoading } = useTransactionDataStore();
+  // 실거래가 데이터는 transactionManagement에서 관리
 
   // Daum Postcode 콜백 함수
   const handleDaumPostcodeComplete = async (data: DaumPostcodeData) => {
     // 새로운 주소 검색 시 실거래가 데이터 초기화
-    if (!isLoading) {
-      clearTransactionData();
+    if (!transactionManagement.isLoading) {
+      transactionManagement.clearTransactionData();
     }
 
     try {
