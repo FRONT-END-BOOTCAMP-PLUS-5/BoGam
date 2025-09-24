@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import {
   TaxCertOutputProps,
   TaxCertApiResponse,
-} from '@/(anon)/_components/common/taxCert/types';
+} from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/taxCert/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useGetTaxCertCopy } from '@/hooks/useTaxCert';
 import { useTaxCertRiskAssessment } from '@/hooks/useTaxCertRiskAssessment';

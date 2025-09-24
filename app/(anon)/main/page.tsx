@@ -1,7 +1,6 @@
 import React from 'react';
 import { styles } from '../mypage/page.styles';
 import Profile from '@/(anon)/_components/common/profile/Profile';
-import WithdrawButton from '../mypage/_components/WithdrawButton';
 import FloatingButton from './_components/floatingButton/FloatingButton';
 import { MainPageClient } from './_components/MainPageComponent';
 import { getUserNicknameFromSession } from '@utils/userAddress';
@@ -30,9 +29,6 @@ export default async function MainPage() {
       <div className={styles.content}>
         {/* 주소 관련 영역 - 동적 */}
         <MainPageClient />
-
-        {/* 회원탈퇴 버튼 - 정적 */}
-        <WithdrawButton />
       </div>
 
       {/* 플로팅 버튼 - 정적 */}

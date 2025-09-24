@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { AddressListItem, ApiResponse, RealEstateFormData } from '@/(anon)/_components/common/realEstate/types';
+import { AddressListItem, ApiResponse, RealEstateFormData } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/types';
 
 interface RealEstateState {
   // 기본 상태

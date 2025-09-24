@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { styles } from './page.styles';
-import ProgressBarChart from '@/(anon)/_components/common/progress/ProgressBarChart';
+import ProgressBarChart from '@/(anon)/steps/_components/progress/ProgressBarChart';
 import FlipBookSection from '@/(anon)/steps/[step-number]/_components/FlipBookSection';
 import FlipPages, { PageData } from '@/(anon)/steps/[step-number]/_components/FlipPages';
 import { getStepSpecificMetadata, getStepSpecificJsonLd } from '@metadata/stepMetadata';

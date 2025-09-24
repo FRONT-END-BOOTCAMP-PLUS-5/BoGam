@@ -18,7 +18,7 @@ export const useMainPageState = () => {
     category: '',
     type: '',
   });
-  const [selectedYear, setSelectedYear] = useState('2024');
+  const [selectedYear, setSelectedYear] = useState('2025');
   const [selectedMonth, setSelectedMonth] = useState('12');
   const [showPostcode, setShowPostcode] = useState(false);
 

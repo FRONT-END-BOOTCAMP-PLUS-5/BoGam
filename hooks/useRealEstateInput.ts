@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { RealEstateFormData } from '@/(anon)/_components/common/realEstate/types';
+import { RealEstateFormData } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/types';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 
 interface UseRealEstateInputProps {

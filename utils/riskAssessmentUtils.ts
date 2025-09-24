@@ -1,7 +1,7 @@
 import { RiskAssessmentResult } from '@/hooks/useRiskAssessment';
 import { BrokerRiskAssessmentResult } from '@/hooks/useBrokerRiskAssessment';
 import { TaxCertRiskAssessmentResult } from '@/hooks/useTaxCertRiskAssessment';
-import { DANGEROUS_KEYWORDS } from '@utils/constants/riskAssessment';
+import { DANGEROUS_KEYWORDS } from '@libs/constants/riskAssessment';
 
 // 위험도 검사 결과를 JSON 형태로 변환하는 타입
 export type RiskAssessmentJsonData = Record<

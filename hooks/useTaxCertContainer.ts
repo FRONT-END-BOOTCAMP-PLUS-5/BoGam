@@ -5,7 +5,7 @@ import { useSubmitTaxCert, useSubmitTwoWayAuth } from '@/hooks/useTaxCert';
 import {
   TaxCertFormData,
   TaxCertApiResponse,
-} from '@/(anon)/_components/common/taxCert/types';
+} from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/taxCert/types';
 import { extractActualData } from '@libs/responseUtils';
 import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
