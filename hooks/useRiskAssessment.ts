@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { RealEstateEntity } from '@be/domain/entities/RealEstate';
-import { DANGEROUS_KEYWORDS } from '@utils/constants/riskAssessment';
+import { DANGEROUS_KEYWORDS } from '@libs/constants/riskAssessment';
 
 export interface RiskFactor {
   fieldName: string; // 필드명 (한글)

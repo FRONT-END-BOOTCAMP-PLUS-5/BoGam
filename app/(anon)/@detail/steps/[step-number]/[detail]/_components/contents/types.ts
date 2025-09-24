@@ -133,6 +133,11 @@ export interface GuaranteeLimitSection extends BaseContentSection {
   type: 'GuaranteeLimit';
 }
 
+// TransactionSearchContainer 전용 인터페이스
+export interface TransactionSearchContainerSection extends BaseContentSection {
+  type: 'TransactionSearchContainer';
+}
+
 // 모든 섹션 타입을 유니온으로 정의
 export type ContentSection =
   | TextOnlySection
@@ -144,7 +149,8 @@ export type ContentSection =
   | TaxCertIntroSection
   | TaxCertContainerSection
   | RealEstateContainerSection
-  | GuaranteeLimitSection;
+  | GuaranteeLimitSection
+  | TransactionSearchContainerSection;
 
 // CombinedContent용 인터페이스
 export interface CombinedContentProps {
@@ -164,7 +170,7 @@ export interface StepContentData {
     | 'CheckListGroup'
     | 'RealEstateContainer'
     | 'BrokerContainer'
-    | 'TransactionSearchComponent'
+    | 'TransactionSearchContainer'
     | 'CombinedContent';
   title?: string;
   columnTitles?: string[];

@@ -1,6 +1,6 @@
 export const styles = {
   // 기존 스타일
-  container: "min-h-screen bg-brand-light-gray/30 relative w-full overflow-x-hidden",
+  container: "min-h-screen bg-brand-light-gray/30 relative w-full overflow-x-hidden pb-20",
   title: "text-2xl font-bold text-brand-black mb-8 text-center",
   accordionSection: "mt-8",
   accordionTitle: "text-xl font-semibold text-brand-black mb-4",

@@ -89,6 +89,21 @@ export const formatTransactionAmount = (amount: string): string => {
 };
 
 /**
+ * 숫자 가격을 억/천만원/만원 단위로 포맷팅
+ * @param price 가격 (억원 단위의 숫자)
+ * @returns 포맷팅된 가격 문자열
+ */
+export const formatPrice = (price: number): string => {
+  if (price >= 1) {
+    return `${price.toFixed(2)}억`;
+  } else if (price >= 0.1) {
+    return `${(price * 10).toFixed(1)}천만원`;
+  } else {
+    return `${(price * 10000).toFixed(0)}만원`;
+  }
+};
+
+/**
  * 동 데이터를 포맷팅 (숫자 + "동", 없으면 "미확인")
  * @param dong 동 데이터
  * @returns 포맷팅된 동 데이터
