@@ -80,7 +80,7 @@ export default function ModalContent({
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
     switch (dataType) {
       case 'TextOnly':
-        return <TextOnly data={pageData} />;
+        return <TextOnly data={pageData} currentPage={currentPage} />;
       case 'List':
         return (
           <List
