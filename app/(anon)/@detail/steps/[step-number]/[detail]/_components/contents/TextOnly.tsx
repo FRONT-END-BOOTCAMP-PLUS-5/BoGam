@@ -77,7 +77,7 @@ const TextOnly = ({ data, currentPage }: TextOnlyProps) => {
     stepResultData && 'jsonDetails' in stepResultData
       ? stepResultData.jsonDetails
       : undefined;
-  console.log('currentPage', currentPage);
+  //console.log('currentPage', currentPage);
   // currentPage가 변경될 때마다 해당 슬라이드를 읽음 처리
   useEffect(() => {
     if (data.length === 0 || !jsonDetails) {
@@ -138,7 +138,7 @@ const TextOnly = ({ data, currentPage }: TextOnlyProps) => {
       </div>
     );
   }
-  console.log('jsonDetails', jsonDetails);
+  //console.log('jsonDetails', jsonDetails);
   // stepData 표시 함수 - jsonDetails의 값들을 CircularIconBadge로 표시
   const renderStepData = () => {
     const slideKey = `읽음_슬라이드${currentPage + 1}`;
