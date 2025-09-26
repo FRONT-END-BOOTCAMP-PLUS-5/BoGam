@@ -13,7 +13,7 @@ import List from './List';
 import CheckListGroup from './CheckListGroup';
 import RadioGroup from './RadioGroup';
 import { RealEstateContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/realEstateContainer/RealEstateContainer';
-import GuaranteeLimitContainer from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/guaranteeLimit/GuaranteeLimitContainer';
+import GuaranteeLimitContainer from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/guaranteeLimit/guaranteeLimitContainer/GuaranteeLimitContainer';
 import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
 import TransactionSearchWrapper, { TransactionSearchWrapperRef } from './TransactionSearchWrapper';
 import { PageIndicator } from '../PageIndicator';
