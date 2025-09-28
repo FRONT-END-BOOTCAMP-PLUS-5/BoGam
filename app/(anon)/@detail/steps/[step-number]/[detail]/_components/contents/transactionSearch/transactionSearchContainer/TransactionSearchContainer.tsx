@@ -12,8 +12,9 @@ import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { parseAddressString } from '@utils/main/addressUtils';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import { TransactionData } from '@/(anon)/main/_components/types/mainPage.types';
-import { ConfirmModal } from '@/(anon)/_components/common/modal/ConfirmModal';
 import { DanjiSerialNumberContent } from '@/(anon)/_components/common/modal/DanjiSerialNumberContent';
+import { useModalStore } from '@libs/stores/modalStore';
+import type { ActualDanjiInfo } from '@/(anon)/_components/common/modal/useDanjiSerialNumber';
 
 export interface TransactionSearchContainerRef {
   handleTransactionSearch: () => void;
@@ -33,7 +34,7 @@ export const TransactionSearchContainer = forwardRef<
   const [targetArea, setTargetArea] = useState('');
   const [targetPrice, setTargetPrice] = useState(0);
   const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
-  const [showDanjiModal, setShowDanjiModal] = useState(false);
+  const { openModal, closeModal } = useModalStore();
 
   // URL에서 stepNumber와 detail 가져오기
   const pathname = window.location.pathname;
@@ -54,7 +55,7 @@ export const TransactionSearchContainer = forwardRef<
       const parsed = parseAddressString(address);
       setParsedAddress(parsed);
     }
-  }, []);
+  }, [selectedAddress]);
 
   interface AreaGroup {
     area: number;
@@ -145,15 +146,10 @@ export const TransactionSearchContainer = forwardRef<
     }
   };
 
-  interface DanjiInfo {
-    commBuildingCode: string;
-    resBuildingName: string;
-  }
-
-  const handleDanjiSelect = (danji: DanjiInfo) => {
+  const handleDanjiSelect = (danji: ActualDanjiInfo) => {
     setComplexName(danji.commBuildingCode);
     setDanjiName(danji.resBuildingName);
-    setShowDanjiModal(false);
+    closeModal();
   };
 
   // ref를 통해 외부에서 접근할 수 있는 메서드 노출
@@ -170,6 +166,24 @@ export const TransactionSearchContainer = forwardRef<
     targetArea,
     targetPrice,
     parsedAddress,
+  };
+
+  const openDanjiModal = () => {
+    openModal({
+      title: '단지 일련번호 조회',
+      icon: 'info',
+      cancelText: '닫기',
+      content: (
+        <DanjiSerialNumberContent
+          searchParams={{
+            addrSido: parsedAddress.addrSido,
+            addrSigungu: parsedAddress.addrSigungu,
+            addrDong: parsedAddress.addrDong,
+          }}
+          onSelect={handleDanjiSelect}
+        />
+      ),
+    });
   };
 
   // 보증금 미포함 거래만 필터링 (averagePricesByArea 계산과 동일한 조건)
@@ -202,7 +216,7 @@ export const TransactionSearchContainer = forwardRef<
       onDanjiNameChange={setDanjiName}
       onTargetAreaChange={setTargetArea}
       onTargetPriceChange={setTargetPrice}
-      onFetchComplex={() => setShowDanjiModal(true)}
+      onFetchComplex={openDanjiModal}
     />
   );
 
@@ -242,25 +256,6 @@ export const TransactionSearchContainer = forwardRef<
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-
-      {/* 단지 일련번호 조회 모달 */}
-      <ConfirmModal
-        isOpen={showDanjiModal}
-        onCancel={() => setShowDanjiModal(false)}
-        title='단지 일련번호 조회'
-        icon='info'
-        cancelText='닫기'
-        onConfirm={() => {}}
-      >
-        <DanjiSerialNumberContent
-          searchParams={{
-            addrSido: parsedAddress.addrSido,
-            addrSigungu: parsedAddress.addrSigungu,
-            addrDong: parsedAddress.addrDong,
-          }}
-          onSelect={handleDanjiSelect}
-        />
-      </ConfirmModal>
     </>
   );
 });
