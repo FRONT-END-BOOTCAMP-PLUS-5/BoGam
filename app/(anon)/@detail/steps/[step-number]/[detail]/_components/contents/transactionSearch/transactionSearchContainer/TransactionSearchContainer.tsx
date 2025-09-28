@@ -176,7 +176,6 @@ export const TransactionSearchContainer = forwardRef<
       }, {
         onSuccess: (data) => {
           if (data.success) {
-            console.log('실거래가 검색 데이터 저장 성공:', data);
             handleApiSuccess();
           } else {
             handleApiError(data.message || '실거래가 검색 데이터 저장 중 오류가 발생했습니다.');
