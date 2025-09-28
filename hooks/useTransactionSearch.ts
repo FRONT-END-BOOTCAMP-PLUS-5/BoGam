@@ -17,8 +17,6 @@ export const useCreateTransactionSearch = (
   return useMutation<TransactionSearchApiResponse, Error, CreateTransactionSearchRequestDto>({
     mutationFn: createTransactionSearch,
     onSuccess: (data, variables) => {
-      console.log('실거래가 검색 데이터 저장 성공:', data);
-      
       // 성공 시 관련 쿼리 무효화
       if (variables.userAddressNickname) {
         queryClient.invalidateQueries({

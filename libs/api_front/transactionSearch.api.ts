@@ -70,7 +70,6 @@ export interface TransactionSearchCopyApiResponse {
 export const createTransactionSearch = async (
   data: CreateTransactionSearchRequestDto
 ): Promise<TransactionSearchApiResponse> => {
-  console.log('실거래가 검색 데이터 저장 요청:', data);
   const response = await frontendAxiosInstance
     .getAxiosInstance()
     .post('/api/transaction-search', data);

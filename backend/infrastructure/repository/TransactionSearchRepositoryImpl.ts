@@ -23,7 +23,7 @@ export class TransactionSearchRepositoryImpl implements TransactionSearchReposit
       return {
         id: result.id,
         userAddressId: result.userAddressId,
-        transactionSearchData: result.transactionSearchData, // 이미 암호화된 상태
+        transactionSearchData: result.transactionSearchData,
         updatedAt: result.updatedAt,
       };
     } catch (error) {

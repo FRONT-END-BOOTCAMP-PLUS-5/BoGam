@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
 
     // userAddressNickname을 userAddressId로 변환
     const userAddressId = await getUserAddressId(userAddressNickname);
+    
     if (!userAddressId) {
       return NextResponse.json(
         {
