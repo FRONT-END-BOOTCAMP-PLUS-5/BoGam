@@ -120,9 +120,11 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
       data: [
         {
           userAddressId: userAddress.id,
-          stepId: 1, // 1-1단계
+          stepId: 1, // 1-1단계 - TextOnly (3개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked",
+            "읽음_슬라이드3": "unchecked"
           },
         },
         {
@@ -134,9 +136,12 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 3, // 1-3단계
+          stepId: 3, // 1-3단계 - TextOnly (4개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked",
+            "읽음_슬라이드3": "unchecked",
+            "읽음_슬라이드4": "unchecked"
           },
         },
         {
@@ -236,9 +241,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 10, // 2-4단계
+          stepId: 10, // 2-4단계 - TextOnly (1개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked"
           },
         },
         {
@@ -262,9 +267,10 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 13, // 3-3단계
+          stepId: 13, // 3-3단계 - TextOnly (2개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked"
           },
         },
         {
@@ -288,23 +294,25 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 15, // 4-2단계
+          stepId: 15, // 4-2단계 - TextOnly (2개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 16, // 4-3단계
+          stepId: 16, // 4-3단계 - TextOnly (1개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 17, // 4-4단계
+          stepId: 17, // 4-4단계 - TextOnly (2개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked"
           },
         },
         {
@@ -341,9 +349,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 20, // 5-3단계
+          stepId: 20, // 5-3단계 - CombinedContent TextOnly (1개 슬라이드)
           details: {
-            "열람": "unchecked",
+            "읽음_슬라이드1": "unchecked",
             "보증신청인(1)": "unchecked",
             "보증신청인(2)": "unchecked",
             "보증신청인(3)": "unchecked",
@@ -365,30 +373,40 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 21, // 5-4단계
+          stepId: 21, // 5-4단계 - TextOnly (1개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 22, // 6-1단계
+          stepId: 22, // 6-1단계 - TextOnly (2개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 23, // 6-2단계
+          stepId: 23, // 6-2단계 - TextOnly (6개 슬라이드)
           details: {
-            "열람": "unchecked"
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked",
+            "읽음_슬라이드3": "unchecked",
+            "읽음_슬라이드4": "unchecked",
+            "읽음_슬라이드5": "unchecked",
+            "읽음_슬라이드6": "unchecked"
           },
         },
         {
           userAddressId: userAddress.id,
-          stepId: 24, // 6-3단계: 등기부등본 발급 오류 해결시 수정
+          stepId: 24, // 6-3단계: 등기부등본 발급 오류 해결시 수정 - CombinedContent TextOnly (5개 슬라이드)
           details: {
-            "열람": "unchecked",
+            "읽음_슬라이드1": "unchecked",
+            "읽음_슬라이드2": "unchecked",
+            "읽음_슬라이드3": "unchecked",
+            "읽음_슬라이드4": "unchecked",
+            "읽음_슬라이드5": "unchecked",
             "경매": "unchecked",
             "미납": "unchecked",
             "부도": "unchecked",
@@ -406,9 +424,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 25, // 7-1단계
+          stepId: 25, // 7-1단계 - CombinedContent TextOnly (1개 슬라이드)
           details: {
-            "열람": "unchecked",
+            "읽음_슬라이드1": "unchecked",
             "이면계약 작성하지 않기": "unchecked",
             "타인 명의 대출 거절하기": "unchecked",
             "신분증, 인감 빌려주지 않기": "unchecked"
@@ -416,9 +434,9 @@ export class AddUserAddressRepositoryImpl implements AddUserAddressRepository {
         },
         {
           userAddressId: userAddress.id,
-          stepId: 26, // 7-2단계
+          stepId: 26, // 7-2단계 - CombinedContent TextOnly (1개 슬라이드)
           details: {
-            "열람": "unchecked",
+            "읽음_슬라이드1": "unchecked",
             "이면계약 작성하지 않기": "unchecked",
             "신분증, 인감 빌려주지 않기": "unchecked",
             "적법한 계약 절차가 아니면 거절하기": "unchecked"

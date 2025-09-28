@@ -96,7 +96,7 @@ export default function CombinedContent({
 
                 {/* 섹션 타입에 따른 컴포넌트 렌더링 */}
                 {section.type === 'TextOnly' && (
-                  <TextOnly data={section.data} />
+                  <TextOnly data={section.data} currentPage={currentPage} />
                 )}
                 {section.type === 'RadioGroup' && (
                   <RadioGroup data={section.data} />
