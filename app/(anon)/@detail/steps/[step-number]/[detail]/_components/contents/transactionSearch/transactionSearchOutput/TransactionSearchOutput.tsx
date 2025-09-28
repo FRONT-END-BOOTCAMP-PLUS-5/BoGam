@@ -56,13 +56,15 @@ export const TransactionSearchOutput = ({
   // 파싱
   const displayData = savedData?.data ? (typeof savedData.data === 'string' ? JSON.parse(savedData.data) : savedData.data) : null;
 
-  // 로딩 중일 때 로딩 UI 표시
-  if (loading) {
+  // 로딩 중일 때 로딩 UI 표시 (실거래가 검색 로딩 또는 저장된 데이터 조회 로딩)
+  if (loading || isSavedDataLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.loadingState}>
           <div className={styles.loadingSpinner}></div>
-          <div className={styles.loadingText}>실거래가 데이터를 불러오고 있습니다</div>
+          <div className={styles.loadingText}>
+            {loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
+          </div>
         </div>
       </div>
     );
