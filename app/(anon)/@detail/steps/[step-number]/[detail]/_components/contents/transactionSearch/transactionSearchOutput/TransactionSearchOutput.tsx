@@ -52,6 +52,10 @@ export const TransactionSearchOutput = ({
     }
   }, [loading, response, onSaveResult]);
 
+  // 저장된 데이터가 있으면 그것을 사용, 없으면 현재 props 사용
+  // 파싱
+  const displayData = savedData?.data ? (typeof savedData.data === 'string' ? JSON.parse(savedData.data) : savedData.data) : null;
+
   // 로딩 중일 때 로딩 UI 표시
   if (loading) {
     return (
@@ -206,7 +210,7 @@ export const TransactionSearchOutput = ({
         <div className={styles.averagePrices}>
           <h4 className={styles.averagePricesTitle}>전용면적별 평균가</h4>
           <div className={styles.averagePricesGrid}>
-            {data.areaAveragePrices.map((item) => (
+            {data.areaAveragePrices.map((item: { area: number; averagePrice: number; transactionCount: number }) => (
               <div key={item.area} className={styles.averagePriceCard}>
                 <div className={styles.averagePriceContent}>
                   <div className={styles.averagePriceArea}>
