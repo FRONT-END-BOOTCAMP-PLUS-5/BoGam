@@ -34,8 +34,6 @@ export const RealEstateInput = ({
   const issueTypeOptions = [
     { value: '0', label: '발급' },
     { value: '1', label: '열람' },
-    { value: '2', label: '고유번호조회' },
-    { value: '3', label: '원문데이터로 결과처리' },
   ];
 
   const handleFormSubmit = (data: RealEstateFormData) => {
