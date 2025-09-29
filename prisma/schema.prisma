@@ -48,20 +48,21 @@ model Address {
 }
 
 model UserAddress {
-  id              Int              @id @default(autoincrement())
-  userId          String           @map("user_id") @db.Uuid
-  addressId       Int              @map("address_id")
-  isPrimary       Boolean          @default(false) @map("is_primary")
-  isSelected      Boolean          @default(false) @map("is_selected")
-  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  nickname        String
-  realEstates     RealEstate?
-  stepResults     StepResult[]
-  taxCerts        TaxCert?
-  brokers         Broker?
-  guaranteeLimits GuaranteeLimit?
-  address         Address          @relation(fields: [addressId], references: [id], onDelete: Cascade)
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                Int                @id @default(autoincrement())
+  userId            String             @map("user_id") @db.Uuid
+  addressId         Int                @map("address_id")
+  isPrimary         Boolean            @default(false) @map("is_primary")
+  isSelected        Boolean            @default(false) @map("is_selected")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  nickname          String
+  realEstates       RealEstate?
+  stepResults       StepResult[]
+  taxCerts          TaxCert?
+  brokers           Broker?
+  guaranteeLimits   GuaranteeLimit?
+  transactionSearches TransactionSearch?
+  address           Address            @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, nickname], map: "user_addresses_user_nickname_unique")
   @@map("user_addresses")
@@ -95,6 +96,16 @@ model GuaranteeLimit {
   userAddress        UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
 
   @@map("guarantee_limits")
+}
+
+model TransactionSearch {
+  id                    Int         @id @default(autoincrement())
+  userAddressId         Int         @unique @map("user_address_id")
+  transactionSearchData String      @map("transaction_search_data")
+  updatedAt             DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userAddress           UserAddress @relation(fields: [userAddressId], references: [id], onDelete: Cascade)
+
+  @@map("transaction_searches")
 }
 
 model Step {

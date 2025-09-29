@@ -6,8 +6,8 @@ import {
 } from '@libs/api_front/guaranteeLimit.api';
 import { useGetGuaranteeLimit, useCheckGuaranteeLimitCopyExists } from '@/hooks/useGuaranteeLimit';
 import { FIELD_ERROR_MESSAGES } from '@libs/constants/guaranteeLimit';
-import GuaranteeLimitInput from './GuaranteeLimitInput';
-import GuaranteeLimitOutput from './GuaranteeLimitOutput';
+import GuaranteeLimitInput from '../guaranteeLimitInput/GuaranteeLimitInput';
+import GuaranteeLimitOutput from '../guaranteeLimitOutput/GuaranteeLimitOutput';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { useModalStore } from '@libs/stores/modalStore';
 import { DataContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/container/DataContainer';
