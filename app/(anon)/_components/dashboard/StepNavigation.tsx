@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { styles } from './StepNavigation.styles';
+import WithdrawButton from '@/(anon)/main/_components/WithdrawButton';
 
 interface StepNavigationProps {
   steps: Array<{
@@ -15,18 +16,17 @@ interface StepNavigationProps {
   currentStep: number;
 }
 
-export default function StepNavigation({ 
-  steps, 
-  onStepClick, 
+export default function StepNavigation({
+  steps,
+  onStepClick,
   onLogout,
-  currentStep
+  currentStep,
 }: StepNavigationProps) {
   return (
     <div className={styles.container}>
       {/* 단계 목록 */}
       <div className={styles.stepsList}>
         {steps.map((step) => {
-
           return (
             <button
               key={step.id}
@@ -40,13 +40,13 @@ export default function StepNavigation({
           );
         })}
       </div>
-      
-      <button
-        onClick={onLogout}
-        className={styles.logoutButton}
-      >
-        로그아웃
-      </button>
+
+      <div className={styles.buttonContainer}>
+        <button onClick={onLogout} className={styles.logoutButton}>
+          로그아웃
+        </button>
+        <WithdrawButton />
+      </div>
     </div>
   );
 }
