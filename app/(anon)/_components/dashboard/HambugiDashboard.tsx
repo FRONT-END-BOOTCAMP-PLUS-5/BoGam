@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useUserStore } from '@libs/stores/userStore';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
@@ -20,7 +19,6 @@ interface HambugiDashboardProps {
 }
 
 export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
-  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   // ESC 키로 대시보드 닫기
@@ -32,7 +30,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
@@ -171,12 +169,6 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
     setCurrentStep(stepId);
   };
 
-  const handleUserClick = () => {
-    // 사용자 정보 페이지로 이동
-    onClose();
-    router.push('/mypage');
-  };
-
   const handleLogout = async () => {
     try {
       // 1. 클라이언트 상태 초기화
@@ -220,7 +212,7 @@ export default function HambugiDashboard({ onClose }: HambugiDashboardProps) {
       <DashboardHeader onClose={onClose} />
 
       {/* 사용자 정보 */}
-      <UserInfo onUserClick={handleUserClick} />
+      <UserInfo />
 
       {/* 메인 콘텐츠 */}
       <div className={styles.mainContent}>
