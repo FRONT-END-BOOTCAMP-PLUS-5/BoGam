@@ -49,9 +49,6 @@ export default function GuaranteeLimitInput({
   return (
     <div>
       <FormContainer onSubmit={onSubmit}>
-        <div className={styles.header}>
-          <h3 className={styles.title}>전세자금보증 금액 조회</h3>
-        </div>
         <div className={styles.formContainer}>
           {/* 전세보증금 */}
           <Field

@@ -1,7 +1,7 @@
 'use client';
 
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
-import DocumentCard from '../../mypage/_components/DocumentCard';
+import DocumentCard from '@/(anon)/main/_components/DocumentCard';
 import { styles as mainStyles } from '../main.styles';
 import { AddressConfirmationTab } from './tabContainer/AddressConfirmationTab';
 import { Pin, X } from 'lucide-react';
