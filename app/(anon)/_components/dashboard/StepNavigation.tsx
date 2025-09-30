@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { styles } from './StepNavigation.styles';
-import WithdrawButton from '@/(anon)/main/_components/WithdrawButton';
+import WithdrawButton from '@/(anon)/_components/dashboard/WithdrawButton';
 
 interface StepNavigationProps {
   steps: Array<{

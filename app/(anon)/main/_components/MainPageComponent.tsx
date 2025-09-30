@@ -10,7 +10,6 @@ import { DaumPostcodeModal } from './daumPostcodeModal/DaumPostcodeModal';
 import { ConfirmModal } from '../../_components/common/modal/ConfirmModal';
 import { GuideResultsContainer } from './guideResults/GuideResultsContainer';
 import { useMainPage } from '@/hooks/useMainPage';
-import WithdrawButton from '@/(anon)/main/_components/WithdrawButton';
 
 export const MainPageClient = () => {
   const {
