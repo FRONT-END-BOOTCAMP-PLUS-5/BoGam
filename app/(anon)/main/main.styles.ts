@@ -32,7 +32,7 @@ export const styles = {
   gauge:
     'relative w-32 h-16 bg-brand-light-gray rounded-t-full overflow-hidden',
   gaugeFill:
-    'absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-green-500 via-yellow-500 to-red-500 rounded-t-full',
+    'absolute bottom-0 left-0 w-full h-3/4 bg-gradient-to-t from-brand-green via-brand-gold to-brand-red rounded-t-full',
   gaugeText:
     'absolute inset-0 flex items-center justify-center text-sm font-medium text-brand-dark-gray',
 
@@ -46,7 +46,7 @@ export const styles = {
   // 에러 상태 스타일
   errorContainer: 'flex items-center justify-center min-h-screen',
   errorContent: 'text-center',
-  errorIcon: 'text-red-500 text-6xl mb-4',
+  errorIcon: 'text-brand-red text-6xl mb-4',
   errorTitle: 'text-xl font-bold text-brand-black mb-2',
   errorMessage: 'text-brand-dark-gray mb-4',
   errorButton:

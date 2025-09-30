@@ -9,7 +9,6 @@ import { styles } from './DocumentViewContent.styles';
 export default function DocumentViewContent() {
   const searchParams = useSearchParams();
   const type = searchParams.get('type') || 'realestate';
-  const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
 
   const handleShowSimpleAuthModal = () => {
     // 간편인증 모달은 여기서는 사용하지 않음
