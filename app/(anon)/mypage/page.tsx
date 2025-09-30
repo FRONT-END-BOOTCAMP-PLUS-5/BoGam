@@ -160,9 +160,6 @@ export default function MyPage() {
 
         {/* 가이드 결과 보기 */}
         <GuideResultView guideSteps={guideSteps} />
-
-        {/* 회원탈퇴 버튼 */}
-        <WithdrawButton />
       </div>
     </div>
   );
