@@ -3,17 +3,35 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FileSearch, FileUser } from 'lucide-react';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { styles } from './DocumentCard.styles';
 
 export default function DocumentCard() {
   const router = useRouter();
+  const { selectedAddress } = useUserAddressStore();
 
   const handleRegisterBookClick = () => {
-    router.push('/document-view?type=realestate');
+    if (!selectedAddress) {
+      alert('주소를 먼저 선택해주세요.');
+      return;
+    }
+    router.push(
+      `/document-view?type=realestate&address=${encodeURIComponent(
+        selectedAddress.nickname
+      )}`
+    );
   };
 
   const handleTaxCertClick = () => {
-    router.push('/document-view?type=taxcert');
+    if (!selectedAddress) {
+      alert('주소를 먼저 선택해주세요.');
+      return;
+    }
+    router.push(
+      `/document-view?type=taxcert&address=${encodeURIComponent(
+        selectedAddress.nickname
+      )}`
+    );
   };
 
   return (

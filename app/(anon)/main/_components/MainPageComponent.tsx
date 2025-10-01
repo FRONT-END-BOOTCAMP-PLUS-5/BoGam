@@ -1,7 +1,6 @@
 'use client';
 
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
-import DocumentCard from '@/(anon)/main/_components/DocumentCard';
 import { styles as mainStyles } from '../main.styles';
 import { AddressConfirmationTab } from './tabContainer/AddressConfirmationTab';
 import { Pin, X } from 'lucide-react';
@@ -10,7 +9,6 @@ import { DaumPostcodeModal } from './daumPostcodeModal/DaumPostcodeModal';
 import { ConfirmModal } from '../../_components/common/modal/ConfirmModal';
 import { GuideResultsContainer } from './guideResults/GuideResultsContainer';
 import { useMainPage } from '@/hooks/useMainPage';
-import WithdrawButton from '@/(anon)/mypage/_components/WithdrawButton';
 
 export const MainPageClient = () => {
   const {
@@ -85,8 +83,6 @@ export const MainPageClient = () => {
       {/* 가이드 결과 컨테이너 */}
       {!isNewAddressSearch && (
         <>
-          {/* 문서 카드 */}
-          <DocumentCard />
           <GuideResultsContainer
             selectedAddress={selectedAddress}
             isNewAddressSearch={isNewAddressSearch}
@@ -129,9 +125,6 @@ export const MainPageClient = () => {
         <br />
         계속 하시겠습니까?
       </ConfirmModal>
-
-      {/* 회원탈퇴 버튼 */}
-      <WithdrawButton />
     </>
   );
 };
