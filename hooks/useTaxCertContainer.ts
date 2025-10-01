@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useTaxCertStore } from '@libs/stores/taxCertStore';
 import { useCheckTaxCertExists } from '@/hooks/useTaxCert';
 import { useSubmitTaxCert, useSubmitTwoWayAuth } from '@/hooks/useTaxCert';
 import {
@@ -9,63 +10,38 @@ import {
 import { extractActualData } from '@libs/responseUtils';
 import { CodefResponse } from '@be/applications/taxCert/dtos/GetTaxCertResponseDto';
 
-interface UseTaxCertContainerProps {
-  onShowSimpleAuthModal: () => void;
-  onSimpleAuthApprove: () => void;
-  onSimpleAuthCancel: () => void;
-}
-
-export const useTaxCertContainer = ({
-  onShowSimpleAuthModal,
-  onSimpleAuthCancel,
-}: UseTaxCertContainerProps) => {
-  const [activeTab, setActiveTab] = useState<'input' | 'output'>('input');
-  const [formData] = useState<TaxCertFormData>({
-    organization: '0001',
-    loginType: '6',
-    loginTypeLevel: '1',
-    phoneNo: '',
-    userName: '',
-    loginIdentity: '',
-    loginBirthDate: '',
-    id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    isIdentityViewYN: '1',
-    isAddrViewYn: '0',
-    proofType: 'B0006',
-    submitTargets: '04',
-    applicationType: '01',
-    clientTypeLevel: '1',
-    identity: '',
-    birthDate: '',
-    originDataYN: '0',
-    originDataYN1: '1',
-  });
-  const [response, setResponse] = useState<TaxCertApiResponse | null>(null);
-  const [isDataLoading, setIsDataLoading] = useState(false);
+export const useTaxCertContainer = () => {
+  // Store에서 상태 가져오기
+  const {
+    activeTab,
+    setActiveTab,
+    formData,
+    isDataLoading,
+    setIsDataLoading,
+    handleShowSimpleAuthModal,
+    handleSimpleAuthCancel,
+  } = useTaxCertStore();
 
   const { selectedAddress } = useUserAddressStore();
-  const { data: existsData } = useCheckTaxCertExists(
+  const { data: existsData, refetch: refetchExists } = useCheckTaxCertExists(
     selectedAddress?.nickname || ''
   );
 
   const submitTaxCertMutation = useSubmitTaxCert();
 
   const submitTwoWayAuthMutation = useSubmitTwoWayAuth(
-    async (data) => {
-      setResponse(data as TaxCertApiResponse);
+    async () => {
+      // DB에 저장되므로 별도로 response 저장 불필요
       setIsDataLoading(false);
       setActiveTab('output');
-      onSimpleAuthCancel(); // 성공 시 모달 닫기
+      handleSimpleAuthCancel(); // 성공 시 모달 닫기
+      // existsData 갱신
+      refetchExists();
     },
     (error) => {
-      setResponse({
-        success: false,
-        message: '간편인증 API 호출 중 오류가 발생했습니다.',
-        error: error instanceof Error ? error.message : '알 수 없는 오류',
-        userAddressNickname: selectedAddress?.nickname || '',
-      });
+      console.error('간편인증 API 호출 중 오류:', error);
       setIsDataLoading(false);
-      onSimpleAuthCancel(); // 실패 시에도 모달 닫기
+      handleSimpleAuthCancel(); // 실패 시에도 모달 닫기
     }
   );
 
@@ -79,7 +55,7 @@ export const useTaxCertContainer = ({
       setActiveTab('input');
       setIsDataLoading(false);
     }
-  }, [existsData, isDataLoading]);
+  }, [existsData, isDataLoading, setActiveTab, setIsDataLoading]);
 
   // useEffect(() => {
   //   const existsDataTyped = existsData as { success: boolean; exists: boolean };
@@ -101,22 +77,26 @@ export const useTaxCertContainer = ({
     const actualMethod = actualData?.method;
 
     if (actualContinue2Way && actualMethod === 'simpleAuth') {
-      onShowSimpleAuthModal();
+      handleShowSimpleAuthModal();
       return true;
     } else {
       return false;
     }
   };
 
-  const handleSimpleAuthApprove = async () => {
+  // 2-way 인증에 필요한 임시 response 저장 (로컬 상태)
+  const [tempResponse, setTempResponse] =
+    React.useState<TaxCertApiResponse | null>(null);
+
+  const handleSimpleAuthApprove = useCallback(async () => {
     if (!selectedAddress?.nickname) {
       alert('선택된 주소 정보가 없습니다.');
       return;
     }
 
     // 1차 응답에서 실제 데이터 추출
-    const responseActualData = response
-      ? extractActualData(response as unknown as CodefResponse)
+    const responseActualData = tempResponse
+      ? extractActualData(tempResponse as unknown as CodefResponse)
       : undefined;
 
     // 1차 응답에서 twoWayInfo 추출
@@ -150,7 +130,7 @@ export const useTaxCertContainer = ({
 
     submitTwoWayAuthMutation.mutate(twoWayRequest);
     // onSimpleAuthApprove() 호출 제거 - 무한 루프 방지
-  };
+  }, [selectedAddress, tempResponse, formData, submitTwoWayAuthMutation]);
 
   const handleSubmit = async (data: TaxCertFormData) => {
     if (!selectedAddress) {
@@ -165,7 +145,7 @@ export const useTaxCertContainer = ({
 
     try {
       const responseData = await submitTaxCertMutation.mutateAsync(requestData);
-      setResponse(responseData as TaxCertApiResponse);
+      setTempResponse(responseData as TaxCertApiResponse);
 
       // 1차 요청 완료 처리 - 기존 방식과 동일
       const needsTwoWay = handleFirstRequestComplete(
@@ -175,21 +155,18 @@ export const useTaxCertContainer = ({
       if (!needsTwoWay) {
         // 추가인증이 필요하지 않은 경우 바로 결과 탭으로
         setActiveTab('output');
+        // existsData 갱신
+        refetchExists();
       }
       // needsTwoWay가 true인 경우 모달이 이미 표시됨
     } catch (error) {
-      setResponse({
-        success: false,
-        message: 'API 호출 중 오류가 발생했습니다.',
-        error: error instanceof Error ? error.message : '알 수 없는 오류',
-        userAddressNickname: selectedAddress.nickname,
-      });
+      console.error('API 호출 중 오류:', error);
+      alert('API 호출 중 오류가 발생했습니다.');
     }
   };
 
   return {
     formData,
-    response,
     existsData,
     submitTaxCertMutation,
     submitTwoWayAuthMutation,

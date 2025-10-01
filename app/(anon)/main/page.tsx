@@ -1,5 +1,5 @@
 import React from 'react';
-import { styles } from '../mypage/page.styles';
+import { styles } from './main.styles';
 import Profile from '@/(anon)/_components/common/profile/Profile';
 import FloatingButton from './_components/floatingButton/FloatingButton';
 import { MainPageClient } from './_components/MainPageComponent';
