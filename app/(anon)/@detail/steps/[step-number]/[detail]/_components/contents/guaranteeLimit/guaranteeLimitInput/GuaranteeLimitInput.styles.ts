@@ -1,9 +1,5 @@
 const styles = {
-  // 헤더
-  header: 'mb-6',
-  title: 'text-xl font-bold text-brand-black mb-2',
-
-  // 폼 필드 컨테이너
+   // 폼 필드 컨테이너
   formContainer: 'space-y-4',
 
   // 입력 필드 관련
