@@ -14,8 +14,10 @@ import CheckListGroup from './CheckListGroup';
 import RadioGroup from './RadioGroup';
 import { RealEstateContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/realEstateContainer/RealEstateContainer';
 import GuaranteeLimitContainer from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/guaranteeLimit/guaranteeLimitContainer/GuaranteeLimitContainer';
-import TaxCertWrapper, { TaxCertWrapperRef } from './TaxCertWrapper';
-import TransactionSearchWrapper, { TransactionSearchWrapperRef } from './TransactionSearchWrapper';
+import TaxCertWrapper from './TaxCertWrapper';
+import TransactionSearchWrapper, {
+  TransactionSearchWrapperRef,
+} from './TransactionSearchWrapper';
 import { PageIndicator } from '../PageIndicator';
 
 interface CombinedContentProps {
@@ -24,10 +26,7 @@ interface CombinedContentProps {
   detail: string;
   currentPage: number;
   onPageChange: (page: number) => void;
-  onShowSimpleAuthModal: () => void;
-  onSimpleAuthApprove: () => void;
-  onSimpleAuthCancel: () => void;
-  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
+
   transactionSearchContainerRef?: React.RefObject<TransactionSearchWrapperRef | null>;
   swiperRef: React.RefObject<SwiperType | null>;
 }
@@ -36,14 +35,10 @@ export default function CombinedContent({
   sections,
   currentPage,
   onPageChange,
-  onShowSimpleAuthModal,
-  onSimpleAuthApprove,
-  onSimpleAuthCancel,
-  taxCertContainerRef,
+
   transactionSearchContainerRef,
   swiperRef,
 }: CombinedContentProps) {
-
   // 스크롤을 맨 위로 올리는 함수
   const scrollToTop = () => {
     const scrollableContainer = document.querySelector(
@@ -82,9 +77,7 @@ export default function CombinedContent({
                 {(section.title || section.subtitle) && (
                   <div className={styles.sectionHeader}>
                     {section.title && (
-                      <h3 className={styles.sectionTitle}>
-                        {section.title}
-                      </h3>
+                      <h3 className={styles.sectionTitle}>{section.title}</h3>
                     )}
                     {section.subtitle && (
                       <p className={styles.sectionSubtitle}>
@@ -103,9 +96,7 @@ export default function CombinedContent({
                 )}
                 {section.type === 'Table' && (
                   <Table
-                    title={
-                      section.title || '소액보증금 최우선변제 기준 변천사'
-                    }
+                    title={section.title || '소액보증금 최우선변제 기준 변천사'}
                     columnTitles={
                       section.columnTitles || [
                         '지역',
@@ -145,10 +136,6 @@ export default function CombinedContent({
                   <TaxCertWrapper
                     sectionIndex={sectionIndex}
                     section={section}
-                    onShowSimpleAuthModal={onShowSimpleAuthModal}
-                    onSimpleAuthApprove={onSimpleAuthApprove}
-                    onSimpleAuthCancel={onSimpleAuthCancel}
-                    ref={taxCertContainerRef}
                   />
                 )}
                 {section.type === 'RealEstateContainer' && (

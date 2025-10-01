@@ -1,8 +1,8 @@
 'use client';
 
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React from 'react';
 import TaxCertIntro from './TaxCertIntro';
-import { TaxCertContainer, TaxCertContainerRef } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/taxCert/taxCertContainer/TaxCertContainer';
+import { TaxCertContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/taxCert/taxCertContainer/TaxCertContainer';
 
 interface ChecklistItem {
   id: string;
@@ -32,57 +32,21 @@ interface TaxCertWrapperProps {
     type: string;
     data?: TaxCertIntroData;
   };
-  onShowSimpleAuthModal: () => void;
-  onSimpleAuthApprove: () => void;
-  onSimpleAuthCancel: () => void;
 }
 
-export interface TaxCertWrapperRef {
-  handleSimpleAuthApprove: () => void;
-}
-
-const TaxCertWrapper = forwardRef<TaxCertWrapperRef, TaxCertWrapperProps>(({
+export default function TaxCertWrapper({
   sectionIndex,
   section,
-  onShowSimpleAuthModal,
-  onSimpleAuthApprove,
-  onSimpleAuthCancel,
-}, ref) => {
-  const taxCertContainerRef = React.useRef<TaxCertContainerRef | null>(null);
-
-  // ref를 통해 외부에서 접근할 수 있는 메서드 노출
-  useImperativeHandle(ref, () => ({
-    handleSimpleAuthApprove: () => {
-      if (taxCertContainerRef.current) {
-        taxCertContainerRef.current.handleSimpleAuthApprove();
-      }
-    },
-  }));
-
+}: TaxCertWrapperProps) {
   // 슬라이드별 렌더링
   switch (sectionIndex) {
     case 0:
-      return section.data ? (
-        <TaxCertIntro
-          data={section.data}
-        />
-      ) : null;
+      return section.data ? <TaxCertIntro data={section.data} /> : null;
 
     case 1:
-      return (
-        <TaxCertContainer
-          ref={taxCertContainerRef}
-          onShowSimpleAuthModal={onShowSimpleAuthModal}
-          onSimpleAuthApprove={onSimpleAuthApprove}
-          onSimpleAuthCancel={onSimpleAuthCancel}
-        />
-      );
+      return <TaxCertContainer />;
 
     default:
       return null;
   }
-});
-
-TaxCertWrapper.displayName = 'TaxCertWrapper';
-
-export default TaxCertWrapper;
+}

@@ -15,9 +15,11 @@ export const useTaxCertOutput = ({
   const { selectedAddress } = useUserAddressStore();
 
   // DB에서 데이터 조회 (response prop이 없을 때만)
-  const { data: dbResponse, isLoading: dbLoading, refetch: refetchTaxCertCopy } = useGetTaxCertCopy(
-    response ? null : selectedAddress?.nickname || null
-  );
+  const {
+    data: dbResponse,
+    isLoading: dbLoading,
+    refetch: refetchTaxCertCopy,
+  } = useGetTaxCertCopy(response ? null : selectedAddress?.nickname || null);
 
   console.log('dbResponse', dbResponse);
 
@@ -28,7 +30,11 @@ export const useTaxCertOutput = ({
     }
 
     if (dbResponse) {
-      const response = dbResponse as unknown as { success: boolean; data?: { taxCertJson: string }; message?: string };
+      const response = dbResponse as unknown as {
+        success: boolean;
+        data?: { taxCertJson: string };
+        message?: string;
+      };
       if (response.success && response.data) {
         return {
           success: true,
