@@ -4,12 +4,6 @@ export const styles = {
   title: 'text-xl font-bold text-brand-black mb-2',
   subtitle: 'text-sm text-brand-dark-gray',
 
-  // 로딩 상태
-  loadingContainer: 'text-center py-8',
-  loadingSpinner:
-    'animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto mb-4',
-  loadingText: 'text-brand-dark-gray',
-  loadingStatus: 'text-sm text-brand-dark-gray mt-2',
 
   // 데이터 컨테이너
   dataContainer: 'space-y-4',

@@ -4,6 +4,7 @@ import { GetGuaranteeLimitResponseDto } from '@libs/api_front/guaranteeLimit.api
 import { useGetGuaranteeLimitCopy } from '@/hooks/useGuaranteeLimit';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { styles } from './GuaranteeLimitOutput.styles';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 export default function GuaranteeLimitOutput() {
   const { selectedAddress } = useUserAddressStore();
@@ -27,15 +28,12 @@ export default function GuaranteeLimitOutput() {
       </div>
 
       {isLoading ? (
-        <div className={styles.loadingContainer}>
-          <div className={styles.loadingSpinner}></div>
-          <p className={styles.loadingText}>
-            전세자금보증상품을 조회하고 있습니다...
-          </p>
-          <p className={styles.loadingStatus}>
-            로딩 상태: {isLoading ? '진행 중' : '완료'}
-          </p>
-        </div>
+        <LoadingOverlay
+          isVisible={true}
+          title="전세자금보증상품을 조회하고 있습니다..."
+          currentStep={1}
+          totalSteps={1}
+        />
       ) : displayData && displayData.items && displayData.items.length > 0 ? (
         <div>
           <div className={styles.dataContainer}>
