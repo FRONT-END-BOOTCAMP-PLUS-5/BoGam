@@ -8,20 +8,22 @@ interface LoadingOverlayProps {
   title: string;
   currentStep: number;
   totalSteps?: number;
+  variant?: 'fullscreen' | 'inline';
 }
 
 export default function LoadingOverlay({
   isVisible,
   title,
   currentStep,
-  totalSteps = 7
+  totalSteps = 7,
+  variant = 'fullscreen'
 }: LoadingOverlayProps) {
   if (!isVisible) return null;
 
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
-    <div className={styles.overlay}>
+    <div className={variant === 'fullscreen' ? styles.overlay : styles.inlineOverlay}>
       <div className={styles.content}>
         <div className="mb-6">
           <div className={styles.spinner}></div>
