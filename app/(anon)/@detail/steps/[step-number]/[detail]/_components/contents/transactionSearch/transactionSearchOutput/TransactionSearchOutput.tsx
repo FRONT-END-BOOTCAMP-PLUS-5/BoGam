@@ -8,6 +8,7 @@ import { formatToKoreanUnit } from '@utils/formatUtils';
 import { formatPrice } from '@utils/main/transactionUtils';
 import { useGetTransactionSearchCopy } from '@/hooks/useTransactionSearch';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface AveragePriceByArea {
   area: number;
@@ -60,12 +61,12 @@ export const TransactionSearchOutput = ({
   if (loading || isSavedDataLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner}></div>
-          <div className={styles.loadingText}>
-            {loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
-          </div>
-        </div>
+        <LoadingOverlay
+          isVisible={true}
+          title={loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
+          currentStep={1}
+          totalSteps={1}
+        />
       </div>
     );
   }

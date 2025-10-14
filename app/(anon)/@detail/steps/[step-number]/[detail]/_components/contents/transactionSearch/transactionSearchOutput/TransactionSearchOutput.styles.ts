@@ -39,8 +39,4 @@ export const styles = {
   // New search button
   newSearchButton: 'px-4 py-2',
   
-  // Loading styles
-  loadingState: 'flex flex-col items-center justify-center py-12',
-  loadingSpinner: 'animate-spin rounded-full h-8 w-8 border-b-2 border-brand mb-4',
-  loadingText: 'text-brand-dark-gray text-center',
 } as const;
