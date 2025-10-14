@@ -47,6 +47,7 @@ export function DanjiSerialNumberContent({
             title="단지 목록을 조회하고 있습니다..."
             currentStep={1}
             totalSteps={1}
+            variant="inline"
           />
         ) : error ? (
           <div className={styles.error}>

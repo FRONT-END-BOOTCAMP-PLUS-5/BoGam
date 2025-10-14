@@ -8,7 +8,7 @@ export const styles = {
   subtitle: 'text-sm text-brand-gray mb-4',
 
   // 결과 목록 컨테이너
-  contentContainer: 'flex-1 overflow-y-auto min-h-[300px] max-h-[400px]',
+  contentContainer: 'flex-1 overflow-y-auto min-h-[300px] max-h-[400px] relative',
 
   // 에러 상태
   error: 'flex items-center justify-center text-brand-error p-4',

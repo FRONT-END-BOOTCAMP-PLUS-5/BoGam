@@ -1,6 +1,6 @@
 export const styles = {
   // 컨테이너
-  container: 'max-w-4xl mx-auto',
+  container: 'max-w-4xl mx-auto relative',
 
   // 메인 컨테이너
   mainContainer: 'bg-brand-white p-6 rounded-lg shadow-sm border border-brand-light-gray',

@@ -66,6 +66,7 @@ export const TransactionSearchOutput = ({
           title={loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
           currentStep={1}
           totalSteps={1}
+          variant="inline"
         />
       </div>
     );

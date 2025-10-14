@@ -1,5 +1,5 @@
 export const styles = {
-  container: 'p-6 bg-brand-white',
+  container: 'p-6 bg-brand-white relative',
   header: 'mb-6',
   title: 'text-xl font-bold text-brand-black mb-2',
   subtitle: 'text-sm text-brand-dark-gray',

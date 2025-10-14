@@ -1,5 +1,5 @@
 export const styles = {
-  container: 'w-full p-5',
+  container: 'w-full p-5 relative',
   mainContainer: 'flex flex-col items-center justify-center min-h-96',
   title: 'text-2xl font-bold mb-5 text-brand-black',
   emptyContainer:

@@ -307,6 +307,7 @@ export const TaxCertOutput = ({
             title='납세증명서 데이터를 불러오는 중이에요!'
             currentStep={1}
             totalSteps={3}
+            variant="inline"
           />
         </div>
       </div>

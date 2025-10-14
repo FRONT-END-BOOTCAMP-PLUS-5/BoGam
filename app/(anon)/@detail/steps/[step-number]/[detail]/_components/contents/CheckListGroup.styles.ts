@@ -1,5 +1,5 @@
 export const styles = {
-  container: 'p-5 max-w-4xl mx-auto space-y-6',
+  container: 'p-5 max-w-4xl mx-auto space-y-6 relative',
   errorContainer: 'flex justify-center items-center py-8 text-brand-error bg-brand-error/10 border border-brand-error rounded-lg',
   section: 'mb-6 space-y-4',
   sectionTitle: 'text-lg font-medium mb-2 text-black',

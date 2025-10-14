@@ -314,6 +314,7 @@ export const BrokerOutput = ({
             }
             currentStep={1}
             totalSteps={3}
+            variant="inline"
           />
         </div>
       </div>

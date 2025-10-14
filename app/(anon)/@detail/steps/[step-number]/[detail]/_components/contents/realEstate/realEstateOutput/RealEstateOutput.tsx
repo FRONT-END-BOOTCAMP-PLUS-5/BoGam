@@ -179,6 +179,7 @@ export const RealEstateOutput = ({
             }
             currentStep={1}
             totalSteps={3}
+            variant="inline"
           />
         </div>
       </div>

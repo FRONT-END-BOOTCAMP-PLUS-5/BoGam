@@ -33,6 +33,7 @@ export default function GuaranteeLimitOutput() {
           title="전세자금보증상품을 조회하고 있습니다..."
           currentStep={1}
           totalSteps={1}
+          variant="inline"
         />
       ) : displayData && displayData.items && displayData.items.length > 0 ? (
         <div>

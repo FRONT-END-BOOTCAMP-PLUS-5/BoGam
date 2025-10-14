@@ -1,6 +1,6 @@
 export const styles = {
   outputSection:
-    'bg-brand-white border border-brand-light-gray rounded-lg p-6 mb-8 shadow-md',
+    'bg-brand-white border border-brand-light-gray rounded-lg p-6 mb-8 shadow-md relative',
   outputTitle:
     'text-xl font-semibold text-brand-black mb-4 pb-2 border-b-2 border-brand-light-gray',
   response: 'p-4 rounded-md border-l-4',

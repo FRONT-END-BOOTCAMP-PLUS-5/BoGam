@@ -78,6 +78,7 @@ export const DataContainer = ({
             title="데이터 확인 중..."
             currentStep={1}
             totalSteps={1}
+            variant="inline"
           />
         ) : activeTab === 'input' ? (
           <div className={styles.inputWrapper}>
