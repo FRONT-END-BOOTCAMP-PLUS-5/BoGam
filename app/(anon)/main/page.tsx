@@ -4,6 +4,9 @@ import Profile from '@/(anon)/_components/common/profile/Profile';
 import FloatingButton from './_components/floatingButton/FloatingButton';
 import { MainPageClient } from './_components/MainPageComponent';
 import { getUserNicknameFromSession } from '@utils/userAddress';
+import { mainPageMetadata } from '@metadata/mainMetadata';
+
+export const metadata = mainPageMetadata;
 
 export default async function MainPage() {
   // 서버 컴포넌트에서 세션 정보 가져오기
