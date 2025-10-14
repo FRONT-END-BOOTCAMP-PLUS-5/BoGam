@@ -3,6 +3,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import { TabNavigation } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/broker/tabNavigation/TabNavigation';
 import { styles } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/container/DataContainer.styles';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface DataContainerProps {
   title: string;
@@ -72,10 +73,12 @@ export const DataContainer = ({
       {/* 탭 컨텐츠 */}
       <div className={styles.tabContent}>
         {checkExistsQuery?.isLoading ? (
-          <div className={styles.loadingState}>
-            <div className={styles.loadingSpinner}></div>
-            <p className={styles.loadingText}>데이터 확인 중...</p>
-          </div>
+          <LoadingOverlay
+            isVisible={true}
+            title="데이터 확인 중..."
+            currentStep={1}
+            totalSteps={1}
+          />
         ) : activeTab === 'input' ? (
           <div className={styles.inputWrapper}>
             {typeof inputComponent === 'function'
