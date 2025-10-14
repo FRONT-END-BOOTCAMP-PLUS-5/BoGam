@@ -10,12 +10,6 @@ export const styles = {
   // 결과 목록 컨테이너
   contentContainer: 'flex-1 overflow-y-auto min-h-[300px] max-h-[400px]',
 
-  // 로딩 상태
-  loading:
-    'flex flex-col items-center justify-center text-brand-gray space-y-4',
-  spinner:
-    'w-8 h-8 border-4 border-brand-light border-t-brand rounded-full animate-spin',
-
   // 에러 상태
   error: 'flex items-center justify-center text-brand-error p-4',
 

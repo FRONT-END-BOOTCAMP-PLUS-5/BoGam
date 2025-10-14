@@ -4,6 +4,7 @@ import React from 'react';
 
 import { styles } from './DanjiSerialNumberContent.styles';
 import { useDanjiSerialNumber, ActualDanjiInfo } from './useDanjiSerialNumber';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface DanjiSerialNumberContentProps {
   searchParams: {
@@ -41,10 +42,12 @@ export function DanjiSerialNumberContent({
       {/* 결과 목록 */}
       <div className={styles.contentContainer}>
         {isLoading ? (
-          <div className={styles.loading}>
-            <div className={styles.spinner}></div>
-            <p>단지 목록을 조회하고 있습니다...</p>
-          </div>
+          <LoadingOverlay
+            isVisible={true}
+            title="단지 목록을 조회하고 있습니다..."
+            currentStep={1}
+            totalSteps={1}
+          />
         ) : error ? (
           <div className={styles.error}>
             <p>
