@@ -12,12 +12,4 @@ export const styles = {
   emptyState: 'text-center py-12 text-brand-dark-gray',
   button:
     'px-6 py-3 bg-brand-blue text-brand-white border-none rounded-md text-base font-semibold cursor-pointer transition-all hover:bg-brand-90 hover:-translate-y-0.5 hover:shadow-lg disabled:bg-brand-dark-gray disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none mt-4',
-  
-  // 중간 결과 표시 스타일
-  intermediateResults: 'mt-6 p-4 bg-brand-light-blue/10 border border-brand-light-blue rounded-lg',
-  intermediateTitle: 'text-lg font-semibold text-brand-black mb-3',
-  resultsList: 'space-y-2',
-  resultItem: 'flex items-center gap-3',
-  checkIcon: 'text-brand-green text-lg font-bold',
-  resultText: 'text-brand-dark-gray text-sm',
 };
