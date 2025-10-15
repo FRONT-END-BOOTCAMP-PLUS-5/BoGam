@@ -28,6 +28,25 @@ export const BrokerOutput = ({
 }: BrokerOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
 
+  // 중간 결과 상태 관리
+  const [intermediateResults, setIntermediateResults] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // 위험도 검사 실행 상태 관리
+  const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
+    useState(false);
+  const [calculatedRiskAssessment, setCalculatedRiskAssessment] =
+    useState<RiskAssessmentResult | null>(null);
+
+  // 위험도 검사 실행 여부를 추적하는 ref
+  const hasPerformedRiskAssessment = useRef(false);
+
+  // 새로운 데이터가 로드되었는지 추적하는 ref
+  const lastDataHash = useRef<string>('');
+
+  // 새로운 데이터가 로드되었는지 추적하는 state
+  const [dataChanged, setDataChanged] = useState(false);
+
   const pathname = window.location.pathname;
   const stepUrlData = parseStepUrl(pathname);
   const stepNumber = stepUrlData?.stepNumber || 3;
@@ -63,10 +82,64 @@ export const BrokerOutput = ({
   const jsonDetails = getJsonDetails();
 
   // DB에서 broker 데이터 조회 (selectedBroker가 없을 때만)
-
   const brokerCopyQuery = useGetBrokerCopy(
     selectedBroker ? null : selectedAddress?.nickname || null
   );
+
+  // 실제 API 호출 단계에 맞춘 처리 시뮬레이션
+  useEffect(() => {
+    if (brokerCopyQuery.isLoading || isPerformingRiskAssessment || dataChanged) {
+      // 로딩 시작 시 초기화
+      setIntermediateResults([]);
+      setCurrentStep(1);
+
+      // 실제 API 호출 단계에 맞춘 처리 시뮬레이션
+      const simulateDataProcessing = () => {
+        const results: string[] = [];
+
+        // 기본 단계들 (항상 표시)
+        results.push(`[STEP] Step 결과 데이터 로딩 중...`);
+        results.push(`[BROKER] 중개사 정보 조회 중...`);
+        results.push(`[VERIFY] 중개사 정보 검증 중...`);
+        results.push(`[RISK] 위험도 검사 엔진 초기화 중...`);
+        results.push(`[ANALYZE] 위험도 분석 실행 중...`);
+
+        // 데이터가 있을 때만 추가 단계
+        if (brokerCopyQuery.data?.data) {
+          const brokerData = brokerCopyQuery.data.data as { brokerData?: BrokerData };
+          if (brokerData.brokerData?.brkrNm) {
+            results.push(`[PARSE] 중개사 데이터 파싱 완료: ${brokerData.brokerData.brkrNm}`);
+          }
+        }
+
+        // 위험도 검사가 진행 중일 때만 추가
+        if (isPerformingRiskAssessment) {
+          results.push(`[ASSESS] 위험도 검사 결과 생성 중...`);
+        }
+
+        // 단계별로 결과 표시
+        let stepIndex = 0;
+        const interval = setInterval(() => {
+          if (stepIndex < results.length) {
+            setIntermediateResults(prev => [...prev, results[stepIndex]]);
+            setCurrentStep(stepIndex + 1);
+            stepIndex++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 700);
+
+        return interval;
+      };
+
+      const interval = simulateDataProcessing();
+      return () => clearInterval(interval);
+    } else {
+      // 로딩 완료 시 초기화
+      setIntermediateResults([]);
+      setCurrentStep(1);
+    }
+  }, [brokerCopyQuery.isLoading, isPerformingRiskAssessment, dataChanged, brokerCopyQuery.data?.data]);
   // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
   useEffect(() => {
     if (selectedAddress?.nickname) {
@@ -74,21 +147,6 @@ export const BrokerOutput = ({
       invalidateRiskDataCache(); // stepResult 캐시 무효화
     }
   }, [selectedBroker, selectedAddress?.nickname, invalidateRiskDataCache]);
-
-  // 위험도 검사 실행 상태 관리
-  const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
-    useState(false);
-  const [calculatedRiskAssessment, setCalculatedRiskAssessment] =
-    useState<RiskAssessmentResult | null>(null);
-
-  // 위험도 검사 실행 여부를 추적하는 ref
-  const hasPerformedRiskAssessment = useRef(false);
-
-  // 새로운 데이터가 로드되었는지 추적하는 ref
-  const lastDataHash = useRef<string>('');
-
-  // 새로운 데이터가 로드되었는지 추적하는 state
-  const [dataChanged, setDataChanged] = useState(false);
 
   // 중개업자 안전도 검사 hook 사용 (selectedBroker 또는 저장된 broker 데이터 사용)
   const brokerData =
@@ -312,10 +370,25 @@ export const BrokerOutput = ({
                 ? '새로운 중개업자 데이터로 위험도 검사를 진행하는 중이에요!'
                 : '중개업자 데이터를 불러오는 중이에요!'
             }
-            currentStep={1}
-            totalSteps={3}
+            currentStep={currentStep}
+            totalSteps={Math.max(intermediateResults.length, 5)}
             variant="inline"
           />
+          
+          {/* 중간 결과 표시 */}
+          {intermediateResults.length > 0 && (
+            <div className={styles.intermediateResults}>
+              <h4 className={styles.intermediateTitle}>진행 상황:</h4>
+              <div className={styles.resultsList}>
+                {intermediateResults.map((result, index) => (
+                  <div key={index} className={styles.resultItem}>
+                    <span className={styles.checkIcon}>✓</span>
+                    <span className={styles.resultText}>{result}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
