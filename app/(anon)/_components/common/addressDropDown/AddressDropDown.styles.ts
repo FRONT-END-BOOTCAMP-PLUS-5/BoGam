@@ -1,7 +1,7 @@
 export const styles = {
   // 메인 컨테이너
   container:
-    'bg-brand-white rounded-lg border border-brand-light-gray shadow-lg relative w-full',
+    'bg-brand-white rounded-lg border border-brand-light-gray shadow-lg relative w-full overflow-hidden',
 
   // 헤더 영역
   header: 'flex items-start justify-between px-4 py-3 cursor-pointer',
@@ -38,6 +38,9 @@ export const styles = {
   selectedAddressTextMobile: 'text-xs',
   addressFirstLineMobile: 'text-xs',
   addressSecondLineMobile: 'text-xs',
+
+  // 로딩 오버레이
+  loadingOverlay: 'absolute top-14 left-4 right-4 z-10',
 } as const;
 
 // 조건부 스타일 함수들

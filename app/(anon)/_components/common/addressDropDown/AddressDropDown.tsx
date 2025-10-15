@@ -178,18 +178,8 @@ export function AddressDropDown(props: AddressDropDownProps) {
   // 빈 상태 체크
   const isEmpty = !addresses || addresses.length === 0;
 
-  // 로딩 상태 표시 (mutation 진행 중에는 로딩하지 않음 - 낙관적 업데이트)
+
   const isDataLoading = !isClient || isLoading;
-  if (isDataLoading) {
-    return (
-      <LoadingOverlay
-        isVisible={true}
-        title={title || '주소를 불러오는 중입니다...'}
-        currentStep={1}
-        totalSteps={1}
-      />
-    );
-  }
 
   // 인증되지 않은 상태 표시
   if (!isAuthenticated) {
@@ -247,6 +237,19 @@ export function AddressDropDown(props: AddressDropDownProps) {
           <ExpandIcon expanded={isExpanded} />
         </button>
       </div>
+
+      {/* 로딩 오버레이 */}
+      {isDataLoading && (
+        <div className={styles.loadingOverlay}>
+          <LoadingOverlay
+            isVisible={true}
+            currentStep={1}
+            totalSteps={1}
+            variant='inline'
+            spinnerSize='small'
+          />
+        </div>
+      )}
 
       {/* 드롭다운 목록 */}
       <AddressDropDownList
