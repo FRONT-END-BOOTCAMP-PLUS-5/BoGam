@@ -24,6 +24,11 @@ export const TaxCertOutput = ({
   const { selectedAddress } = useUserAddressStore();
   console.log('selectedAddress', selectedAddress);
 
+  // 중간 결과 상태 관리
+  const [intermediateResults, setIntermediateResults] = useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] = useState(false);
+
   const {
     displayResponse,
     riskAssessment,
@@ -69,6 +74,59 @@ export const TaxCertOutput = ({
 
   const jsonDetails = getJsonDetails();
 
+  // 실제 데이터를 사용한 로딩 스피너 뒤 시뮬레이션 (유저에게 "뭔가 되고 있음" 제공)
+  useEffect(() => {
+    if (totalLoading || isPerformingRiskAssessment) {
+      // 로딩 시작 시 초기화
+      setIntermediateResults([]);
+      setCurrentStep(1);
+
+      // 실제 API 호출 단계에 맞춘 처리 시뮬레이션
+      const simulateDataProcessing = () => {
+        const results: string[] = [];
+
+        // 기본 단계들 (항상 표시)
+        results.push(`[AUTH] CODEF OAuth 토큰 발급 중...`);
+        results.push(`[VERIFY] 사용자 인증 정보 검증 중...`);
+        results.push(`[2WAY] 2-way 인증 요청 처리 중...`);
+        results.push(`[SIMPLE] 간편인증 승인 대기 중...`);
+        results.push(`[QUERY] 납세증명서 데이터 조회 중...`);
+
+        // 데이터가 있을 때만 추가 단계
+        if (displayResponse?.data) {
+          const dataKeys = Object.keys(displayResponse.data);
+          results.push(`[PARSE] 데이터 파싱 완료 (${dataKeys.length} 필드)`);
+        }
+
+        // 위험도 검사가 진행 중일 때만 추가
+        if (isPerformingRiskAssessment) {
+          results.push(`[RISK] 위험도 검사 엔진 실행 중...`);
+        }
+
+        // 단계별로 결과 표시
+        let stepIndex = 0;
+        const interval = setInterval(() => {
+          if (stepIndex < results.length) {
+            setIntermediateResults(prev => [...prev, results[stepIndex]]);
+            setCurrentStep(stepIndex + 1);
+            stepIndex++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 1500); 
+
+        return interval;
+      };
+
+      const interval = simulateDataProcessing();
+      return () => clearInterval(interval);
+    } else {
+      // 로딩 완료 시 초기화
+      setIntermediateResults([]);
+      setCurrentStep(1);
+    }
+  }, [totalLoading, isPerformingRiskAssessment, response?.data, displayResponse?.data, selectedAddress?.nickname]);
+
   // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
   // useEffect(() => {
   //   if (hasData && response?.data && selectedAddress?.nickname) {
@@ -80,8 +138,6 @@ export const TaxCertOutput = ({
 
   //console.log('savedRiskData', savedRiskData);
 
-  const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
-    useState(false);
   const [calculatedRiskAssessment, setCalculatedRiskAssessment] =
     useState<TaxCertRiskAssessmentResult | null>(null);
 
@@ -306,10 +362,25 @@ export const TaxCertOutput = ({
             <LoadingOverlay
               isVisible={true}
               title='납세증명서 데이터를 불러오는 중이에요!'
-              currentStep={1}
-              totalSteps={3}
+              currentStep={currentStep}
+              totalSteps={Math.max(intermediateResults.length, 5)}
               variant="inline"
             />
+            
+            {/* 중간 결과 표시 */}
+            {intermediateResults.length > 0 && (
+              <div className={styles.intermediateResults}>
+                <h4 className={styles.intermediateTitle}>진행 상황:</h4>
+                <div className={styles.resultsList}>
+                  {intermediateResults.map((result, index) => (
+                    <div key={index} className={styles.resultItem}>
+                      <span className={styles.checkIcon}>✓</span>
+                      <span className={styles.resultText}>{result}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
