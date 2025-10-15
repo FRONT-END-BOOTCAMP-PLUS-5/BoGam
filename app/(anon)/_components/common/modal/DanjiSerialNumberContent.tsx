@@ -48,6 +48,7 @@ export function DanjiSerialNumberContent({
             currentStep={1}
             totalSteps={1}
             variant="inline"
+            spinnerSize="small"
           />
         ) : error ? (
           <div className={styles.error}>

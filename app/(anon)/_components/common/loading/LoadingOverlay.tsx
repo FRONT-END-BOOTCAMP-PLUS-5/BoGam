@@ -9,6 +9,7 @@ interface LoadingOverlayProps {
   currentStep: number;
   totalSteps?: number;
   variant?: 'fullscreen' | 'inline';
+  spinnerSize?: 'default' | 'small';
 }
 
 export default function LoadingOverlay({
@@ -16,7 +17,8 @@ export default function LoadingOverlay({
   title,
   currentStep,
   totalSteps = 7,
-  variant = 'fullscreen'
+  variant = 'fullscreen',
+  spinnerSize = 'default'
 }: LoadingOverlayProps) {
   if (!isVisible) return null;
 
@@ -26,7 +28,7 @@ export default function LoadingOverlay({
     <div className={variant === 'fullscreen' ? styles.overlay : styles.inlineOverlay}>
       <div className={styles.content}>
         <div className="mb-6">
-          <div className={styles.spinner}></div>
+          <div className={spinnerSize === 'small' ? styles.spinnerSmall : styles.spinner}></div>
           <h2 className={styles.title}>{title}</h2>
           
           {/* 진행률 바 */}
