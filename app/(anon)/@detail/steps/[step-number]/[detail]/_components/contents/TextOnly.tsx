@@ -9,6 +9,7 @@ import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/Ci
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import Button from '@/(anon)/_components/common/button/Button';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface ContentSection {
   title?: string;
@@ -124,7 +125,14 @@ const TextOnly = ({ data, currentPage }: TextOnlyProps) => {
     return (
       <div className={styles.container}>
         <div className={styles.loadingContainer}>
-          <div>로딩 중...</div>
+          <LoadingOverlay
+            isVisible={true}
+            title="데이터를 불러오고 있습니다..."
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+            spinnerSize="small"
+          />
         </div>
       </div>
     );
