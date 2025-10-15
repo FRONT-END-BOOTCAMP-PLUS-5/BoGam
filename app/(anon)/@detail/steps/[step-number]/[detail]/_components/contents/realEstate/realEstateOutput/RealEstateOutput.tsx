@@ -196,7 +196,7 @@ export const RealEstateOutput = ({
             안전도를 검사할 등기부등본 데이터가 없어요!
           </p>
           <p className={styles.emptyText}>
-            Input 탭에서 등기부등본을 조회하고 선택하시면 안전도 검사 결과를
+            입력 탭에서 등기부등본을 조회하고 선택하시면 안전도 검사 결과를
             확인할 수 있습니다.
           </p>
         </div>

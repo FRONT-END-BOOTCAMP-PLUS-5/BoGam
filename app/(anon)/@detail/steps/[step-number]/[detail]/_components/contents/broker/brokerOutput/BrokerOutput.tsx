@@ -329,7 +329,7 @@ export const BrokerOutput = ({
         <div className={styles.emptyState}>
           <p>안전도를 검사할 중개업자 데이터가 없어요!</p>
           <p className='text-sm text-brand-dark-gray mt-2'>
-            Input 탭에서 중개업자를 조회하고 선택하시면 안전도 검사 결과를
+            입력 탭에서 중개업자를 조회하고 선택하시면 안전도 검사 결과를
             확인할 수 있습니다.
           </p>
         </div>
