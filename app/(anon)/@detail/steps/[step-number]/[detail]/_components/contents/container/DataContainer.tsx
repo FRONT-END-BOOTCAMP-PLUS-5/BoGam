@@ -63,6 +63,23 @@ export const DataContainer = ({
     }
   };
 
+  // 존재 여부 확인 중일 때는 로딩 오버레이만 표시 (탭/타이틀 숨김)
+  if (checkExistsQuery?.isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loadingContent}>
+          <LoadingOverlay
+            isVisible={true}
+            title="데이터 확인 중..."
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>{title}</h1>
@@ -72,15 +89,7 @@ export const DataContainer = ({
 
       {/* 탭 컨텐츠 */}
       <div className={styles.tabContent}>
-        {checkExistsQuery?.isLoading ? (
-          <LoadingOverlay
-            isVisible={true}
-            title="데이터 확인 중..."
-            currentStep={1}
-            totalSteps={1}
-            variant="inline"
-          />
-        ) : activeTab === 'input' ? (
+        {activeTab === 'input' ? (
           <div className={styles.inputWrapper}>
             {typeof inputComponent === 'function'
               ? inputComponent({ onSuccess: handleSuccess })

@@ -57,17 +57,22 @@ export const TransactionSearchOutput = ({
   // 파싱
   const displayData = savedData?.data ? (typeof savedData.data === 'string' ? JSON.parse(savedData.data) : savedData.data) : null;
 
-  // 로딩 중일 때 로딩 UI 표시 (실거래가 검색 로딩 또는 저장된 데이터 조회 로딩)
+  // 로딩 중일 때 로딩 UI 표시 (탭 아래 컨텐츠 영역만 덮도록 contentArea 안에서 렌더)
   if (loading || isSavedDataLoading) {
     return (
       <div className={styles.container}>
-        <LoadingOverlay
-          isVisible={true}
-          title={loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
-          currentStep={1}
-          totalSteps={1}
-          variant="inline"
-        />
+        <div className={styles.resultsHeader}>
+          <h3 className={styles.resultsTitle}>검색 결과</h3>
+        </div>
+        <div className={styles.contentArea}>
+          <LoadingOverlay
+            isVisible={true}
+            title={loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+          />
+        </div>
       </div>
     );
   }

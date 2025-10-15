@@ -5,6 +5,9 @@ export const styles = {
   // 메인 컨테이너
   mainContainer: 'bg-brand-white p-6 rounded-lg shadow-sm border border-brand-light-gray',
 
+  // 데이터 컨테이너 (탭 아래 영역)
+  dataContainer: 'relative min-h-80 md:min-h-96',
+
   // 제목
   title: 'text-lg font-semibold text-brand-black mb-4',
 

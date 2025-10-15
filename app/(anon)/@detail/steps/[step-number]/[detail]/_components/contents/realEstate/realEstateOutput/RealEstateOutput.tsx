@@ -170,17 +170,19 @@ export const RealEstateOutput = ({
       <div className={styles.container}>
         <div className={styles.mainContainer}>
           <h2 className={styles.title}>응답 결과</h2>
-          <LoadingOverlay
-            isVisible={true}
-            title={
-              dataChanged
-                ? '새로운 등기부등본 데이터로 위험도 검사를 진행하는 중이에요!'
-                : '등기부등본 데이터를 불러오는 중이에요!'
-            }
-            currentStep={1}
-            totalSteps={3}
-            variant="inline"
-          />
+          <div className={styles.dataContainer}>
+            <LoadingOverlay
+              isVisible={true}
+              title={
+                dataChanged
+                  ? '새로운 등기부등본 데이터로 위험도 검사를 진행하는 중이에요!'
+                  : '등기부등본 데이터를 불러오는 중이에요!'
+              }
+              currentStep={1}
+              totalSteps={3}
+              variant="inline"
+            />
+          </div>
         </div>
       </div>
     );

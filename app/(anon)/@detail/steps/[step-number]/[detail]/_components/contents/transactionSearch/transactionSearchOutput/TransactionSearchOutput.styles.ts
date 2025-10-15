@@ -1,7 +1,8 @@
 export const styles = {
-  container: 'space-y-6',
+  container: 'space-y-6 relative',
   resultsHeader: 'flex justify-between items-center mb-6',
   resultsTitle: 'text-2xl font-bold text-brand-black',
+  contentArea: 'relative min-h-80 md:min-h-96',
   
   // Empty state
   emptyState: 'text-center py-12',

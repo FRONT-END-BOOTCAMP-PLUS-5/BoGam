@@ -303,8 +303,8 @@ export const BrokerOutput = ({
   if (brokerCopyQuery.isLoading || isPerformingRiskAssessment || dataChanged) {
     return (
       <div className={styles.outputSection}>
-        <div className={styles.outputSection}>
-          <h2 className={styles.outputTitle}>응답 결과</h2>
+        <h2 className={styles.outputTitle}>응답 결과</h2>
+        <div className={styles.responseContainer}>
           <LoadingOverlay
             isVisible={true}
             title={

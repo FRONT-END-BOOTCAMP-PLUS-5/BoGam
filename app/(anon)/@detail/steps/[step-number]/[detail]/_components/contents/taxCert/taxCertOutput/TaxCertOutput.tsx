@@ -302,13 +302,15 @@ export const TaxCertOutput = ({
       <div className={styles.container}>
         <div className={styles.mainContainer}>
           <h2 className={styles.title}>응답 결과</h2>
-          <LoadingOverlay
-            isVisible={true}
-            title='납세증명서 데이터를 불러오는 중이에요!'
-            currentStep={1}
-            totalSteps={3}
-            variant="inline"
-          />
+          <div className={styles.dataContainer}>
+            <LoadingOverlay
+              isVisible={true}
+              title='납세증명서 데이터를 불러오는 중이에요!'
+              currentStep={1}
+              totalSteps={3}
+              variant="inline"
+            />
+          </div>
         </div>
       </div>
     );

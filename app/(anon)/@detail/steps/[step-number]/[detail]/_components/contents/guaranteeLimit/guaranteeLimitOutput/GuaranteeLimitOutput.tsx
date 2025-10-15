@@ -27,17 +27,17 @@ export default function GuaranteeLimitOutput() {
         </p>
       </div>
 
-      {isLoading ? (
-        <LoadingOverlay
-          isVisible={true}
-          title="전세자금보증상품을 조회하고 있습니다..."
-          currentStep={1}
-          totalSteps={1}
-          variant="inline"
-        />
-      ) : displayData && displayData.items && displayData.items.length > 0 ? (
-        <div>
-          <div className={styles.dataContainer}>
+      <div className={styles.dataContainer}>
+        {isLoading ? (
+          <LoadingOverlay
+            isVisible={true}
+            title="전세자금보증상품을 조회하고 있습니다..."
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+          />
+        ) : displayData && displayData.items && displayData.items.length > 0 ? (
+          <div>
             {displayData.items.map(
               (
                 item: GetGuaranteeLimitResponseDto['items'][0],
@@ -67,10 +67,8 @@ export default function GuaranteeLimitOutput() {
               )
             )}
           </div>
-        </div>
-      ) : (
-        <div className={styles.emptyContainer}>
-          <div className='mb-4'>
+        ) : (
+          <div className={styles.emptyContainer}>
             <div className={styles.emptyIcon}>
               <span className={styles.emptyIconText}>📋</span>
             </div>
@@ -80,8 +78,8 @@ export default function GuaranteeLimitOutput() {
             </p>
             <p className={styles.emptyHint}>다른 조건으로 다시 조회해보세요.</p>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

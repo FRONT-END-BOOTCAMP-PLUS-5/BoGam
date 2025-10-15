@@ -4,6 +4,7 @@ export const styles = {
   title: 'text-2xl font-bold mb-5 text-brand-black',
   emptyContainer:
     'flex flex-col items-center justify-center min-h-80 text-center',
+  dataContainer: 'relative min-h-80 md:min-h-96',
   emptyText: 'text-base text-brand-dark-gray mb-2',
   pdfSection:
     'mt-8 p-5 border border-brand-light-gray rounded-lg bg-brand-light-gray',
