@@ -6,10 +6,5 @@ export const styles = {
   activeTab: 'border-brand-blue text-brand-blue',
   inactiveTab: 'border-transparent text-brand-dark-gray hover:text-brand-black',
   tabContent: 'mt-6',
-  loadingState: 'flex flex-col items-center justify-center py-12',
-  loadingSpinner:
-    'animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mb-4',
-  loadingText: 'text-brand-dark-gray text-center',
-  loadingNote: 'text-sm text-brand-dark-gray mt-2',
   emptyState: 'text-center py-12 text-brand-dark-gray',
 };

@@ -7,6 +7,7 @@ import { useStepResultMutations } from '@/hooks/useStepResultMutations';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
 import { parseStepUrl } from '@utils/stepUrlParser';
 import CircularIconBadge from '@/(anon)/_components/common/circularIconBadges/CircularIconBadge';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface RegionData {
   region: string;
@@ -155,7 +156,14 @@ const Table = ({
     return (
       <div className={styles.container}>
         <div className={styles.loadingContainer}>
-          <div>로딩 중...</div>
+          <LoadingOverlay
+            isVisible={true}
+            title="데이터를 불러오고 있습니다..."
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+            spinnerSize="small"
+          />
         </div>
       </div>
     );

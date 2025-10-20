@@ -1,13 +1,11 @@
 export const styles = {
   outputSection:
-    'bg-brand-white border border-brand-light-gray rounded-lg p-6 mb-8 shadow-md',
+    'bg-brand-white border border-brand-light-gray rounded-lg p-6 mb-8 shadow-md relative',
   outputTitle:
     'text-xl font-semibold text-brand-black mb-4 pb-2 border-b-2 border-brand-light-gray',
-  loadingState: 'flex flex-col items-center justify-center py-12',
-  loadingSpinner:
-    'animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue mb-4',
-  loadingText: 'text-brand-dark-gray text-center',
   response: 'p-4 rounded-md border-l-4',
+  // 탭 아래 컨텐츠 영역 (오버레이 기준 영역)
+  responseContainer: 'relative min-h-80 md:min-h-96',
   success: 'bg-green-100 border-green-500 text-green-800',
   error: 'bg-red-100 border-red-500 text-red-800',
   responseText: 'my-2',

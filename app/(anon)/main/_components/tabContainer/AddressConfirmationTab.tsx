@@ -3,9 +3,11 @@
 import React, { useEffect, useMemo } from 'react';
 import { useMainPageModule } from '@/hooks/main/useMainPageModule';
 import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import { useUserAddresses } from '@/hooks/useUserAddresses';
 import Button from '@/(anon)/_components/common/button/Button';
 import { styles } from '@/(anon)/main/_components/tabContainer/AddressConfirmationTab.styles';
 import KakaoMapModule from '@/(anon)/main/_components/kakaoMapModule/KakaoMapModule';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 import {
   parseDongHoInputOnly,
   formatDongHoDisplay,
@@ -14,6 +16,9 @@ import {
 export const AddressConfirmationTab: React.FC = () => {
   // Zustand store에서 직접 가져오기
   const { selectedAddress, updateAddress } = useUserAddressStore();
+  
+  // 주소 데이터 로딩 상태
+  const { isLoading } = useUserAddresses();
 
   // useMainPageModule에서 필요한 함수들만 가져오기
   const {
@@ -152,6 +157,19 @@ export const AddressConfirmationTab: React.FC = () => {
               displaySearchQuery ||
               '주소를 검색하여 추가해주세요'}
           </span>
+          
+          {/* 로딩 오버레이 */}
+          {isLoading && (
+            <div className={styles.loadingOverlay}>
+              <LoadingOverlay
+                isVisible={true}
+                currentStep={1}
+                totalSteps={1}
+                variant='inline'
+                spinnerSize='small'
+              />
+            </div>
+          )}
         </div>
         <Button
           onClick={() => {

@@ -31,6 +31,10 @@ export default function SigninForm() {
     setError,
   } = useForm<SigninInput>({
     resolver: zodResolver(signinSchema),
+    defaultValues: {
+      username: 'test@test.com',
+      password: 'Test1234!',
+    },
   });
 
   const onSubmit = async (data: SigninInput) => {
