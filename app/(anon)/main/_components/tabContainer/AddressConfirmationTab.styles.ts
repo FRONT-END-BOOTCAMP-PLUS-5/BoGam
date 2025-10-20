@@ -7,10 +7,11 @@ export const styles = {
   
     // 두 번째 줄: 주소 검색 결과
     addressContainer:
-      'flex justify-between w-full h-8 py-3 bg-brand-light-blue rounded-lg',
+      'flex justify-between w-full h-8 py-3 bg-brand-light-blue rounded-lg relative',
     addressValue: 'flex text-sm text-brand-black items-center px-3',
     addressPlaceholder: 'flex text-sm text-brand-black items-center px-3',
     addressSearchRow: 'flex gap-1',
+    loadingOverlay: 'absolute inset-0 pointer-events-none',
   
     // 세 번째 줄: 동/호 입력 필드들
     dongHoInputs: 'flex flex-row w-full gap-3',
