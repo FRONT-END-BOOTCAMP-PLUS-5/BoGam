@@ -9,7 +9,7 @@ export const styles = {
     addressContainer:
       'flex justify-between w-full h-8 py-3 bg-brand-light-blue rounded-lg',
     addressValue: 'flex text-sm text-brand-black items-center px-3',
-    addressPlaceholder: 'flex text-sm text-bsrand-dark-gray items-start mt-1',
+    addressPlaceholder: 'flex text-sm text-brand-black items-center px-3',
     addressSearchRow: 'flex gap-1',
   
     // 세 번째 줄: 동/호 입력 필드들
