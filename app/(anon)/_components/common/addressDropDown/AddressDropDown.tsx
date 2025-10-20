@@ -230,8 +230,14 @@ export function AddressDropDown(props: AddressDropDownProps) {
           )}
         </div>
         <button
+          type='button'
           className={getExpandButtonStyle(isEmpty)}
           aria-label={isExpanded ? '목록 닫기' : '목록 열기'}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isEmpty || selectedAddressMutation.isPending) return;
+            handleToggleExpand();
+          }}
           disabled={isEmpty || selectedAddressMutation.isPending}
         >
           <ExpandIcon expanded={isExpanded} />
@@ -240,7 +246,7 @@ export function AddressDropDown(props: AddressDropDownProps) {
 
       {/* 로딩 오버레이 */}
       {isDataLoading && (
-        <div className={styles.loadingOverlay}>
+        <div className={`${styles.loadingOverlay} pointer-events-none`}>
           <LoadingOverlay
             isVisible={true}
             currentStep={1}
