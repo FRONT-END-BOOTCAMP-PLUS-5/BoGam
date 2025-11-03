@@ -19,7 +19,7 @@ const styles = {
   summary: 'mt-3 text-base text-black',
   
   // 로딩 및 에러 상태 스타일
-  loadingContainer: 'text-center py-10 text-black',
+  loadingContainer: 'relative min-h-80 md:min-h-96',
   errorContainer: 'text-center py-10 text-brand-error',
   noDataContainer: 'text-center py-10 text-black',
 

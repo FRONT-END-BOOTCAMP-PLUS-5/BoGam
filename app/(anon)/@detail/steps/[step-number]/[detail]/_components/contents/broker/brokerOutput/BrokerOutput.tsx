@@ -28,6 +28,24 @@ export const BrokerOutput = ({
 }: BrokerOutputProps) => {
   const { selectedAddress } = useUserAddressStore();
 
+  // 단계별 로딩 상태 관리
+  const [currentStep, setCurrentStep] = useState(1);
+
+  // 위험도 검사 실행 상태 관리
+  const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
+    useState(false);
+  const [calculatedRiskAssessment, setCalculatedRiskAssessment] =
+    useState<RiskAssessmentResult | null>(null);
+
+  // 위험도 검사 실행 여부를 추적하는 ref
+  const hasPerformedRiskAssessment = useRef(false);
+
+  // 새로운 데이터가 로드되었는지 추적하는 ref
+  const lastDataHash = useRef<string>('');
+
+  // 새로운 데이터가 로드되었는지 추적하는 state
+  const [dataChanged, setDataChanged] = useState(false);
+
   const pathname = window.location.pathname;
   const stepUrlData = parseStepUrl(pathname);
   const stepNumber = stepUrlData?.stepNumber || 3;
@@ -63,10 +81,52 @@ export const BrokerOutput = ({
   const jsonDetails = getJsonDetails();
 
   // DB에서 broker 데이터 조회 (selectedBroker가 없을 때만)
-
   const brokerCopyQuery = useGetBrokerCopy(
     selectedBroker ? null : selectedAddress?.nickname || null
   );
+
+  // 단계별 로딩 진행률 계산
+  useEffect(() => {
+    if (brokerCopyQuery.isLoading || isPerformingRiskAssessment || dataChanged) {
+      // 로딩 시작 시 초기화
+      setCurrentStep(1);
+
+      // 단계별 진행률 계산
+      const calculateProgress = () => {
+        let totalSteps = 5; // 기본 단계 수
+        let currentStep = 1;
+
+        // Step 결과 데이터 로딩
+        if (stepResultData) {
+          currentStep = 2;
+        }
+
+        // 중개사 정보 조회
+        if (brokerCopyQuery.data?.data) {
+          currentStep = 3;
+        }
+
+        // 위험도 검사 진행
+        if (isPerformingRiskAssessment) {
+          currentStep = 4;
+          totalSteps = 6; // 위험도 검사 단계 추가
+        }
+
+        // 완료
+        if (!brokerCopyQuery.isLoading && !isPerformingRiskAssessment && !dataChanged) {
+          currentStep = totalSteps;
+        }
+
+        setCurrentStep(currentStep);
+      };
+
+      const interval = setInterval(calculateProgress, 700);
+      return () => clearInterval(interval);
+    } else {
+      // 로딩 완료 시 초기화
+      setCurrentStep(1);
+    }
+  }, [brokerCopyQuery.isLoading, isPerformingRiskAssessment, dataChanged, brokerCopyQuery.data?.data, stepResultData]);
   // 초기 렌더링 시 캐시 무효화 (새로운 데이터가 있을 때)
   useEffect(() => {
     if (selectedAddress?.nickname) {
@@ -74,21 +134,6 @@ export const BrokerOutput = ({
       invalidateRiskDataCache(); // stepResult 캐시 무효화
     }
   }, [selectedBroker, selectedAddress?.nickname, invalidateRiskDataCache]);
-
-  // 위험도 검사 실행 상태 관리
-  const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
-    useState(false);
-  const [calculatedRiskAssessment, setCalculatedRiskAssessment] =
-    useState<RiskAssessmentResult | null>(null);
-
-  // 위험도 검사 실행 여부를 추적하는 ref
-  const hasPerformedRiskAssessment = useRef(false);
-
-  // 새로운 데이터가 로드되었는지 추적하는 ref
-  const lastDataHash = useRef<string>('');
-
-  // 새로운 데이터가 로드되었는지 추적하는 state
-  const [dataChanged, setDataChanged] = useState(false);
 
   // 중개업자 안전도 검사 hook 사용 (selectedBroker 또는 저장된 broker 데이터 사용)
   const brokerData =
@@ -303,8 +348,8 @@ export const BrokerOutput = ({
   if (brokerCopyQuery.isLoading || isPerformingRiskAssessment || dataChanged) {
     return (
       <div className={styles.outputSection}>
-        <div className={styles.outputSection}>
-          <h2 className={styles.outputTitle}>응답 결과</h2>
+        <h2 className={styles.outputTitle}>응답 결과</h2>
+        <div className={styles.responseContainer}>
           <LoadingOverlay
             isVisible={true}
             title={
@@ -312,8 +357,9 @@ export const BrokerOutput = ({
                 ? '새로운 중개업자 데이터로 위험도 검사를 진행하는 중이에요!'
                 : '중개업자 데이터를 불러오는 중이에요!'
             }
-            currentStep={1}
-            totalSteps={3}
+            currentStep={currentStep}
+            totalSteps={6}
+            variant="inline"
           />
         </div>
       </div>
@@ -328,7 +374,7 @@ export const BrokerOutput = ({
         <div className={styles.emptyState}>
           <p>안전도를 검사할 중개업자 데이터가 없어요!</p>
           <p className='text-sm text-brand-dark-gray mt-2'>
-            Input 탭에서 중개업자를 조회하고 선택하시면 안전도 검사 결과를
+            입력 탭에서 중개업자를 조회하고 선택하시면 안전도 검사 결과를
             확인할 수 있습니다.
           </p>
         </div>

@@ -10,6 +10,7 @@ import { parseStepUrl } from '@utils/stepUrlParser';
 import RadioButtonGroup from '@/(anon)/_components/common/radioButtonGroup/RadioButtonGroup';
 import Button from '@/(anon)/_components/common/button/Button';
 import { LegacyContentSection } from './types';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface RadioGroupProps {
   title?: string;
@@ -315,7 +316,16 @@ const RadioGroup = ({ title, subtitle, data }: RadioGroupProps) => {
   if (typeof window === 'undefined' || isLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingContainer}>로딩 중...</div>
+        <div className={styles.loadingContainer}>
+          <LoadingOverlay
+            isVisible={true}
+            title="데이터를 불러오고 있습니다..."
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+            spinnerSize="small"
+          />
+        </div>
       </div>
     );
   }

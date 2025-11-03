@@ -6,6 +6,9 @@ import { styles } from './TransactionSearchOutput.styles';
 import Button from '@/(anon)/_components/common/button/Button';
 import { formatToKoreanUnit } from '@utils/formatUtils';
 import { formatPrice } from '@utils/main/transactionUtils';
+import { useGetTransactionSearchCopy } from '@/hooks/useTransactionSearch';
+import { useUserAddressStore } from '@libs/stores/userAddresses/userAddressStore';
+import LoadingOverlay from '@/(anon)/_components/common/loading/LoadingOverlay';
 
 interface AveragePriceByArea {
   area: number;
@@ -32,6 +35,14 @@ export const TransactionSearchOutput = ({
   onNewSearch,
   onSaveResult,
 }: TransactionSearchOutputExtendedProps) => {
+  const { selectedAddress } = useUserAddressStore();
+  
+  // DB에서 저장된 데이터 조회
+  const { data: savedData, isLoading: isSavedDataLoading, error: savedDataError } = useGetTransactionSearchCopy(
+    selectedAddress?.nickname || null
+  );
+
+
   const hasSaved = useRef(false);
 
   // 결과가 완료되었을 때 한 번만 저장
@@ -41,13 +52,26 @@ export const TransactionSearchOutput = ({
       hasSaved.current = true;
     }
   }, [loading, response, onSaveResult]);
-  // 로딩 중일 때 로딩 UI 표시
-  if (loading) {
+
+  // 저장된 데이터가 있으면 그것을 사용, 없으면 현재 props 사용
+  // 파싱
+  const displayData = savedData?.data ? (typeof savedData.data === 'string' ? JSON.parse(savedData.data) : savedData.data) : null;
+
+  // 로딩 중일 때 로딩 UI 표시 (탭 아래 컨텐츠 영역만 덮도록 contentArea 안에서 렌더)
+  if (loading || isSavedDataLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loadingState}>
-          <div className={styles.loadingSpinner}></div>
-          <div className={styles.loadingText}>실거래가 데이터를 불러오고 있습니다</div>
+        <div className={styles.resultsHeader}>
+          <h3 className={styles.resultsTitle}>검색 결과</h3>
+        </div>
+        <div className={styles.contentArea}>
+          <LoadingOverlay
+            isVisible={true}
+            title={loading ? '실거래가 데이터를 불러오고 있습니다' : '저장된 데이터를 불러오고 있습니다'}
+            currentStep={1}
+            totalSteps={1}
+            variant="inline"
+          />
         </div>
       </div>
     );
@@ -57,23 +81,36 @@ export const TransactionSearchOutput = ({
 
   // 분석 카드 렌더링 함수
   const renderAnalysisCard = () => {
-    if (!targetArea || targetPrice <= 0 || averagePricesByArea.length === 0) {
+    // 저장된 데이터가 있으면 그것을 사용, 없으면 현재 props 사용
+    const data = displayData || {
+      complexName,
+      targetArea: parseFloat(targetArea),
+      targetPrice: targetPrice / 100000000,
+      similarArea: averagePricesByArea.length > 0 ? averagePricesByArea[0].area : undefined,
+      averagePrice: averagePricesByArea.length > 0 ? averagePricesByArea[0].averagePrice : undefined,
+      searchResultCount: response?.data?.length || 0,
+      areaAveragePrices: averagePricesByArea.map(item => ({
+        area: item.area,
+        averagePrice: item.averagePrice,
+        transactionCount: item.count,
+      })),
+    };
+
+
+    if (!data.targetArea || data.targetPrice <= 0) {
       return null;
     }
 
-    const targetAreaNum = parseFloat(targetArea);
-    if (isNaN(targetAreaNum)) return null;
+    const targetAreaNum = data.targetArea;
+    const targetPriceNum = data.targetPrice;
 
-    const mostSimilarArea = averagePricesByArea.reduce((prev, curr) => {
-      return Math.abs(curr.area - targetAreaNum) < Math.abs(prev.area - targetAreaNum)
-        ? curr
-        : prev;
-    });
+    // 유사한 면적과 평균가가 있으면 사용
+    const similarArea = data.similarArea;
+    const averagePrice = data.averagePrice;
 
-    const targetPriceNum = targetPrice / 100000000; // 억원 단위로 변환
-    if (targetPriceNum === 0) return null;
+    if (!similarArea || !averagePrice) return null;
 
-    const ratio = targetPriceNum / mostSimilarArea.averagePrice;
+    const ratio = targetPriceNum / averagePrice;
     const percentage = (ratio * 100).toFixed(1);
     const isDangerous = ratio > 0.9;
 
@@ -83,28 +120,28 @@ export const TransactionSearchOutput = ({
         <div className={styles.analysisContent}>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>단지명:</span>
-            <span className={styles.analysisValue}>{complexName}</span>
+            <span className={styles.analysisValue}>{data.complexName}</span>
           </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>입력한 전용면적:</span>
-            <span className={styles.analysisValue}>{targetArea}㎡</span>
+            <span className={styles.analysisValue}>{targetAreaNum}㎡</span>
           </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>입력한 전세 거래가:</span>
             <span className={styles.analysisValue}>
-              {targetPrice > 0 ? formatToKoreanUnit(targetPrice) : ''}
+              {targetPriceNum > 0 ? formatToKoreanUnit(targetPriceNum * 100000000) : ''}
             </span>
           </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>유사한 전용면적:</span>
             <span className={styles.analysisValue}>
-              {mostSimilarArea.area}㎡
+              {similarArea}㎡
             </span>
           </div>
           <div className={styles.analysisRow}>
             <span className={styles.analysisLabel}>해당 면적 매매 평균가:</span>
             <span className={styles.analysisValue}>
-              {formatPrice(mostSimilarArea.averagePrice)}
+              {formatPrice(averagePrice)}
             </span>
           </div>
 
@@ -134,8 +171,18 @@ export const TransactionSearchOutput = ({
     );
   };
 
+  // 저장된 데이터가 있으면 그것을 사용, 없으면 현재 props 사용
+  const data = displayData || {
+    searchResultCount: response?.data?.length || 0,
+    areaAveragePrices: averagePricesByArea.map(item => ({
+      area: item.area,
+      averagePrice: item.averagePrice,
+      transactionCount: item.count,
+    })),
+  };
+
   const transactionData = response?.data || [];
-  const displayCount = response?.filteredCount || transactionData.length;
+  const displayCount = data.searchResultCount || transactionData.length;
 
   return (
     <div className={styles.container}>
@@ -156,7 +203,7 @@ export const TransactionSearchOutput = ({
       {renderAnalysisCard()}
 
       {/* 데이터가 없을 때 */}
-      {transactionData.length === 0 && (
+      {displayCount === 0 && (
         <div className={styles.emptyState}>
           <div className={styles.emptyStateTitle}>
             매매 거래 검색 결과가 없습니다.
@@ -168,11 +215,11 @@ export const TransactionSearchOutput = ({
       )}
 
       {/* 전용면적별 평균가 */}
-      {averagePricesByArea.length > 0 && (
+      {data.areaAveragePrices && data.areaAveragePrices.length > 0 && (
         <div className={styles.averagePrices}>
           <h4 className={styles.averagePricesTitle}>전용면적별 평균가</h4>
           <div className={styles.averagePricesGrid}>
-            {averagePricesByArea.map((item) => (
+            {data.areaAveragePrices.map((item: { area: number; averagePrice: number; transactionCount: number }) => (
               <div key={item.area} className={styles.averagePriceCard}>
                 <div className={styles.averagePriceContent}>
                   <div className={styles.averagePriceArea}>
@@ -182,7 +229,7 @@ export const TransactionSearchOutput = ({
                     {formatPrice(item.averagePrice)}
                   </div>
                   <div className={styles.averagePriceCount}>
-                    {item.count}건 거래
+                    {item.transactionCount}건 거래
                   </div>
                 </div>
               </div>

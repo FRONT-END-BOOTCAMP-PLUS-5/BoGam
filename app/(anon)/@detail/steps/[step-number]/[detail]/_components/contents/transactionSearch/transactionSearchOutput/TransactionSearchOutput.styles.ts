@@ -1,7 +1,8 @@
 export const styles = {
-  container: 'space-y-6',
+  container: 'space-y-6 relative',
   resultsHeader: 'flex justify-between items-center mb-6',
   resultsTitle: 'text-2xl font-bold text-brand-black',
+  contentArea: 'relative min-h-80 md:min-h-96',
   
   // Empty state
   emptyState: 'text-center py-12',
@@ -39,8 +40,4 @@ export const styles = {
   // New search button
   newSearchButton: 'px-4 py-2',
   
-  // Loading styles
-  loadingState: 'flex flex-col items-center justify-center py-12',
-  loadingSpinner: 'animate-spin rounded-full h-8 w-8 border-b-2 border-brand mb-4',
-  loadingText: 'text-brand-dark-gray text-center',
 } as const;

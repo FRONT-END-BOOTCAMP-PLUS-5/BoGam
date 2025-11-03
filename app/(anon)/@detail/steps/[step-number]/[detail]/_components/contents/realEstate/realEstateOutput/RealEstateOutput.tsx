@@ -60,6 +60,9 @@ export const RealEstateOutput = ({
 
   const jsonDetails = getJsonDetails();
 
+  // 단계별 로딩 상태 관리
+  const [currentStep, setCurrentStep] = useState(1);
+  const [totalSteps, setTotalSteps] = useState(3);
 
   // 위험도 검사 실행 상태 관리
   const [isPerformingRiskAssessment, setIsPerformingRiskAssessment] =
@@ -75,6 +78,51 @@ export const RealEstateOutput = ({
 
   // 새로운 데이터가 로드되었는지 추적하는 state
   const [dataChanged, setDataChanged] = useState(false);
+
+  // 단계별 로딩 진행률 계산
+  useEffect(() => {
+    if (totalLoading || isPerformingRiskAssessment || dataChanged) {
+      // 로딩 시작 시 초기화
+      setCurrentStep(1);
+
+      // 단계별 진행률 계산
+      const calculateProgress = () => {
+        let steps = 3;
+        let currentStep = 1;
+
+        // Step 결과 데이터 로딩
+        if (stepResultData) {
+          currentStep = 2;
+        }
+
+        // 등기부등본 데이터 조회
+        if (displayResponse?.data?.data || displayResponse?.data?.realEstateJson?.data) {
+          currentStep = 3;
+        }
+
+        // 위험도 검사가 필요한 경우 단계 추가
+        if (isPerformingRiskAssessment) {
+          steps = 4; // 위험도 검사 단계 추가
+          currentStep = 4;
+        }
+
+        // 완료
+        if (!totalLoading && !isPerformingRiskAssessment && !dataChanged) {
+          currentStep = steps;
+        }
+
+        setCurrentStep(currentStep);
+        setTotalSteps(steps);
+      };
+
+      const interval = setInterval(calculateProgress, 700);
+      return () => clearInterval(interval);
+    } else {
+      // 로딩 완료 시 초기화
+      setCurrentStep(1);
+      setTotalSteps(3);
+    }
+  }, [totalLoading, isPerformingRiskAssessment, dataChanged, stepResultData, displayResponse?.data?.data, displayResponse?.data?.realEstateJson?.data]);
 
   // 위험도 검사 hook 사용
   const realEstateData =
@@ -170,16 +218,19 @@ export const RealEstateOutput = ({
       <div className={styles.container}>
         <div className={styles.mainContainer}>
           <h2 className={styles.title}>응답 결과</h2>
-          <LoadingOverlay
-            isVisible={true}
-            title={
-              dataChanged
-                ? '새로운 등기부등본 데이터로 위험도 검사를 진행하는 중이에요!'
-                : '등기부등본 데이터를 불러오는 중이에요!'
-            }
-            currentStep={1}
-            totalSteps={3}
-          />
+          <div className={styles.dataContainer}>
+            <LoadingOverlay
+              isVisible={true}
+              title={
+                dataChanged
+                  ? '새로운 등기부등본 데이터로 위험도 검사를 진행하는 중이에요!'
+                  : '등기부등본 데이터를 불러오는 중이에요!'
+              }
+              currentStep={currentStep}
+              totalSteps={totalSteps}
+              variant="inline"
+            />
+          </div>
         </div>
       </div>
     );
@@ -195,7 +246,7 @@ export const RealEstateOutput = ({
             안전도를 검사할 등기부등본 데이터가 없어요!
           </p>
           <p className={styles.emptyText}>
-            Input 탭에서 등기부등본을 조회하고 선택하시면 안전도 검사 결과를
+            입력 탭에서 등기부등본을 조회하고 선택하시면 안전도 검사 결과를
             확인할 수 있습니다.
           </p>
         </div>

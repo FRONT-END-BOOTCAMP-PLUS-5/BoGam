@@ -10,13 +10,9 @@ import List from './contents/List';
 import CheckListGroup from './contents/CheckListGroup';
 import RadioGroup from './contents/RadioGroup';
 import { parseStepUrl } from '@utils/stepUrlParser';
-import {
-  LegacyContentSection,
-  StepContentData
-} from './contents/types';
+import { LegacyContentSection, StepContentData } from './contents/types';
 import { RealEstateContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/realEstate/realEstateContainer/RealEstateContainer';
 import { BrokerContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/broker/brokerContainer/BrokerContainer';
-import { TaxCertWrapperRef } from './contents/TaxCertWrapper';
 import { TransactionSearchWrapperRef } from './contents/TransactionSearchWrapper';
 import { TransactionSearchContainer } from '@/(anon)/@detail/steps/[step-number]/[detail]/_components/contents/transactionSearch/transactionSearchContainer/TransactionSearchContainer';
 import { PageIndicator } from './PageIndicator';
@@ -31,18 +27,10 @@ interface RegionData {
 }
 
 interface ModalContentProps {
-  onShowSimpleAuthModal: () => void;
-  onSimpleAuthApprove: () => void;
-  onSimpleAuthCancel: () => void;
-  taxCertContainerRef?: React.RefObject<TaxCertWrapperRef | null>;
   transactionSearchContainerRef?: React.RefObject<TransactionSearchWrapperRef | null>;
 }
 
 export default function ModalContent({
-  onShowSimpleAuthModal,
-  onSimpleAuthApprove,
-  onSimpleAuthCancel,
-  taxCertContainerRef,
   transactionSearchContainerRef,
 }: ModalContentProps) {
   const [currentPage, setCurrentPage] = useState(0);
@@ -80,7 +68,7 @@ export default function ModalContent({
   const renderSwiperContent = (pageData: LegacyContentSection[]) => {
     switch (dataType) {
       case 'TextOnly':
-        return <TextOnly data={pageData} />;
+        return <TextOnly data={pageData} currentPage={currentPage} />;
       case 'List':
         return (
           <List
@@ -143,7 +131,6 @@ export default function ModalContent({
     </div>
   );
 
-
   // CombinedContent 타입인 경우 sections를 사용하여 type별로 스와이퍼 분리
   if (
     stepContentData &&
@@ -166,10 +153,6 @@ export default function ModalContent({
           detail={detail}
           currentPage={currentPage}
           onPageChange={handlePageChange}
-          onShowSimpleAuthModal={onShowSimpleAuthModal}
-          onSimpleAuthApprove={onSimpleAuthApprove}
-          onSimpleAuthCancel={onSimpleAuthCancel}
-          taxCertContainerRef={taxCertContainerRef}
           transactionSearchContainerRef={transactionSearchContainerRef}
           swiperRef={swiperRef}
         />

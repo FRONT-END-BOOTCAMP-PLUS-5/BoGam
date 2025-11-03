@@ -32,7 +32,6 @@ export const TransactionSearchInput = ({
   onTargetPriceChange,
   onFetchComplex,
 }: TransactionSearchInputExtendedProps) => {
-  const { selectedAddress } = useUserAddressStore();
   const [error, setError] = useState<string | null>(null);
 
 
@@ -68,8 +67,6 @@ export const TransactionSearchInput = ({
     }
   };
 
-  // 주소 표시 로직
-  const displayAddress = selectedAddress?.roadAddress || selectedAddress?.lotAddress || '';
 
   const isFormDisabled = 
     !formData.parsedAddress.addrSido ||
@@ -84,15 +81,7 @@ export const TransactionSearchInput = ({
       disabled={isFormDisabled}
     >
       <div className={styles.container}>
-        <h3 className={styles.formTitle}>실거래가 조회</h3>
 
-        {/* 주소 정보 표시 */}
-        {displayAddress && (
-          <div className={styles.addressDisplay}>
-            <label className={styles.formLabel}>선택된 주소:</label>
-            <div className={styles.addressValue}>{displayAddress}</div>
-          </div>
-        )}
 
         {/* 조회 년도 */}
         <Field

@@ -4,6 +4,13 @@ import StepDetailPage from './steps/[step-number]/[detail]/StepDetail';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
+import {
+  isStepDetailUrl,
+  isMainStepsPage,
+  isProgrammaticNavigation,
+  clearProgrammaticNavigationFlag,
+  closeMultiSlot,
+} from '@utils/multiSlotNavigation';
 
 export default function DetailSlot() {
   const router = useRouter();
@@ -11,35 +18,13 @@ export default function DetailSlot() {
   const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {
-    // URL 패턴 확인: /steps/[step-number]/[detail]
-    const stepPattern = /^\/steps\/(\d+)\/(\d+)$/;
-    const match = pathname.match(stepPattern);
-    const isStepDetailUrl = !!match;
-
-    if (isStepDetailUrl && match) {
+    if (isStepDetailUrl(pathname)) {
       // step-number 유효성 검사는 steps/[step-number]/page.tsx에서 이미 처리됨
 
-      // 세션스토리지에서 프로그래밍 라우팅 플래그와 타임스탬프 확인
-      const isProgrammaticNavigation = sessionStorage.getItem(
-        'programmatic-navigation'
-      );
-      const navigationTimestamp = sessionStorage.getItem(
-        'navigation-timestamp'
-      );
-      const currentTime = Date.now();
-
-      // 타임스탬프가 5초 이내이고 플래그가 있으면 프로그래밍 라우팅으로 간주
-      const isRecentNavigation =
-        navigationTimestamp &&
-        currentTime - parseInt(navigationTimestamp) < 5000;
-
-      if (isProgrammaticNavigation === 'true' && isRecentNavigation) {
+      if (isProgrammaticNavigation()) {
         setShouldShow(true);
-        // 플래그 제거
-        sessionStorage.removeItem('programmatic-navigation');
-        sessionStorage.removeItem('navigation-timestamp');
+        clearProgrammaticNavigationFlag();
       } else {
-
         // 프로그래밍 라우팅이 아닌 경우 404 처리
         notFound();
         return;
@@ -47,10 +32,7 @@ export default function DetailSlot() {
     } else {
       // steps/로 시작하지만 패턴이 맞지 않는 경우 404
       // 단, steps/숫자 (메인 steps 페이지)는 제외
-      const mainStepsPattern = /^\/steps\/(\d+)$/;
-      const isMainStepsPage = mainStepsPattern.test(pathname);
-      
-      if (pathname.startsWith('/steps/') && !isMainStepsPage) {
+      if (pathname.startsWith('/steps/') && !isMainStepsPage(pathname)) {
         notFound();
         return;
       }
@@ -65,10 +47,7 @@ export default function DetailSlot() {
   return (
     <StepDetailPage
       isOpen={shouldShow}
-      onClose={() => {
-        setShouldShow(false);
-        router.back();
-      }}
+      onClose={() => closeMultiSlot(router, setShouldShow)}
     />
   );
 }

@@ -5,40 +5,48 @@ import { styles } from './LoadingOverlay.styles';
 
 interface LoadingOverlayProps {
   isVisible: boolean;
-  title: string;
+  title?: string;
   currentStep: number;
   totalSteps?: number;
+  variant?: 'fullscreen' | 'inline';
+  spinnerSize?: 'default' | 'small';
 }
 
 export default function LoadingOverlay({
   isVisible,
   title,
   currentStep,
-  totalSteps = 7
+  totalSteps = 7,
+  variant = 'fullscreen',
+  spinnerSize = 'default'
 }: LoadingOverlayProps) {
   if (!isVisible) return null;
 
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
-    <div className={styles.overlay}>
+    <div className={variant === 'fullscreen' ? styles.overlay : styles.inlineOverlay}>
       <div className={styles.content}>
-        <div className="mb-6">
-          <div className={styles.spinner}></div>
-          <h2 className={styles.title}>{title}</h2>
+        <div className={title ? "mb-6" : ""}>
+          <div className={spinnerSize === 'small' ? styles.spinnerSmall : styles.spinner}></div>
+          {title && <h2 className={styles.title}>{title}</h2>}
           
-          {/* 진행률 바 */}
-          <div className={styles.progressBarContainer}>
-            <div 
-              className={styles.progressBar}
-              style={{ width: `${progressPercentage}%` }}
-            ></div>
-          </div>
+          {/* 진행률 바 - title이 있을 때만 표시 */}
+          {title && (
+            <div className={styles.progressBarContainer}>
+              <div 
+                className={styles.progressBar}
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+          )}
           
-          {/* 진행률 텍스트 */}
-          <p className={styles.progressText}>
-            {currentStep}/{totalSteps} 완료
-          </p>
+          {/* 진행률 텍스트 - title이 있을 때만 표시 */}
+          {title && (
+            <p className={styles.progressText}>
+              {currentStep}/{totalSteps} 완료
+            </p>
+          )}
         </div>
       </div>
     </div>

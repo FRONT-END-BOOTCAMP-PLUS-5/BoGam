@@ -156,6 +156,7 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
         title='데이터를 불러오는 중입니다...'
         currentStep={1}
         totalSteps={1}
+        variant="inline"
       />
     );
   }
@@ -168,6 +169,7 @@ const CheckListGroup = ({ data }: CheckListGroupProps) => {
         title='데이터를 불러오는 중 오류가 발생했습니다. 기본값으로 초기화 중...'
         currentStep={1}
         totalSteps={1}
+        variant="inline"
       />
     );
   }

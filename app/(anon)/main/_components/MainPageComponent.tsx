@@ -1,7 +1,6 @@
 'use client';
 
 import { AddressDropDown } from '@/(anon)/_components/common/addressDropDown/AddressDropDown';
-import DocumentCard from '../../mypage/_components/DocumentCard';
 import { styles as mainStyles } from '../main.styles';
 import { AddressConfirmationTab } from './tabContainer/AddressConfirmationTab';
 import { Pin, X } from 'lucide-react';
@@ -84,8 +83,6 @@ export const MainPageClient = () => {
       {/* 가이드 결과 컨테이너 */}
       {!isNewAddressSearch && (
         <>
-          {/* 문서 카드 */}
-          <DocumentCard />
           <GuideResultsContainer
             selectedAddress={selectedAddress}
             isNewAddressSearch={isNewAddressSearch}

@@ -80,6 +80,7 @@ export function AddressDropDownItem({
       >
         {showFavoriteToggle && (
           <button
+            type='button'
             onClick={(e) => {
               e.stopPropagation();
               handleToggleFavorite();
@@ -116,6 +117,7 @@ export function AddressDropDownItem({
       </div>
       {showDeleteButton && (
         <button
+          type='button'
           onClick={(e) => {
             e.stopPropagation();
             handleDelete();

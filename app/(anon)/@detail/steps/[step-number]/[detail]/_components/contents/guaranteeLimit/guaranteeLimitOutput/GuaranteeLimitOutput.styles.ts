@@ -1,18 +1,12 @@
 export const styles = {
-  container: 'p-6 bg-brand-white',
+  container: 'p-6 bg-brand-white relative',
   header: 'mb-6',
   title: 'text-xl font-bold text-brand-black mb-2',
   subtitle: 'text-sm text-brand-dark-gray',
 
-  // 로딩 상태
-  loadingContainer: 'text-center py-8',
-  loadingSpinner:
-    'animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto mb-4',
-  loadingText: 'text-brand-dark-gray',
-  loadingStatus: 'text-sm text-brand-dark-gray mt-2',
 
   // 데이터 컨테이너
-  dataContainer: 'space-y-4',
+  dataContainer: 'space-y-4 relative min-h-80 md:min-h-96',
 
   // 카드 스타일
   card: 'p-6 bg-gradient-to-r from-brand-light-blue to-brand-white rounded-lg border-2 border-brand shadow-sm',
@@ -30,7 +24,7 @@ export const styles = {
   amountLabel: 'text-sm text-brand-dark-gray',
 
   // 빈 상태
-  emptyContainer: 'text-center py-8',
+  emptyContainer: 'text-center py-8 mb-4',
   emptyIcon:
     'w-16 h-16 bg-brand-light-gray rounded-full flex items-center justify-center mx-auto mb-4',
   emptyIconText: 'text-brand-dark-gray text-2xl',

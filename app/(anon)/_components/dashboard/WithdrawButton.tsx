@@ -14,7 +14,7 @@ export default function WithdrawButton() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  
+
   const clearUser = useUserStore((state) => state.clearUser);
   const { clearAll } = useUserAddressStore();
   const { setStep } = useRootStep();
@@ -23,14 +23,16 @@ export default function WithdrawButton() {
   const handleDeleteUser = async () => {
     try {
       setIsDeleting(true);
-      
+
       const response = await authApi.deleteUser();
-      
+
       if (response.success) {
         // 성공적으로 삭제된 경우 상태 정리 및 홈페이지 이동
         await handleUserCleanup();
       } else {
-        setErrorMessage(response.message || '회원탈퇴 처리 중 오류가 발생했습니다.');
+        setErrorMessage(
+          response.message || '회원탈퇴 처리 중 오류가 발생했습니다.'
+        );
         setShowErrorModal(true);
       }
     } catch {
@@ -74,8 +76,8 @@ export default function WithdrawButton() {
   return (
     <>
       {/* 회원탈퇴 버튼 */}
-      <div className={styles.withdrawButton}>
-        <button 
+      <div>
+        <button
           className={styles.withdrawBtn}
           onClick={() => setIsDeleteModalOpen(true)}
         >
@@ -86,25 +88,25 @@ export default function WithdrawButton() {
       {/* 회원탈퇴 확인 모달 */}
       <ConfirmModal
         isOpen={isDeleteModalOpen}
-        title="회원탈퇴 확인"
+        title='회원탈퇴 확인'
         onConfirm={handleDeleteUser}
         onCancel={() => setIsDeleteModalOpen(false)}
-        confirmText="회원탈퇴"
-        cancelText="취소"
-        icon="warning"
+        confirmText='회원탈퇴'
+        cancelText='취소'
+        icon='warning'
         isLoading={isDeleting}
       >
-        정말로 회원탈퇴를 하시겠습니까?<br />
-        이 작업은 되돌릴 수 없으며, 모든 데이터가 영구적으로 삭제됩니다.
+        정말로 회원탈퇴를 하시겠습니까?
+        <br />이 작업은 되돌릴 수 없으며, 모든 데이터가 영구적으로 삭제됩니다.
       </ConfirmModal>
 
       {/* 에러 모달 */}
       <ConfirmModal
         isOpen={showErrorModal}
-        title="오류 발생"
+        title='오류 발생'
         onConfirm={() => setShowErrorModal(false)}
-        confirmText="확인"
-        icon="error"
+        confirmText='확인'
+        icon='error'
       >
         {errorMessage}
       </ConfirmModal>
