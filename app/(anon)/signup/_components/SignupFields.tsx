@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { SignupInput } from './schema';
 import Field from '@/(anon)/_components/common/forms/Field';
@@ -7,35 +8,102 @@ import TextInput from '@/(anon)/_components/common/forms/TextInput';
 import PasswordInput from '@/(anon)/_components/common/forms/PasswordInput';
 import OtpInput from '@/(anon)/_components/common/forms/OtpInput';
 import { styles } from '@/(anon)/_components/common/forms/Forms.styles';
-import { useState } from 'react';
 import { useCheckNickname } from '@/hooks/useCheckNickname';
+import { useCheckUsername } from '@/hooks/useCheckUsername';
 
 interface Props {
   form: UseFormReturn<SignupInput>;
+  triggerNicknameCheck: boolean;
+  setTriggerNicknameCheck: (value: boolean) => void;
+  triggerUsernameCheck: boolean;
+  setTriggerUsernameCheck: (value: boolean) => void;
 }
 
-export function SignupFields({ form }: Props) {
+export function SignupFields({
+  form,
+  triggerNicknameCheck,
+  setTriggerNicknameCheck,
+  triggerUsernameCheck,
+  setTriggerUsernameCheck,
+}: Props) {
   const {
     register,
     watch,
     setValue,
     clearErrors,
+    setError,
     trigger,
     formState: { errors },
   } = form;
 
   const nickname = watch('nickname');
-  const [triggerCheck, setTriggerCheck] = useState(false);
+  const username = watch('username');
 
-  const { data, isFetching, isError, isSuccess, refetch } = useCheckNickname(
-    nickname,
-    triggerCheck
-  );
+  const [nicknameAvailable, setNicknameAvailable] = useState<
+    boolean | undefined
+  >(undefined);
+  const [usernameAvailable, setUsernameAvailable] = useState<
+    boolean | undefined
+  >(undefined);
 
-  const available = data?.available ?? false;
+  const [nicknameMessage, setNicknameMessage] = useState<string | null>(null);
+  const [usernameMessage, setUsernameMessage] = useState<string | null>(null);
+
+  const {
+    data: nicknameData,
+    isFetching: isNicknameFetching,
+    isError: isNicknameError,
+    isSuccess: isNicknameSuccess,
+  } = useCheckNickname(nickname, triggerNicknameCheck);
+
+  const {
+    data: usernameData,
+    isFetching: isUsernameFetching,
+    isError: isUsernameError,
+    isSuccess: isUsernameSuccess,
+  } = useCheckUsername(username, triggerUsernameCheck);
+
+  useEffect(() => {
+    if (triggerNicknameCheck && isNicknameSuccess) {
+      const available = nicknameData?.available ?? false;
+      if (available) {
+        setNicknameAvailable(true);
+        clearErrors('nickname');
+        setNicknameMessage('사용 가능한 닉네임입니다.');
+      } else {
+        setNicknameAvailable(false);
+        setError('nickname', {
+          type: 'manual',
+          message: '이미 사용 중인 닉네임입니다.',
+        });
+        setNicknameMessage(null);
+      }
+      setTriggerNicknameCheck(false);
+    }
+  }, [triggerNicknameCheck, isNicknameSuccess, nicknameData]);
+
+  useEffect(() => {
+    if (triggerUsernameCheck && isUsernameSuccess) {
+      const available = usernameData?.available ?? false;
+      if (available) {
+        setUsernameAvailable(true);
+        clearErrors('username');
+        setUsernameMessage('사용 가능한 아이디입니다.');
+      } else {
+        setUsernameAvailable(false);
+        setError('username', {
+          type: 'manual',
+          message: '이미 사용 중인 아이디입니다.',
+        });
+        setUsernameMessage(null);
+      }
+      setTriggerUsernameCheck(false);
+    }
+  }, [triggerUsernameCheck, isUsernameSuccess, usernameData]);
 
   return (
     <>
+      {/* 이름 */}
       <Field id='name' label='이름'>
         <TextInput
           id='name'
@@ -46,6 +114,7 @@ export function SignupFields({ form }: Props) {
         {errors.name && <p className={styles.error}>{errors.name.message}</p>}
       </Field>
 
+      {/* 닉네임 */}
       <Field id='nickname' label='닉네임' hint='2글자 이상 입력하세요.'>
         <TextInput
           id='nickname'
@@ -55,31 +124,39 @@ export function SignupFields({ form }: Props) {
             <button
               type='button'
               className={
-                available ? styles.addonRightDisabled : styles.addonRight
+                nicknameAvailable
+                  ? styles.addonRightDisabled
+                  : styles.addonRight
               }
               onClick={() => {
-                setTriggerCheck(true);
-                refetch();
+                const currentNickname = form.getValues('nickname');
+                console.log(currentNickname);
+                if (currentNickname.trim().length < 2) {
+                  setError('nickname', {
+                    type: 'manual',
+                    message: '닉네임은 최소 2자 이상 입력해주세요.',
+                  });
+                  return;
+                }
+                setTriggerNicknameCheck(true);
               }}
-              disabled={available}
+              disabled={nicknameAvailable}
             >
-              {isFetching ? '확인 중' : available ? '확인완료' : '중복확인'}
+              {isNicknameFetching ? '확인 중' : '중복확인'}
             </button>
           }
           onChange={() => {
-            setTriggerCheck(false);
+            setNicknameAvailable(undefined);
+            setNicknameMessage(null);
+            setTriggerNicknameCheck(false);
             clearErrors('nickname');
           }}
         />
-        {isError && (
+        {isNicknameError && (
           <p className={styles.error}>중복 확인 중 오류가 발생했습니다.</p>
         )}
-        {isSuccess && (
-          <p className={available ? styles.success : styles.helper}>
-            {available
-              ? '사용 가능한 닉네임입니다.'
-              : '이미 사용 중인 닉네임입니다.'}
-          </p>
+        {nicknameMessage && !errors.nickname && (
+          <p className={styles.success}>{nicknameMessage}</p>
         )}
         {errors.nickname && (
           <p className={styles.error}>{errors.nickname.message}</p>
@@ -93,8 +170,44 @@ export function SignupFields({ form }: Props) {
           type='email'
           placeholder='example@domain.com'
           {...register('username')}
-          onChange={() => clearErrors('username')}
+          rightAddon={
+            <button
+              type='button'
+              className={
+                usernameAvailable
+                  ? styles.addonRightDisabled
+                  : styles.addonRight
+              }
+              onClick={() => {
+                const currentUsername = form.getValues('username');
+                console.log('');
+                if (!currentUsername.trim()) {
+                  setError('username', {
+                    type: 'manual',
+                    message: '아이디를 입력해주세요.',
+                  });
+                  return;
+                }
+                setTriggerUsernameCheck(true);
+              }}
+              disabled={usernameAvailable}
+            >
+              {isUsernameFetching ? '확인 중' : '중복확인'}
+            </button>
+          }
+          onChange={() => {
+            setUsernameAvailable(undefined);
+            setUsernameMessage(null);
+            setTriggerUsernameCheck(false);
+            clearErrors('username');
+          }}
         />
+        {isUsernameError && (
+          <p className={styles.error}>중복 확인 중 오류가 발생했습니다.</p>
+        )}
+        {usernameMessage && !errors.username && (
+          <p className={styles.success}>{usernameMessage}</p>
+        )}
         {errors.username && (
           <p className={styles.error}>{errors.username.message}</p>
         )}

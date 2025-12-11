@@ -149,4 +149,11 @@ export class UserRepositoryImpl implements UserRepository {
     });
     return !!user;
   }
+
+  async isUsernameTaken(username: string): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { username },
+    });
+    return !!user;
+  }
 }
